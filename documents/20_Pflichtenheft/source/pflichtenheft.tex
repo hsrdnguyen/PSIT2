@@ -1,0 +1,153 @@
+
+\documentclass{avocado}
+
+
+\usepackage[ngerman]{babel}
+\usepackage[german=quotes]{csquotes}
+\usepackage{float}
+%\usepackage{bibgerm}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage[backend=biber, style=ieee]{biblatex}
+\addbibresource{sources.bib}
+%\usepackage[fixlanguage]{babelbib}
+%\selectbiblanguage{german}
+%\bibliographystyle{ieeetr}
+%\addbibresource{sources}
+\newcommand{\mail}[1]{\href{mailto:#1}{#1}}
+\setlength{\parindent}{0cm}
+\usepackage[bookmarks=true]{hyperref}
+\hypersetup{
+    bookmarks=false,    % show bookmarks bar?
+    pdftitle={Avocada Share - Pflichtenheft},    % title
+    pdfauthor={Dang Thien Nguyen, Sascha Bergmann, Kunz Lion, Cyril Müller},  % author
+    pdfsubject={Funktionale und nicht-funktionale Anforderungen}, % subject of the document
+    pdfkeywords={Avocado Share, Pflichtenheft, Gruppe 13, PSIT, IT15b}, % list of keywords
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=blue!30!black,% color of internal links
+    citecolor=black,        % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=black,        % color of external links
+    linktoc=page            % only page is linked
+}%
+
+%\project{Avocado Share}
+\title{\LARGE{Avocado Share}\\\large{Pflichtenheft}}
+\author{%
+    Gruppe 13 \\%[0.3em]
+    \normalsize{Dang Thien Nguyen} \\%[0.5em]
+    \normalsize{Sascha Bergmann} \\%[0.5em]
+    \normalsize{Kunz Lion} \\%[0.5em]
+    \normalsize{Cyril Müller} \\%[0.5em]
+}
+
+\newcommand{\zeropadded}[1]{%
+    \ifnum\value{#1}<10 0\fi \arabic{#1}%
+}
+
+\newcommand{\requirementsectioncharacter}{-}
+
+\newcounter{RequirementSubsectionCounter}
+\newcommand{\requirementsection}[2]{%
+    \section{\texttt{/#1xxxx/} #2}%
+    \renewcommand{\requirementsectioncharacter}{#1}%
+    \setcounter{RequirementSubsectionCounter}{0}%
+}
+
+\newcommand{\requirementsubsection}[1]{%
+    \stepcounter{RequirementSubsectionCounter}%
+    \subsection{\texttt{/\requirementsectioncharacter\zeropadded{RequirementSubsectionCounter}xx/} #1} % 
+}
+
+
+\newcommand{\requirement}[2]{%
+    \subsubsection*{\texttt{/\requirementsectioncharacter\zeropadded{RequirementSubsectionCounter}#1/} #2}%
+    \label{subsub:requ_#2}
+}
+
+\newcommand{\refreq}[1]{\nameref{subsub:requ_#1}}
+
+\newcommand{\tbf}{\emph{Noch zu definieren.}}
+
+
+
+\usepackage[toc, xindy]{glossaries}
+%\newglossary[glignoredl]{ignored}{glignored}{glignoredin}{Ignored Glossary}
+
+
+\makeglossaries
+
+
+\begin{document}
+\include{glossary}
+
+\clearpage
+\maketitle
+\thispagestyle{empty}\clearpage
+
+\section*{Dokumentenhistorie}
+\begin{tabularx}{\linewidth}{|l|r|X|} \hline
+Version & \multicolumn{1}{l|}{Datum} 			& Anpassungen \\ \hline
+0.1      & 11.10.2015		& Dokumentstruktur \\ \hline
+0.2	     & 12.10.2015       & Erster Entwurf  \\ \hline
+1.0		 &  2.11.2015		& Erste Version, ohne Abnahmekriterien \\ \hline
+\end{tabularx}
+\vfill
+\section*{Unterschriften}
+\begin{minipage}[t][5cm][t]{0.45\linewidth}
+\subsection*{Auftraggeber}
+Prof. Dr. Max Lemmenmeier \\
+ZHAW, Dept. Linguistik \\
+%LCC Language Competence Centre \\
+%Büro SF 03.09 \\
+Theaterstr. 17 \\
+%Postfach \\
+8400 Winterthur \\
+%Tel. 0041 58 934 60 73 \\
+\mail{max.lemmenmeier@zhaw.ch} \\
+\vfill \hrule
+\end{minipage} \hfill
+\begin{minipage}[t][5cm][t]{0.45\linewidth}
+\subsection*{Auftragnehmer}
+Leiter Projektgruppe \\
+Sascha Bergmann \\
+ZHAW, Bachelorstudent ICT \\
+\mail{bergmsas@students.zhaw.ch} \\
+\vfill \hrule
+\end{minipage} \\
+%\begin{minipage[t]{0.45\linewidth}
+%\subsection*{Auftraggeber}
+%\end{minipage}
+\clearpage
+\tableofcontents
+\clearpage
+
+\input{einleitung}
+\input{zielbestimmung}
+\input{produkteinsatz}
+\input{functionalrequirements}
+\begin{landscape}
+\section{Funktionsbaum}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{Funktionsbaum.pdf}
+\caption{Funktionsbaum}
+\end{figure}
+\end{landscape}
+
+%\input{nonfunctionalrequirements}
+%\requirementsection{T}{Abnahmekriterien}
+
+\clearpage
+
+\glsaddall
+\printglossaries
+
+%\bibliographystyle{ieeetr}
+\nocite{*}
+%\bibliography{sources}
+\printbibliography[heading=bibintoc]
+
+\end{document}
