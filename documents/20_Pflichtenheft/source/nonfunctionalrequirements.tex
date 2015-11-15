@@ -1,16 +1,16 @@
 \requirementsection{R}{Nicht-funktionale Anforderungen}
-Alle nicht-funktionalen Anforderungen /R05xx/ sind aus dem Dokument “Nicht-funktionale Anforderungen” von Patrick Feisthammel \cite{patfeist15nifunanf} übernommen und gegebenenfalls ergänzt worden.
+Alle nicht-funktionalen Anforderungen \texttt{/R05xx/} sind aus dem Dokument "`Nicht-funktionale Anforderungen"' von Patrick Feisthammel \cite{patfeist15nifunanf} übernommen und gegebenenfalls ergänzt worden.
 
 \setcounter{RequirementSubsectionCounter}{5}
 \requirement{00}{Gebrauchsfähigkeit (Usability)}
 Die Webseiten müssen durch den Benutzer, welcher dem Benutzerprofil entspricht, ohne weitere Hilfe verwendet werden können. Es müssen, wenn der Benutzer diese für sein Verständnis benötigt, Hinweisfelder eingeblendet werden können.
-Erweiterte Usability, wie zum Beispiel Erweiterungen für Blinde, wird nicht speziell berücksichtigt.
+Erweiterte Usability, wie zum Beispiel eine Erweiterungen für Blinde, wird nicht speziell berücksichtigt.
 
 \requirement{10}{Fehlertoleranz}
-Hinweise und Fehlermeldungen müssen für den Benutzer verständlich formuliert sein und eine Hilfestellung zur Problemlösung beinhalten. Kein auftretender Fehler darf ohne Verarbeitung dem Benutzer angezeigt werden.
+Hinweise und Fehlermeldungen müssen für den Benutzer verständlich formuliert sein und eine Hilfestellung zur Problemlösung beinhalten. Kein auftretender Fehler darf dem Benutzer ohne Verarbeitung angezeigt werden.
 
 \requirement{20}{Sprache und länderspezifische Einstellungen}
-Die Webseiten sind in deutscher Sprache (Schweiz) verfasst, verwenden den Zeichensatz \gls{utf8}. Es werden die Schweiz-spezifischen Einstellungen von Datum, Zeit, Zahlen und Währung verwendet.
+Die Webseiten sind in deutscher Sprache (Schweiz) verfasst und verwenden den Zeichensatz \gls{utf8}. Es werden die Schweiz-spezifischen Einstellungen von Datum, Zeit, Zahlen und Währung verwendet.
 
 \requirement{30}{Zielplattform (Server)}
 Die Web-Applikation muss als \gls{JSP} auf dem zur Verfügung gestellten virtuellen Server unter Verwendung einer SQL-Datenbank mit Apache Tomcat betrieben werden.
@@ -19,7 +19,7 @@ Die Web-Applikation muss als \gls{JSP} auf dem zur Verfügung gestellten virtuel
 Die Webseiten werden in der aktuellsten freigegebenen Version des Mozilla Firefox und Google Chrome korrekt dargestellt. Die Webseite muss für Bildschirmgrössen mit einer Breite ab 480 Pixel problemlos darstellbar sein. Für Bildschirme mit einer Breite unter 600 Pixel muss eine Mobilansicht bereitstehen. Die Webseite muss skalierbar sein und sich an die Bildschrirmbreite anpassen.
 
 \requirement{50}{Werkzeuge zur Entwicklung}
-Als Projektmanagement-Tool und zur Verwaltung des Sourcecodes und der Dokumente muss der zur Verfügung gestellte Github- Server verwendet werden.
+Als Projektmanagement-Tool und zur Verwaltung des Sourcecodes und der Dokumente muss der zur Verfügung gestellte Github-Server verwendet werden.
 
 \requirement{60}{Robustheit}
 Auch nach einem Neustart des virtuellen Servers muss die Webseite voll funktionsfähig sein.

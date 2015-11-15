@@ -1,5 +1,7 @@
 \requirementsection{F}{Funktionale Anforderungen}
+
 \requirementsubsection{Sicherheit}
+
 \requirement{00}{Zugriffskontrolle}
 Beim Aufrufen der verschiedenen Seiten prüft das System immer, ob der Benutzer angemeldet ist. Falls er nicht angemeldet ist, wird er auf die Log-in Seite verwiesen. Davon ausgenommen sind nur die Seiten, zur Registrierung (\texttt{/F0200/} Registrierung) und diejenige zur Anmeldung (\refreq{An- und Abmelden}). \\
 
@@ -42,7 +44,7 @@ Die Registrierung eines Benutzers erfolgt über ein Formular, welches folgende A
 \item Nachname
 \item E-Mail-Adresse
 \end{itemize}
-Wenn alle Eingaben gemacht wurden und die E-Mail Adresse ein gültiges Format hat, wird dem Benutzer eine E-Mail zur Bestätigung gesendet, mit welcher er sein Konto aktivieren kann. Erst nach der Aktivierung des Kontos kann man sich auch anmelden. Sollte eine Eingabe nicht korrekt sein, wird das Formular erneut mit entsprechenden Fehlermeldungen angezeigt. In der E-Mail ist ein Link enthalten und eine kurze Beschreibung über den Nutzen dieses Links. Beim Öffnen der Seite, auf welche der Link verweist, wird der entsprechende Benutzer freigeschaltet. Dem Benutzer wird nun ein Loginformular und eine Bestätigung der Aktivierung angezeigt.
+Wenn alle Eingaben gemacht worden sind und die E-Mail-Adresse ein gültiges Format hat, wird dem Benutzer eine E-Mail zur Bestätigung gesendet, mit welcher er sein Konto aktivieren kann. Erst nach der Aktivierung des Kontos kann man sich auch anmelden. Sollte eine Eingabe nicht korrekt sein, wird das Formular erneut mit entsprechenden Fehlermeldungen angezeigt. In der E-Mail ist ein Link enthalten und eine kurze Beschreibung über den Nutzen dieses Links. Beim Öffnen der Seite, auf welche der Link verweist, wird der entsprechende Benutzer freigeschaltet. Dem Benutzer wird nun ein Loginformular und eine Bestätigung der Aktivierung angezeigt.
 Um eine Erweiterung auf verschiedene Fachhochschulen und Universitäten zu erlauben, sind nur E-Mail-Adressen der ZHAW, also "`\texttt{@students.zhaw.ch}"' und "`\texttt{@zhaw.ch}"', zulässig.
 
 \requirement{10}{Benutzerdaten ändern}
@@ -52,9 +54,9 @@ Dem Benutzer ist es über das oben erwähnte Formular auch möglich, sein Benutz
 \begin{table}[H]
 \begin{tabularx}{\textwidth}{|l|l|X|} \hline
 \textbf{Eigenschaft} &\textbf{Editierbar} & \textbf{Beschreibung} \\ \hline
-E-Mail-Addresse		& Ja 	& Die E-Mail-Adresse wird benötigt um den Benutzer eindeutig zu identifizieren und um ihm allfällige Benachrichtigen zukommen zu lassen.\\ \hline
+E-Mail-Addresse		& Ja 	& Die E-Mail-Adresse wird benötigt, um den Benutzer eindeutig zu identifizieren und um ihm allfällige Benachrichtigungen zukommen zu lassen.\\ \hline
 Profilbild			& Ja 	& Ein optionales Profilbild.\\ \hline
-Berechtigung 		& Ja 	& Alle Berechtigungen die der Benutzer in Modulen, Gruppen und Dateien hat. Diese werden ihm gegeben und er kann sie nicht selber ändern.\\ \hline
+Berechtigung 		& Ja 	& Alle Berechtigungen, die der Benutzer in Modulen, Gruppen und Dateien hat. Diese werden ihm gegeben und er kann sie nicht selber ändern.\\ \hline
 Vorname 			& Ja 	& Der Vorname des Benutzers\\ \hline
 Nachname			& Ja	& Der Nachname des Benutzers\\ \hline
 \end{tabularx}
@@ -63,21 +65,21 @@ Nachname			& Ja	& Der Nachname des Benutzers\\ \hline
 \end{table}
 
 \requirementsubsection{Gruppenverwaltung}
-Gruppen werden verwendet, um mehreren Benutzern gleichzeitig Berechtigungen auf Module und Dateien zu geben. Es ist auch möglich das eine Gruppe Mitglied in einer anderen Gruppe ist. Eine Gruppe kann beispielsweise eine Klasse mit allen Studenten dieser Klasse sein.
+Gruppen werden verwendet, um mehreren Benutzern gleichzeitig Berechtigungen auf Module und Dateien zu geben. Es ist auch möglich, dass eine Gruppe Mitglied in einer anderen Gruppe ist. Eine Gruppe kann beispielsweise eine Klasse mit allen Studenten dieser Klasse sein.
 
 \requirement{00}{Gruppe erstellen}
 Jeder angemeldete Benutzer kann eine Gruppe erstellen, wodurch er automatisch das Verwaltungsrecht an der Gruppe erhält. Eine Gruppe kann nicht erstellt werden, wenn bereits eine andere Gruppe mit demselben Namen existiert, was durch die Ausgabe einer Fehlermeldung angezeigt wird.
 Beim Erstellen einer Gruppe kann diese sogleich konfiguriert werden (\refreq{Gruppe bearbeiten}).
 
 \requirement{10}{Gruppe bearbeiten}
-Jeder angemeldete Benutzer der ein Verwaltungsrecht an einer Gruppe besitzt, kann diese bearbeiten. Die zu bearbeitenden Eigenschaften einer Gruppe sind in der nachfolgenden Tabelle~\ref{tab:gruppe_eigenschaften} ersichtlich. Zudem kann jeder Benutzer mit Verwaltungsrecht die Gruppe löschen. Wird eine Gruppe gelöscht, werden den Mitgliedern der Gruppe alle Berechtigungen, die sie durch die Mitgliedschaft der Gruppe an Modulen, Gruppen und Dateien geerbt haben, wieder entzogen.
+Jeder angemeldete Benutzer, der ein Verwaltungsrecht an einer Gruppe besitzt, kann diese bearbeiten. Die zu bearbeitenden Eigenschaften einer Gruppe sind in der nachfolgenden Tabelle~\ref{tab:gruppe_eigenschaften} ersichtlich. Zudem kann jeder Benutzer mit Verwaltungsrecht die Gruppe löschen. Wird eine Gruppe gelöscht, werden den Mitgliedern der Gruppe alle Berechtigungen, die sie durch die Mitgliedschaft in der Gruppe an Modulen, Gruppen und Dateien geerbt haben, wieder entzogen.
 
 \begin{table}[H]
 \begin{tabularx}{\textwidth}{|l|l|X|} \hline
 \textbf{Eigenschaft} &\textbf{Editierbar} & \textbf{Beschreibung} \\ \hline
 Name				& Ja 	& Der Name der Gruppe, wie z.B. “IT15b Winterthur”. Der Name muss eindeutig sein. Es darf also keine andere Gruppe mit dem gleichen Namen geben.\\ \hline
 Beschreibung		& Ja 	& Eine kurze Beschreibung der Gruppe.\\ \hline
-Mitglieder			& Ja 	& Alle in der Gruppe enthaltenen Benutzer und Gruppen, inklusive den Berechtigungen die sie in der Gruppe besitzen.\\ \hline
+Mitglieder			& Ja 	& Alle in der Gruppe enthaltenen Benutzer und Gruppen, inklusive den Berechtigungen, die sie in der Gruppe besitzen.\\ \hline
 Ersteller	 		& Nein 	& Der Benutzer, welcher die Gruppe erstellt hat.\\ \hline
 Erstelldatum		& Nein 	& Das Datum, an dem die Gruppe erstellt wurde.\\ \hline
 \end{tabularx}
@@ -103,13 +105,14 @@ Der Benutzer (U1) kann ebenfalls Berechtigungen von Benutzern und Gruppen in die
 \end{table}
 
 \requirementsubsection{Modulverwaltung}
-Module werden verwendet um Dateien zu gruppieren und sollen Module oder Fächer abbilden. Berechtigungen, die in Modulen für Gruppen und Benutzer vergeben werden, gelten für alle darin enthaltenen Dokumente.
+Module werden verwendet, um Dateien zu gruppieren, und sollen Module oder Fächer abbilden. Berechtigungen, die in Modulen für Gruppen und Benutzer vergeben werden, gelten für alle darin enthaltenen Dokumente.
+
 \requirement{00}{Modul erstellen}
 Jeder angemeldete Benutzer kann ein Modul erstellen, wodurch er sogleich das Verwaltungsrecht am Modul erhält. Ein Modul kann nicht erstellt werden, wenn bereits ein anderes Modul mit demselben Namen existiert, was durch die Ausgabe einer Fehlermeldung angezeigt wird.
 Beim Erstellen eines Moduls kann dieses sogleich konfiguriert werden (\refreq{Modul bearbeiten}).
 
 \requirement{10}{Modul bearbeiten}
-Jeder angemeldete Benutzer der ein Verwaltungsrecht an einem Modul besitzt, kann dieses bearbeiten. Die zu bearbeitenden Eigenschaften eines Moduls sind in nachfolgender Tabelle~\ref{tab:modul_eigenschaften} ersichtlich. Zudem kann jeder Benutzer mit Verwaltungsrecht das Modul löschen, was bewirkt, dass alle in das Modul hochgeladenen Dateien unwiderruflich gelöscht werden.
+Jeder angemeldete Benutzer, der ein Verwaltungsrecht an einem Modul besitzt, kann dieses bearbeiten. Die zu bearbeitenden Eigenschaften eines Moduls sind in nachfolgender Tabelle~\ref{tab:modul_eigenschaften} ersichtlich. Zudem kann jeder Benutzer mit Verwaltungsrecht das Modul löschen, was bewirkt, dass alle in das Modul hochgeladenen Dateien unwiderruflich gelöscht werden.
 
 \begin{table}[H]
 \begin{tabularx}{\textwidth}{|l|l|X|} \hline
@@ -118,7 +121,7 @@ Name				& Ja 	& Der Name des Moduls. Zum Beispiel “Mathematik 1”. Dieser Nam
 Beschreibung		& Ja 	& Eine kurze Beschreibung des Moduls.\\ \hline
 Mitglieder			& Ja 	& Alle in dem Modul enthaltenen Benutzer und Gruppen, inklusive den Berechtigungen, die sie im Modul besitzen.\\ \hline
 Ersteller	 		& Nein 	& Der Benutzer, welcher das Modul erstellt hat.\\ \hline
-Erstelldatum		& Nein 	& Das Datum an dem das Modul erstellt wurde.\\ \hline
+Erstelldatum		& Nein 	& Das Datum, an dem das Modul erstellt wurde.\\ \hline
 \end{tabularx}
 \caption{Eigenschaften eines Moduls}
 \label{tab:modul_eigenschaften}
@@ -141,7 +144,7 @@ Der Benutzer mit Verwaltungsrecht kann ebenfalls Benutzern oder Gruppen ihre Ber
 \label{tab:modul_rechte}
 \end{table}
 \requirementsubsection{Dateimanagement}
-Dateien repräsentieren zum Beispiel Notizen oder Zusammenfassungen. Diese Dateien werden in Module hochgeladen und sind von diesen abhängig. Das heisst, die Dateien können nicht ohne ein Modul existieren. Die Berechtigungen für Dateien werden vom Modul übernommen, in welches die Datei hochgeladen wird, können aber auch einzeln vergeben werden. Den Benutzern ist es auch möglich Dateien zu bewerten und zu kategorisieren.
+Dateien repräsentieren zum Beispiel Notizen oder Zusammenfassungen. Diese Dateien werden in Module hochgeladen und sind von diesen abhängig. Das heisst, die Dateien können nicht ohne ein Modul existieren. Die Berechtigungen für Dateien werden vom Modul übernommen, in welches die Datei hochgeladen wird, können aber auch einzeln vergeben werden. Den Benutzern ist es auch möglich, Dateien zu bewerten und zu kategorisieren.
 
 \requirement{00}{Datei hochladen}
 Jeder Benutzer mit Schreibrecht an einem Modul kann Dateien in dieses Modul hochladen. Es können keine Dateien mit dem gleichen Namen im selben Modul erstellt werden. Der Benutzer hat somit automatisch Verwaltungsrecht an der Datei. Abgesehen vom Verwaltungsrecht werden alle Berechtigungen der Benutzer oder Gruppen im Modul, in welches die Datei hochgeladen wird, auf die Datei übertragen.
@@ -154,13 +157,13 @@ Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann deren Eigenscha
 \textbf{Eigenschaft} &\textbf{Editierbar} & \textbf{Beschreibung} \\ \hline
 Titel				& Ja 	& Der Titel ist der Name der Datei, unter dem sie für Benutzer ersichtlich ist, wie zum Beispiel “Mathematik Zusammenfassung”. Dieser Titel muss im Modul, in dem die Datei hochgeladen wurde, eindeutig sein. Es darf also keine andere Datei im selben Modul mit dem gleichen Namen geben.\\ \hline
 Beschreibung		& Ja 	& Eine kurze Beschreibung der Datei.\\ \hline
-Berechtigungen		& Ja 	& Alle Berechtigungen die für Benutzern und Gruppen dieser Datei erteilt wurden.\\ \hline
+Berechtigungen		& Ja 	& Alle Berechtigungen, die für Benutzer und Gruppen dieser Datei erteilt wurden.\\ \hline
 Kategorien			& Ja 	& Alle Kategorien, die der Datei zugewiesen wurden.\\ \hline
 Bewertung			& Ja	& Jeder Benutzer kann eine Bewertung für die Datei abgeben und diese Bewertung gegebenenfalls auch wieder verändern.\\ \hline
 Datei 				& Ja	& Die Datei selbst, wie zum Beispiel ein PDF-Dokument.\\ \hline
 Dateityp			& Nein	& Der Dateityp der Datei, der von der hochgeladenen Datei abhängig ist.\\ \hline
 Ersteller	 		& Nein 	& Der Benutzer, welcher die Datei erstellt hat.\\ \hline
-Erstelldatum		& Nein 	& Das Datum an dem die Datei erstellt wurde.\\ \hline
+Erstelldatum		& Nein 	& Das Datum, an dem die Datei erstellt wurde.\\ \hline
 \end{tabularx}
 \caption{Eigenschaften einer Datei}
 \label{tab:datei_eigenschaften}
@@ -182,11 +185,14 @@ Jeder Benutzer mit Verwaltungsrecht für eine Datei kann auch Benutzern und Grup
 \end{table}
 
 \requirement{30}{Datei anzeigen}
-Jeder angemeldete Benutzer mit Leserecht für eine Datei kann Details zu dieser Datei in der Webseite ansehen. Wenn es das Dateiformat und die Grösse des Bildschirmes dies zulässt, wird die Datei im Browser angezeigt. Der Benutzer kann die Datei von der Webseite herunterladen und lokal abspeichern.
+Jeder angemeldete Benutzer mit Leserecht für eine Datei kann Details zu dieser Datei in der Webseite ansehen. Wenn es das Dateiformat und die Grösse des Bildschirmes zulässt, wird die Datei im Browser angezeigt. Der Benutzer kann die Datei von der Webseite herunterladen und lokal abspeichern.
+
 \requirement{40}{Datei bewerten}
-Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit diese Datei mit einem bis vier Sterne  zu bewerten. Der Benutzer kann seine Bewertung nachträglich anpassen oder entfernen.
+Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit, diese Datei mit einem bis vier Sterne  zu bewerten. Der Benutzer kann seine Bewertung nachträglich anpassen oder entfernen.
+
 \requirement{50}{Datei kategorisieren}
 Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann zu dieser Datei Kategorien hinzufügen und entfernen. Kategorien erleichtern die Suche nach Dateien.
+
 \requirementsubsection{Suche}
 \requirement{00}{Suche}
 Über ein Suchfeld kann jeder angemeldete Benutzer nach Objekten, also Dateien, Gruppen, Modulen und Benutzern suchen.\\
@@ -194,11 +200,13 @@ Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann zu dieser Datei
 Die Suchresultate können mit Hilfe von weiteren Such- und Filterkriterien sowohl vor der Suche als auch auf der Webseite, welche die Suchresultate darstellt, angepasst werden. Der Benutzer hat folgende Auswahlmöglichkeiten:
 \begin{itemize}
 \item Ein- bzw. Ausblenden von bestimmten Objekttypen, wie Dateien, Gruppen, Modulen oder Benutzern.
-\item Ein- bzw. Ausblenden von Objekten auf die der Benutzer keinen Lesezugriff hat. Auf diese Objekte kann der Benutzer Zugriff beantragen (\refreq{Zugriff beantragen}). 
+\item Ein- bzw. Ausblenden von Objekten, auf die der Benutzer keinen Lesezugriff hat. Auf diese Objekte kann der Benutzer Zugriff beantragen (\refreq{Zugriff beantragen}). 
 \item Einschränkungen anhand der Eigenschaften von Objekten. Es können nur gemeinsame Eigenschaften von allen eingeblendeten Objekttypen eingeschränkt werden.
 \end{itemize}
-Dem Benutzer ist es auch möglich die Suchresultate nach gemeinsamen Eigenschaften der Resultate zu sortieren. Ohne benutzerdefinierte Sortierung werden Dateien mit einer guten und aktuellen Bewertung für den Benutzer weiter oben in der Liste und somit besser sichbar dargestellt.
+Dem Benutzer ist es auch möglich, die Suchresultate nach gemeinsamen Eigenschaften der Resultate zu sortieren. Ohne benutzerdefinierte Sortierung werden Dateien mit einer guten und aktuellen Bewertung für den Benutzer weiter oben in der Liste und somit besser sichbar dargestellt.
+
 \requirement{10}{Zugriff beantragen}
-Jeder angemeldete Benutzer kann für Module, Gruppen und Dateien, die er über die Suche findet, auf welche er aber keinen Zugriff hat, Berechtigungen beantragen. Dies geschieht über ein Fenster in dem er die gewünschte Berechtigung und den Grund, wieso er diese Berechtigung benötigt, angibt. Danach wird dem Ersteller des Objekts ein E-Mail, mit den oben erwähnten Angaben, gesendet.
+Jeder angemeldete Benutzer kann für Module, Gruppen und Dateien, die er über die Suche findet, auf welche er aber keinen Zugriff hat, Berechtigungen beantragen. Dies geschieht über ein Fenster in dem er die gewünschte Berechtigung und den Grund, wieso er diese Berechtigung benötigt, angibt. Danach wird dem Ersteller des Objekts ein E-Mail mit den oben erwähnten Angaben gesendet.
+
 \requirement{20}{Zugriff freigeben}
-Der Ersteller eines Objektes erhält im Falle einer Zugriffsanfrage (\refreq{Zugriff beantragen}) einer E-Mail. Darin enthalten ist der Name des Objektes, auf das der Zugriff beantragt wird, der Antragsteller, die benötigte Berechtigung und der Grund, aus welchem der Zugriff gewünscht wird. Über einen Link im E-Mail kann der Ersteller dann den Zugriff freigeben.
+Der Ersteller eines Objektes erhält im Falle einer Zugriffsanfrage (\refreq{Zugriff beantragen}) eine E-Mail. Darin enthalten ist der Name des Objektes, auf das der Zugriff beantragt wird, der Antragsteller, die benötigte Berechtigung und der Grund, der zum Wunsch nach Zugriff geführt hat. Über einen Link im E-Mail kann der Ersteller dann den Zugriff freigeben.
