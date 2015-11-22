@@ -43,32 +43,30 @@
     \normalsize{Cyril Müller} \\%[0.5em]
 }
 
-\newcommand{\zeropadded}[1]{%
-    \ifnum\value{#1}<10 0\fi \arabic{#1}%
+\newcommand{\printrequirement}[2]{%
+    \texttt{/#1/} #2% 
 }
 
-\newcommand{\requirementsectioncharacter}{-}
-
-\newcounter{RequirementSubsectionCounter}
 \newcommand{\requirementsection}[2]{%
-    \section{\texttt{/#1xxxx/} #2}%
-    \renewcommand{\requirementsectioncharacter}{#1}%
-    \setcounter{RequirementSubsectionCounter}{0}%
+    \section{\printrequirement{#1xxxx}{#2}}%
 }
 
-\newcommand{\requirementsubsection}[1]{%
-    \stepcounter{RequirementSubsectionCounter}%
-    \subsection{\texttt{/\requirementsectioncharacter\zeropadded{RequirementSubsectionCounter}xx/} #1} % 
-}
 
+\newcommand{\requirementsubsection}[2]{%
+    \subsection{\printrequirement{#1xx}{#2}}% 
+}
 
 \newcommand{\requirement}[2]{%
-    \subsubsection*{\texttt{/\requirementsectioncharacter\zeropadded{RequirementSubsectionCounter}#1/} #2}%
-    \label{subsub:requ_#2}
+% #1: The requirement number e.g. "T0100"
+% #2: The requirement title
+    \subsubsection*{\printrequirement{#1}{#2}}%
+    \expandafter\def\csname RequirementName#1\endcsname{#2}
+    \expandafter\def\csname RequirementNumber#2\endcsname{#1}
+    \label{subsub:requirement_#2}
 }
 
-\newcommand{\refreq}[1]{\nameref{subsub:requ_#1}}
-
+% Refer to a requirement by it's title
+\newcommand{\refreq}[1]{\nameref{subsub:requirement_#1}}
 \newcommand{\tbf}{\emph{Noch zu definieren.}}
 
 
