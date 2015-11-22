@@ -1,7 +1,18 @@
 \section{Ziel des Avocado Share}
 Die Webplattform Avocado Share soll Studentinnen und Studenten der ZHAW als Hilfe beim Austausch von Daten und Know-how dienen.
+\subsection{Musskriterien}
 Die Benutzer können Dateien, gruppiert nach den jeweiligen Modulen, hochladen und mit anderen teilen. Für eine vereinfachte Suche lassen sich die Dateien in Kategorien unterteilen und können bewertet werden. Die Berechtigungen lassen sich mit Gruppen, wie zum Beispiel einer Unterrichtsklasse, einfach verwalten. Wird eine solche Gruppe in ein Modul eingetragen, so haben alle Studenten und Studentinnen dieser Klasse Zugriff auf dieses Modul und die entsprechenden Dateien. Bei speziellen Berechtigungen, wenn zum Beispiel eine Person eine zusätzliche Berechtigung für ein bestimmtes Modul braucht, kann diese auch ohne eine Gruppenzugehörigkeit eingestellt werden.\\
 
 Innerhalb der Plattform kann natürlich auch nach Kategorien und Dateien gesucht werden. Dateien, die eine hohe Bewertung haben und aktuell sind, sollen in den ersten Zeilen angezeigt werden. \\
 Es soll eine Verwaltungsoberfläche geben, in der jeder einzelne Benutzer seine Benutzereinstellungen bearbeiten, anpassen und als Übersicht darstellen kann. \\
 Wenn ein Benutzer eine Datei überschreibt, wird die überschriebene Datei nicht aufbewahrt. Es wird eine Versionierung geführt, um zu sehen, wer die Datei wann verändert hat, aber nicht, was verändert wurde. Somit ist es auch nicht möglich, gemachte Änderungen wieder rückgängig zu machen.
+\subsection{Wunschkriterien}
+Sofern die Zeit noch reicht werden noch folgende Erweiterungen, oder eine Auswahl davon, in die Applikation eingebaut.\\
+Dokumente können gleich im Browser erstellt und verändert werden. Dies wird durch einen Web-Editor ermöglicht. Auch offline erstellt und dann hochgeladene Dokumente können mit diesem Editor verändert werden.\\
+Sofern es die Infrastruktur erlaubt, wird der Avocado-Share über LDAP mit dem Active Directory der ZHAW verbunden, sodass jeder Student der ZHAW kein neues Login erstellen muss. Aus dem Active Directory wird auch gleich ausgelesen in welchen Klassen sich eine Person befindet und fügt diese beim ersten Login gleich den entsprechenden Gruppen hinzu.\\
+\subsection{Wunschkriterien}
+Sofern die Zeit noch reicht werden noch folgende Erweiterungen, oder eine Auswahl davon, in die Applikation eingebaut.\\
+Dokumente können gleich im Browser erstellt und verändert werden. Dies wird durch einen Web-Editor ermöglicht. Auch offline erstellt und dann hochgeladene Dokumente können mit diesem Editor verändert werden.\\
+Sofern es die Infrastruktur erlaubt, wird der Avocado-Share über LDAP mit dem Active Directory der ZHAW verbunden, sodass jeder Student der ZHAW kein neues Login erstellen muss. Aus dem Active Directory wird auch gleich ausgelesen in welchen Klassen sich eine Person befindet und fügt diese beim ersten Login gleich den entsprechenden Gruppen hinzu.\\
+\subsection{Abgrenzungskriterien}
+Die Applikation regelt sich nicht selbst, sprich es wird nichts automatisch gelöscht, auch wenn eine Datei veraltet ist oder nicht gebraucht wird. Für eine saubere Strukturierung der Ablage und eine klare Benennung der Dateien sind die User selbst verantwortlich. Es wird jedoch versucht durch entsprechendes Design die User zu einer guten Struktur zu bewegen. Der Avocado-Share soll auch nicht den mündlichen Know-How austausch erstezen, sondern lediglich als unterstützendes Tool dienen.
