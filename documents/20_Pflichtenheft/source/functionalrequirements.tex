@@ -1,9 +1,12 @@
 \requirementsection{F}{Funktionale Anforderungen}
 
-\requirementsubsection{Sicherheit}
+\requirementsubsection{F01}{Sicherheit}
 
-\requirement{00}{Zugriffskontrolle}
-Beim Aufrufen der verschiedenen Seiten prüft das System immer, ob der Benutzer angemeldet ist. Falls er nicht angemeldet ist, wird er auf die Log-in Seite verwiesen. Davon ausgenommen sind nur die Seiten zur Registrierung(\texttt{/F0200/} Registrierung) und diejenige zur Anmeldung (\refreq{An- und Abmelden}). \\
+\requirement{F0100}{Zugriffskontrolle}
+Beim Aufrufen der verschiedenen Seiten prüft das System immer,
+ob der Benutzer angemeldet ist. Falls er nicht angemeldet ist,
+wird er auf die Log-in Seite verwiesen. Davon ausgenommen sind
+nur die Seiten zur Registrierung(\texttt{/F0200/} Registrierung) und diejenige zur Anmeldung (\refreq{An- und Abmelden}). \\
 
 Auf alle Module, Gruppen und Dateien hat jeder Benutzer individuelle Zugriffsrechte. Folgende Tabelle~\ref{tab:rights} zeigt, welche grundsätzlichen Berechtigungen es gibt.
 
@@ -26,18 +29,18 @@ Ein Benutzer gilt als Mitglied einer Gruppe, wenn er mindestens Leserecht an ein
 Benutzer mit Verwaltungsrecht auf einem Objekt können anderen Benutzern und Gruppen auch Verwaltungsrecht auf dieses Objekt erteilen, aber ihnen dieses Recht nicht wieder entziehen. Diese Verwaltungsrechte können nur vom Ersteller des Objekts wieder entzogen werden.
 
 
-\requirement{10}{An- und Abmelden}
+\requirement{F0110}{An- und Abmelden}
 Die Applikation bietet ein Formular, über welches sich ein Benutzer mit seiner E-Mail-Adresse und dem Passwort anmelden kann. Sind seine Eingaben korrekt und im System erfasst, wird er auf die Hauptseite umgeleitet. Ansonsten  wird dem Benutzer eine Fehlermeldung angezeigt und er kann es erneut versuchen. Zudem wird nun ein Link angezeigt, der es einem ermöglicht, sein Passwort zurückzusetzen (\refreq{Passwort zurücksetzen}).\\
 
 Auf jeder Seite wird, sofern der Benutzer angemeldet ist, eine Schaltfläche angezeigt, über welche sich der Benutzer abmelden kann. Meldet sich ein Benutzer ab, wird er auf die Startseite umgeleitet. Nach einer 12-stündigen Inaktivität wird der Benutzer automatisch ausgeloggt.
 
-\requirement{20}{Passwort zurücksetzen}
+\requirement{F0120}{Passwort zurücksetzen}
 Nach Eingabe seiner E-Mail-Adresse und einem \gls{Captcha} kann der Benutzer sich ein neues Passwort generieren lassen. Dieses wird ihm dann per E-Mail zugestellt, ist ab sofort gültig und ersetzt das alte Passwort.
 
-\requirementsubsection{Benutzerverwaltung}
+\requirementsubsection{F02}{Benutzerverwaltung}
 Benutzer stellen Personen dar. Jeder Benutzer hat individuelle Berechtigungen an Modulen, Gruppen und Dateien. Ein Benutzer kann auch selber neue Gruppen, Module und Dateien erstellen und Berechtigungen an diesen für andere Benutzer und Gruppen vergeben.
 
-\requirement{00}{Registrierung}
+\requirement{F0200}{Registrierung}
 Die Registrierung eines Benutzers erfolgt über ein Formular, welches folgende Angaben zwingend benötigt:
 \begin{itemize}
 \item Vorname
@@ -47,7 +50,7 @@ Die Registrierung eines Benutzers erfolgt über ein Formular, welches folgende A
 Wenn alle Eingaben gemacht worden sind und die E-Mail-Adresse ein gültiges Format hat, wird dem Benutzer eine E-Mail zur Bestätigung gesendet, mit welcher er sein Konto aktivieren kann. Erst nach der Aktivierung des Kontos kann man sich auch anmelden. Sollte eine Eingabe nicht korrekt sein, wird das Formular erneut mit entsprechenden Fehlermeldungen angezeigt. In der E-Mail ist ein Link enthalten und eine kurze Beschreibung über den Nutzen dieses Links. Beim Öffnen der Seite, auf welche der Link verweist, wird der entsprechende Benutzer freigeschaltet. Dem Benutzer wird nun ein Loginformular und eine Bestätigung der Aktivierung angezeigt.
 Um eine Erweiterung auf verschiedene Fachhochschulen und Universitäten zu erlauben, sind nur E-Mail-Adressen der ZHAW, also "`\texttt{@students.zhaw.ch}"' und "`\texttt{@zhaw.ch}"', zulässig.
 
-\requirement{10}{Benutzerdaten ändern}
+\requirement{F0210}{Benutzerdaten ändern}
 Jeder angemeldete Benutzer kann seine Benutzerdaten einsehen und über ein Formular ändern. Die editierbaren Benutzerdaten sind in der nachfolgenden Tabelle~\ref{tab:benutzer_eigenschaften} ersichtlich. Wird die E-Mail-Adresse geändert, wird wieder ein E-Mail mit einem Bestätigungs-Link versandt, mit welchem die neue E-Mail-Adresse validiert wird. Der Prozess der Validierung ist derselbe wie bei der Registrierung (\refreq{Registrierung}). Die E-Mail-Adresse wird erst geändert, wenn sie validiert wurde. 
 Dem Benutzer ist es über das oben erwähnte Formular auch möglich, sein Benutzerkonto zu löschen. Löscht er sein Konto, so wird er automatisch abgemeldet (\refreq{An- und Abmelden}).
 
@@ -64,14 +67,14 @@ Nachname			& Ja	& Der Nachname des Benutzers\\ \hline
 \label{tab:benutzer_eigenschaften}
 \end{table}
 
-\requirementsubsection{Gruppenverwaltung}
+\requirementsubsection{F03}{Gruppenverwaltung}
 Gruppen werden verwendet, um mehreren Benutzern gleichzeitig Berechtigungen auf Module und Dateien zu geben. Es ist auch möglich, dass eine Gruppe Mitglied in einer anderen Gruppe ist. Eine Gruppe kann beispielsweise eine Klasse mit allen Studenten dieser Klasse sein.
 
-\requirement{00}{Gruppe erstellen}
+\requirement{F0300}{Gruppe erstellen}
 Jeder angemeldete Benutzer kann eine Gruppe erstellen, wodurch er automatisch das Verwaltungsrecht an der Gruppe erhält. Eine Gruppe kann nicht erstellt werden, wenn bereits eine andere Gruppe mit demselben Namen existiert, was durch die Ausgabe einer Fehlermeldung angezeigt wird.
 Beim Erstellen einer Gruppe kann diese sogleich konfiguriert werden (\refreq{Gruppe bearbeiten}).
 
-\requirement{10}{Gruppe bearbeiten}
+\requirement{F0310}{Gruppe bearbeiten}
 Jeder angemeldete Benutzer, der ein Verwaltungsrecht an einer Gruppe besitzt, kann diese bearbeiten. Die zu bearbeitenden Eigenschaften einer Gruppe sind in der nachfolgenden Tabelle~\ref{tab:gruppe_eigenschaften} ersichtlich. Zudem kann jeder Benutzer mit Verwaltungsrecht die Gruppe löschen. Wird eine Gruppe gelöscht, werden den Mitgliedern der Gruppe alle Berechtigungen, die sie durch die Mitgliedschaft in der Gruppe an Modulen, Gruppen und Dateien geerbt haben, wieder entzogen.
 
 \begin{table}[H]
@@ -87,7 +90,7 @@ Erstelldatum		& Nein 	& Das Datum, an dem die Gruppe erstellt wurde.\\ \hline
 \label{tab:gruppe_eigenschaften}
 \end{table}
 
-\requirement{20}{Gruppenrechte bearbeiten}
+\requirement{F0320}{Gruppenrechte bearbeiten}
 Jeder angemeldete Benutzer mit Verwaltungsrecht (U1) an einer Gruppe kann für andere Benutzer oder Gruppen (U2) Berechtigungen erteilen. Die zu vergebenden Berechtigungen sind in der nachfolgenden Tabelle (Berechtigungen in Gruppen) ersichtlich. Der hinzugefügte Benutzer oder die Gruppe (U2) übernimmt dann automatisch die Berechtigungen dieser Gruppe, welche diese in anderen Gruppen, Modulen oder Dateien besitzt.
 Der Benutzer (U1) kann ebenfalls Berechtigungen von Benutzern und Gruppen in dieser Gruppe entziehen oder ändern. Werden Benutzern oder Gruppen alle Rechte in der Gruppe entzogen, verlieren sie alle Berechtigungen an Dateien, Modulen und anderen Gruppen, welche mit der Mitgliedschaft in der Gruppe einhergehen.
 
@@ -104,14 +107,14 @@ Der Benutzer (U1) kann ebenfalls Berechtigungen von Benutzern und Gruppen in die
 \label{tab:gruppe_rechte}
 \end{table}
 
-\requirementsubsection{Modulverwaltung}
+\requirementsubsection{F04}{Modulverwaltung}
 Module werden verwendet, um Dateien zu gruppieren, und sollen Module oder Fächer abbilden. Berechtigungen, die in Modulen für Gruppen und Benutzer vergeben werden, gelten für alle darin enthaltenen Dokumente.
 
-\requirement{00}{Modul erstellen}
+\requirement{F0400}{Modul erstellen}
 Jeder angemeldete Benutzer kann ein Modul erstellen, wodurch er sogleich das Verwaltungsrecht am Modul erhält. Ein Modul kann nicht erstellt werden, wenn bereits ein anderes Modul mit demselben Namen existiert, was durch die Ausgabe einer Fehlermeldung angezeigt wird.
 Beim Erstellen eines Moduls kann dieses sogleich konfiguriert werden (\refreq{Modul bearbeiten}).
 
-\requirement{10}{Modul bearbeiten}
+\requirement{F0410}{Modul bearbeiten}
 Jeder angemeldete Benutzer, der ein Verwaltungsrecht an einem Modul besitzt, kann dieses bearbeiten. Die zu bearbeitenden Eigenschaften eines Moduls sind in nachfolgender Tabelle~\ref{tab:modul_eigenschaften} ersichtlich. Zudem kann jeder Benutzer mit Verwaltungsrecht das Modul löschen, was bewirkt, dass alle in das Modul hochgeladenen Dateien unwiderruflich gelöscht werden.
 
 \begin{table}[H]
@@ -127,7 +130,7 @@ Erstelldatum		& Nein 	& Das Datum, an dem das Modul erstellt wurde.\\ \hline
 \label{tab:modul_eigenschaften}
 \end{table}
 
-\requirement{20}{Modulrechte bearbeiten}
+\requirement{F0420}{Modulrechte bearbeiten}
 Jeder angemeldete Benutzer mit Verwaltungsrecht an einem Modul kann für andere Benutzer oder Gruppen Berechtigungen erteilen. Die zu vergebenden Berechtigungen sind in der nachfolgenden Tabelle~\ref{tab:modul_rechte} ersichtlich.
 Der Benutzer mit Verwaltungsrecht kann ebenfalls Benutzern oder Gruppen ihre Berechtigungen, welche sie im Modul besitzen, entziehen oder ändern. Werden Benutzern oder Gruppen alle Rechte entzogen, sind sie nicht mehr Mitglied im Modul und haben somit auch keinen Zugriff auf die darin enthaltenen Dateien mehr.
 
@@ -143,13 +146,13 @@ Der Benutzer mit Verwaltungsrecht kann ebenfalls Benutzern oder Gruppen ihre Ber
 \caption{Berechtigungen in Modulen}
 \label{tab:modul_rechte}
 \end{table}
-\requirementsubsection{Dateimanagement}
+\requirementsubsection{F05}{Dateimanagement}
 Dateien repräsentieren zum Beispiel Notizen oder Zusammenfassungen. Diese Dateien werden in Module hochgeladen und sind von diesen abhängig. Das heisst, die Dateien können nicht ohne ein Modul existieren. Die Berechtigungen für Dateien werden vom Modul übernommen, in welches die Datei hochgeladen wird, können aber auch einzeln vergeben werden. Den Benutzern ist es auch möglich, Dateien zu bewerten und zu kategorisieren.
 
-\requirement{00}{Datei hochladen}
+\requirement{F0500}{Datei hochladen}
 Jeder Benutzer mit Schreibrecht an einem Modul kann Dateien in dieses Modul hochladen. Es können keine Dateien mit dem gleichen Namen im selben Modul erstellt werden. Der Benutzer hat somit automatisch Verwaltungsrecht an der Datei. Abgesehen vom Verwaltungsrecht werden alle Berechtigungen der Benutzer oder Gruppen im Modul, in welches die Datei hochgeladen wird, auf die Datei übertragen.
 
-\requirement{10}{Datei bearbeiten}
+\requirement{F0510}{Datei bearbeiten}
 Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann deren Eigenschaften, exklusive den Berechtigungen und des Titels, ändern. Die zu bearbeitenden Eigenschaften einer Datei sind in der nachfolgenden Tabelle~\ref{tab:datei_eigenschaften} ersichtlich. Zudem kann dieser Benutzer die Datei austauschen. Ein Benutzer mit Verwaltungsrecht kann alle Eigenschaften bearbeiten und die Datei löschen. Das Löschen hat zur Folge, dass die Datei unwiderruflich aus dem System gelöscht wird und nicht mehr wiederhergestellt werden kann.
 
 \begin{table}[H]
@@ -169,7 +172,7 @@ Erstelldatum		& Nein 	& Das Datum, an dem die Datei erstellt wurde.\\ \hline
 \label{tab:datei_eigenschaften}
 \end{table}
 
-\requirement{20}{Dateirechte bearbeiten}
+\requirement{F0520}{Dateirechte bearbeiten}
 Jeder Benutzer mit Verwaltungsrecht für eine Datei kann auch Benutzern und Gruppen, die nicht Mitglied im entsprechenden Modul sind oder durch das Modul weniger Rechte an der Datei haben, Berechtigungen für diese Datei erteilen. Die zu vergebenden Berechtigungen und die daraus resultierenden Möglichkeiten für einen Benutzer oder eine Gruppe sind in der nachfolgenden Tabelle~\ref{tab:datei_rechte} ersichtlich.
 
 \begin{table}[H]
@@ -184,17 +187,17 @@ Jeder Benutzer mit Verwaltungsrecht für eine Datei kann auch Benutzern und Grup
 \label{tab:datei_rechte}
 \end{table}
 
-\requirement{30}{Datei anzeigen}
+\requirement{F0530}{Datei anzeigen}
 Jeder angemeldete Benutzer mit Leserecht für eine Datei kann Details zu dieser Datei in der Webseite ansehen. Wenn es das Dateiformat und die Grösse des Bildschirmes zulässt, wird die Datei im Browser angezeigt. Der Benutzer kann die Datei von der Webseite herunterladen und lokal abspeichern.
 
-\requirement{40}{Datei bewerten}
+\requirement{F0540}{Datei bewerten}
 Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit, diese Datei mit einem bis vier Sterne  zu bewerten. Der Benutzer kann seine Bewertung nachträglich anpassen oder entfernen.
 
-\requirement{50}{Datei kategorisieren}
+\requirement{F0550}{Datei kategorisieren}
 Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann zu dieser Datei Kategorien hinzufügen und entfernen. Kategorien erleichtern die Suche nach Dateien.
 
-\requirementsubsection{Suche}
-\requirement{00}{Suche}
+\requirementsubsection{F06}{Suche}
+\requirement{F0600}{Suche}
 Über ein Suchfeld kann jeder angemeldete Benutzer nach Objekten, also Dateien, Gruppen, Modulen und Benutzern suchen.\\
 
 Die Suchresultate können mit Hilfe von weiteren Such- und Filterkriterien sowohl vor der Suche als auch auf der Webseite, welche die Suchresultate darstellt, angepasst werden. Der Benutzer hat folgende Auswahlmöglichkeiten:
@@ -205,8 +208,8 @@ Die Suchresultate können mit Hilfe von weiteren Such- und Filterkriterien sowoh
 \end{itemize}
 Dem Benutzer ist es auch möglich, die Suchresultate nach gemeinsamen Eigenschaften der Resultate zu sortieren. Ohne benutzerdefinierte Sortierung werden Dateien mit einer guten und aktuellen Bewertung für den Benutzer weiter oben in der Liste und somit besser sichbar dargestellt.
 
-\requirement{10}{Zugriff beantragen}
+\requirement{F0610}{Zugriff beantragen}
 Jeder angemeldete Benutzer kann für Module, Gruppen und Dateien, die er über die Suche findet, auf welche er aber keinen Zugriff hat, Berechtigungen beantragen. Dies geschieht über ein Fenster in dem er die gewünschte Berechtigung und den Grund, wieso er diese Berechtigung benötigt, angibt. Danach wird dem Ersteller des Objekts ein E-Mail mit den oben erwähnten Angaben gesendet.
 
-\requirement{20}{Zugriff freigeben}
+\requirement{F0620}{Zugriff freigeben}
 Der Ersteller eines Objektes erhält im Falle einer Zugriffsanfrage (\refreq{Zugriff beantragen}) eine E-Mail. Darin enthalten ist der Name des Objektes, auf das der Zugriff beantragt wird, der Antragsteller, die benötigte Berechtigung und der Grund, der zum Wunsch nach Zugriff geführt hat. Über einen Link im E-Mail kann der Ersteller dann den Zugriff freigeben.
