@@ -11,6 +11,11 @@
 \usepackage{graphicx}
 \usepackage{pdflscape}
 \usepackage[backend=biber, style=ieee]{biblatex}
+
+\usepackage{nameref}% loads gettitlestring
+%\GetTitleStringSetup{expand}
+
+
 \addbibresource{sources.bib}
 %\usepackage[fixlanguage]{babelbib}
 %\selectbiblanguage{german}
@@ -18,7 +23,23 @@
 %\addbibresource{sources}
 \newcommand{\mail}[1]{\href{mailto:#1}{#1}}
 \setlength{\parindent}{0cm}
-\usepackage[bookmarks=true]{hyperref}
+
+\newcommand{\titel}{Avocado Share}
+\newcommand{\shorttitel}{}
+\newcommand{\doctype}{Pflichtenheft}
+\newcommand{\untertitel}{Java-Applikation zur Dimensionierung von PID-Reglern}
+\newcommand{\datum}{\today}
+\newcommand{\team}{Gruppe 13}
+\newcommand{\autorA}{Bergmann Sascha}
+\newcommand{\autorB}{Kunz Lion}
+\newcommand{\autorC}{Ngueyen Dang Thien}
+\newcommand{\autorD}{Müller Cyril}
+\newcommand{\autorE}{}
+\newcommand{\ort}{Winterthur}
+\newcommand{\dozent}{Niklaus Peter}
+\newcommand{\betreuer}{Gut Richard, Gertiser Anita,\\ Buchschacher Pascal}
+\newcommand{\version}{0.1}
+
 \hypersetup{
     bookmarks=false,    % show bookmarks bar?
     pdftitle={Avocada Share - Pflichtenheft},    % title
@@ -32,6 +53,7 @@
     urlcolor=black,        % color of external links
     linktoc=page            % only page is linked
 }%
+
 
 %\project{Avocado Share}
 \title{\LARGE{Avocado Share}\\\large{Pflichtenheft}}
@@ -50,6 +72,7 @@
 \newcommand{\requirementsectioncharacter}{-}
 
 \newcounter{RequirementSubsectionCounter}
+
 \newcommand{\requirementsection}[2]{%
     \section{\texttt{/#1xxxx/} #2}%
     \renewcommand{\requirementsectioncharacter}{#1}%
@@ -58,9 +81,8 @@
 
 \newcommand{\requirementsubsection}[1]{%
     \stepcounter{RequirementSubsectionCounter}%
-    \subsection{\texttt{/\requirementsectioncharacter\zeropadded{RequirementSubsectionCounter}xx/} #1} % 
+    \subsection{\texttt{/\requirementsectioncharacter\zeropadded{RequirementSubsectionCounter}xx/} #1} %
 }
-
 
 \newcommand{\requirement}[2]{%
     \subsubsection*{\texttt{/\requirementsectioncharacter\zeropadded{RequirementSubsectionCounter}#1/} #2}%
@@ -81,6 +103,38 @@
 
 
 \begin{document}
+
+% title page -------------------------------------------------------------------
+\thispagestyle{plain}
+
+\begin{titlepage}
+    \begin{flushleft}
+        \vspace*{1cm}
+        \textbf{
+            \hspace{-0.12cm}\LARGE{\doctype}\\
+            \Huge{\titel}\\
+            \vspace{0.5cm}
+            \large{\untertitel}\\
+            \vspace{1.5cm}
+            \large{\team\\\autorA, \autorB,\\\autorC, \autorD}\\
+        }
+        \vspace{1cm}
+        \vfill
+        \large{
+            %\hspace{-0.83cm} \includegraphics{images/fhnw_logo_full}\\
+            %\line(1,0){165} 
+
+            %\vspace{0.5cm}
+            %Auftraggeber:\\ \dozent \\
+            %Betreuer:\\ \betreuer \\
+            %\vspace{0.5cm}
+            \ort, \datum \hfill Version: \version
+        }
+    \end{flushleft}
+\end{titlepage}
+% end of titlepage -------------------------------------------------------------
+
+
 \include{glossary}
 
 \clearpage
