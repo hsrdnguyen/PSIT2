@@ -1,6 +1,6 @@
 \requirementsection{F}{Funktionale Anforderungen}
 
-\requirementsubsection{Sicherheit}
+\requirementsubsection{F01}{Sicherheit}
 
 \requirement{F0100}{Zugriffskontrolle}
 Beim Aufrufen der verschiedenen Seiten prüft das System immer, ob der Benutzer angemeldet ist. Falls er nicht angemeldet ist, wird er auf die Log-in Seite verwiesen. Davon ausgenommen sind nur die Seiten, zur Registrierung (\texttt{/F0200/} Registrierung) und diejenige zur Anmeldung (\refreq{An- und Abmelden}). \\
@@ -34,7 +34,7 @@ Auf jeder Seite wird, sofern der Benutzer angemeldet ist, eine Schaltfläche ang
 \requirement{F0120}{Passwort zurücksetzen}
 Nach Eingabe seiner E-Mail-Adresse und einem \gls{Captcha} kann der Benutzer sich ein neues Passwort generieren lassen. Dieses wird ihm dann per E-Mail zugestellt, ist ab sofort gültig und ersetzt das alte Passwort.
 
-\requirementsubsection{Benutzerverwaltung}
+\requirementsubsection{F02}{Benutzerverwaltung}
 Benutzer stellen Personen dar. Jeder Benutzer hat individuelle Berechtigungen an Modulen, Gruppen und Dateien. Ein Benutzer kann auch selber neue Gruppen, Module und Dateien erstellen und Berechtigungen an diesen für andere Benutzer und Gruppen vergeben.
 
 \requirement{F0200}{Registrierung}
@@ -64,7 +64,7 @@ Nachname			& Ja	& Der Nachname des Benutzers\\ \hline
 \label{tab:benutzer_eigenschaften}
 \end{table}
 
-\requirementsubsection{Gruppenverwaltung}
+\requirementsubsection{F03}{Gruppenverwaltung}
 Gruppen werden verwendet, um mehreren Benutzern gleichzeitig Berechtigungen auf Module und Dateien zu geben. Es ist auch möglich, dass eine Gruppe Mitglied in einer anderen Gruppe ist. Eine Gruppe kann beispielsweise eine Klasse mit allen Studenten dieser Klasse sein.
 
 \requirement{F0300}{Gruppe erstellen}
@@ -104,7 +104,7 @@ Der Benutzer (U1) kann ebenfalls Berechtigungen von Benutzern und Gruppen in die
 \label{tab:gruppe_rechte}
 \end{table}
 
-\requirementsubsection{Modulverwaltung}
+\requirementsubsection{F04}{Modulverwaltung}
 Module werden verwendet, um Dateien zu gruppieren, und sollen Module oder Fächer abbilden. Berechtigungen, die in Modulen für Gruppen und Benutzer vergeben werden, gelten für alle darin enthaltenen Dokumente.
 
 \requirement{F0400}{Modul erstellen}
@@ -143,7 +143,7 @@ Der Benutzer mit Verwaltungsrecht kann ebenfalls Benutzern oder Gruppen ihre Ber
 \caption{Berechtigungen in Modulen}
 \label{tab:modul_rechte}
 \end{table}
-\requirementsubsection{Dateimanagement}
+\requirementsubsection{F05}{Dateimanagement}
 Dateien repräsentieren zum Beispiel Notizen oder Zusammenfassungen. Diese Dateien werden in Module hochgeladen und sind von diesen abhängig. Das heisst, die Dateien können nicht ohne ein Modul existieren. Die Berechtigungen für Dateien werden vom Modul übernommen, in welches die Datei hochgeladen wird, können aber auch einzeln vergeben werden. Den Benutzern ist es auch möglich, Dateien zu bewerten und zu kategorisieren.
 
 \requirement{F0500}{Datei hochladen}
@@ -193,7 +193,7 @@ Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit, d
 \requirement{F0550}{Datei kategorisieren}
 Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann zu dieser Datei Kategorien hinzufügen und entfernen. Kategorien erleichtern die Suche nach Dateien.
 
-\requirementsubsection{Suche}
+\requirementsubsection{F06}{Suche}
 \requirement{F0600}{Suche}
 Über ein Suchfeld kann jeder angemeldete Benutzer nach Objekten, also Dateien, Gruppen, Modulen und Benutzern suchen.\\
 
