@@ -142,7 +142,7 @@ Der Benutzer mit Verwaltungsrecht kann ebenfalls Benutzern oder Gruppen ihre Ber
 \textbf{Stufe} & \textbf{Berechtigung}     & \textbf{Beschreibung} \\ \hline
 0     & Keine Rechte     & Der Benutzer hat keine Berechtigung in dem Modul und ist somit kein Mitglied des Moduls.\\ \hline
 1     & Leserecht        & Der Benutzer hat die Erlaubnis, alle Dateien des Moduls zu betrachten.\\ \hline
-2     & Schreibrecht     & Der Benutzer hat die Erlaubnis, neue Dateien in das Modul hochzuladen und hat Schreibrecht allen Dateien des Moduls (siehe \texttt{/F0510/} Datei bearbeiten).\\ \hline
+2     & Schreibrecht     & Der Benutzer hat die Erlaubnis, neue Dateien in das Modul hochzuladen und hat Schreibrecht allen Dateien des Moduls (siehe \refreq{Datei bearbeiten}).\\ \hline
 3     & Verwaltungsrecht & Der Benutzer hat die Erlaubnis, das Modul zu verändern oder zu löschen (\refreq{Modul bearbeiten}). Ebenfalls besitzt er Verwaltungsrecht an allen Dateien. \\ \hline
 \end{tabularx}
 \caption{Berechtigungen in Modulen}
@@ -152,7 +152,7 @@ Der Benutzer mit Verwaltungsrecht kann ebenfalls Benutzern oder Gruppen ihre Ber
 Dateien repräsentieren zum Beispiel Notizen oder Zusammenfassungen. Diese Dateien werden in Module hochgeladen und sind von diesen abhängig. Das heisst, die Dateien können nicht ohne ein Modul existieren. Die Berechtigungen für Dateien werden vom Modul übernommen, in welches die Datei hochgeladen wird, können aber auch einzeln vergeben werden. Den Benutzern ist es auch möglich, Dateien zu bewerten und zu kategorisieren.
 
 \requirement{F0500}{Datei hochladen}
-Jeder Benutzer mit Schreibrecht an einem Modul kann Dateien in dieses Modul hochladen. Alle Dateiformate können hochgeladen werden und die maximalgrösse einer Datei beträgt  30 GB. Ein Upload von mehreren Dateien auf ein mal ist nicht vorgesehen. Es können keine Dateien mit dem gleichen Namen im selben Modul erstellt werden. Der Benutzer hat somit automatisch Verwaltungsrecht an der Datei. Abgesehen vom Verwaltungsrecht werden alle Berechtigungen der Benutzer oder Gruppen im Modul, in welches die Datei hochgeladen wird, auf die Datei übertragen.
+Jeder Benutzer mit Schreibrecht an einem Modul kann Dateien in dieses Modul hochladen. Alle Dateiformate können hochgeladen werden und die maximalgrösse einer Datei beträgt 30 GB. Ein Upload von mehreren Dateien auf ein mal ist nicht vorgesehen. Es können keine Dateien mit dem gleichen Namen im selben Modul erstellt werden. Der Benutzer hat somit automatisch Verwaltungsrecht an der Datei. Abgesehen vom Verwaltungsrecht werden alle Berechtigungen der Benutzer oder Gruppen im Modul, in welches die Datei hochgeladen wird, auf die Datei übertragen.
 
 \requirement{F0510}{Datei bearbeiten}
 Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann deren Eigenschaften, exklusive den Berechtigungen und des Titels, ändern. Die zu bearbeitenden Eigenschaften einer Datei sind in der nachfolgenden Tabelle~\ref{tab:datei_eigenschaften} ersichtlich. Zudem kann dieser Benutzer die Datei austauschen. Ein Benutzer mit Verwaltungsrecht kann alle Eigenschaften bearbeiten und die Datei löschen. Das Löschen hat zur Folge, dass die Datei unwiderruflich aus dem System gelöscht wird und nicht mehr wiederhergestellt werden kann.
@@ -193,7 +193,7 @@ Jeder Benutzer mit Verwaltungsrecht für eine Datei kann auch Benutzern und Grup
 Jeder angemeldete Benutzer mit Leserecht für eine Datei kann Details zu dieser Datei in der Webseite ansehen. Wenn es das Dateiformat und die Grösse des Bildschirmes zulässt, wird die Datei im Browser angezeigt. Der Benutzer kann die Datei von der Webseite herunterladen und lokal abspeichern.
 
 \requirement{F0540}{Datei bewerten}
-Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit, diese Datei mit einem bis vier Sterne  zu bewerten. Der Benutzer kann seine Bewertung nachträglich anpassen oder entfernen. \\
+Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit, diese Datei mit einem bis vier Sterne zu bewerten. Der Benutzer kann seine Bewertung nachträglich anpassen oder entfernen. \\
 Die Wertung eines Dokumentes ist das Mittel aller Bewertungen und wird auf eine Kommastelle gerundet. Ausserdem wird immer angezeigt wie viele Bewertungen für ein Dokument schon abgegeben wurden.
 
 \requirement{F0550}{Datei kategorisieren}
