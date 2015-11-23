@@ -10,6 +10,8 @@
 \usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{pdflscape}
+\usepackage{xstring}
+\usepackage{caption}
 \usepackage[backend=biber, style=ieee]{biblatex}
 \addbibresource{sources.bib}
 %\usepackage[fixlanguage]{babelbib}
@@ -65,10 +67,34 @@
     \label{subsub:requirement_#2}
 }
 
+\newcommand{\user}[1]{$U_#1$}
+\newcommand{\group}[1]{$G_#1$}
+
+\newenvironment{abnahmefall}[1][]{%
+%begin{abnahmefall}
+\tabularx{\textwidth}{|lX|} \hline
+\ifthenelse{\equal{#1}{}}
+{}{%
+\textbf{Testfall}& \textbf{#1} \\ \hline
+}%
+\ignorespaces}{
+%end{abnahmefall}
+\endtabularx\\[1em]
+}
+
+\newcommand{\ausgangssituation}[1]{\textbf{Ausgangssituation} &\ignorespaces #1 \\ \hline}
+\newcommand{\ereignis}[1]{\textbf{Ereignis} &\ignorespaces #1 \\ \hline }
+\newcommand{\ergebnis}[1]{\textbf{Erwartetes Ergebnis} &\ignorespaces #1 \\ \hline}
+
 % Refer to a requirement by it's title
 \newcommand{\refreq}[1]{\nameref{subsub:requirement_#1}}
 \newcommand{\tbf}{\emph{Noch zu definieren.}}
 
+\newcommand{\abnahmekriterium}[1]{%
+\StrLeft{\csname RequirementNumber#1\endcsname}{1}[\requirementsectioncharacter]%
+\StrBehind{\csname RequirementNumber#1\endcsname}{\requirementsectioncharacter}[\plainrequirementnumber]%
+\subsubsection*{\printrequirement{T\plainrequirementnumber}{#1}}%
+}
 
 
 \usepackage[toc, xindy]{glossaries}
@@ -91,9 +117,7 @@
 \input{06_functionalrequirements}
 \input{07_functiontree}
 \input{08_nonfunctionalrequirements}
-
-%\requirementsection{T}{Abnahmekriterien}
-
+\input{09_abnahmekriterien}
 \clearpage
 
 \glsaddall

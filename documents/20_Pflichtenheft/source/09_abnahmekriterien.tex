@@ -1,0 +1,288 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\requirementsection{T}{Abnahmekriterien}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\requirementsubsection{T01}{Sicherheit}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{Zugriffskontrolle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abnahmefall}[Zugriff eines nicht angemeldeten Benutzers]
+\ausgangssituation{
+Ein registrierter Benutzer ist nicht angemeldet.
+}
+\ereignis{
+Der Benutzer versucht irgend eine Seite der Applikation zu öffnen, abgesehen von der Seite zur Registrierung (/F0200/ Registrierung) und der Login Seite (\refreq{An- und Abmelden}).
+}
+\ergebnis{
+Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung angezeigt, dass er angemeldet sein muss um diese Seite zu öffnen.
+}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Zugriff eines angemeldeten Benutzers mit Berechtigung]
+	\ausgangssituation{
+		Ein angemeldeter Benutzer und besitzt die erforderlichen Berechtigungen eine Seite aufzurufen. Beispielsweise besitzt er das Vewaltungsrecht einer Gruppe, dann hat er Zugriffsberechtigung auf die Seite zum Editieren der Eigenschaften dieser Gruppe.
+	}
+	\ereignis{
+		Der Benutzer versucht irgendeine Seite der Applikation zu öffnen, auf welche er die Zugriffsberechtigung hat.
+	}
+	\ergebnis{
+		Die vom Benutzer aufgerufene Seite wird angzeigt.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Zugriff eines angemeldeten Benutzers ohne Berechtigung]
+	\ausgangssituation{
+		Ein angemeldeter Benutzer hat keine Zugriffsberechtigung auf die Seite hat, die er öffnen will. Hat er zum Beispiel nur Leserecht an einer Gruppe, so hat er keine Zugriffsberechtigung auf die Seite zum Editieren der Eigenschaften einer Gruppe.
+	}
+	\ereignis{
+		Der Benutzer versucht irgendeine Seite der Applikation zu öffnen, auf welche er keine Zugriffsberechtigung hat.
+	}
+	\ergebnis{
+		Die vom Benutzer aufgerufene Seite wird nicht angezeigt und es wird eine Fehlermeldung angezeigt, dass der Benutzer die benötigten Rechte zum Aufrufen der Seite nicht besitzt.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Verwaltungsrecht erteilen/entziehen]
+	\ausgangssituation{
+		Ein angemeldeter Benutzer \user{1} besitzt Verwaltungsrecht an einem Objekt.
+		Es existiert ein anderer Benutzer \user{2}, der auch Verwaltungsrecht an diesem Objekt besitzt.
+		Keiner der beiden Benutzer (\user{1} oder \user{2}) ist der Ersteller des Objektes.
+	}
+	\ereignis{
+		Der Benutzer \user{1} erteilt einem anderen Benutzer \user{3} Verwaltungsrecht am Objekt und entzieht dem Benutzer \user{2} das Verwaltungsrecht am Objekt.
+	}
+	\ergebnis{
+		Der Benutzer \user{3} hat nun Verwaltungsrecht am erwähnten Objekt.
+		Der Versuch zum Entziehen der Verwaltungsrechte des Benutzers \user{2} scheiter und es wird eine Fehlermeldung ausgegeben, da der Benutzer \user{1} nicht Ersteller des Objektes ist.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Verwaltungsrecht erteilen/entziehen]
+	\ausgangssituation{
+		Ein angemeldeter Benutzer \user{1} besitzt Verwaltungsrecht an einem Objekt.
+		Es existiert ein anderer Benutzer \user{2}, der auch Verwaltungsrecht an
+		diesem Objekt besitzt. Keiner der beiden Benutzer (\user{1} oder \user{2}) ist
+		der Ersteller des Objektes.
+	}
+	\ereignis{
+		Der Benutzer \user{1} erteilt einem anderen Benutzer \user{3} Verwaltungsrecht
+		am Objekt und entzieht dem Benutzer \user{2} das Verwaltungsrecht am Objekt.
+	}
+	\ergebnis{
+		Der Benutzer \user{3} hat nun Verwaltungsrecht am erwähnten Objekt. Der
+		Versuch zum Entziehen der Verwaltungsrechte des Benutzers \user{2}
+		scheiter und es wird eine Fehlermeldung ausgegeben, da der
+		Benutzer \user{1} nicht Ersteller des Objektes ist.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{An- und Abmelden}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Anmelden]
+	\ausgangssituation{
+		Ein registrierter Benutzer ist nicht angemeldet.
+	}
+	\ereignis{
+		Der Benutzer öffnet die Applikation, es wird ein Anmeldeformular
+		angezeigt, in welches der Benutzer seine E-Mail-Adresse und sein
+		Passwort eingibt.
+	}
+	\ergebnis{
+		Falls seine Eingaben korrekt sind, wird der Benutzer angemeldet
+		und auf die Hauptseite umgeleitet. Falls die Eingaben fehlerhaft
+		sind, wird eine Fehlermeldung angezeigt und der Benutzer kann es
+		erneut versuchen. Zudem wird ein Link angezeigt um sein Passwort
+		zurückzusetzten.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Anmelden]
+	\ausgangssituation{
+		Ein Benutzer ist angemeldet.
+	}
+	\ereignis{
+		Der angemeldete Benutzer meldet sich über eine Schaltfläche ab.
+	}
+	\ergebnis{
+		Der Benutzer ist abgemeldet und wird auf die Startseite der Applikation umgeleitet.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{Passwort zurücksetzen}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[]
+	\ausgangssituation{
+		Ein bestehender Benutzer, welcher aus der Applikation abgemeldet ist und
+		sich anmelden will, weiss sein Passwort nicht mehr.
+	}
+	\ereignis{
+		Der abgemeldete Benutzer gibt in das Passwort zurücksetzten Formular,
+		die für seinen Benutzer zutreffende E-Mail-Adresse ein und füllt danach
+		das \gls{Captcha} aus und lässt sich ein neues Passwort generieren.
+	}
+	\ergebnis{
+		Der Benutzer ist abgemeldet und wird auf die Startseite der Applikation umgeleitet.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\requirementsubsection{T02}{Benutzerverwaltung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{Registrierung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Registrierung]
+	\ausgangssituation{
+		Ein Benutzer ist noch nicht im System erfasst und will sich neu registrieren.
+	}
+	\ereignis{
+		Der Benutzer gibt im Registrierungs-Formular seinen Vor- und Nachnamen, seine E-Mail-Adresse und sein gewünschtes Passwort ein und schliesst die Registrierung über die entsprechende Schaltfläche ab.
+	}
+	\ergebnis{
+		Falls alle Angaben gemacht wurden und die E-Mail-Adresse ein gültiges Format hat, wird dem Benutzer eine E-Mail zur Bestätigung gesendet, mit welcher er sein Konto aktivieren kann. Falls die Angaben nicht korrekt waren, wird das Formular nochmals angezeigt und eine Fehlermeldung ausgegeben. In der Bestätigungs-E-Mail ist ein Link zum Aktivieren des Benutzerkontos enthalten und eine kurze Beschreibung über den Nutzen dieses Links.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Registrierung bestätigen]
+	\ausgangssituation{
+		Ein Benutzer hat die Registrierung abgeschlossen hat und bekam ein E-Mail, in welchem ein Link zum Aktivieren des Benutzerkontos enthalten ist.
+	}
+	\ereignis{
+		Der Benutzer klickt im E-Mail auf den Link zur Aktivierung.
+	}
+	\ergebnis{
+		Beim Öffnen des Links, wird man auf die Applikations-Seite weitergeleitet und der entsprechende Benutzer freigeschaltet. Dem Benutzer wird nun ein Loginformular und eine Bestätigung der Aktivierung angezeigt.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{Benutzerdaten ändern}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Benutzerdaten ändern]
+	\ausgangssituation{
+		Ein bestehender Benutzer ist in der Applikation angemeldet.
+	}
+	\ereignis{
+		Der Benutzer editiert über ein Formular seine Benutzerdaten, genauer gesagt seinen Vor- und Nachnamen, sein Profilbild, seine Berechtigungen und seine E-Mail-Adresse und speichert diese ab.
+	}
+	\ergebnis{
+		 Abgesehen von der E-Mail-Adresse wurden alle Änderungen übernommen. Für die Änderung an der E-Mail-Adresse wurde an die neu eingegebene Adresse ein Bestätigungs-E-Mail gesandt, in welchem ein Link zum Bestätigen der E-Mail-Adresse enthalten ist.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Änderung an E-Mail bestätigen]
+	\ausgangssituation{
+		Ein Benutzer hat im Benutzerdaten-Änderungsformular seine E-Mail Adresse geändert und es wurde ihm an die neu eingetragene E-Mail-Adresse eine Bestätigungs-E-Mail gesandt.
+	}
+	\ereignis{
+		Der Benutzer klickt im E-Mail auf den Link zum Validieren der geänderten E-Mail-Adresse.
+	}
+	\ergebnis{
+		 Die E-Mail-Adresse des Benutzers wird geändert und die Startseite der Applikation wird geöffnet.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Benutzerkonto löschen]
+	\ausgangssituation{
+		Ein bestehender Benutzer ist in der Applikation angemeldet.
+	}
+	\ereignis{
+		Der Benutzer löscht sein Benutzerkonto über eine entsprechende Schaltfläche.
+	}
+	\ergebnis{
+		 Der Benutzer wird abgemeldet und auf die Startseite der Applikation weitergeleitet. Sein Benutzerkonto ist nun gelöscht und wenn der Benutzer versucht sich wieder anzumelden, ist dies nicht möglich.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\requirementsubsection{T03}{Gruppenverwaltung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{Gruppe erstellen}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Gruppe erstellen]
+	\ausgangssituation{
+		Ein bestehender Benutzer ist in der Applikation angemeldet.
+	}
+	\ereignis{
+		Der Benutzer erstellt über ein Formular eine neue Gruppe und  konfiguriert diese Gruppe (siehe Gruppe bearbeiten) sogleich. Er bestimmt lediglich den Namen der Gruppe und schliesst das Erstellen der Gruppe ab.
+	}
+	\ergebnis{
+		Falls keine andere Gruppe mit dem gleichen Namen bereits existiert, wird die Gruppe mit den eingegebenen Konfigurationen erstellt. Zusätzlich wird der Benutzer, welcher die Gruppe erstellt hat, gleich als Ersteller der Gruppe eingetragen, das Erstelldatum der Gruppe wird gesetzt und der Ersteller bekommt sogleich Verwaltungs-Rechte an der Gruppe. Ist der Gruppenname bereits vergeben wird dem Benutzer eine Fehlermeldung, dass bereits eine Gruppe mit dem gleichen Namen existiert, angezeigt und das Erstellformular für die Gruppe wird erneut angezeigt.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{Gruppe bearbeiten}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Gruppe bearbeiten]
+	\ausgangssituation{
+		Es gibt eine Gruppe mit mehreren Mitgliedern. Ein angemeldeter Benutzer besitzt Verwaltungsrecht an dieser Gruppe.
+	}
+	\ereignis{
+		Der Benutzer ändert über das Bearbeitungs-Formular der Gruppe den Namen, die Beschreibung und die Mitglieder und speichert diese Änderungen ab.
+	}
+	\ergebnis{
+		Falls der geänderte Name nicht gleich wie der einer anderen Gruppe lautet, werden alle Änderungen an der Gruppe übernommen und die Seite mit den Eigenschaften der Gruppe angezeigt. Ansonsten wird eine Fehlermeldung ausgegeben und das Bearbeitungs-Formular wird wieder angezeigt.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Gruppe löschen]
+	\ausgangssituation{
+		Es gibt eine Gruppe mit mehreren Mitgliedern. Ein angemeldeter Benutzer besitzt Verwaltungsrecht an dieser Gruppe.
+	}
+	\ereignis{
+		Der Benutzer ändert über das Bearbeitungs-Formular der Gruppe den Namen, die Beschreibung und die Mitglieder und speichert diese Änderungen ab.
+	}
+	\ergebnis{
+		Falls der geänderte Name nicht gleich wie der einer anderen Gruppe lautet, werden alle Änderungen an der Gruppe übernommen und die Seite mit den Eigenschaften der Gruppe angezeigt. Ansonsten wird eine Fehlermeldung ausgegeben und das Bearbeitungs-Formular wird wieder angezeigt.
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\abnahmekriterium{Gruppenrechte bearbeiten}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Gruppen-Berechtigungen erteilen]
+	\ausgangssituation{
+		Es existiert die Gruppen \group{1}, \group{2} und \group{3}, ein angemeldeter Benutzer \user{1} und die Benutzer \user{2} und \user{3}. Des weiteren gibt es Objekte an denen die Gruppe \group{1} Leserecht, Schreibrecht oder Verwaltungsrecht besitzt. Die Tabelle~\ref{tab:ausgangssituation_grippenrechte_erteilen} zeigt die Rechte der Gruppen und Benutzer an der Gruppe \group{1}.
+		\\[1em]
+		&
+		\begin{tabular}{|l|l|} \hline
+			\textbf{Inhaber des Rechts} & \textbf{Rechte an der Gruppe \group{1}} \\ \hline
+			Benutzer \user{1} 			& Verwaltungsrecht \\ \hline
+			Gruppe \group{2}, Benutzer \user{2} 	& Keine Rechte \\ \hline
+			Gruppe \group{3}, Benutzer \user{3}  & Leserecht \\ \hline 
+		\end{tabular}
+		\captionof{table}{Rechte der Benutzer und Gruppen in der Gruppe \group{1}}
+		\label{tab:ausgangssituation_grippenrechte_erteilen}
+	}%
+	\ereignis{
+		Der Benutzer \user{1} erteilt dem Benutzer \user{2} und der Gruppe \group{2} Leserechte an der Gruppe \group{1}. Dem Benutzer \user{3} und der Gruppe \group{3} erteilt der Benutzer \user{1} Verwaltungsrecht an der Gruppe \group{1}.
+	}%
+	\ergebnis{
+		Der Benutzer \user{2} und die Gruppe \group{2} übernehmen alle Berechtigungen welche die Gruppe (\group{1}) in anderen Modulen, Gruppen und Dateien besitzt. Die Gruppe \group{3} und der Benutzer \user{3} haben nun die Verwaltungsrecht an der Gruppe \group{1} und können nun deren Eigenschaften ändern (siehe Gruppe bearbeiten). 
+	}
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abnahmefall}[Gruppen-Berechtigungen entziehen]
+	\ausgangssituation{
+		Es existieren die Gruppen \group{1}, \group{2} und \group{3}, ein angemeldeter Benutzer \user{1}, welcher nicht der Ersteller der Gruppe \group{1} ist, und die Benutzer \user{2} und \user{3}. Die nachfolgende Tabelle~\ref{tab:ausgangssituation_grippenrechte_entziehen} zeigt die Berechtigungen der Benutzer und Gruppen an der Gruppe \group{1}.\\[1em]
+		&
+		%\begin{table}[H]
+		\begin{tabular}{|l|l|} \hline
+		\textbf{Inhaber des Rechts} & \textbf{Rechte an der Gruppe \group{1}}\\ \hline
+		Benutzer \user{1} 			& Verwaltungsrecht \\ \hline
+		Gruppe \group{2}, Benutzer \user{2} 	& Leserecht \\ \hline
+		Gruppe \group{3}, Benutzer \user{3}  & Verwaltungsrecht \\ \hline 
+		\end{tabular}
+		\captionof{table}{Rechte der Benutzer und Gruppen in der Gruppe \group{1}}
+		\label{tab:ausgangssituation_grippenrechte_entziehen}
+		%\label{tab:ausgangssituation_grippenrechte_entziehen}
+		%\end{table}
+	}%
+	\ereignis{
+		Der Benutzer \user{1} entzieht den Gruppen \group{2} und \group{2} und den Benutzern \user{2} und \user{3} alle Rechte an der Gruppe \group{1}.
+	}%
+	\ergebnis{
+		Der Gruppe \group{2} und dem Benutzer \user{2} werden alle Berechtigungen an der Gruppe \group{1} entzogen und somit auch alle Berechtigungen an anderen Modulen, Gruppe und Dateien, welche mit der Mitgliedschaft an der Gruppe \group{1} einhergegangen sind. Der Gruppen \group{3} und Benutzer \user{3} wird das Verwaltungsrecht an der Gruppe \group{1} nicht entzogen und dem Benutzer \user{1} wird eine Fehlermeldung ausgegeben, da der Benutzer \user{1} diese Berechtigung nicht entziehen kann.
+	}%
+\end{abnahmefall}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
