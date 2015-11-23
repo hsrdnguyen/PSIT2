@@ -6,7 +6,7 @@
 Beim Aufrufen der verschiedenen Seiten prüft das System immer,
 ob der Benutzer angemeldet ist. Falls er nicht angemeldet ist,
 wird er auf die Log-in Seite verwiesen. Davon ausgenommen sind
-nur die Seiten zur Registrierung(\texttt{/F0200/} Registrierung) und diejenige zur Anmeldung (\refreq{An- und Abmelden}). \\
+nur die Seiten zur Registrierung (\refreq{Registrierung}) und diejenige zur Anmeldung (\refreq{An- und Abmelden}). \\
 
 Auf alle Module, Gruppen und Dateien hat jeder Benutzer individuelle Zugriffsrechte. Folgende Tabelle~\ref{tab:rights} zeigt, welche grundsätzlichen Berechtigungen es gibt.
 
@@ -24,7 +24,8 @@ Auf alle Module, Gruppen und Dateien hat jeder Benutzer individuelle Zugriffsrec
 
 Jede Berechtigungsstufe beinhaltet alle tieferen Berechtigungen. Bei jedem Aufruf einer Seite, welche einen Benutzer, eine Datei, eine Gruppe oder ein Modul darstellt, wird überprüft, ob der angemeldete Benutzer die Leserechte besitzt. Bei unerlaubtem Zugriff wird eine entsprechende Fehlermeldung ausgegeben und der Zugriff bzw. das Anzeigen von Details verweigert. Bei jeder Anfrage, die Daten einer Datei, eines Benutzers, einer Gruppe oder eines Moduls zu verändern, wird überprüft, ob der angemeldete Benutzer die Rechte besitzt, um diese Änderungen vorzunehmen.\\
 
-Ein Benutzer gilt als Mitglied einer Gruppe, wenn er mindestens Leserecht an einer Gruppe besitzt. Ist der Benutzer in einer Gruppe, welche eine höhere Berechtigungsstufe hat, so übernimmt der Benutzer automatisch diese Berechtigung. Der Benutzer verliert diese Berechtigung, sobald er nicht mehr in dieser Gruppe ist (vergleiche \texttt{/F0320/} Gruppenrechte bearbeiten).\\
+Ein Benutzer gilt als Mitglied einer Gruppe, wenn er mindestens Leserecht an einer Gruppe besitzt.
+Ist der Benutzer in einer Gruppe, welche eine höhere Berechtigungsstufe hat, so übernimmt der Benutzer automatisch diese Berechtigung. Der Benutzer verliert diese Berechtigung, sobald er nicht mehr in dieser Gruppe ist (vergleiche \refreq{Gruppenrechte bearbeiten}).\\
 
 Benutzer mit Verwaltungsrecht auf einem Objekt können anderen Benutzern und Gruppen auch Verwaltungsrecht auf dieses Objekt erteilen, aber ihnen dieses Recht nicht wieder entziehen. Diese Verwaltungsrechte können nur vom Ersteller des Objekts wieder entzogen werden.
 
@@ -63,7 +64,7 @@ Profilbild			& Ja 	& Ein optionales Profilbild.\\ \hline
 Berechtigung 		& Ja 	& Alle Berechtigungen, die der Benutzer in Modulen, Gruppen und Dateien hat. Diese werden ihm gegeben und er kann sie nicht selber ändern.\\ \hline
 Vorname 			& Ja 	& Der Vorname des Benutzers\\ \hline
 Nachname			& Ja	& Der Nachname des Benutzers\\ \hline
-Passwort			& Ja	& Das Passwort des Benutzers. Es darf neben Buchstaben und Zahlen folgende Zeichen enthalten: . , - + \_ ! ? \\ \hline
+Passwort			& Ja	& Das Passwort des Benutzers. Es darf aus allen Unicode-Zeichen, die korrekt als UTF-8 kodiert, sind bestehen. \\ \hline
 \end{tabularx}
 \caption{Eigenschaften eines Benutzers}
 \label{tab:benutzer_eigenschaften}
@@ -93,8 +94,11 @@ Erstelldatum		& Nein 	& Das Datum, an dem die Gruppe erstellt wurde.\\ \hline
 \end{table}
 
 \requirement{F0320}{Gruppenrechte bearbeiten}
-Jeder angemeldete Benutzer mit Verwaltungsrecht (U1) an einer Gruppe kann für andere Benutzer oder Gruppen (U2) Berechtigungen erteilen. Die zu vergebenden Berechtigungen sind in der nachfolgenden Tabelle (Berechtigungen in Gruppen) ersichtlich. Der hinzugefügte Benutzer oder die Gruppe (U2) übernimmt dann automatisch die Berechtigungen dieser Gruppe, welche diese in anderen Gruppen, Modulen oder Dateien besitzt.
-Der Benutzer (U1) kann ebenfalls Berechtigungen von Benutzern und Gruppen in dieser Gruppe entziehen oder ändern. Werden Benutzern oder Gruppen alle Rechte in der Gruppe entzogen, verlieren sie alle Berechtigungen an Dateien, Modulen und anderen Gruppen, welche mit der Mitgliedschaft in der Gruppe einhergehen.
+Jeder angemeldete Benutzer mit Verwaltungsrecht \user{1} an einer Gruppe kann für andere Benutzer oder Gruppen \user{2} Berechtigungen erteilen.
+Die zu vergebenden Berechtigungen sind in der nachfolgenden Tabelle~\ref{tab:gruppe_rechte} ersichtlich.
+Der hinzugefügte Benutzer oder die Gruppe \user{2} übernimmt dann automatisch die Berechtigungen dieser Gruppe, welche diese in anderen Gruppen, Modulen oder Dateien besitzt.
+Der Benutzer \user{1} kann ebenfalls Berechtigungen von Benutzern und Gruppen in dieser Gruppe entziehen oder ändern.
+Werden Benutzern oder Gruppen alle Rechte in der Gruppe entzogen, verlieren sie alle Berechtigungen an Dateien, Modulen und anderen Gruppen, welche mit der Mitgliedschaft in der Gruppe einhergehen.
 
 
 \begin{table}[H]
@@ -211,7 +215,7 @@ Die Suchresultate können mit Hilfe von weiteren Such- und Filterkriterien sowoh
 \item Einschränkungen anhand der Eigenschaften von Objekten. Es können nur gemeinsame Eigenschaften von allen eingeblendeten Objekttypen eingeschränkt werden.
 \end{itemize}
 Dem Benutzer ist es auch möglich, die Suchresultate nach gemeinsamen Eigenschaften der Resultate zu sortieren. Ohne benutzerdefinierte Sortierung werden Dateien mit einer guten und aktuellen Bewertung für den Benutzer weiter oben in der Liste und somit besser sichbar dargestellt.\\
-Der benutzte Suchalgorithmus welcher verwendet wird, ist noch nicht bestimmt, doch es wird ein bewährter Algorithmus gewählt werden um Stabilität und Verlässlichkeit garantieren zu können.
+Welcher Suchalgorithmus verwendet wird, ist noch nicht bestimmt. Es wird jedoch ein bewährter Algorithmus eingesetzt, um Stabilität, Effizienz und Verlässlichkeit zu garantieren.
 
 \requirement{F0610}{Zugriff beantragen}
 Jeder angemeldete Benutzer kann für Module, Gruppen und Dateien, die er über die Suche findet, auf welche er aber keinen Zugriff hat, Berechtigungen beantragen. Dies geschieht über ein Fenster in dem er die gewünschte Berechtigung und den Grund, wieso er diese Berechtigung benötigt, angibt. Danach wird allen Verwaltern des Objekts ein E-Mail mit den oben erwähnten Angaben gesendet.
