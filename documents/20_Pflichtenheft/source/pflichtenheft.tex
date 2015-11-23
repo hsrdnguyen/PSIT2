@@ -27,7 +27,7 @@
 \newcommand{\titel}{Avocado Share}
 \newcommand{\shorttitel}{}
 \newcommand{\doctype}{Pflichtenheft}
-\newcommand{\untertitel}{Java-Applikation zur Dimensionierung von PID-Reglern}
+\newcommand{\untertitel}{Webplatform zur }
 \newcommand{\datum}{\today}
 \newcommand{\team}{Gruppe 13}
 \newcommand{\autorA}{Bergmann Sascha}
@@ -36,34 +36,28 @@
 \newcommand{\autorD}{Müller Cyril}
 \newcommand{\autorE}{}
 \newcommand{\ort}{Winterthur}
-\newcommand{\dozent}{Niklaus Peter}
-\newcommand{\betreuer}{Gut Richard, Gertiser Anita,\\ Buchschacher Pascal}
-\newcommand{\version}{0.1}
+\newcommand{\dozent}{}
+\newcommand{\betreuer}{}
+\newcommand{\version}{1.2}
 
 \hypersetup{
     bookmarks=false,    % show bookmarks bar?
-    pdftitle={Avocada Share - Pflichtenheft},    % title
-    pdfauthor={Dang Thien Nguyen, Sascha Bergmann, Kunz Lion, Cyril Müller},  % author
+    pdftitle={\titel - \doctype},    % title
+    pdfauthor={\autorA, \autorB, \autorC, \autorD},  % author
     pdfsubject={Funktionale und nicht-funktionale Anforderungen}, % subject of the document
-    pdfkeywords={Avocado Share, Pflichtenheft, Gruppe 13, PSIT, IT15b}, % list of keywords
+    pdfkeywords={\titel, \doctype, \team, Version \version, PSIT, IT15b}, % list of keywords
     colorlinks=true,        % false: boxed links; true: colored links
     linkcolor=blue!30!black,% color of internal links
     citecolor=black,        % color of links to bibliography
     filecolor=black,        % color of file links
-    urlcolor=black,        % color of external links
+    urlcolor=black,         % color of external links
     linktoc=page            % only page is linked
 }%
 
 
 %\project{Avocado Share}
-\title{\LARGE{Avocado Share}\\\large{Pflichtenheft}}
-\author{%
-    Gruppe 13 \\%[0.3em]
-    \normalsize{Dang Thien Nguyen} \\%[0.5em]
-    \normalsize{Sascha Bergmann} \\%[0.5em]
-    \normalsize{Lion Kunz} \\%[0.5em]
-    \normalsize{Cyril Müller} \\%[0.5em]
-}
+\title{\title}
+\author{\autorA \and \autorB \and \autorC \and \autorD \and \autorD}
 
 \newcommand{\zeropadded}[1]{%
     \ifnum\value{#1}<10 0\fi \arabic{#1}%
@@ -121,25 +115,22 @@
         \vspace{1cm}
         \vfill
         \large{
-            %\hspace{-0.83cm} \includegraphics{images/fhnw_logo_full}\\
-            %\line(1,0){165} 
+            \iffalse % We don't need a dozent or a betreuer
+                \hspace{-0.83cm} \includegraphics{images/zhaw_logo_full}\\
+                \line(1,0){165} 
 
-            %\vspace{0.5cm}
-            %Auftraggeber:\\ \dozent \\
-            %Betreuer:\\ \betreuer \\
-            %\vspace{0.5cm}
+                \vspace{0.5cm}
+                Auftraggeber:\\ \dozent \\
+                Betreuer:\\ \betreuer \\
+                \vspace{0.5cm}
+            \fi
             \ort, \datum \hfill Version: \version
         }
     \end{flushleft}
 \end{titlepage}
 % end of titlepage -------------------------------------------------------------
 
-
 \include{glossary}
-
-\clearpage
-\maketitle
-\thispagestyle{empty}\clearpage
 
 \section*{Dokumentenhistorie}
 \begin{tabularx}{\linewidth}{|l|r|X|} \hline
