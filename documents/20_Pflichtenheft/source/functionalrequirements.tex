@@ -35,7 +35,7 @@ Die Applikation bietet ein Formular, über welches sich ein Benutzer mit seiner 
 Auf jeder Seite wird, sofern der Benutzer angemeldet ist, eine Schaltfläche angezeigt, über welche sich der Benutzer abmelden kann. Meldet sich ein Benutzer ab, wird er auf die Startseite umgeleitet. Nach einer 12-stündigen Inaktivität wird der Benutzer automatisch ausgeloggt.
 
 \requirement{F0120}{Passwort zurücksetzen}
-Nach Eingabe seiner E-Mail-Adresse und einem \gls{Captcha} kann der Benutzer sich ein neues Passwort generieren lassen. Dieses wird ihm dann per E-Mail zugestellt, ist ab sofort gültig und ersetzt das alte Passwort.
+Nach Eingabe seiner E-Mail-Adresse und einem \gls{Captcha} kann der Benutzer sich ein neues Passwort generieren lassen. Dieses wird ihm dann per E-Mail zugestellt, ist ab sofort gültig und ersetzt das alte Passwort. Das generierte Passwort wird eine länge von 12 Zeichen haben und aus Gross-, Kleinbuchstaben, Zahlen und Sonderzeichen bestehen. 
 
 \requirementsubsection{F02}{Benutzerverwaltung}
 Benutzer stellen Personen dar. Jeder Benutzer hat individuelle Berechtigungen an Modulen, Gruppen und Dateien. Ein Benutzer kann auch selber neue Gruppen, Module und Dateien erstellen und Berechtigungen an diesen für andere Benutzer und Gruppen vergeben.
@@ -63,6 +63,7 @@ Profilbild			& Ja 	& Ein optionales Profilbild.\\ \hline
 Berechtigung 		& Ja 	& Alle Berechtigungen, die der Benutzer in Modulen, Gruppen und Dateien hat. Diese werden ihm gegeben und er kann sie nicht selber ändern.\\ \hline
 Vorname 			& Ja 	& Der Vorname des Benutzers\\ \hline
 Nachname			& Ja	& Der Nachname des Benutzers\\ \hline
+Passwort			& Ja	& Das Passwort des Benutzers. Es darf neben Buchstaben und Zahlen folgende Zeichen enthalten: . , - + _ ! ? \\ \hline
 \end{tabularx}
 \caption{Eigenschaften eines Benutzers}
 \label{tab:benutzer_eigenschaften}
@@ -151,7 +152,7 @@ Der Benutzer mit Verwaltungsrecht kann ebenfalls Benutzern oder Gruppen ihre Ber
 Dateien repräsentieren zum Beispiel Notizen oder Zusammenfassungen. Diese Dateien werden in Module hochgeladen und sind von diesen abhängig. Das heisst, die Dateien können nicht ohne ein Modul existieren. Die Berechtigungen für Dateien werden vom Modul übernommen, in welches die Datei hochgeladen wird, können aber auch einzeln vergeben werden. Den Benutzern ist es auch möglich, Dateien zu bewerten und zu kategorisieren.
 
 \requirement{F0500}{Datei hochladen}
-Jeder Benutzer mit Schreibrecht an einem Modul kann Dateien in dieses Modul hochladen. Es können keine Dateien mit dem gleichen Namen im selben Modul erstellt werden. Der Benutzer hat somit automatisch Verwaltungsrecht an der Datei. Abgesehen vom Verwaltungsrecht werden alle Berechtigungen der Benutzer oder Gruppen im Modul, in welches die Datei hochgeladen wird, auf die Datei übertragen.
+Jeder Benutzer mit Schreibrecht an einem Modul kann Dateien in dieses Modul hochladen. Alle Dateiformate können hochgeladen werden und die maximalgrösse einer Datei beträgt  30 GB. Ein Upload von mehreren Dateien auf ein mal ist nicht vorgesehen. Es können keine Dateien mit dem gleichen Namen im selben Modul erstellt werden. Der Benutzer hat somit automatisch Verwaltungsrecht an der Datei. Abgesehen vom Verwaltungsrecht werden alle Berechtigungen der Benutzer oder Gruppen im Modul, in welches die Datei hochgeladen wird, auf die Datei übertragen.
 
 \requirement{F0510}{Datei bearbeiten}
 Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann deren Eigenschaften, exklusive den Berechtigungen und des Titels, ändern. Die zu bearbeitenden Eigenschaften einer Datei sind in der nachfolgenden Tabelle~\ref{tab:datei_eigenschaften} ersichtlich. Zudem kann dieser Benutzer die Datei austauschen. Ein Benutzer mit Verwaltungsrecht kann alle Eigenschaften bearbeiten und die Datei löschen. Das Löschen hat zur Folge, dass die Datei unwiderruflich aus dem System gelöscht wird und nicht mehr wiederhergestellt werden kann.
@@ -192,14 +193,16 @@ Jeder Benutzer mit Verwaltungsrecht für eine Datei kann auch Benutzern und Grup
 Jeder angemeldete Benutzer mit Leserecht für eine Datei kann Details zu dieser Datei in der Webseite ansehen. Wenn es das Dateiformat und die Grösse des Bildschirmes zulässt, wird die Datei im Browser angezeigt. Der Benutzer kann die Datei von der Webseite herunterladen und lokal abspeichern.
 
 \requirement{F0540}{Datei bewerten}
-Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit, diese Datei mit einem bis vier Sterne  zu bewerten. Der Benutzer kann seine Bewertung nachträglich anpassen oder entfernen.
+Jeder angemeldete Benutzer mit Leserecht für eine Datei hat die Möglichkeit, diese Datei mit einem bis vier Sterne  zu bewerten. Der Benutzer kann seine Bewertung nachträglich anpassen oder entfernen. \\
+Die Wertung eines Dokumentes ist das Mittel aller Bewertungen und wird auf eine Kommastelle gerundet. Ausserdem wird immer angezeigt wie viele Bewertungen für ein Dokument schon abgegeben wurden.
 
 \requirement{F0550}{Datei kategorisieren}
-Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann zu dieser Datei Kategorien hinzufügen und entfernen. Kategorien erleichtern die Suche nach Dateien.
+Jeder angemeldete Benutzer mit Schreibrecht für eine Datei kann zu dieser Datei Kategorien hinzufügen und entfernen. Um einer Unordnung betreffend der Kategorien vorzubeugen wird man bei der Kategorisierung Vorschläge von schon benutzten Begriffen angezeigt bekommen, welche man dann auswählen kann. Die Vorschläge werden aufgrund des Dokumententitels gesucht. Kategorien erleichtern die Suche nach Dateien. 
 
 \requirementsubsection{F06}{Suche}
 \requirement{F0600}{Suche}
 Über ein Suchfeld kann jeder angemeldete Benutzer nach Objekten, also Dateien, Gruppen, Modulen und Benutzern suchen.\\
+Gesucht wird in dieser Version der Applikation nur über Titel und Kategorien einer Datei. Es wird jedoch so entwickelt, dass es möglich wäre eine Suche über den Inhalt von Dokumenten zu implementieren.
 
 Die Suchresultate können mit Hilfe von weiteren Such- und Filterkriterien sowohl vor der Suche als auch auf der Webseite, welche die Suchresultate darstellt, angepasst werden. Der Benutzer hat folgende Auswahlmöglichkeiten:
 \begin{itemize}
@@ -207,10 +210,11 @@ Die Suchresultate können mit Hilfe von weiteren Such- und Filterkriterien sowoh
 \item Ein- bzw. Ausblenden von Objekten, auf die der Benutzer keinen Lesezugriff hat. Auf diese Objekte kann der Benutzer Zugriff beantragen (\refreq{Zugriff beantragen}). 
 \item Einschränkungen anhand der Eigenschaften von Objekten. Es können nur gemeinsame Eigenschaften von allen eingeblendeten Objekttypen eingeschränkt werden.
 \end{itemize}
-Dem Benutzer ist es auch möglich, die Suchresultate nach gemeinsamen Eigenschaften der Resultate zu sortieren. Ohne benutzerdefinierte Sortierung werden Dateien mit einer guten und aktuellen Bewertung für den Benutzer weiter oben in der Liste und somit besser sichbar dargestellt.
+Dem Benutzer ist es auch möglich, die Suchresultate nach gemeinsamen Eigenschaften der Resultate zu sortieren. Ohne benutzerdefinierte Sortierung werden Dateien mit einer guten und aktuellen Bewertung für den Benutzer weiter oben in der Liste und somit besser sichbar dargestellt.\\
+Der benutzte Suchalgorithmus welcher verwendet wird, ist noch nicht bestimmt, doch es wird ein bewährter Algorithmus gewählt werden um Stabilität und Verlässlichkeit garantieren zu können.
 
 \requirement{F0610}{Zugriff beantragen}
-Jeder angemeldete Benutzer kann für Module, Gruppen und Dateien, die er über die Suche findet, auf welche er aber keinen Zugriff hat, Berechtigungen beantragen. Dies geschieht über ein Fenster in dem er die gewünschte Berechtigung und den Grund, wieso er diese Berechtigung benötigt, angibt. Danach wird dem Ersteller des Objekts ein E-Mail mit den oben erwähnten Angaben gesendet.
+Jeder angemeldete Benutzer kann für Module, Gruppen und Dateien, die er über die Suche findet, auf welche er aber keinen Zugriff hat, Berechtigungen beantragen. Dies geschieht über ein Fenster in dem er die gewünschte Berechtigung und den Grund, wieso er diese Berechtigung benötigt, angibt. Danach wird allen Verwaltern des Objekts ein E-Mail mit den oben erwähnten Angaben gesendet.
 
 \requirement{F0620}{Zugriff freigeben}
 Der Ersteller eines Objektes erhält im Falle einer Zugriffsanfrage (\refreq{Zugriff beantragen}) eine E-Mail. Darin enthalten ist der Name des Objektes, auf das der Zugriff beantragt wird, der Antragsteller, die benötigte Berechtigung und der Grund, der zum Wunsch nach Zugriff geführt hat. Über einen Link im E-Mail kann der Ersteller dann den Zugriff freigeben.
