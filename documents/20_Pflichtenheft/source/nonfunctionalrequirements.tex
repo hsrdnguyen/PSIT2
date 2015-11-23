@@ -1,5 +1,5 @@
 \requirementsection{R}{Nicht-funktionale Anforderungen}
-Alle nicht-funktionalen Anforderungen \texttt{/R05xx/} sind aus dem Dokument "`Nicht-funktionale Anforderungen"' von Patrick Feisthammel \cite{patfeist15nifunanf} übernommen und gegebenenfalls ergänzt worden.
+Alle nicht-funktionalen Anforderungen \texttt{/R07xx/} sind aus dem Dokument "`Nicht-funktionale Anforderungen"' von Patrick Feisthammel \cite{patfeist15nifunanf} übernommen und gegebenenfalls ergänzt worden.
 
 \requirement{R0700}{Gebrauchsfähigkeit (Usability)}
 Die Webseiten müssen durch den Benutzer, welcher dem Benutzerprofil entspricht, ohne weitere Hilfe verwendet werden können. Es müssen, wenn der Benutzer diese für sein Verständnis benötigt, Hinweisfelder eingeblendet werden können.
@@ -34,17 +34,17 @@ Die Benutzerdaten und Dateien müssen mit einem Mindestmass an Sicherheit gesch�
 Um das Abhören von Passwörtern möglichst zu vermeiden, muss die HTTP-Verbindung zwischen Client und Server mit \gls{TLS} 1.2 gesichert werden. Das Serverzertifikat muss dabei nicht von Zertifizierungsstellen verifiziert sein.
 
 \requirement{R0820}{Antwortzeit}
-Eine browserseitige Anfrage auf eine Webseite muss, falls in folgendem Text nicht anders definiert, vom Server innerhalb von maximal einer Sekunden bearbeitet und beantwortet werden. In die Antwortzeit wird weder die Übertragungszeit noch die Zeit, die der Browser benötigt, um die Webseite anzuzeigen, eingerechnet. Anfragen, eine Datei herunterzuladen (siehe Datei herunterladen), dürfen maximal 5 Sekunden dauern, bis der Download startet. Eine Suche muss innerhalb von maximal 5 Sekunden beantwortet werden. Aktionen, welche eine längere Rechenzeit auf dem Server beanspruchen, müssen asynchron zur Webseiten-Anfrage bearbeitet werden.
+Eine browserseitige Anfrage auf eine Webseite muss, falls in folgendem Text nicht anders definiert, vom Server innerhalb von maximal einer Sekunden bearbeitet und beantwortet werden. In die Antwortzeit wird weder die Übertragungszeit noch die Zeit, die der Browser benötigt, um die Webseite anzuzeigen, eingerechnet. Anfragen, eine Datei herunterzuladen (siehe \refreq{Datei anzeigen}), dürfen maximal 5 Sekunden dauern, bis der Download startet. Eine Suche muss innerhalb von maximal 5 Sekunden beantwortet werden. Aktionen, welche eine längere Rechenzeit auf dem Server beanspruchen, müssen asynchron zur Webseiten-Anfrage bearbeitet werden.
 
 
 \iffalse
 \begin{table}[H]
 \centering
 \begin{tabular}{|l|l|} \hline
-\textbf{Seitenaufruf} & \textbf{Maximale Antwortzeit} \\ \hline
-Allgemein 					& 1 Sekunde \\ \hline
-Start eines Datei-Downloads & 5 Sekunden \\ \hline
-Suche						& 5 Sekunden \\ \hline
+\textbf{Seitenaufruf} & \textbf{Maximale Antwortzeit} & \textbf{Funktionale Anforderung}\\ \hline
+Allgemein 					& 1 Sekunde  & \\ \hline
+Start eines Datei-Downloads & 5 Sekunden & \refreq{Datei anzeigen}\\ \hline
+Suche						& 5 Sekunden & \refreq{Suche}\\ \hline
 \end{tabular}
 \caption{Maximale Antwortzeit von Seitenaufrufen.}
 \end{table}
