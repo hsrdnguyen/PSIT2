@@ -15,7 +15,7 @@ Die Webseiten sind in deutscher Sprache (Schweiz) verfasst und verwenden den Zei
 Die Web-Applikation muss als \gls{JSP} auf dem zur Verfügung gestellten virtuellen Server unter Verwendung einer SQL-Datenbank mit Apache Tomcat betrieben werden.
 
 \requirement{R0740}{Zielplattform (Client)}
-Die Webseiten werden in der aktuellsten freigegebenen Version des Mozilla Firefox und Google Chrome korrekt dargestellt. Die Webseite muss für Bildschirmgrössen mit einer Breite ab 480 Pixel problemlos darstellbar sein. Für Bildschirme mit einer Breite unter 600 Pixel muss eine Mobilansicht bereitstehen. Die Webseite muss skalierbar sein und sich an die Bildschrirmbreite anpassen.
+Die Webseiten werden in der aktuellsten freigegebenen Version des Mozilla Firefox und Google Chrome korrekt dargestellt. Die Webseite muss für Bildschirmgrössen mit einer Breite ab 480 Pixel problemlos darstellbar sein. Für Bildschirme mit einer Breite unter 600 Pixel muss eine Mobilansicht bereitstehen. Die Webseite muss skalierbar sein und sich an die Bildschirmbreite anpassen.
 
 \requirement{R0750}{Werkzeuge zur Entwicklung}
 Als Projektmanagement-Tool und zur Verwaltung des Sourcecodes und der Dokumente muss der zur Verfügung gestellte Github-Server verwendet werden.
@@ -34,7 +34,7 @@ Die Benutzerdaten und Dateien müssen mit einem Mindestmass an Sicherheit gesch�
 Um das Abhören von Passwörtern möglichst zu vermeiden, muss die HTTP-Verbindung zwischen Client und Server mit \gls{TLS} 1.2 gesichert werden. Der verwendete Algorithmus muss \gls{Perfect Forward Secrecy} unterstützen. Das Serverzertifikat muss dabei nicht von Zertifizierungsstellen verifiziert sein.
 
 \requirement{R0820}{Antwortzeit}
-Eine browserseitige Anfrage auf eine Webseite muss, falls in folgendem Text nicht anders definiert, vom Server innerhalb von maximal einer Sekunden bearbeitet und beantwortet werden. In die Antwortzeit wird weder die Übertragungszeit noch die Zeit, die der Browser benötigt, um die Webseite anzuzeigen, eingerechnet. Anfragen, eine Datei herunterzuladen (siehe \refreq{Datei anzeigen}), dürfen maximal 5 Sekunden dauern, bis der Download startet. Eine Suche muss innerhalb von maximal 5 Sekunden beantwortet werden. Aktionen, welche eine längere Rechenzeit auf dem Server beanspruchen, müssen asynchron zur Webseiten-Anfrage bearbeitet werden.
+Eine browserseitige Anfrage auf eine Webseite muss, falls in folgendem Text nicht anders definiert, vom Server innerhalb von maximal einer Sekunden bearbeitet und beantwortet werden. In die Antwortzeit wird weder die Übertragungszeit noch die Zeit, die der Browser benötigt, um die Webseite anzuzeigen, eingerechnet. Eine Anfragen bis ein Datei-Download started (siehe \refreq{Datei anzeigen}) darf maximal 5 Sekunden dauern. Eine Suche muss innerhalb von maximal 5 Sekunden beantwortet werden. Aktionen, welche eine längere Rechenzeit auf dem Server beanspruchen, müssen asynchron zur Webseiten-Anfrage bearbeitet werden.
 
 
 \iffalse
@@ -54,7 +54,7 @@ Suche						& 5 Sekunden & \refreq{Suche}\\ \hline
 Von den Systemdateien und den Dateien der Benutzer müssen von Zeit zu Zeit Sicherungskopien erstellt werden, sodass bei einem Dateiverlust im Hauptsystem ein Grossteil der verlorenen Daten wieder hergestellt werden kann. 
 
 \requirement{R0840}{Erweiterbarkeit}
-Die Systemkomponenten müssen so implementiert sein, dass diese zu einem späteren Zeitpunkt ohne grossen Mehraufwand erweitert und auf neue Bedürfnisse abgestimmt werden können. Texte müssen zentral gespeichert werden, dass sie einfach in andere Sprachen übersetzt werden könne.
+Die Systemkomponenten müssen so implementiert sein, dass diese zu einem späteren Zeitpunkt ohne grossen Mehraufwand erweitert und auf neue Bedürfnisse abgestimmt werden können. Texte müssen zentral gespeichert werden, damit sie einfach in andere Sprachen übersetzt werden könne.
 
 \requirement{R0850}{Dokumentation in Quellcode}
 Im Quellcode müssen alle Methoden, Klassen und Datenfelder dokumentiert werden.

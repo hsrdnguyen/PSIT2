@@ -15,7 +15,7 @@
 Ein registrierter Benutzer ist nicht angemeldet.
 }
 \ereignis{
-Der Benutzer versucht irgend eine Seite der Applikation zu öffnen, abgesehen von der Seite zur Registrierung (/F0200/ Registrierung) und der Login Seite (\refreq{An- und Abmelden}).
+Der Benutzer versucht irgendeine Seite der Applikation zu öffnen, abgesehen von der Seite zur Registrierung (\refreq{Registrierung}) und der Login Seite (\refreq{An- und Abmelden}).
 }
 \ergebnis{
 Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung angezeigt, dass er angemeldet sein muss um diese Seite zu öffnen.
@@ -36,7 +36,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}[Zugriff eines angemeldeten Benutzers ohne Berechtigung]
 	\ausgangssituation{
-		Ein angemeldeter Benutzer hat keine Zugriffsberechtigung auf die Seite hat, die er öffnen will. Hat er zum Beispiel nur Leserecht an einer Gruppe, so hat er keine Zugriffsberechtigung auf die Seite zum Editieren der Eigenschaften einer Gruppe.
+		Ein angemeldeter Benutzer hat keine Zugriffsberechtigung auf die Seite, die er öffnen will. Wenn er zum Beispiel nur Leserecht an einer Gruppe besitzt, so hat er keine Zugriffsberechtigung auf die Seite zum Editieren der Eigenschaften einer Gruppe.
 	}
 	\ereignis{
 		Der Benutzer versucht irgendeine Seite der Applikation zu öffnen, auf welche er keine Zugriffsberechtigung hat.
@@ -76,8 +76,8 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		Falls seine Eingaben korrekt sind, wird der Benutzer angemeldet
 		und auf die Hauptseite umgeleitet. Falls die Eingaben fehlerhaft
 		sind, wird eine Fehlermeldung angezeigt und der Benutzer kann es
-		erneut versuchen. Zudem wird ein Link angezeigt um sein Passwort
-		zurückzusetzen
+		erneut versuchen. Zudem wird ein Link angezeigt, um sein Passwort
+		zurückzusetzen.
 	}
 \end{abnahmefall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,9 +101,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		sich anmelden will, weiss sein Passwort nicht mehr.
 	}
 	\ereignis{
-		Der abgemeldete Benutzer gibt in das Passwort zurücksetzten Formular,
-		die für seinen Benutzer zutreffende E-Mail-Adresse ein und füllt danach
-		das \gls{Captcha} aus und lässt sich ein neues Passwort generieren.
+		Der abgemeldete Benutzer gibt seine E-Mail-Addresse in das Formular, um sein Passwort zurückzusetzten, ein, füllt danach das \gls{Captcha} aus und lässt sich ein neues Passwort generieren.
 	}
 	\ergebnis{
 		Der Benutzer ist abgemeldet und wird auf die Startseite der Applikation umgeleitet.
@@ -531,10 +529,10 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}
 	\ausgangssituation{%
-		 Die Applikation ist auf dem finalen System installiert und es wurden Testdaten hinzugefügt. Die Definition der benötigten Testdaten befindet sich auf dem Testprotokoll. Es wurden ausserdem Unit-Tests für die Applikation geschrieben es gibt einen Computer ohne die Quelldateien der Applikation.%
+		 Die Applikation ist auf dem finalen System installiert und es wurden Testdaten hinzugefügt. Die Definition der benötigten Testdaten befindet sich auf dem Testprotokoll. Es wurden ausserdem Unit-Tests für die Applikation geschrieben.%
 	}
 	\ereignis{%
-		Alle Test auf dem Testprotokoll werden in der aufgelistet Reihenfolge ausgeführt. Ausserdem wird in einer Java-Entwicklungsumgebung der gesamte Sourcecode der Applikation aus Git geklont und die Unit-Tests ausgeführt.%
+		Alle Tests auf dem Testprotokoll werden in der aufgelistet Reihenfolge ausgeführt. Ausserdem wird in einer Java-Entwicklungsumgebung der gesamte Quelltext der Applikation aus Git geklont und die Unit-Tests ausgeführt.%
 	}
 	\ergebnis{%
 		Alle Tests, sowohl vom Protokoll, als auch Unit-Test beenden erfolgreich.%
@@ -549,7 +547,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}
 	\ausgangssituation{%
-		 Ein potentieller Angreifer hat Zugriff auf die Datenbank der Applikation. Die Datenbank beinhaltet mehrere registrierte Benutzer. Zwei Benutzer haben dasselbe Passwort.%
+		 Ein potentieller Angreifer hat Zugriff auf die Datenbank der Applikation. Die Datenbank beinhaltet mehrere registrierte Benutzer.%
 	}
 	\ereignis{%
 		Der Angreifer versucht die Passwörter zu lesen.%
