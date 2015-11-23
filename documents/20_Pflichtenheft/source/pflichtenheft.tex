@@ -22,7 +22,7 @@
 \newcommand{\titel}{Avocado Share}
 \newcommand{\shorttitel}{}
 \newcommand{\doctype}{Pflichtenheft}
-\newcommand{\untertitel}{Webplatform zur }
+\newcommand{\untertitel}{Studentenplattform zum Know-How-Transfer}
 \newcommand{\datum}{\today}
 \newcommand{\team}{Gruppe 13}
 \newcommand{\autorA}{Bergmann Sascha}
@@ -54,8 +54,8 @@
 \title{\title}
 \author{\autorA \and \autorB \and \autorC \and \autorD \and \autorD}
 
-\newcommand{\zeropadded}[1]{%
-    \ifnum\value{#1}<10 0\fi \arabic{#1}%
+\newcommand{\printrequirement}[2]{%
+    \texttt{/#1/} #2% 
 }
 
 \newcommand{\requirementsection}[2]{%
