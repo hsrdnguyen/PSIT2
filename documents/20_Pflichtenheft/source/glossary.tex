@@ -48,7 +48,7 @@
 \newglossaryentry{TLS}
 {
 	name={TLS},
-	description={ist eine Abkürzung für "`Transport Layer Security"' und ist ein Verschlüsselungsprotokoll zur sicheren Datenübertragung im Internet. Die neuste Version von \gls{TLS} ist die Version 1.2}
+	description={ist eine Abkürzung für "`Transport Layer Security"' und ist ein Verschlüsselungsprotokoll zur sicheren Datenübertragung im Internet. Akuell ist die Version 1.2 von \gls{TLS}\cite{rfc5246}}
 }
 
 \newglossaryentry{LDAP}
@@ -61,4 +61,10 @@
 {
 	name={Active Directory},
 	description={ist ein von Microsoft entwickelter Verzeichnisdienst für Windows Server und unterstützt bei der Verwaltung von Benutzern und Rechten}
+}
+
+\newglossaryentry{Perfect Forward Secrecy}
+{
+	name={Perfect Forward Secrecy},
+	description={ist die Eigenschaft von Verschlüsslungsverfahren. Werden mit \gls{TLS} gesicherte Verbindungen zwischen Server und Client aufgezeichnet und der private Schlüssel des gerät in falsche Hände, so ist es mit Perfect Forward Secrecy trotzdem nicht möglich im Nachheinein diese Verbindungen zu entschlüsseln \cite{yanzhu14whytheweb}}
 }

@@ -102,7 +102,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}[Anmelden]
 	\ausgangssituation{
-		Ein Benutzer ist angemeldet.
+		Ein Benutzer ist registriert und angemeldet.
 	}
 	\ereignis{
 		Der angemeldete Benutzer meldet sich über eine Schaltfläche ab.
@@ -205,7 +205,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		Ein bestehender Benutzer ist in der Applikation angemeldet.
 	}
 	\ereignis{
-		Der Benutzer erstellt über ein Formular eine neue Gruppe und  konfiguriert diese Gruppe (siehe Gruppe bearbeiten) sogleich. Er bestimmt lediglich den Namen der Gruppe und schliesst das Erstellen der Gruppe ab.
+		Der Benutzer erstellt über ein Formular eine neue Gruppe und  konfiguriert diese sogleich (siehe \refreq{Gruppe bearbeiten}). Er bestimmt lediglich den Namen der Gruppe und schliesst das Erstellen der Gruppe ab.
 	}
 	\ergebnis{
 		Falls keine andere Gruppe mit dem gleichen Namen bereits existiert, wird die Gruppe mit den eingegebenen Konfigurationen erstellt. Zusätzlich wird der Benutzer, welcher die Gruppe erstellt hat, gleich als Ersteller der Gruppe eingetragen, das Erstelldatum der Gruppe wird gesetzt und der Ersteller bekommt sogleich Verwaltungs-Rechte an der Gruppe. Ist der Gruppenname bereits vergeben wird dem Benutzer eine Fehlermeldung, dass bereits eine Gruppe mit dem gleichen Namen existiert, angezeigt und das Erstellformular für die Gruppe wird erneut angezeigt.
@@ -266,7 +266,6 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 	\ausgangssituation{
 		Es existieren die Gruppen \group{1}, \group{2} und \group{3}, ein angemeldeter Benutzer \user{1}, welcher nicht der Ersteller der Gruppe \group{1} ist, und die Benutzer \user{2} und \user{3}. Die nachfolgende Tabelle~\ref{tab:ausgangssituation_grippenrechte_entziehen} zeigt die Berechtigungen der Benutzer und Gruppen an der Gruppe \group{1}.\\[1em]
 		&
-		%\begin{table}[H]
 		\begin{tabular}{|l|l|} \hline
 		\textbf{Inhaber des Rechts} & \textbf{Rechte an der Gruppe \group{1}}\\ \hline
 		Benutzer \user{1} 			& Verwaltungsrecht \\ \hline
@@ -275,8 +274,6 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		\end{tabular}
 		\captionof{table}{Rechte der Benutzer und Gruppen in der Gruppe \group{1}}
 		\label{tab:ausgangssituation_grippenrechte_entziehen}
-		%\label{tab:ausgangssituation_grippenrechte_entziehen}
-		%\end{table}
 	}%
 	\ereignis{
 		Der Benutzer \user{1} entzieht den Gruppen \group{2} und \group{2} und den Benutzern \user{2} und \user{3} alle Rechte an der Gruppe \group{1}.
