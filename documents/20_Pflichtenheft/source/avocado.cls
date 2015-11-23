@@ -85,8 +85,8 @@
 \chead{}
 \rhead{\bfseries Avocado Share}
 %\lfoot{Sascha Bergmann, Lion Kunz, Dang Thien Nguyen, Cyril Müller}
-\lfoot{Gruppe 13: S. Bergmann, L. Kunz, D. T. Ngueyen, C. Müller}
+\lfoot{Gruppe 13}
 \cfoot{}
-\rfoot{}
+\rfoot{S. Bergmann, L. Kunz, D. T. Ngueyen, C. Müller}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
