@@ -81,14 +81,12 @@
 
 \pagestyle{fancy}
 
-\iffalse
 \lhead{Pflichtenheft}
 \chead{}
 \rhead{\bfseries Avocado Share}
 %\lfoot{Sascha Bergmann, Lion Kunz, Dang Thien Nguyen, Cyril Müller}
-\lfoot{Gruppe 13}
+\lfoot{Gruppe 13: S. Bergmann, L. Kunz, D. T. Ngueyen, C. Müller}
 \cfoot{}
-\rfoot{\thepage}
+\rfoot{}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
-\fi
