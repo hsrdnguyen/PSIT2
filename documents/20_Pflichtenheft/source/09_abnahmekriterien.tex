@@ -24,13 +24,13 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}[Zugriff eines angemeldeten Benutzers mit Berechtigung]
 	\ausgangssituation{
-		Ein angemeldeter Benutzer und besitzt die erforderlichen Berechtigungen eine Seite aufzurufen. Beispielsweise besitzt er das Vewaltungsrecht einer Gruppe, dann hat er Zugriffsberechtigung auf die Seite zum Editieren der Eigenschaften dieser Gruppe.
+		Ein angemeldeter Benutzer und besitzt die erforderlichen Berechtigungen eine Seite aufzurufen. Beispielsweise besitzt er das Verwaltungsrecht einer Gruppe, dann hat er Zugriffsberechtigung auf die Seite zum Editieren der Eigenschaften dieser Gruppe.
 	}
 	\ereignis{
 		Der Benutzer versucht irgendeine Seite der Applikation zu öffnen, auf welche er die Zugriffsberechtigung hat.
 	}
 	\ergebnis{
-		Die vom Benutzer aufgerufene Seite wird angzeigt.
+		Die vom Benutzer aufgerufene Seite wird angezeigt.
 	}
 \end{abnahmefall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		und auf die Hauptseite umgeleitet. Falls die Eingaben fehlerhaft
 		sind, wird eine Fehlermeldung angezeigt und der Benutzer kann es
 		erneut versuchen. Zudem wird ein Link angezeigt um sein Passwort
-		zurückzusetzten.
+		zurückzusetzen
 	}
 \end{abnahmefall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		Ein bestehender Benutzer ist in der Applikation angemeldet.
 	}
 	\ereignis{
-		Der Benutzer editiert über ein Formular seine Benutzerdaten, genauer gesagt seinen Vor- und Nachnamen, sein Profilbild, seine Berechtigungen und seine E-Mail-Adresse und speichert diese ab.
+		Der Benutzer editiert über ein Formular seine Benutzerdaten, genauer gesagt seinen Vor- und Nachnamen, sein Profilbild und seine E-Mail-Adresse und speichert diese ab.
 	}
 	\ergebnis{
 		 Abgesehen von der E-Mail-Adresse wurden alle Änderungen übernommen. Für die Änderung an der E-Mail-Adresse wurde an die neu eingegebene Adresse ein Bestätigungs-E-Mail gesandt, in welchem ein Link zum Bestätigen der E-Mail-Adresse enthalten ist.
@@ -301,7 +301,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 	\ereignis{
 		Der angemeldete Benutzer versucht die Berechtigungen für andere Benutzer zu ändern, zu erteilen oder zu entziehen.
 	}
-	\ergebnis{Falls der angemeldete Benutzer Verwaltungsrecht am Modul besitzt und er nicht versucht, Verwaltungsrechte Anderer zu entziehen, werden die Änderungen übernommmen. Falls er versucht Verwalungsrechte zu entziehen und er nicht der Ersteller des Moduls ist, wird eine Fehlermeldung ausgegeben. Hat der Benutzer kein Verwaltungsrecht am Modul, wird eine Meldung angezeigt, dass er keine Änderungen vornehmen darf.}
+	\ergebnis{Falls der angemeldete Benutzer Verwaltungsrecht am Modul besitzt und er nicht versucht, Verwaltungsrechte Anderer zu entziehen, werden die Änderungen übernommen. Falls er versucht Verwaltungsrechte zu entziehen und er nicht der Ersteller des Moduls ist, wird eine Fehlermeldung ausgegeben. Hat der Benutzer kein Verwaltungsrecht am Modul, wird eine Meldung angezeigt, dass er keine Änderungen vornehmen darf.}
 \end{abnahmefall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -328,7 +328,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 	\ereignis{
 		Der angemeldete Benutzer ändert die Eigenschaften der Datei und speichert diese ab.
 	}
-	\ergebnis{Hat der Benutzer Verwaltungsrecht an der Datei, werden alle Änderungen übernommen. Besitzt der Benutzer nur Schreib-Rechte und ändert er die Eigenschaften (exklusiv Titel und Berechtigungen) ab, werden diese Änderungen übernommen. Versucht er jedoch den Titel und den Namen zu ändern, wird eine Fehlermeldung ausgegeben da er eine zu tiefe Berechtigungs Stufe besitzt. Hat der Benutzer nur Lese-Rechte an der Datei, wird eine Meldung vom System ausgegeben, dass er nicht die Benötigten Berechtigungen hat um die Eigenschaften zu ändern.}
+	\ergebnis{Hat der Benutzer Verwaltungsrecht an der Datei, werden alle Änderungen übernommen. Besitzt der Benutzer nur Schreib-Rechte und ändert er die Eigenschaften (exklusiv Titel und Berechtigungen) ab, werden diese Änderungen übernommen. Versucht er jedoch den Titel und den Namen zu ändern, wird eine Fehlermeldung ausgegeben da er eine zu tiefe Berechtigungs-Stufe besitzt. Hat der Benutzer nur Lese-Rechte an der Datei, wird eine Meldung vom System ausgegeben, dass er nicht die Benötigten Berechtigungen hat um die Eigenschaften zu ändern.}
 \end{abnahmefall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}[Datei löschen]
@@ -345,7 +345,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}[Dateirechte entziehen]
 	\ausgangssituation{
-		Es existieren die Benutzer \user{1}, \user{2}, \user{3} und \user{4}, die Gruppen G2, G3 und G4 und die Dateien $D_1$ und $D_2$. Der Benutzer \user{1} ist angemeldet und Ersteller der Datei $D_1$ aber nicht von der Datei $D_2$. Die Rechte der Benutzer und Gruppen kann aus nachfolgender Tabelle~\ref{tab:ausgangssituation_dateirechte_entziehen} entnommen werden.\\[0.5em]
+		Es existieren die Benutzer \user{1}, \user{2}, \user{3} und \user{4}, die Gruppen \group{2}, \group{3} und \group{4} und die Dateien $D_1$ und $D_2$. Der Benutzer \user{1} ist angemeldet und Ersteller der Datei $D_1$ aber nicht von der Datei $D_2$. Die Rechte der Benutzer und Gruppen kann aus nachfolgender Tabelle~\ref{tab:ausgangssituation_dateirechte_entziehen} entnommen werden.\\[0.5em]
 		&
 		\begin{tabular}{|l|l|} \hline
 		\textbf{Inhaber des Rechts} & \textbf{Rechte an $D_1$ und $D_2$}\\ \hline
@@ -357,9 +357,9 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		\label{tab:ausgangssituation_dateirechte_entziehen}
 	}
 	\ereignis{
-		Der Benutzer \user{1} versucht die Berechtigungsstufen von allen Benutzern \user{2} bis \user{4} und jede Gruppen G1 bis G4 an den Datein $D_1$ und $D_2$ über das entsprechende Formular um eine Stufe herabzusetzen.
+		Der Benutzer \user{1} versucht die Berechtigungsstufen von allen Benutzern \user{2} bis \user{4} und jede Gruppen \group{1} bis \group{4} an den Dateien $D_1$ und $D_2$ über das entsprechende Formular um eine Stufe herabzusetzen.
 	}
-	\ergebnis{Die Berechtigungsstufen der Benutzer \user{2} bis \user{4} und der Gruppen G1 bis G4 an der Datei D1 werden heruntergesetzt. Dasselbe gilt für die Berechtungsstufen der Benutzer \user{2} und \user{3} und der Gruppen G3 und G4 an der Datei D2. Die Berechtigungen der Gruppe G4 und des Benutzers \user{4} können nicht verändert werden und dem Benutzer \user{1} wird eine Fehlermeldung angezeigt.}
+	\ergebnis{Die Berechtigungsstufen der Benutzer \user{2} bis \user{4} und der Gruppen \group{1} bis \group{4} an der Datei $D_1$ werden heruntergesetzt. Dasselbe gilt für die Berechtigungsstufen der Benutzer \user{2} und \user{3} und der Gruppen \group{3} und \group{4} an der Datei $D_2$. Die Berechtigungen der Gruppe \group{4} und des Benutzers \user{4} können nicht verändert werden und dem Benutzer \user{1} wird eine Fehlermeldung angezeigt.}
 \end{abnahmefall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}[Dateirechte verändern]
@@ -369,7 +369,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 	\ereignis{
 		Der angemeldete Benutzer versucht die Berechtigungen an der Datei für andere Benutzer zu ändern, zu erteilen oder zu entziehen.
 	}
-	\ergebnis{Falls der angemeldete Benutzer Verwaltungsrecht an der Datei besitzt und er nicht versucht Verwaltungsrechte von anderen Benutzer oder Rechte, die durch das Modul vorgegeben sind, zu entziehen, werden die Änderungen übernommmen. Falls er versucht Verwaltungsrechte zu entziehen und er nicht der Ersteller der Datei ist, wird eine Fehlermeldung ausgegeben. Eine Fehlermeldung wird auch ausgegeben, wenn versucht wird, die Berechtigungen, die vom Modul, in das die Datei hochgeladen wurde, vorgegeben werden, zu ändern. Hat der Benutzer kein Verwaltungsrecht am Modul, wird eine Meldung angezeigt, dass er keine Änderungen vornehmen darf.}
+	\ergebnis{Falls der angemeldete Benutzer Verwaltungsrecht an der Datei besitzt und er nicht versucht Verwaltungsrechte von anderen Benutzer oder Rechte, die durch das Modul vorgegeben sind, zu entziehen, werden die Änderungen übernommen. Falls er versucht Verwaltungsrechte zu entziehen und er nicht der Ersteller der Datei ist, wird eine Fehlermeldung ausgegeben. Eine Fehlermeldung wird auch ausgegeben, wenn versucht wird, die Berechtigungen, die vom Modul, in das die Datei hochgeladen wurde, vorgegeben werden, zu ändern. Hat der Benutzer kein Verwaltungsrecht am Modul, wird eine Meldung angezeigt, dass er keine Änderungen vornehmen darf.}
 \end{abnahmefall}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \abnahmekriterium{Datei anzeigen}
@@ -488,7 +488,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		Der Benutzer ruft verschiedene Seiten der Webapplikation auf.%
 	}
 	\ergebnis{%
-		Der Text auf den Webseiten ist in korrekten Schweizer Hochdeutsch geschrieben. Die übertragenen Daten sind im UTF-8 codiert.%
+		Der Text auf den Webseiten ist in korrekten Schweizer Hochdeutsch geschrieben. Die übertragenen Daten sind im \gls{utf8} codiert.%
 	}
 \end{abnahmefall}
 
@@ -531,7 +531,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abnahmefall}
 	\ausgangssituation{%
-		 Die Applikation ist auf dem finalen System installiert und es wurden Testdaten hinzugefügt. Die definition der benötigten Testdaten befindet sich auf dem Testprotokoll. Es wurden ausserdem Unit-Tests für die Applikation geschrieben es gibt einen Computer ohne die Source-Files der Applikation.%
+		 Die Applikation ist auf dem finalen System installiert und es wurden Testdaten hinzugefügt. Die Definition der benötigten Testdaten befindet sich auf dem Testprotokoll. Es wurden ausserdem Unit-Tests für die Applikation geschrieben es gibt einen Computer ohne die Quelldateien der Applikation.%
 	}
 	\ereignis{%
 		Alle Test auf dem Testprotokoll werden in der aufgelistet Reihenfolge ausgeführt. Ausserdem wird in einer Java-Entwicklungsumgebung der gesamte Sourcecode der Applikation aus Git geklont und die Unit-Tests ausgeführt.%
@@ -555,7 +555,7 @@ Der Benutzer wird auf die Login Seite umgeleitet und es wird eine Fehlermeldung 
 		Der Angreifer versucht die Passwörter zu lesen.%
 	}
 	\ergebnis{%
-		Dem Angreifer ist es nicht möglich ohne mehraufwand herauszufinden, wie die Passwörter der Benutzer im Klartext lauten und welche Benutzer dasselbe Passwort besitzen.%
+		Dem Angreifer ist es nicht möglich ohne Mehraufwand herauszufinden, wie die Passwörter der Benutzer im Klartext lauten und welche Benutzer dasselbe Passwort besitzen.%
 	}
 
 \end{abnahmefall}
