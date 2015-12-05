@@ -23,7 +23,7 @@
 
 \newcommand{\titel}{Avocado Share}
 \newcommand{\shorttitel}{}
-\newcommand{\doctype}{Pflichtenheft}
+\newcommand{\doctype}{Planung}
 \newcommand{\untertitel}{Studentenplattform zum Know-How-Transfer}
 \newcommand{\datum}{\today}
 \newcommand{\team}{Gruppe 13}
@@ -35,7 +35,7 @@
 \newcommand{\ort}{Winterthur}
 \newcommand{\dozent}{}
 \newcommand{\betreuer}{}
-\newcommand{\version}{1.6}
+\newcommand{\version}{0.1}
 
 \hypersetup{
     bookmarks=false,    % show bookmarks bar?
@@ -114,29 +114,14 @@
 
 \makeglossaries
 
-
 \begin{document}
-\include{glossary}
 \input{00_titlepage}
 \input{01_history}
-\input{02_approval}
+%\input{02_approval}
 \tableofcontents
 \clearpage
 \input{03_einleitung}
-\input{04_zielbestimmung}
-\input{05_produkteinsatz}
-\input{06_functionalrequirements}
-\input{07_functiontree}
-\input{08_nonfunctionalrequirements}
-\input{09_abnahmekriterien}
-\clearpage
-
-\glsaddall
-\printglossaries
-
-%\bibliographystyle{ieeetr}
-\nocite{*}
-%\bibliography{sources}
-\printbibliography[heading=bibintoc]
+\input{netplan.tex}
+\input{ressourcenplanung.tex}
 
 \end{document}
