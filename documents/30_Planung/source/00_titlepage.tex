@@ -1,0 +1,34 @@
+% title page -------------------------------------------------------------------
+\thispagestyle{plain}
+
+\begin{titlepage}
+    \begin{flushleft}
+        \vspace*{1cm}
+        \textbf{
+            \hspace{-0.12cm}\LARGE{\doctype}\\
+            \Huge{\titel}\\
+            \vspace{0.5cm}
+            \large{\untertitel}\\
+            \vspace{1.5cm}
+            \large{\team\\}
+        }
+            \large{\autorA, \autorB,\\\autorC, \autorD}\\
+        \vspace{1cm}
+        \centering
+        \includegraphics[width=0.9\textwidth]{Avocado/AvocadoShare.pdf}
+        \vfill
+        \large{
+            \iffalse % We don't need a dozent or a betreuer
+                \hspace{-0.83cm} \includegraphics{images/zhaw_logo_full}\\
+                \line(1,0){165} 
+
+                \vspace{0.5cm}
+                Auftraggeber:\\ \dozent \\
+                Betreuer:\\ \betreuer \\
+                \vspace{0.5cm}
+            \fi
+            \ort, \datum \hfill Version: \version
+        }
+    \end{flushleft}
+\end{titlepage}
+% end of titlepage -------------------------------------------------------------

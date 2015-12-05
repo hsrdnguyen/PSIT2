@@ -1,0 +1,127 @@
+
+\documentclass{avocado}
+
+
+\usepackage[ngerman]{babel}
+\usepackage[german=quotes]{csquotes}
+\usepackage{float}
+%\usepackage{bibgerm}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage{xstring}
+\usepackage{caption}
+\usepackage[backend=biber, style=ieee]{biblatex}
+\addbibresource{sources.bib}
+%\usepackage[fixlanguage]{babelbib}
+%\selectbiblanguage{german}
+%\bibliographystyle{ieeetr}
+%\addbibresource{sources}
+\newcommand{\mail}[1]{\href{mailto:#1}{#1}}
+\setlength{\parindent}{0cm}
+
+\newcommand{\titel}{Avocado Share}
+\newcommand{\shorttitel}{}
+\newcommand{\doctype}{Pflichtenheft}
+\newcommand{\untertitel}{Studentenplattform zum Know-How-Transfer}
+\newcommand{\datum}{\today}
+\newcommand{\team}{Gruppe 13}
+\newcommand{\autorA}{Bergmann Sascha}
+\newcommand{\autorB}{Kunz Lion}
+\newcommand{\autorC}{Ngueyen Dang Thien}
+\newcommand{\autorD}{Müller Cyril}
+\newcommand{\autorE}{}
+\newcommand{\ort}{Winterthur}
+\newcommand{\dozent}{}
+\newcommand{\betreuer}{}
+\newcommand{\version}{1.6}
+
+\hypersetup{
+    bookmarks=false,    % show bookmarks bar?
+    pdftitle={\titel - \doctype},    % title
+    pdfauthor={\autorA, \autorB, \autorC, \autorD},  % author
+    pdfsubject={Funktionale und nicht-funktionale Anforderungen}, % subject of the document
+    pdfkeywords={\titel, \doctype, \team, Version \version, PSIT, IT15b}, % list of keywords
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=blue!30!black,% color of internal links
+    citecolor=black,        % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=black,         % color of external links
+    linktoc=page            % only page is linked
+}%
+
+%\project{Avocado Share}
+\title{\title}
+\author{\autorA \and \autorB \and \autorC \and \autorD \and \autorD}
+
+\newcommand{\printrequirement}[2]{%
+    \texttt{/#1/} #2% 
+}
+
+\newcommand{\requirementsection}[2]{%
+    \section{\printrequirement{#1xxxx}{#2}}%
+}
+
+
+\newcommand{\requirementsubsection}[2]{%
+    \subsection{\printrequirement{#1xx}{#2}}% 
+}
+
+
+\newcommand{\requirement}[2]{%
+% #1: The requirement number e.g. "T0100"
+% #2: The requirement title
+    \subsubsection*{\printrequirement{#1}{#2}}%
+    \expandafter\def\csname RequirementName#1\endcsname{#2}
+    \expandafter\def\csname RequirementNumber#2\endcsname{#1}
+    \label{subsub:requirement_#2}
+}
+
+\newcommand{\user}[1]{$U_#1$}
+\newcommand{\group}[1]{$G_#1$}
+
+\newenvironment{abnahmefall}[1][]{%
+%begin{abnahmefall}
+\tabularx{\textwidth}{|lX|} \hline
+\ifthenelse{\equal{#1}{}}
+{}{%
+& \textbf{#1} \\ \hline
+}%
+\ignorespaces}{
+%end{abnahmefall}
+\endtabularx\\[1em]
+}
+
+\newcommand{\ausgangssituation}[1]{\textbf{Ausgangssituation} &\ignorespaces #1 \\ \hline}
+\newcommand{\ereignis}[1]{\textbf{Ereignis} &\ignorespaces #1 \\ \hline }
+\newcommand{\ergebnis}[1]{\textbf{Erwartetes Ergebnis} &\ignorespaces #1 \\ \hline}
+
+% Refer to a requirement by it's title
+\newcommand{\refreq}[1]{\nameref{subsub:requirement_#1}}
+\newcommand{\tbf}{\emph{Noch zu definieren.}}
+
+\newcommand{\abnahmekriterium}[1]{%
+\StrLeft{\csname RequirementNumber#1\endcsname}{1}[\requirementsectioncharacter]%
+\StrBehind{\csname RequirementNumber#1\endcsname}{\requirementsectioncharacter}[\plainrequirementnumber]%
+\subsubsection*{\printrequirement{T\plainrequirementnumber}{#1}}%
+}
+
+
+\usepackage[toc, xindy]{glossaries}
+%\newglossary[glignoredl]{ignored}{glignored}{glignoredin}{Ignored Glossary}
+
+
+\makeglossaries
+
+\begin{document}
+\input{00_titlepage}
+\input{01_history}
+\input{02_approval}
+\tableofcontents
+\clearpage
+\input{03_einleitung}
+\input{netplan.tex}
+\input{ressourcenplanung.tex}
+
+\end{document}
