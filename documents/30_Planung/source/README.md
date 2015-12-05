@@ -23,7 +23,15 @@ Es sollte **für Benutzer** ausgewählt werden und **Checkbox enfernen**, dass d
   2. "Haupt"-Dokument (`document.tex`, `pflichtenheft.tex`, o.Ä.) öffnen
   3. Typeset drücken oder <kbd>Ctr + T</kbd>
 
-**Debian (Ubuntu)**
+*Troubleshooting*
+
+"File <something>.sty not found":
+ * TeXworks schliessen (!!)
+ * MiKTeX Package Manager starten
+ * >Repository >Synchronize
+ * Erneut versuchen
+
+**Debian(Ubuntu)**
   
   1. ``make``
   2. ????
