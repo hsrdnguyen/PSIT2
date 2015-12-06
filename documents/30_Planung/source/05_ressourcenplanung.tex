@@ -32,146 +32,16 @@ Die Auslastung ist bei allen Personen sehr ähnlich. Der Projektleiter Sascha Be
 \definecolor{nguyeda}{HTML}{FFC000}
 
 \begin{figure}[H]
-\begin{tikzpicture}
 \centering
-\begin{axis}[
-	width=\linewidth-2cm,
-	xbar stacked,
-	area legend,
-	ytick=data,
-	yticklabels={Aufwand M1,
-				Aufwand M2,
-				Aufwand M3,
-				Aufwand M4,
-				%\emph{Total}
-				},
-	legend style={
-		legend columns=2,
-		at={(xticklabel cs:0.5, 20)},
-		anchor=north,
-		draw=none
-	},
-	xlabel={Aufwand in Stunden},
-	xticklabel pos=lower,
-	minor x tick num=1,
-	xmin=0,
-	xmax=65,
-	bar width=4mm,
-	y=7.5mm,
-	enlarge x limits={abs=0},
-	enlarge y limits={abs=0.7},
-	grid=major,
-	y dir=reverse
-]
-\addplot[bergmansas,fill=bergmansas] coordinates
-% Transfer
-{(13,0)
-(10,1)
-(12,2)
-(12.5,3)};
-
-\addplot[kunzlio,fill=kunzlio] coordinates
-{(13.75,0)
-(12,1)
-(17,2)
-(12.5,3)
-%(55.25,4)
-};
-
-\addplot[muellcy1,fill=muellcy1] coordinates
-{(18.75,0)
-(11,1)
-(16,2)
-(12.5,3)
-%(58.25,4)
-};
-
-\addplot[nguyeda, fill=nguyeda] coordinates
-{(13.75,0)
-(20,1)
-(10,2)
-(12.5,3)
-%(56.25,4)
-};
-
-\legend{S. Bergmann, L. Kunz, C. Müller, D. Nguyen}
-
-\end{axis}
-\end{tikzpicture}
+\input{05.01_diagram_auslastung_meilensteine}
 \caption{Auslastung pro Meilenstein.}
 \end{figure}
 
 
 
 \begin{figure}[H]
-\begin{tikzpicture}
 \centering
-\begin{axis}[
-	width=\linewidth-2cm,
-	xbar stacked,
-	area legend,
-	ytick=data,
-	yticklabels={S. Bergmann,
-				L. Kunz,
-				C. Müller,
-				D. Nguyen,
-				\emph{Total}
-				},
-	xlabel={Aufwand in Stunden},
-	xticklabel pos=lower,
-	minor x tick num=1,
-	xmin=0,
-	xmax=65,
-	bar width=4mm,
-	y=7.5mm,
-	enlarge x limits={abs=0},
-	enlarge y limits={abs=0.7},
-	grid=major,
-	y dir=reverse
-]
-\addplot[bergmansas,fill=bergmansas, x={label}, y={bergmansas}] coordinates
-% Transfer
-{%(13,0)
-(48.25, 0)
-(0,1)
-(0,2)
-(0,3)
-};
-
-\addplot[kunzlio,fill=kunzlio] coordinates
-{
-(0,0)
-(55.25,1)
-(0,2)
-(0,3)
-};
-
-\addplot[muellcy1,fill=muellcy1] coordinates
-{
-(0,0)
-(0,1)
-(58.25,2)
-(0,3)
-%(18.75,0)
-%(11,1)
-%(16,2)
-%(12.5,3)
-%(,4)
-};
-
-\addplot[nguyeda, fill=nguyeda] coordinates
-{
-(0,0)
-(0,1)
-(0,2)
-(56.25,3)
-%(,4)
-};
-
-%\legend{Sascha Bergmann, Lion Kunz, Cyril Müller, Dang Thien Nguyen}
-
-\end{axis}
-\end{tikzpicture}
+\input{05.02_diagram_auslastung_gesammt}
 \caption{Gesamte Auslastung pro Person.}
 \end{figure}
 

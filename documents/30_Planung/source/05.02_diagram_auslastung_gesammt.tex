@@ -1,0 +1,68 @@
+\begin{tikzpicture}
+\centering
+\begin{axis}[
+	width=\linewidth-2cm,
+	xbar stacked,
+	area legend,
+	ytick=data,
+	yticklabels={S. Bergmann,
+				L. Kunz,
+				C. Müller,
+				D. Nguyen,
+				\emph{Total}
+				},
+	xlabel={Aufwand in Stunden},
+	xticklabel pos=lower,
+	minor x tick num=1,
+	xmin=0,
+	xmax=65,
+	bar width=4mm,
+	y=7.5mm,
+	enlarge x limits={abs=0},
+	enlarge y limits={abs=0.7},
+	grid=major,
+	y dir=reverse
+]
+\addplot[bergmansas,fill=bergmansas, x={label}, y={bergmansas}] coordinates
+% Transfer
+{%(13,0)
+(48.25, 0)
+(0,1)
+(0,2)
+(0,3)
+};
+
+\addplot[kunzlio,fill=kunzlio] coordinates
+{
+(0,0)
+(55.25,1)
+(0,2)
+(0,3)
+};
+
+\addplot[muellcy1,fill=muellcy1] coordinates
+{
+(0,0)
+(0,1)
+(58.25,2)
+(0,3)
+%(18.75,0)
+%(11,1)
+%(16,2)
+%(12.5,3)
+%(,4)
+};
+
+\addplot[nguyeda, fill=nguyeda] coordinates
+{
+(0,0)
+(0,1)
+(0,2)
+(56.25,3)
+%(,4)
+};
+
+%\legend{Sascha Bergmann, Lion Kunz, Cyril Müller, Dang Thien Nguyen}
+
+\end{axis}
+\end{tikzpicture}

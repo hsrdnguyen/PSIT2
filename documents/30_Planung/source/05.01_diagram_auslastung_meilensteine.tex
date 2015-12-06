@@ -1,0 +1,57 @@
+\pgfplotstableread{
+MS    bergmansas     kunzlio    muellcy1    nguyeda
+1     13.75          13.75      18.75       13.75
+2     10             12         11          20
+3     12             17         16          10
+4     12.5           12.5       12.5        12.5
+}\datatable
+
+\begin{tikzpicture}
+\begin{axis}[
+	width=\linewidth-2cm,
+	xbar stacked,
+	area legend,
+	ytick=data,
+	yticklabels={Aufwand M1,
+				Aufwand M2,
+				Aufwand M3,
+				Aufwand M4,
+				%\emph{Total}
+				},
+	legend style={
+		legend columns=2,
+		at={(xticklabel cs:0.5, 20)},
+		anchor=north,
+		draw=none
+	},
+	xlabel={Aufwand in Stunden},
+	xticklabel pos=lower,
+	minor x tick num=1,
+	xmin=0,
+	xmax=65,
+	bar width=4mm,
+	y=7.5mm,
+	enlarge x limits={abs=0},
+	enlarge y limits={abs=0.7},
+	grid=major,
+	y dir=reverse,
+    point meta=explicit,
+    %calculate offset/.code={
+    %    \pgfkeys{/pgf/fpu=true,/pgf/fpu/output format=fixed}
+    %    \pgfmathsetmacro\testmacro{(\pgfplotspointmeta*10^\pgfplots@data@scale@trafo@EXPONENT@x)/2*\pgfplots@x@veclength)}
+    %    \pgfkeys{/pgf/fpu=false}
+    %},
+    %every node near coord/.style={
+    %    /pgfplots/calculate offset,
+    %    yshift=-\testmacro
+    %},
+	%nodes near coords,
+	%nodes near coords align=center
+]
+\addplot[bergmansas,fill=bergmansas] table [y={MS}, x=bergmansas] \datatable;
+\addplot[kunzlio,fill=kunzlio] table [y={MS}, x=kunzlio] \datatable;
+\addplot[muellcy1,fill=muellcy1] table [y={MS}, x=muellcy1] \datatable;
+\addplot[nguyeda,fill=nguyeda] table [y={MS}, x=nguyeda] \datatable;
+\legend{S. Bergmann, L. Kunz, C. Müller, D. Nguyen}
+\end{axis}
+\end{tikzpicture}
