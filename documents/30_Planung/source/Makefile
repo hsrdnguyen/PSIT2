@@ -1,10 +1,15 @@
 .PHONY: clean all
+TARGET=planung
+
 all: clean
-	pdflatex pflichtenheft
-	makeglossaries pflichtenheft
-	biber pflichtenheft
-	pdflatex pflichtenheft
-	pdflatex pflichtenheft
+	$(MAKE) $(TARGET)
+
+$(TARGET):
+	pdflatex $@
+	makeglossaries $@
+	biber $@
+	pdflatex $@
+	pdflatex $@
 
 
 

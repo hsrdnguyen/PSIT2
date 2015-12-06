@@ -16,7 +16,15 @@
 \usepackage[backend=biber, style=ieee]{biblatex}
 \usepackage{pgfplots}
 \usepackage{pgfgantt}
+\usepackage{todonotes}
 %\usepackage{ltablex} % breaks the history tabularx
+
+% colors for bar charts
+\definecolor{bergmansas}{HTML}{5B9BD5} % light blue
+\definecolor{kunzlio}{HTML}{ED7D31}  % dark orange
+\definecolor{muellcy1}{HTML}{A5A5A5} % gray
+\definecolor{nguyeda}{HTML}{FFC000} % bright orange
+
 
 
 \addbibresource{sources.bib}
@@ -41,13 +49,13 @@
 \newcommand{\ort}{Winterthur}
 \newcommand{\dozent}{}
 \newcommand{\betreuer}{}
-\newcommand{\version}{0.1}
+\newcommand{\version}{0.2}
 
 \hypersetup{
     bookmarks=false,    % show bookmarks bar?
     pdftitle={\titel - \doctype},    % title
     pdfauthor={\autorA, \autorB, \autorC, \autorD},  % author
-    pdfsubject={Funktionale und nicht-funktionale Anforderungen}, % subject of the document
+    pdfsubject={Planung des Avocado-Shares}, % subject of the document
     pdfkeywords={\titel, \doctype, \team, Version \version, PSIT, IT15b}, % list of keywords
     colorlinks=true,        % false: boxed links; true: colored links
     linkcolor=blue!30!black,% color of internal links
