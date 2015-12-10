@@ -1,5 +1,5 @@
 \section{Netzplan}
-Im folgenden Netzplan sind alle Arbeitspakete der Entwicklung des Avocado-Share dargestellt. 
+Im folgenden Netzplan (Abbildung~\ref{fig:netzplan}) sind alle Arbeitspakete der Entwicklung des Avocado-Share dargestellt. 
 Um sicherzustellen, dass jedes Arbeitspaket termingerecht und vollständig ausgeführt wird, haben wir beschlossen, neben dem Verantwortlichen auch eine Person zu bestimmen, welche eine Aufgabe ausführt.\\
 
 Durch eine Planungsphase zu Beginn des Projektes, ist es uns möglich eine klare Schichtentrennung zu machen.
@@ -9,12 +9,11 @@ Grundgerüstes, doch es bringt uns viel Freiheit in den folgenden Paketen. So k�
 Verzögerungen und Ausfälle reagieren.
 Da wir eine technisch saubere Lösung haben wollen, ist es uns wichtig, dass die Spezialisten eines Bereiches in unserem Team auch entweder Verantwortlicher oder Ausführender eines Arbeitspaketes sind. \\
 
-In jedem Arbeitspaket inbegriffen ist, wo sinnvoll, auch das Testing.
-Bei Arbeitspaketen in welchen Java-Code geschrieben wurde, sollten Unit-Tests geschrieben werden.
-Bei Web- und UI-Paketen sollte ein kurzes Test-Protokoll geschrieben werden, um sicherzustellen, dass alle Funktionen auch korrekt funktionieren.
-So kann beim Arbeitspaket Testing schnell und einfach alles nochmals getestet werden.\\
+Ein Paket gilt erst als abgeschlossen, wenn die Qualität der Arbeit überprüft wurde.
+Für geschriebenen Java-Code, sollen Unit-Tests geschrieben werden. Bei Web- und UI-Paketen sollte ein kurzes Test-Protokoll geschrieben werden, um sicherzustellen, dass alle Module und Klassen auch korrekt implementiert wurden und funktionieren.
+So kann beim Arbeitspaket "`Testing"' schnell und einfach alles nochmals getestet werden. Design- und Planungspakete, wie "`Softwareentwurf"' oder "`DB-Design"', müssen zur Kontrolle einem Review des Projektteams standhalten.\\
 
-Design- und Planungspakete haben als "`Test"' ein Review mit dem gesamten Team.
+Im Anhang~\ref{sub:arbeitspakete_und_aufwandschaetzung} findet sich eine Auflistung aller Arbeitspakete. Ebenfalls ist unter \ref{sec:netzplan_abhaengigkeiten} eine zusätzliche Darstellung des Netzplanes zu finden, bei welcher die Pakete nach ihren Abhängigkeiten gegliedert sind. Diese zusätzliche Darstellung zeigt, welche Schritte parallel erledigt werden könnten.
 
 \begin{landscape}
 % \vspace*{\fill}: center vertically 
@@ -23,6 +22,7 @@ Design- und Planungspakete haben als "`Test"' ein Review mit dem gesamten Team.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{graphics/netzplan_s2.pdf}
 \caption{Der Netzplan zeigt die Arbeitspakete, geordnet nach Arbeitsprozessen.}
+\label{fig:netzplan}
 \end{figure}
 \vspace*{\fill}
 \end{landscape}

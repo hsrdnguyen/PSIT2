@@ -86,7 +86,7 @@
 \rhead{\bfseries Avocado Share}
 %\lfoot{Sascha Bergmann, Lion Kunz, Dang Thien Nguyen, Cyril Müller}
 \lfoot{Gruppe 13}
-\cfoot{S. Bergmann, L. Kunz, D. Ngueyen, C. Müller}
+\cfoot{S. Bergmann, L. Kunz, D. Nguyen, C. Müller}
 \rfoot{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
