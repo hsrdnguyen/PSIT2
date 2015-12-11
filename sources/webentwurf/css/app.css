@@ -72,7 +72,8 @@ section.fullpage:last-of-type{
 }
 
 section.fullpage#login{
-	background-color:rgba(240,255,240,20);
+	/* Fancy background image goes here */
+	background-image:url('../gfx/loginwallpaper.jpg');
 }
 
 
