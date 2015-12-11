@@ -31,7 +31,6 @@ footer{
 	padding-top: 3rem;
 	/* box */
 	background-color: rgb(230,230,230);
-
 	/* font */
 	font-size: 85%;
 }
@@ -51,6 +50,63 @@ footer ul li a:link {
 	color: rgb(120,120,120);
 }
 
+h1 {
+	margin-bottom: 2rem;
+}
 
-.modul {
+main {
+	margin: 2.5rem 0;
+}
+
+section {
+	margin-bottom: 1rem;
+}
+
+section.fullpage{
+	padding: 2rem;
+	height: 100%;
+	position: relative;
+}
+section.fullpage:last-of-type{
+	margin-bottom: 200px; /* push footer down */
+}
+
+section.fullpage#login{
+	background-color:rgba(240,255,240,20);
+}
+
+
+.vertical-center {
+	display: table;
+	height: 100%;
+}
+
+.vertical-center.container{
+	width: 100%;
+}
+
+.vertical-center > div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#loginform {
+	background: #fff;
+	padding: 2rem 2rem 1rem 2rem;
+}
+
+/*
+a.modul-link:link, a.modul-link:hover, a.modul-link {
+	text-decoration: none;
+	color:inherit;
+}
+
+a.modul-link:hover .modul {
+	background-color: rgb(230,230,230);
+	color: rgb(20,20,20);
+}
+*/
+
+.list-group-header{
+	background-color: rgb(240,240,240);
 }

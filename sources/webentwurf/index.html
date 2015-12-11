@@ -11,8 +11,9 @@
 </head>
 <body>
 <div id="footerpusher">
-<header class="container">
+<header>
     <nav class="navbar navbar-light bg-faded">
+      <div class="container">
       <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
         &#9776;
       </button>
@@ -52,7 +53,7 @@
                     <label for="navbar-login-username" class="input-group-addon">
                       <span class="octicon octicon-person"></span>
                       <!-- Display label without css and placeholder -->
-                      <span class="hidden-xs-up">Benutzername</span>
+                      <span class="sr-only">Benutzername</span>
                     </label>
                     <input id="navbar-login-username" type="text" class="form-control" placeholder="Benutzername">
                   </div>
@@ -60,7 +61,7 @@
                     <label for="navbar-login-password" class="input-group-addon">
                       <span class="octicon octicon-lock"></span>
                       <!-- Display label without css and placeholder -->
-                      <span class="hidden-xs-up">Passwort</span>
+                      <span class="sr-only">Passwort</span>
                     </label>
                     <input id="navbar-login-password" type="password" class="form-control" placeholder="Passwort">
                   </div>
@@ -72,34 +73,62 @@
         </li>
       </ul>
       </div>
+      </div>
     </nav>
 </header>
 <main class="container">
-  <h1>Startseite</h1>
+  <h1>Dein Portfolio</h1>
   <div class="row">
     <section class="col-xl-4 col-lg-6">
-      <h2>Module</h2>
-      <div class="modul card">
-        <div class="card-block">
-          <h4 class="card-title">Analysis für Dummies</h4>
-          <p class="card-text">Kurzeinstieg in Anlysis</p>
-          <a href="#" class="btn btn-primary">Betrachten</a>
-        </div>
-      </div>
-
-      <div class="modul card">
-        <div class="card-block">
-          <h4 class="card-title">Webdesign für Nerds</h4>
-          <p class="card-text">HTML &amp; Unicode ጷm Web.</p>
-          <a href="#" class="btn btn-primary">Betrachten</a>
-        </div>
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Module</h2></div>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
+          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">MANIT</h4>
+          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+        </a>
       </div>
     </section>
     <section class="col-xl-4 col-lg-6">
-      <h2>Kürzlich hinzugefügte Dateien</h2>
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Kürzlich hinzugefügte Dateien</h2></div>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
+          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">MANIT</h4>
+          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+        </a>
+      </div>
     </section>
     <section class="col-xl-4 col-lg-6">
-      <h2>Zuletzt Besucht</h2>
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Zuletzt besucht</h2></div>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
+          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">MANIT</h4>
+          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+        </a>
+      </div>
     </section>
   </div>
 </main>
