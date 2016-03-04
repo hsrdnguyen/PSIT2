@@ -1,5 +1,6 @@
 -- Avocado Share schema generation commands
 
+-- Create users with password set to "secret password"
 -- CREATE identity avocado_admin WITH ENCRYPTED PASSWORD 'a584efafa8f9ea7fe5cf18442f32b07b';
 -- CREATE identity avocado_web WITH ENCRYPTED PASSWORD 'a584efafa8f9ea7fe5cf18442f32b07b';
 
