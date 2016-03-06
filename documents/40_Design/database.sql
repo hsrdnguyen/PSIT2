@@ -1,50 +1,61 @@
 -- Avocado Share schema generation commands
 
--- CREATE identity avocado_admin WITH ENCRYPTED PASSWORD 'a584efafa8f9ea7fe5cf18442f32b07b';
--- CREATE identity avocado_web WITH ENCRYPTED PASSWORD 'a584efafa8f9ea7fe5cf18442f32b07b';
+-- Create users with password set to a secret password.
+-- keiM2h0ciOgw;4)-/x-4nvRU5BgD#Y7N
+
+CREATE ROLE avocado_tomcat WITH ENCRYPTED PASSWORD '77eb2c2e52824f26bd47f6d0bc6e1dcb' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOLOGIN;
 
 CREATE SCHEMA avocado_share;
 
--- GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA avocado_share TO avocado_web;
--- GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA avocado_share TO avocado_admin;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA avocado_share TO avocado_tomcat;
 
 SET search_path TO avocado_share;
 
 CREATE TABLE access_control
 (
-  Id INTEGER NOT NULL,
-  CreationDate timestamp NOT NULL,
-  CONSTRAINT pk_access_control PRIMARY KEY (Id)
+  id INTEGER NOT NULL,
+  creation_date timestamp NOT NULL,
+  CONSTRAINT pk_access_control PRIMARY KEY (id)
 );
 
 CREATE TABLE file
 (
-  Id INTEGER NOT NULL,
+  id INTEGER NOT NULL,
   Title VARCHAR(50) NOT NULL,
-  Description VARCHAR(512) NOT NULL,
-  Filename VARCHAR(32) NOT NULL,
-  Type VARCHAR(32) NOT NULL,
+  description VARCHAR(512) NOT NULL,
   LastChanged timestamp NOT NULL,
-  CONSTRAINT pk_File PRIMARY KEY(Id),
-  CONSTRAINT fk_File FOREIGN KEY(Id) REFERENCES access_control(Id)
+  CONSTRAINT pk_File PRIMARY KEY(id),
+  CONSTRAINT fk_File FOREIGN KEY(id) REFERENCES access_control(id)
+);
+
+CREATE TABLE file_version
+(
+  id INTEGER NOT NULL,
+  type VARCHAR(32) NOT NULL,
+  filename VARCHAR(32) NOT NULL,
+  creation_date timestamp NOT NULL,
+  CONSTRAINT pk_file_version PRIMARY KEY(id, filename),
+  CONSTRAINT fk_file_version FOREIGN KEY(id) REFERENCES file(id)
 );
 
 CREATE TABLE access_group
 (
-  Id INTEGER NOT NULL,
-  Name VARCHAR(32) NOT NULL,
-  Description VARCHAR(512) NOT NULL,
-  CONSTRAINT pk_access_group PRIMARY KEY(Id),
-  CONSTRAINT fk_access_group_Id FOREIGN KEY(Id) REFERENCES access_control(Id)
+  id INTEGER NOT NULL,
+  name VARCHAR(32) NOT NULL,
+  description VARCHAR(512) NOT NULL,
+  CONSTRAINT pk_access_group PRIMARY KEY(id),
+  CONSTRAINT fk_access_group_id FOREIGN KEY(id) REFERENCES access_control(id),
+  CONSTRAINT uc_access_group UNIQUE(name)
 );
 
 CREATE TABLE module
 (
-  Id INTEGER NOT NULL,
-  Name VARCHAR(32) NOT NULL,
-  Description VARCHAR(512) NOT NULL,
-  CONSTRAINT pk_Module PRIMARY KEY(Id),
-  CONSTRAINT fk_Module_Id FOREIGN KEY(Id) REFERENCES access_control(Id)
+  id INTEGER NOT NULL,
+  name VARCHAR(32) NOT NULL,
+  description VARCHAR(512) NOT NULL,
+  CONSTRAINT pk_module PRIMARY KEY(id),
+  CONSTRAINT fk_module_id FOREIGN KEY(id) REFERENCES access_control(id),
+  CONSTRAINT uc_module UNIQUE(name)
 );
 
 CREATE TABLE identity
@@ -52,11 +63,11 @@ CREATE TABLE identity
   id INTEGER NOT NULL,
   prename VARCHAR(50) NOT NULL,
   surname VARCHAR(50) NOT NULL,
-  avatar VARCHAR(32) NOT NULL,        -- Path to file?
+  avatar VARCHAR(65) NOT NULL,
   description VARCHAR(512) NOT NULL,
-  password VARCHAR(10) NOT NULL,
-  CONSTRAINT pk_identity PRIMARY KEY(Id),
-  CONSTRAINT fk_identity_id FOREIGN KEY(Id) REFERENCES access_control(Id)
+  password VARCHAR(65) NOT NULL,
+  CONSTRAINT pk_identity PRIMARY KEY(id),
+  CONSTRAINT fk_identity_id FOREIGN KEY(id) REFERENCES access_control(id)
 );
 
 
@@ -76,7 +87,7 @@ CREATE TABLE email
   address VARCHAR(128) NOT NULL,
   verified BOOLEAN NOT NULL,
   CONSTRAINT pk_email PRIMARY KEY(identity_id, address),
-  CONSTRAINT fk_email_id FOREIGN KEY(identity_id) REFERENCES identity(Id)
+  CONSTRAINT fk_email_id FOREIGN KEY(identity_id) REFERENCES identity(id)
 );
 
 CREATE TABLE email_verification
@@ -93,9 +104,9 @@ CREATE TABLE email_verification
 CREATE TABLE category
 (
   object_id INTEGER NOT NULL,
-  Name VARCHAR(100) NOT NULL,
-  CONSTRAINT pk_Category PRIMARY KEY(object_id, Name),
-  CONSTRAINT fk_Category_object_id FOREIGN KEY (object_id) REFERENCES access_control(Id)
+  name VARCHAR(100) NOT NULL,
+  CONSTRAINT pk_Category PRIMARY KEY(object_id, name),
+  CONSTRAINT fk_Category_object_id FOREIGN KEY (object_id) REFERENCES access_control(id)
 );
 
 
@@ -114,10 +125,10 @@ CREATE TABLE rights
   object_id INTEGER NOT NULL,
   owner_id INTEGER NOT NULL,
   Level INTEGER NOT NULL,
-  CONSTRAINT fk_Rights_Level FOREIGN KEY(Level) REFERENCES access_level(Level),
-  CONSTRAINT fk_Rights_owner_id FOREIGN KEY(owner_id) REFERENCES access_control(Id),
-  CONSTRAINT fk_Rights_object_id FOREIGN KEY(object_id) REFERENCES access_control(Id),
-  CONSTRAINT pk_Rights PRIMARY KEY(object_id, owner_id)
+  CONSTRAINT fk_rights_Level FOREIGN KEY(Level) REFERENCES access_level(Level),
+  CONSTRAINT fk_rights_owner_id FOREIGN KEY(owner_id) REFERENCES access_control(id),
+  CONSTRAINT fk_rights_object_id FOREIGN KEY(object_id) REFERENCES access_control(id),
+  CONSTRAINT pk_rights PRIMARY KEY(object_id, owner_id)
 );
 
 
@@ -135,11 +146,11 @@ CREATE TABLE rating
 (
   object_id INTEGER NOT NULL,
   identity_id INTEGER NOT NULL,
-  Rating INTEGER NOT NULL,
-  CONSTRAINT fk_Rating_object_id FOREIGN KEY(object_id) REFERENCES access_control(Id),
-  CONSTRAINT fk_Rating_identity_id FOREIGN KEY(identity_id) REFERENCES identity(Id),
-  CONSTRAINT pk_Rating PRIMARY KEY(object_id, identity_id),
-  CONSTRAINT chk_Rating CHECK (Rating >= 0 AND Rating <= 5)
+  rating INTEGER NOT NULL,
+  CONSTRAINT fk_rating_object_id FOREIGN KEY(object_id) REFERENCES access_control(id),
+  CONSTRAINT fk_rating_identity_id FOREIGN KEY(identity_id) REFERENCES identity(id),
+  CONSTRAINT pk_rating PRIMARY KEY(object_id, identity_id),
+  CONSTRAINT chk_rating CHECK (rating >= 0 AND Rating <= 5)
 );
 
 CREATE TABLE uploaded_into
@@ -147,8 +158,8 @@ CREATE TABLE uploaded_into
   file_id INTEGER NOT NULL,
   module_id INTEGER NOT NULL,
   Level INTEGER NOT NULL,
-  CONSTRAINT fk_uploaded_into_file_id FOREIGN KEY(file_id) REFERENCES File(Id),
-  CONSTRAINT fk_uploaded_into_module_id FOREIGN KEY(module_id) REFERENCES Module(Id),
+  CONSTRAINT fk_uploaded_into_file_id FOREIGN KEY(file_id) REFERENCES File(id),
+  CONSTRAINT fk_uploaded_into_module_id FOREIGN KEY(module_id) REFERENCES Module(id),
   CONSTRAINT pk_uploaded_into PRIMARY KEY(file_id),
   CONSTRAINT uc_uploaded_into UNIQUE(file_id, module_id)
 );
