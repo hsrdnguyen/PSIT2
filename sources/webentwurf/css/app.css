@@ -111,3 +111,13 @@ a.modul-link:hover .modul {
 .list-group-header{
 	background-color: rgb(240,240,240);
 }
+
+.main-section {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+* {fd
+    box-sizing: border-box;
+}
+
