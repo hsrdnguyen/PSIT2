@@ -1,4 +1,4 @@
-package AvocadoShare.Model.Data;
+package ch.avocado.share.model.data;
 
 import java.util.Date;
 import java.util.List;

@@ -1,7 +1,7 @@
-package AvocadoShare.Common;
+package ch.avocado.share.common;
 
-import AvocadoShare.Model.Exceptions.ServiceNotFoundException;
-import AvocadoShare.Service.*;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.*;
 
 import java.lang.reflect.Type;
 import java.util.Dictionary;

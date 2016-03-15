@@ -1,4 +1,4 @@
-package AvocadoShare.Model.Data;
+package ch.avocado.share.model.data;
 
 /**
  * Created by bergm on 15/03/2016.

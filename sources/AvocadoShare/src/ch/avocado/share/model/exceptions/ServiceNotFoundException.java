@@ -1,4 +1,4 @@
-package AvocadoShare.Model.Exceptions;
+package ch.avocado.share.model.exceptions;
 
 /**
  * Created by bergm on 15/03/2016.
