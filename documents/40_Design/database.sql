@@ -71,6 +71,15 @@ CREATE TABLE identity
 );
 
 
+CREATE TABLE password_reset
+(
+  id INTEGER NOT NULL,
+  expiry TIMESTAMP NOT NULL,
+  code CHAR(32) NOT NULL,
+  CONSTRAINT pk_password_reset PRIMARY KEY(id),
+  CONSTRAINT fk_password_reset REFERENCES identity(id)
+);
+
 CREATE TABLE ownership
 (
   owner_id INTEGER NOT NULL,
