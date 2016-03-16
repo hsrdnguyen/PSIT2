@@ -1,4 +1,4 @@
-
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -15,17 +15,9 @@
 <header>
     <nav class="navbar navbar-light bg-faded">
       <div class="container">
-
-
-
-
       <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
         &#9776;
       </button>
-
-
-
-
       <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
       <a href="indexlog.html" class="navbar-brand" href="#">Avocado Share</a>
       <ul class="nav navbar-nav">
@@ -100,7 +92,7 @@
         <!-- Second Module -->
         <a href="document_view.html" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode á·m Web.</p>
         </a>
         <!-- Third Module -->
         <a href="document_view.html" class="list-group-item">
@@ -118,7 +110,7 @@
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode á·m Web.</p>
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">MANIT</h4>
@@ -135,7 +127,7 @@
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode á·m Web.</p>
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">MANIT</h4>
@@ -149,12 +141,12 @@
 <footer class="text-muted">
   <div class="container">
     <ul>
-      <li><a href="#">Über uns</a></li>
+      <li><a href="#">Ãber uns</a></li>
       <li><a href="contact.html">Kontakt</a></li>
       <li><a href="#">Fehler melden</a></li>
       <li><a href="#">Profil Bearbeiten</a></li>
     </ul>
-    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
+    <p>SorgfÃ¤lltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
   </div>
 

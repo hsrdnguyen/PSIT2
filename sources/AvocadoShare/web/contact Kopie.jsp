@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/app.css">
+  <meta charset="utf-8" />
 </head>
 <body>
 <div id="footerpusher">
@@ -84,7 +85,7 @@
  	<h2>Senden Sie uns eine Nachricht</h2>
 	</a>
 	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
-	<p class="text-block">Die Felder mit * mÃ¼ssen ausgefÃ¼llt werden.</p><div id="xform" class="xform">
+	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
 
     <form action="" method="post" id="form_formular" class="contact_action">
 

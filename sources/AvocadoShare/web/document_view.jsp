@@ -78,7 +78,7 @@
     </nav>
 </header>
 <main class="container">
-  <h1>DokumentenÃ¼berblick</h1>
+  <h1>Dokumentenüberblick</h1>
    <form class="form-inline">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Suchwort">
@@ -131,11 +131,11 @@
       <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
         <a href="document_view0.html" class="list-group-item">
-          <h4 class="list-group-item-heading">Analysis fÃ¼r Dummies</h4>
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
           <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
         </a>
         <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign fÃ¼r Nerds</h4>
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
           <p class="list-group-item-text">HTML &amp; Unicode im Web.</p>
         </a>
         <a href="#" class="list-group-item">
@@ -154,7 +154,7 @@
       <li><a href="contact.html" href="#contact">Kontakt</a></li>
       <li><a href="#something">Fehler melden</a></li>
     </ul>
-    <p>SorgfÃ¤lltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril MÃ¼ller</span>.</p>
+    <p>SorgfÃ¤lltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
   </div>
 

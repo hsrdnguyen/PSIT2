@@ -117,7 +117,8 @@ a.modul-link:hover .modul {
     position: relative;
     overflow: hidden;
 }
-* {fd
+
+* {
     box-sizing: border-box;
 }
 

@@ -1,4 +1,4 @@
-
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -99,7 +99,7 @@
         <!-- Second Module -->
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode îm Web.</p>
         </a>
         <!-- Third Module -->
         <a href="#" class="list-group-item">
@@ -117,7 +117,7 @@
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode á·m Web.</p>
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">MANIT</h4>
@@ -134,7 +134,7 @@
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode á·m Web.</p>
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">MANIT</h4>
@@ -148,11 +148,11 @@
 <footer class="text-muted">
   <div class="container">
     <ul>
-      <li><a href="#about">Über uns</a></li>
+      <li><a href="#about">Ãber uns</a></li>
       <li><a href="contact.html" href="#contact">Kontakt</a></li>
       <li><a href="#something">Fehler melden</a></li>
     </ul>
-    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
+    <p>SorgfÃ¤lltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
   </div>
 

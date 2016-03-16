@@ -3,14 +3,13 @@ package ch.avocado.share.model.data;
 /**
  * Created by bergm on 15/03/2016.
  */
-public class EmailAddress extends AccessControlObjectBase{
+public class EmailAddress {
 
     private boolean verified;
     private String address;
     private EmailAddressVerification verification;
 
     public EmailAddress(boolean verified, String address, EmailAddressVerification verification) {
-
         setVerified(verified);
         setAddress(address);
         setVerification(verification);

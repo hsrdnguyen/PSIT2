@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/app.css">
+  <meta charset="utf-8" />
 </head>
 <body>
 <div id="footerpusher">
