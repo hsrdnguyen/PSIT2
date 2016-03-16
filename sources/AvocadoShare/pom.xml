@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>AvocadoShare</groupId>
-  <artifactId>AvocadoShare</artifactId>
+  <groupId>ch.avocado</groupId>
+ 
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>Avocado Share</name>
@@ -10,14 +10,22 @@
     <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <configuration>
+              <webXml>web/WEB-INF/web.xml</webXml>
+          </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
         <configuration>
-          <source/>
-          <target/>
+          <source>7</source>
+          <target />
         </configuration>
       </plugin>
     </plugins>
+    
   </build>
  <dependencies>
     <dependency>
@@ -36,6 +44,12 @@
       <artifactId>jstl</artifactId>
       <version>1.2</version>
     </dependency>
+  	<dependency>
+		<groupId>org.bouncycastle</groupId>
+		<artifactId>bcprov-jdk15on</artifactId>
+		<version>1.54</version>
+	</dependency>
+    
     <dependency>
       <groupId>org.glassfish.web</groupId>
       <artifactId>jstl-impl</artifactId>
@@ -56,4 +70,6 @@
       </exclusions>
     </dependency>
   </dependencies>
+ <url>https://github.engineering.zhaw.ch/ps-15-spio-lerx/ps_15_gruppe13</url>
+ <artifactId>share</artifactId>
 </project>

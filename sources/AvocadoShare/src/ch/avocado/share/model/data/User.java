@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class User extends AccessControlObjectBase{
 
-    private String password;
+    private UserPassword password;
     private String prename;
     private String surname;
     private String avatar;
@@ -23,13 +23,13 @@ public class User extends AccessControlObjectBase{
         setSurname(surname);
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordDigest() {
+    	return this.password.getDigest();
     }
-
+    
     public void setPassword(String password) {
-        if (password == null) throw new IllegalArgumentException("password is null");
-        this.password = password;
+    	if (password == null) throw new IllegalArgumentException("password is null");
+    	this.password = UserPassword.fromPassword(password);
     }
 
     public String getPrename() {
