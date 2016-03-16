@@ -1,4 +1,4 @@
-package ch.avocado.share.model.data;
+package ch.avocado.share.test;
 
 import static org.junit.Assert.*;
 
