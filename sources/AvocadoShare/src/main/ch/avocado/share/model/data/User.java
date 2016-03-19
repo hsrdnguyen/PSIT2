@@ -14,7 +14,7 @@ public class User extends AccessControlObjectBase{
     private String avatar;
     private EmailAddress mail;
 
-    public User(String id, List<Category> categories, Date creationDate, Rating rating, String ownerId, String description, String password, String prename, String surname, String avatar, EmailAddress mail) {
+    public User(String id, List<Category> categories, Date creationDate, Rating rating, String ownerId, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
         super(id, categories, creationDate, rating, ownerId, description);
         setAvatar(avatar);
         setMail(mail);
@@ -23,13 +23,13 @@ public class User extends AccessControlObjectBase{
         setSurname(surname);
     }
 
-    public String getPasswordDigest() {
-    	return this.password.getDigest();
+    public UserPassword getPassword() {
+    	return this.password;
     }
     
-    public void setPassword(String password) {
+    public void setPassword(UserPassword password) {
     	if (password == null) throw new IllegalArgumentException("password is null");
-    	this.password = UserPassword.fromPassword(password);
+    	this.password = password;
     }
 
     public String getPrename() {

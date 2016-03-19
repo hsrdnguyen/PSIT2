@@ -1,13 +1,10 @@
 package ch.avocado.share.model.data;
 
+import ch.avocado.share.helper.Base64;
 import ch.avocado.share.helper.BinaryTokenGenerator;
 import ch.avocado.share.helper.TokenGenerator;
 
 import java.io.Serializable;
-import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
-
 import org.bouncycastle.crypto.generators.*;
 
 /**
@@ -37,7 +34,7 @@ public class UserPassword implements Serializable{
 	private String digest;
 
 	/**
-	 * Private constructor for {@link fromPassword}.
+	 * Private constructor for {@link UserPassword.fromPassword}.
 	 */
 	private UserPassword() {
 		this.digest = null;
@@ -89,10 +86,9 @@ public class UserPassword implements Serializable{
 		if(salt == null) {
 			throw new IllegalArgumentException("salt can't be null");
 		}
-		Encoder encoder = Base64.getEncoder();
 		byte[] key = SCrypt.generate(password.getBytes(), salt, SCRYPT_CPU_MEMORY_COST, SCRYPT_BLOCK_SIZE,
 				SCRYPT_PARALIZING_FACTOR, SCRYPT_KEY_LENGTH);
-		return encoder.encodeToString(salt) + ":" + encoder.encodeToString(key);
+		return Base64.encode(salt) + ":" + Base64.encode(key);
 	}
 
 	/**
@@ -130,9 +126,8 @@ public class UserPassword implements Serializable{
 	 * @return The salt
 	 */
 	private byte[] getSalt() {
-		Decoder decoder = Base64.getDecoder();
 		if (this.digest.contains(":")) {
-			return decoder.decode(this.digest.split(":")[0]);
+			return Base64.decode(this.digest.split(":")[0]);
 		}
 		return null;
 	}

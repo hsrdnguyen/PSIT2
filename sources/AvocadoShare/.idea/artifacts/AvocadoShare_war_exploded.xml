@@ -1,13 +1,22 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="AvocadoShare:war exploded">
-    <output-path>$PROJECT_DIR$/out/artifacts/AvocadoShare_war_exploded</output-path>
+    <output-path>$PROJECT_DIR$/target/share-0.0.2-SNAPSHOT</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="AvocadoShare/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="AvocadoShare" />
         </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.1.0" />
+          <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
+          <element id="library" level="project" name="Maven: org.bouncycastle:bcprov-jdk15on:1.54" />
+          <element id="library" level="project" name="Maven: org.glassfish.web:jstl-impl:1.2" />
+        </element>
       </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/share-0.0.2-SNAPSHOT/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="AvocadoShare/web/Web" />
     </root>
   </artifact>
 </component>
