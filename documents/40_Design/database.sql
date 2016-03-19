@@ -77,7 +77,7 @@ CREATE TABLE password_reset
   expiry TIMESTAMP NOT NULL,
   code CHAR(32) NOT NULL,
   CONSTRAINT pk_password_reset PRIMARY KEY(id),
-  CONSTRAINT fk_password_reset REFERENCES identity(id)
+  CONSTRAINT fk_password_reset FOREIGN KEY(id) REFERENCES identity(id)
 );
 
 CREATE TABLE ownership
