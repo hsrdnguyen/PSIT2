@@ -12,8 +12,8 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     private static Connection conn;
 
     // JDBC driver name and database URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/EMP";
+    static final String JDBC_DRIVER = "org.postgresql.Driver";
+    static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_share";
 
     //  Database credentials
     static final String USER = "avocado_tomcat";
@@ -33,8 +33,10 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
         ensureConnection();
         Statement stmt = conn.createStatement();
 
+        ResultSet result = stmt.executeQuery(query);
+
         conn.close();
-        return stmt.executeQuery(query);
+        return result;
     }
 
     @Override
@@ -51,15 +53,17 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     public boolean updateDataSet(String query) throws SQLException {
         ensureConnection();
         Statement stmt = conn.createStatement();
-
+        boolean result = stmt.executeUpdate(query) != 0;
         conn.close();
-        return stmt.executeUpdate(query) != 0;
+        return result;
     }
 
     private void ensureConnection() throws SQLException {
         if (conn == null || conn.isClosed())
         {
             conn =  DriverManager.getConnection(DB_URL,USER,PASS);
+            Statement setSchema = conn.createStatement();
+            setSchema.execute("SET search_path TO avocado_share;");
         }
     }
 
