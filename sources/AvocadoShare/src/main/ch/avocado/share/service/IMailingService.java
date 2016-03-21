@@ -25,4 +25,10 @@ public interface IMailingService {
      */
     boolean sendRequestAccessEmail(User requestingUser, AccessControlObjectBase accessObject, String message);
 
+    /**
+     * Sends an email to the user with a link to reset his password.
+     * @param user user to send the email to
+     * @return true if mail was sent successfully
+     */
+    boolean sendPasswordResetEmail(User user);
 }

@@ -43,7 +43,8 @@ public class UserSession {
 		}
 		this.session = session;
 	}
-	
+
+
 	public boolean isAuthenticated() {
 		if(getUserId() != null) {
 			return true;

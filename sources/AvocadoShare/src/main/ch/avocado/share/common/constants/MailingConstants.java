@@ -13,11 +13,15 @@ public class MailingConstants {
     public static final String AUTHENTIFICATION = "true";
     public static final String PASSWORD = "Gruppe13";
 
-    //For Verification
+    // For Verification
     public static final String VERIFICATION_SUBJECT = "E-Mail Verifikation";
     public static final String VERIFICATION_MESSAGE = "Dear Mail Crawler,\n\n No spam to my email, please!";
 
-    //For permission-request
+    // For permission-request
     public static final String REQUEST_SUBJECT = "E-Mail Verifikation";
     public static final String REQUEST_MESSAGE = "Dear Mail Crawler,\n\n No spam to my email, please!";
+
+    // For password reset request
+    public static final String PASSWORD_RESET_SUBJECT = "Password zurücksetzten";
+    public static final String PASSWORD_RESET_MESSAGE = "???";
 }

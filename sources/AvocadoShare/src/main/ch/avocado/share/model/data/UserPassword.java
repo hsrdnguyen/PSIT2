@@ -5,6 +5,7 @@ import ch.avocado.share.common.BinaryTokenGenerator;
 import ch.avocado.share.common.TokenGenerator;
 
 import java.io.Serializable;
+
 import org.bouncycastle.crypto.generators.*;
 
 /**
@@ -37,6 +38,7 @@ public class UserPassword implements Serializable{
 	private static final int SCRYPT_KEY_LENGTH = 32;
 
 	private String digest;
+    private PasswordResetVerification passwordResetVerification;
 
 	/**
 	 * Private constructor for fromPassword.
@@ -50,8 +52,9 @@ public class UserPassword implements Serializable{
 	 * 
 	 * @param digest The hashed password digest.
 	 */
-	public UserPassword(String digest) {
+	public UserPassword(String digest, PasswordResetVerification passwordResetVerification) {
 		setDigest(digest);
+        setPasswordResetVerification(passwordResetVerification);
 	}
 
 	/**
@@ -150,4 +153,14 @@ public class UserPassword implements Serializable{
 		String generatedDigest = generateDigest(password, salt);
 		return generatedDigest.equals(digest);
 	}
+
+
+    public PasswordResetVerification getPasswordResetVerification() {
+        return passwordResetVerification;
+    }
+
+    public void setPasswordResetVerification(PasswordResetVerification passwordResetVerification) {
+        if(passwordResetVerification == null) throw new IllegalArgumentException("passwordResetVerification is null");
+        this.passwordResetVerification = passwordResetVerification;
+    }
 }
