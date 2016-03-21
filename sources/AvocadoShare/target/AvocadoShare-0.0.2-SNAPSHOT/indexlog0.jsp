@@ -15,9 +15,17 @@
 <header>
     <nav class="navbar navbar-light bg-faded">
       <div class="container">
+
+
+
+
       <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
         &#9776;
       </button>
+
+
+
+
       <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
       <a href="indexlog.html" class="navbar-brand" href="#">Avocado Share</a>
       <ul class="nav navbar-nav">
@@ -30,7 +38,7 @@
         </li>
         <!-- Navbar Search -->
         <li class="nav-item pull-md-right">
-          <form action="document_viewlog.html" class="form-inline">
+          <form action="document_view.html" class="form-inline">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Search for...">
               <span class="input-group-btn">
@@ -48,7 +56,13 @@
               <span class="octicon octicon-person"></span>
             </button>
 
-            <a href="upload.html"> <button id="navbar-login-toggle-button" class="btn btn-secondary "
+
+
+            <a href="upload.html">
+
+
+
+              <button id="navbar-login-toggle-button" class="btn btn-secondary "
               type="submit">Upload</button></a>
 
 
@@ -71,64 +85,73 @@
     </nav>
 </header>
 <main class="container">
-  <main class="container">
-
-
-    <div class="text-contact">
-
-
-   	<h2>Dateien Hochladen</h2>
-
-  	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
-  	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
-
-      <form action="FileUpload.jsp" method="post" id="form_formular" class="contact_action" enctype="multipart/form-data">
-
-
-  <div class="form-group" id="formular-anrede">
-      <label class="control-label" for="category">Kathegorie auswählen</label>
-          <select class="form-control" id="category" name="category">
-                      <option value="1">Analysis für Dummies</option>
-                      <option value="2">Webdesign für Nerds</option>
-                      <option value="3">Manit</option>
-                      <option value="4">PSIT</option>
-              </select>
-          </div>
-          <input type="file" name="file" size="50" />
-  <div class="form-group" id="formular-title">
-      <label class="control-label" for="title">Titel *</label>
-      <input class="form-control" name="title" id="title" value="" type="text">
+  <h1>Dein Portfolio</h1>
+  <div class="row">
+    <!-- 3 columns on extra large screen,
+         2 on large and 1 on smaller screens -->
+    <section class="col-xl-4 col-lg-6">
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Module</h2></div>
+        <!-- First Module -->
+        <a href="document_viewlog.html" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
+          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
+        </a>
+        <!-- Second Module -->
+        <a href="document_view.html" class="list-group-item">
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+        </a>
+        <!-- Third Module -->
+        <a href="document_view.html" class="list-group-item">
+          <h4 class="list-group-item-heading">MANIT</h4>
+          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+        </a>
       </div>
-
-      <div class="form-group" id="formular-msg">
-          <label class="control-label" for="description">Beschreibung *</label>
-          <textarea class="form-control" name="msg" id="description" rows="10"></textarea>
-          </div>
-  <div class="form-group" id="formular-author">
-      <label class="control-label" for="author">Author *</label>
-      <input class="form-control" name="author" id="author" value="" type="text">
+    </section>
+    <section class="col-xl-4 col-lg-6">
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Kürzlich hinzugefügte Dateien</h2></div>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
+          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">MANIT</h4>
+          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+        </a>
       </div>
-  <div class="form-group" id="formular-class">
-      <label class="control-label" for="class">Klasse</label>
-      <input class="form-control" name="class" id="class" value="" type="text">
+    </section>
+    <section class="col-xl-4 col-lg-6">
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Zuletzt besucht</h2></div>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
+          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">MANIT</h4>
+          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+        </a>
       </div>
-
-  <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Hochladen</button>
-
-  </form>
+    </section>
   </div>
-  </div>
-  </div>
-  </main>
 </main>
 </div> <!-- /#footerpusher -->
 <footer class="text-muted">
   <div class="container">
     <ul>
-      <li><a href="#">Über uns</a></li>
-      <li><a href="contact.html">Kontakt</a></li>
-      <li><a href="#">Fehler melden</a></li>
-      <li><a href="#">Profil Bearbeiten</a></li>
+      <li><a href="#about">Über uns</a></li>
+      <li><a href="contact.html" href="#contact">Kontakt</a></li>
+      <li><a href="#something">Fehler melden</a></li>
     </ul>
     <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -48,7 +47,13 @@
               <span class="octicon octicon-person"></span>
             </button>
 
-            <a href="upload.html"> <button id="navbar-login-toggle-button" class="btn btn-secondary "
+
+
+            <a href="upload.html">
+
+
+
+              <button id="navbar-login-toggle-button" class="btn btn-secondary "
               type="submit">Upload</button></a>
 
 
@@ -71,66 +76,84 @@
     </nav>
 </header>
 <main class="container">
-  <main class="container">
+  <h1>Dokumenten�berblick</h1>
+   <form class="form-inline">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Suchwort">
+              <span class="input-group-btn">
+                <button class="btn btn-secondary" type="submit">Suchen</button>
+              </span>
 
-
-    <div class="text-contact">
-
-
-   	<h2>Dateien Hochladen</h2>
-
-  	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
-  	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
-
-      <form action="FileUpload.jsp" method="post" id="form_formular" class="contact_action" enctype="multipart/form-data">
-
-
-  <div class="form-group" id="formular-anrede">
-      <label class="control-label" for="category">Kathegorie auswählen</label>
-          <select class="form-control" id="category" name="category">
-                      <option value="1">Analysis für Dummies</option>
-                      <option value="2">Webdesign für Nerds</option>
-                      <option value="3">Manit</option>
-                      <option value="4">PSIT</option>
-              </select>
-          </div>
-          <input type="file" name="file" size="50" />
-  <div class="form-group" id="formular-title">
-      <label class="control-label" for="title">Titel *</label>
-      <input class="form-control" name="title" id="title" value="" type="text">
+            </div>
+   </form><br>
+  <div class="row">
+    <!-- 3 columns on extra large screen,
+         2 on large and 1 on smaller screens -->
+    <section class="filter">
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Filter</h2></div>
+        <!-- First Module -->
+        <div class="tags">
+        <label>
+            <input type="checkbox" rel="dab" />
+            Datenbank
+        </label><br>
+        <label>
+            <input type="checkbox" rel="web" />
+            Web
+        </label><br>
+        <label>
+            <input type="checkbox" rel="prog" />
+            Programmieren
+        </label><br>
+        <label>
+            <input type="checkbox" rel="thin" />
+            Theoretische Informatik
+        </label><br>
+        <label>
+            <input type="checkbox" rel="manit" />
+            Mathematik Analysis
+        </label><br>
+        <label>
+            <input type="checkbox" rel="mgmit" />
+           Diskrete Mathematik
+        </label><br>
+        <label>
+            <input type="checkbox" rel="etc" />
+            ...
+        </label><br>
+    </div>
       </div>
-
-      <div class="form-group" id="formular-msg">
-          <label class="control-label" for="description">Beschreibung *</label>
-          <textarea class="form-control" name="msg" id="description" rows="10"></textarea>
-          </div>
-  <div class="form-group" id="formular-author">
-      <label class="control-label" for="author">Author *</label>
-      <input class="form-control" name="author" id="author" value="" type="text">
+    </section>
+    <section class="document-show">
+      <div class="list-group">
+        <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
+        <a href="document_view2.html" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis f�r Dummies</h4>
+          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">Webdesign f�r Nerds</h4>
+          <p class="list-group-item-text">HTML &amp; Unicode im Web.</p>
+        </a>
+        <a href="#" class="list-group-item">
+          <h4 class="list-group-item-heading">MANIT</h4>
+          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+        </a>
       </div>
-  <div class="form-group" id="formular-class">
-      <label class="control-label" for="class">Klasse</label>
-      <input class="form-control" name="class" id="class" value="" type="text">
-      </div>
-
-  <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Hochladen</button>
-
-  </form>
+    </section>
   </div>
-  </div>
-  </div>
-  </main>
 </main>
 </div> <!-- /#footerpusher -->
 <footer class="text-muted">
   <div class="container">
     <ul>
-      <li><a href="#">Über uns</a></li>
+      <li><a href="#">&Uuml;ber uns</a></li>
       <li><a href="contact.html">Kontakt</a></li>
       <li><a href="#">Fehler melden</a></li>
       <li><a href="#">Profil Bearbeiten</a></li>
     </ul>
-    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
+    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril M�ller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
   </div>
 
