@@ -1,5 +1,7 @@
 package ch.avocado.share.common;
 
+import ch.avocado.share.controller.UserSession;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -57,14 +59,15 @@ public class AuthenticationFilter implements Filter {
 	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		boolean authenticated = true;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		UserSession userSession = new UserSession((HttpServletRequest) request);
+		User user = userSession.getUser();
 		if(!request.isSecure()) {
 			// TODO redirect to HTTPS://
 		} else {
 			// Check if user is authenticated
 		}
-		if(authenticated) {
+		if(user == null) {
 			// pass the request along the filter chain
 			chain.doFilter(request, response);
 		} else {

@@ -1,12 +1,13 @@
 package ch.avocado.share.model.data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by bergm on 15/03/2016.
  */
-public class Group extends AccessControlObjectBase {
+public class Group extends AccessControlObjectBase implements Serializable {
 
     private String name;
 
