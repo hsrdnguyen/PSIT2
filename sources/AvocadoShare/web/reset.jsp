@@ -1,6 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
+<%@ page import="ch.avocado.share.common.Encoder" %>
 <jsp:useBean id="forgottenPassword" class="ch.avocado.share.controller.ForgottenPasswordBean"/>
 <jsp:setProperty name="forgottenPassword" property="email"/>
 <jsp:setProperty name="forgottenPassword" property="code"/>

@@ -14,13 +14,15 @@ import java.util.Date;
  * Created by coffeemakr on 21.03.16.
  */
 public class ForgottenPasswordBean implements Serializable {
-    public static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage.";
-    public static final String ERROR_EMPTY_PASSWORD = "Passwort darf nicht leer sein.";
-    public static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Passwort-Bestätigung darf nicht leer sein.";
-    public static final String ERROR_INTERNAL_SERVER = "Interner Server Fehler.";
-    public static final String ERROR_INVALID_CODE_OR_EMAIL = "Bestätigungscode oder E-Mail-Adresse stimmen nicht.";
-    public static final String ERROR_PASSWORDS_DO_NOT_MATCH = "Passwörter stimmen nicht überein.";
-    public static final String ERROR_SEND_MAIL_FAILED = "Sender des E-Mail fehlgeschlagen.";
+    private static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage.";
+    private static final String ERROR_EMPTY_PASSWORD = "Passwort darf nicht leer sein.";
+    private static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Passwort-Bestätigung darf nicht leer sein.";
+    private static final String ERROR_INTERNAL_SERVER = "Interner Server Fehler.";
+    private static final String ERROR_INVALID_CODE_OR_EMAIL = "Bestätigungscode oder E-Mail-Adresse stimmen nicht.";
+    private static final String ERROR_PASSWORDS_DO_NOT_MATCH = "Passwörter stimmen nicht überein.";
+    private static final String ERROR_SEND_MAIL_FAILED = "Sender des E-Mail fehlgeschlagen.";
+    public static final String ERROR_GENERAL_FAILURE = "Password zurücksetzen schlug fehl.";
+    public static final String ERROR_EMPTY_EMAIL = "Bitte geben Sie ihre E-Mail-Adresse an.";
     private String email;
     private String code;
     private String password;
@@ -48,8 +50,8 @@ public class ForgottenPasswordBean implements Serializable {
         IMailingService mailingService;
         IUserDataHandler userDataHandler;
         User user;
-        if (email == null) {
-            errorMessage = ERROR_INVALID_REQUEST;
+        if (email == null || email.isEmpty()) {
+            errorMessage = ERROR_EMPTY_EMAIL;
             return false;
         }
         try {
@@ -60,13 +62,13 @@ public class ForgottenPasswordBean implements Serializable {
             return false;
         }
         user = userDataHandler.getUserByEmailAddress(email);
-        if(user == null) {
+        if (user == null) {
             return true;
         }
-        Date expiry = PasswordResetVerification.getDateFromExpiryInHours(24*2);
+        Date expiry = PasswordResetVerification.getDateFromExpiryInHours(24 * 2);
         PasswordResetVerification passwordResetVerification = new PasswordResetVerification(expiry);
         user.getPassword().setPasswordResetVerification(passwordResetVerification);
-        if(!mailingService.sendPasswordResetEmail(user)) {
+        if (!mailingService.sendPasswordResetEmail(user)) {
             errorMessage = ERROR_SEND_MAIL_FAILED;
             return false;
         }
@@ -113,38 +115,27 @@ public class ForgottenPasswordBean implements Serializable {
         return user;
     }
 
-    private boolean verifyCode(String code, User user) {
-        if (code == null) {
-            this.errorMessage = ERROR_INVALID_REQUEST;
-        }
-        for (PasswordResetVerification verification : user.getPassword().getPasswordResetVerification()) {
-            if (!verification.isExpired() && verification.getCode().equals(code)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Reset the password. If the change does fail you can query the error message by calling getErrorMessage().
+     *
      * @return {@code true} if the password was changed successfully. Otherwise {@code false} is returned.
      */
     public boolean resetPassword() {
-        if (password == null || passwordConfirmation == null || email == null || code == null) {
-            errorMessage = ERROR_INVALID_REQUEST;
-        } else if (password.isEmpty()) {
+        if (password == null || password.isEmpty()) {
             errorMessage = ERROR_EMPTY_PASSWORD;
-        } else if (passwordConfirmation.isEmpty()) {
+        } else if (passwordConfirmation == null || passwordConfirmation.isEmpty()) {
             errorMessage = ERROR_EMPTY_PASSWORD_CONFIRMATION;
-        } else if (email.isEmpty()) {
+        } else if (email == null || email.isEmpty() || code == null || code.isEmpty()) {
             errorMessage = ERROR_INVALID_CODE_OR_EMAIL;
         } else if (!password.equals(passwordConfirmation)) {
             errorMessage = ERROR_PASSWORDS_DO_NOT_MATCH;
         } else {
             User user = getUser();
-            if (user != null && verifyCode(code, user)) {
-                user.setPassword(password);
+            if (user != null && user.resetPassword(password, code)) {
                 return true;
+            }else {
+                errorMessage = ERROR_GENERAL_FAILURE;
             }
         }
         return false;

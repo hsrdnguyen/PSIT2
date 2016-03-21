@@ -73,4 +73,11 @@ public class User extends AccessControlObjectBase{
         this.mail = mail;
     }
 
+    public boolean resetPassword(String password, String code) {
+        PasswordResetVerification verification = getPassword().getPasswordResetVerification();
+        if (verification != null && !verification.isExpired() && verification.getCode().equals(code)) {
+            return true;
+        }
+        return false;
+    }
 }

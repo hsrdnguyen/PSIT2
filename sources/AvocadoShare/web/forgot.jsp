@@ -9,8 +9,11 @@
 <body>
 <% // TODO: include header %>
 <%
+    boolean showFormular = true;
     if (request.getMethod() == "POST") {
-        if (forgottenPassword.sendEmail()) {%>
+        if (forgottenPassword.sendEmail()) {
+            showFormular = false;
+%>
 <div class="alert alert-success">
     Falls ihre E-Mail-Adresse stimmt, erhalten sie in Kürze ein Link, um ihr Password zurückzusetzten.
 </div>
@@ -22,7 +25,8 @@
 </div>
 <%
         }
-    } else {
+    }
+    if(showFormular) {
 %>
     <form method="POST">
         <div class="input-group">

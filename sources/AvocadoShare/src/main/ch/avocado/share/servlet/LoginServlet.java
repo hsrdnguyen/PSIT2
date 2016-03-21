@@ -57,8 +57,14 @@ public class LoginServlet extends HttpServlet {
 	}
 
 	public boolean checkTestCookie(HttpServletRequest request) {
-		for(Cookie cookie: request.getCookies()) {
-			if(cookie.getName().equals(COOKIE_CHECK_NAME) && cookie.getValue().equals(COOKIE_CHECK_VALUE)) {
+		Cookie[] cookies = request.getCookies();
+		if(cookies == null) {
+			return false;
+		}
+		for(Cookie cookie: cookies) {
+			String name = cookie.getName();
+			String value = cookie.getValue();
+			if(name.equals(COOKIE_CHECK_NAME) && value.equals(COOKIE_CHECK_VALUE)) {
 				return true;
 			}
 		}

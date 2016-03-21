@@ -52,10 +52,15 @@ public class UserPassword implements Serializable{
 	 * 
 	 * @param digest The hashed password digest.
 	 */
-	public UserPassword(String digest, PasswordResetVerification passwordResetVerification) {
+	public UserPassword(String digest) {
 		setDigest(digest);
-        setPasswordResetVerification(passwordResetVerification);
+        this.passwordResetVerification = null;
 	}
+
+    public UserPassword(String digest, PasswordResetVerification passwordResetVerification) {
+        setDigest(digest);
+        setPasswordResetVerification(passwordResetVerification);
+    }
 
 	/**
 	 * Create UserPassword from password.

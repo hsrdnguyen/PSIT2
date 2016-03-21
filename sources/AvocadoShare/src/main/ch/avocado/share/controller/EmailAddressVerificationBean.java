@@ -27,7 +27,7 @@ public class EmailAddressVerificationBean implements Serializable {
         IUserDataHandler userDataHandler = null;
         boolean isVerified = false;
         try {
-            userDataHandler = ServiceLocator.GetService(IUserDataHandler.class);
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
         }
         if(userDataHandler != null) {

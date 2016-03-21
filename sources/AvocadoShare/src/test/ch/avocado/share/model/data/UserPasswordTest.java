@@ -13,6 +13,7 @@ public class UserPasswordTest {
 	static final String PASSWORD_1 = "ALong&Str0ngP4ssWörd";
 	static final String PASSWORD_1_DIGEST = "9sRF9PfH:jgnjoiBIAJLk7XmtaVuS2JQKlI6TiSYFTqUbo4LIqIc=";
 
+
 	@Test
 	public void test_digest_generation() {
 		UserPassword pass =  UserPassword.fromPassword(PASSWORD_1);
