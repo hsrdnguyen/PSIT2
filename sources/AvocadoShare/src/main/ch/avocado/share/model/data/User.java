@@ -26,10 +26,15 @@ public class User extends AccessControlObjectBase{
     public UserPassword getPassword() {
     	return this.password;
     }
-    
-    public void setPassword(UserPassword password) {
+
+    private void setPassword(UserPassword password) {
+        if (password == null) throw new IllegalArgumentException("password is null");
+        this.password = password;
+    }
+
+    public void setPassword(String password) {
     	if (password == null) throw new IllegalArgumentException("password is null");
-    	this.password = password;
+    	this.password = UserPassword.fromPassword(password);
     }
 
     public String getPrename() {
@@ -66,5 +71,13 @@ public class User extends AccessControlObjectBase{
     public void setMail(EmailAddress mail) {
         if (mail == null) throw new IllegalArgumentException("mail is null");
         this.mail = mail;
+    }
+
+    public boolean resetPassword(String password, String code) {
+        PasswordResetVerification verification = getPassword().getPasswordResetVerification();
+        if (verification != null && !verification.isExpired() && verification.getCode().equals(code)) {
+            return true;
+        }
+        return false;
     }
 }

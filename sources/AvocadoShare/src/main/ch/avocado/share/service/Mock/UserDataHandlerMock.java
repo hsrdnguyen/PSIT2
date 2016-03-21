@@ -24,6 +24,11 @@ public class UserDataHandlerMock implements IUserDataHandler {
     }
 
     @Override
+    public User getUserByEmailAddress(String emailAddress) {
+        return null;
+    }
+
+    @Override
     public boolean updateUser(User user) {
         return false;
     }

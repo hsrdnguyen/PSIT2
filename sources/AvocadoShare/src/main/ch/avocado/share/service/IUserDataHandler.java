@@ -30,6 +30,15 @@ public interface IUserDataHandler {
     User getUser(String userId);
 
     /**
+     * Returns the user from the database selected by its
+     * email address.
+     * @param emailAddress email address of the user
+     * @return user if there is a user with this email address
+     *              or otherwise null.
+     */
+    User getUserByEmailAddress(String emailAddress);
+
+    /**
      * updates a user on the database
      * @param user user with updated data
      * @return true if it was successfully updated

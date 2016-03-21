@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,12 +28,15 @@ public class LoginServlet extends HttpServlet {
 	static final public String LOGIN_ERROR = "login_error";
 	static final public String FIELD_EMAIL = "email";
 	static final public String FIELD_PASSWORD = "password";
-	
+
+	static private final String COOKIE_CHECK_NAME = "are_cookies_enabled";
+	static private final String COOKIE_CHECK_VALUE = "yes! :)";
 	
 	private static final long serialVersionUID = 5348852043943606854L;
 	
 	
 	public User checkLogin(String email, String password) {
+
 		//User user = UserController.findByEmail(email);
 		User user = null;
 		if (user != null && user.getPassword().matchesPassword(password)) {
@@ -46,8 +50,30 @@ public class LoginServlet extends HttpServlet {
 		dispatcher.forward(request, response);
 	}
 
+
+	private void addTestCookie(HttpServletResponse response) {
+		Cookie checkCookie = new Cookie(COOKIE_CHECK_NAME, COOKIE_CHECK_VALUE);
+		response.addCookie(checkCookie);
+	}
+
+	public boolean checkTestCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if(cookies == null) {
+			return false;
+		}
+		for(Cookie cookie: cookies) {
+			String name = cookie.getName();
+			String value = cookie.getValue();
+			if(name.equals(COOKIE_CHECK_NAME) && value.equals(COOKIE_CHECK_VALUE)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		addTestCookie(response);
 		renderLogin(request, response);
 	}
 
@@ -63,6 +89,9 @@ public class LoginServlet extends HttpServlet {
 			request.setAttribute(LOGIN_ERROR, "Kein Passwort eingegeben.");
 			renderLogin(request, response);
 		} else {
+			if(!checkTestCookie(request)) {
+				request.setAttribute(LOGIN_ERROR, "Cookies scheinen deaktiviert zu sein. Bitte überprüfen Sie das.");
+			}
 			User user = checkLogin(email, password);
 			if (user != null) {
 				
