@@ -12,7 +12,7 @@ public class EmailAddress {
     public EmailAddress(boolean verified, String address, EmailAddressVerification verification) {
         setVerified(verified);
         setAddress(address);
-        setVerification(verification);
+        this.verification = verification;
     }
 
     public boolean isVerified() {
