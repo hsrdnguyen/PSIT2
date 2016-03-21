@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import ch.avocado.share.helper.BinaryTokenGenerator;
-import ch.avocado.share.helper.TokenGenerator;
+import ch.avocado.share.common.BinaryTokenGenerator;
+import ch.avocado.share.common.TokenGenerator;
 
 public class BinaryTokenGeneratorTest {
 		

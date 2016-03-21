@@ -1,4 +1,4 @@
-package ch.avocado.share.helper;
+package ch.avocado.share.common;
 
 /**
  * Created by coffeemakr on 19.03.16.

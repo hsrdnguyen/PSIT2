@@ -1,8 +1,8 @@
 package ch.avocado.share.model.data;
 
-import ch.avocado.share.helper.Base64;
-import ch.avocado.share.helper.BinaryTokenGenerator;
-import ch.avocado.share.helper.TokenGenerator;
+import ch.avocado.share.common.Base64;
+import ch.avocado.share.common.BinaryTokenGenerator;
+import ch.avocado.share.common.TokenGenerator;
 
 import java.io.Serializable;
 import org.bouncycastle.crypto.generators.*;
@@ -26,15 +26,20 @@ public class UserPassword implements Serializable{
 	 * value: 2^20
 	 */
 	private static final int SCRYPT_CPU_MEMORY_COST = 32768;
-																// parameter
+	/**
+	 * Block size
+	 */
 	private static final int SCRYPT_BLOCK_SIZE = 8;
-	private static final int SCRYPT_PARALIZING_FACTOR = 1;
+	/**
+	 * 
+	 */
+	private static final int SCRYPT_PARALLELIZING_FACTOR = 1;
 	private static final int SCRYPT_KEY_LENGTH = 32;
 
 	private String digest;
 
 	/**
-	 * Private constructor for {@link UserPassword.fromPassword}.
+	 * Private constructor for fromPassword.
 	 */
 	private UserPassword() {
 		this.digest = null;
@@ -87,7 +92,7 @@ public class UserPassword implements Serializable{
 			throw new IllegalArgumentException("salt can't be null");
 		}
 		byte[] key = SCrypt.generate(password.getBytes(), salt, SCRYPT_CPU_MEMORY_COST, SCRYPT_BLOCK_SIZE,
-				SCRYPT_PARALIZING_FACTOR, SCRYPT_KEY_LENGTH);
+				SCRYPT_PARALLELIZING_FACTOR, SCRYPT_KEY_LENGTH);
 		return Base64.encode(salt) + ":" + Base64.encode(key);
 	}
 

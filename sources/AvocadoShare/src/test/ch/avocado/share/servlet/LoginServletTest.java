@@ -37,12 +37,11 @@ public class LoginServletTest {
         response = new MockHttpServletResponse();
 	}
 
-    private void assertIsRedirect(HttpServletResponse response) {
-		String redirectUrl = response.getHeader("location");
-		assertTrue(response.getStatus() == HttpServletResponse.SC_FOUND);
-		assertNotNull(redirectUrl);
-    }
-    
+	/**
+	 * Test that the
+	 * @throws ServletException
+	 * @throws IOException
+     */
 	@Test
 	public void testDoLoginWithInvalidCredentials() throws ServletException, IOException {
 		request.setParameter(LoginServlet.FIELD_EMAIL, INVALID_LOGIN_EMAIL);
@@ -75,11 +74,4 @@ public class LoginServletTest {
 	public void testDoLoginWithValidCredentials() {
 		// TODO: Implement
 	}
-
-	@Test
-	public void testDoGetHttpServletRequestHttpServletResponse() throws ServletException, IOException {
-		servlet.doGet(request, response);
-		assertIsRedirect(response);
-	}
-
 }

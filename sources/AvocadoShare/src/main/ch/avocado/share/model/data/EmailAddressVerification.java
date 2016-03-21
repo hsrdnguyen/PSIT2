@@ -1,8 +1,8 @@
 package ch.avocado.share.model.data;
 import java.util.Date;
 
-import ch.avocado.share.helper.CharsetTokenGenerator;
-import ch.avocado.share.helper.TokenGenerator;
+import ch.avocado.share.common.CharsetTokenGenerator;
+import ch.avocado.share.common.TokenGenerator;
 
 /**
  * Created by bergm on 15/03/2016.
