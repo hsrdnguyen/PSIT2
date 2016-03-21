@@ -2,7 +2,6 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.constants.MailingConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IMailingService;
 
@@ -16,9 +15,9 @@ import java.util.Properties;
  */
 public class MailingService implements IMailingService {
     @Override
-    public boolean sendVerificationEmail(User user, EmailAddressVerification emailAddressVerification) {
+    public boolean sendVerificationEmail(User user) {
         if (user == null) throw new IllegalArgumentException("user is Null");
-        if (emailAddressVerification == null) throw new IllegalArgumentException("emailAddressVerification is Null");
+        if (user.getMail().getVerification() == null) throw new IllegalArgumentException("emailAddressVerification is Null");
 
         Session session = prepareMessage();
 
