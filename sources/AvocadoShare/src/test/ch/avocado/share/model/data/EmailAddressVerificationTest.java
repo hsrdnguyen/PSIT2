@@ -19,6 +19,5 @@ public class EmailAddressVerificationTest {
 		for(char codeCharacter : code.toCharArray()) {
 			assertTrue(Character.isAlphabetic(codeCharacter) || Character.isDigit(codeCharacter));
 		}
-		System.out.println(code);
 	}
 }

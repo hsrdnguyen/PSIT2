@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import ch.avocado.share.helper.CharsetTokenGenerator;
-import ch.avocado.share.helper.TokenGenerator;
+import ch.avocado.share.common.CharsetTokenGenerator;
+import ch.avocado.share.common.TokenGenerator;
 
 public class CharsetTokenGeneratorTest {
 	
