@@ -4,6 +4,7 @@ import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Impl.DatabaseConnectionHandler;
+import ch.avocado.share.service.Impl.MailingService;
 import ch.avocado.share.service.Mock.*;
 
 import java.lang.reflect.Type;
@@ -23,7 +24,7 @@ public class ServiceLocator {
         registerServices();
     }
 
-    public static <T> T GetService(Class<T> clazz) throws ServiceNotFoundException {
+    public static <T> T getService(Class<T> clazz) throws ServiceNotFoundException {
         if (!services.containsKey(clazz)) throw new ServiceNotFoundException(clazz.toString(), ServiceLocator.class.toString());
 
         return (T)services.get(clazz);
@@ -35,5 +36,6 @@ public class ServiceLocator {
         services.put(IFileStorageHandler.class, new FileStorageHandlerMock());
         services.put(ISecurityHandler.class, new SecurityHandlerMock());
         services.put(IFileDataHandler.class, new FileDataHandlerMock());
+        services.put(IMailingService.class, new MailingService());
     }
 }
