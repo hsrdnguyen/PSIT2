@@ -1,6 +1,7 @@
 package ch.avocado.share.common;
 
 import ch.avocado.share.controller.UserSession;
+import ch.avocado.share.model.data.User;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -17,9 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet Filter implementation class AuthentificationFilter
+ * Servlet Filter implementation class AuthenticationFilter
  */
-@WebFilter(description = "Check authentification")
+@WebFilter(description = "Check authentication")
 public class AuthenticationFilter implements Filter {
 	
 	/**
