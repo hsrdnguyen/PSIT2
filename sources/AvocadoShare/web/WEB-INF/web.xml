@@ -6,6 +6,7 @@
 
     <description>Avocado Share web application</description>
 
+<!--
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>ch.avocado.share.common.AuthenticationFilter</filter-class>
@@ -16,6 +17,7 @@
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
+    -->
     <!-- <resource-ref>
        <description>Database Connection</description>
        <res-ref-name>jdbc/db-workshop</res-ref-name>
