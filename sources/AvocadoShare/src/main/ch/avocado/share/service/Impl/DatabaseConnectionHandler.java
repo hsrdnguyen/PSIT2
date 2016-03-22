@@ -21,7 +21,7 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     public DatabaseConnectionHandler() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName(JDBC_DRIVER);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

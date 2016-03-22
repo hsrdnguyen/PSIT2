@@ -1,6 +1,7 @@
 package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.File;
+import org.apache.commons.fileupload.FileItem;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -8,31 +9,25 @@ import ch.avocado.share.model.data.File;
 public interface IFileStorageHandler {
 
     /**
-     * adds the given File to the Database and saves it on the server
-     * @param file file to be added
-     * @return true if it could be added
+     * Saves a given file to the server
+     * @param dbFIle file to be saved
+     * @return Path to the file-location
      */
-    boolean addFile(File file);
+    String saveFile(FileItem fi, File dbFIle);
 
     /**
-     * deletes the given file rom the database and the server
-     * @param file file to be deleted
-     * @return true if was successfully deleted
+     * Gets the file on the given location
+     * @param path relative path to the file without filename
+     * @param fileName name of the file on the server
+     * @return file that is found on the given location
      */
-    boolean deleteFile(File file);
+    File getFile(String path, String fileName);
 
     /**
-     * Returns the file from the server with the data from the database
-     * @param fileId id of the requested file
-     * @return File from server
+     * Checks if a file on the given location exists
+     * @param path relative path to the file without filename
+     * @param fileName name of the file on the server
+     * @return true if the file exists
      */
-    File getFile(String fileId);
-
-    /**
-     * updates a file on the server and database and creates a new version number
-     * @param file file with updated data
-     * @return true if it was successfully updated
-     */
-    boolean updateFile(File file);
-
+    boolean fileExists(String path, String fileName);
 }
