@@ -6,9 +6,8 @@ package ch.avocado.share.model.data;
 public enum AccessLevelEnum {
     NONE(0),
     READ(1),
-    WRITE(2),
-    READWRITE(3),
-    OWNER(4);
+    WRITE(3),
+    OWNER(7);
 
     private final int numericLevel;
 

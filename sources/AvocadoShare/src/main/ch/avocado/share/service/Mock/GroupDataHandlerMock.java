@@ -36,4 +36,9 @@ public class GroupDataHandlerMock implements IGroupDataHandler {
         return new User[0];
     }
 
+    @Override
+    public Group[] getGroupsOfUser(User user) {
+        return new Group[0];
+    }
+
 }

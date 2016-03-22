@@ -3,179 +3,174 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 
-import java.io.Serializable;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * GroupBean is used to create, change and delete {@link Group}s.
  */
-public class GroupBean implements Serializable {
+public class GroupBean extends ResourceBean<Group> {
 
     private static final String ERROR_NO_NAME = "Bitte einen Namen eingeben.";
     private static final String ERROR_NO_DESCRIPTION = "Bitte eine Beschreibung angeben.";
     private static final String ERROR_INTERNAL_SERVER = "Interner Server-Fehler.";
     private static final String ERROR_GROUP_NAME_ALREADY_EXISTS = "Eine Gruppe mit diesem Namen existiert bereits.";
+    public static final String ERROR_NO_SUCH_GROUP = "Gruppe existiert nicht.";
+    public static final String ERROR_DATABASE = "Gruppe konnte nicht in der Datenbank gespeichert werden.";
 
     private String name;
     private String description;
-    private String errorMessage = null;
-    private User owner;
-    private Group group = null;
-    private User[] members = null;
-    private String groupId;
 
 
-    private IUserDataHandler getUserDataHandler() {
-        IUserDataHandler userDataHandler = null;
-        try {
-            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            errorMessage = ERROR_INTERNAL_SERVER;
-        }
-        return userDataHandler;
-    }
-
-    private IGroupDataHandler getGroupDataHandler() {
-        IGroupDataHandler groupDataHandler = null;
-        try {
-            groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            errorMessage = ERROR_INTERNAL_SERVER;
-        }
-        return groupDataHandler;
-    }
-
-    private boolean checkName(IGroupDataHandler groupDataHandler) {
+    private boolean checkParameterName() throws HttpBeanException {
         if (name == null || name.trim().isEmpty()) {
-            errorMessage = ERROR_NO_NAME;
+            addFormError("name", ERROR_NO_NAME);
             return false;
         }
         name = name.trim();
+        IGroupDataHandler groupDataHandler = getGroupDataHandler();
         if (groupDataHandler.getGroupByName(name) != null) {
-            errorMessage = ERROR_GROUP_NAME_ALREADY_EXISTS;
+            addFormError("name", ERROR_GROUP_NAME_ALREADY_EXISTS);
             return false;
         }
         return true;
     }
 
-    private boolean checkDescription() {
+    private boolean checkParameterDescription() {
         if (description == null || description.trim().isEmpty()) {
-            errorMessage = ERROR_NO_DESCRIPTION;
+            addFormError("description", ERROR_NO_DESCRIPTION);
             return false;
         }
         description = description.trim();
         return false;
     }
 
-    private boolean checkOwner() {
-        if (owner == null) {
-            errorMessage = ERROR_INTERNAL_SERVER;
-            return false;
-        }
-        return true;
+    @Override
+    protected boolean hasIdentifier() {
+        return name != null;
     }
 
-    public boolean create() {
+
+    @Override
+    public Group create() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
         IUserDataHandler userDataHandler = getUserDataHandler();
-        if (userDataHandler == null || groupDataHandler == null) return false;
-
-        if (!checkOwner()) return false;
-        if (!checkDescription()) return false;
-        if (!checkName(groupDataHandler)) return false;
-
-        group = new Group(null, null, new Date(System.currentTimeMillis()), null, owner.getId(), description, name);
-
-        if (!groupDataHandler.addGroup(group)) {
-            errorMessage = ERROR_INTERNAL_SERVER;
-            return false;
+        checkParameterName();
+        checkParameterDescription();
+        if (!hasErrors()) {
+            Group group = new Group(null, null, new Date(System.currentTimeMillis()), null, getAccessingUser().getId(), description, name, new ArrayList<User>());
+            if (!groupDataHandler.addGroup(group) ||
+                    !userDataHandler.addUserToGroup(getAccessingUser(), group)) {
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+            }
+            return group;
         }
-        if (!userDataHandler.addUserToGroup(owner, group)) {
-            errorMessage = ERROR_INTERNAL_SERVER;
-            return false;
+        return null;
+    }
+
+    @Override
+    public Group get() throws HttpBeanException {
+        IGroupDataHandler groupDataHandler = getGroupDataHandler();
+        Group group = null;
+        if (name != null) {
+            group = groupDataHandler.getGroupByName(name);
         }
-        return true;
+        if (group == null) {
+            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_NO_SUCH_GROUP);
+        }
+        return group;
     }
 
-    private boolean loadMembers() {
+    @Override
+    public Group[] index() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        if (groupDataHandler == null) return false;
-        members = groupDataHandler.getGroupMembers(group);
-        return true;
+        return groupDataHandler.getGroupsOfUser(getAccessingUser());
     }
 
-    private boolean loadGroup() {
+    @Override
+    public void update() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        if (groupDataHandler == null) return false;
-        if (name == null) return false;
-        group = groupDataHandler.getGroupByName(name);
-        if (group == null) return false;
-        return true;
+        checkParameterDescription();
+        checkParameterName();
+        if (!hasErrors()) {
+            getObject().setName(name);
+            getObject().setDescription(description);
+            if (!groupDataHandler.updateGroup(getObject())) {
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+            }
+        }
     }
 
-    public boolean load() {
-        if (!loadGroup() || !loadMembers()) return false;
-        return true;
+    @Override
+    public void destroy() throws HttpBeanException {
+        IGroupDataHandler groupDataHandler = getGroupDataHandler();
+        if (!groupDataHandler.deleteGroup(getObject())) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+        }
+    }
+
+    @Override
+    public String getAttributeName() {
+        return "Group";
     }
 
     /**
-     * @return null if there is no error.
+     * Get group description
+     * @return The description of the group
      */
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Set the group description
+     * @param description The description of the group
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Set the group name
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * @return The group name
+     */
     public String getName() {
         return name;
     }
 
-    public void setOwner(User owner) {
-        if (owner == null) throw new IllegalArgumentException("owner is null");
-        this.owner = owner;
+    private IUserDataHandler getUserDataHandler() throws HttpBeanException {
+        IUserDataHandler userDataHandler = null;
+        try {
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+        } catch (ServiceNotFoundException e) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_INTERNAL_SERVER);
+        }
+        return userDataHandler;
     }
 
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setGroupId(String groupId) {
-        if (groupId == null) throw new IllegalArgumentException("groupId is null");
-        this.groupId = groupId;
-        IGroupDataHandler groupDataHandler;
+    private IGroupDataHandler getGroupDataHandler() throws HttpBeanException {
+        IGroupDataHandler groupDataHandler = null;
         try {
             groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            return;
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_INTERNAL_SERVER);
         }
-        group = groupDataHandler.getGroup(groupId);
+        return groupDataHandler;
     }
 
-    public User[] getMembers() {
-        return members;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (group == null) throw new IllegalArgumentException("group is null");
-        this.group = group;
-    }
 }

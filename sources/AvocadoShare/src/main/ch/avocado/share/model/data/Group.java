@@ -1,6 +1,7 @@
 package ch.avocado.share.model.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +11,21 @@ import java.util.List;
 public class Group extends AccessControlObjectBase implements Serializable {
 
     private String name;
+    private List<User> members;
 
-    public Group(String id, List<Category> categories, Date creationDate, Rating rating, String ownerId, String description, String name) {
+    public Group(String id,
+                 List<Category> categories,
+                 Date creationDate,
+                 Rating rating,
+                 String ownerId,
+                 String description,
+                 String name,
+                 List<User> members) {
         super(id, categories, creationDate, rating, ownerId, description);
-        setName(name);
+        if(name == null) throw new IllegalArgumentException("name is null");
+        this.name = name;
+        if(members == null) throw new IllegalArgumentException("member is null");
+        this.members = members;
     }
 
     public String getName() {
@@ -22,6 +34,22 @@ public class Group extends AccessControlObjectBase implements Serializable {
 
     public void setName(String name) {
         if (name == null) throw new IllegalArgumentException("name is null");
-        this.name = name;
+        if(!this.name.equals(name)) {
+            this.name = name;
+            setDirty(true);
+        }
+    }
+
+    public User[] getMembers() {
+        User[] users = new User[members.size()];
+        return members.toArray(users);
+    }
+
+    public void addMember(User member) {
+        this.members.add(member);
+    }
+
+    public void removeMember(User member) {
+        this.members.remove(member);
     }
 }

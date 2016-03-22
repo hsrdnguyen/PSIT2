@@ -14,6 +14,7 @@ public abstract class AccessControlObjectBase {
     private Rating rating;
     private String ownerId;
     private String description;
+    private boolean dirty;
 
     public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, Rating rating, String ownerId, String description) {
         this.id = id;
@@ -39,6 +40,7 @@ public abstract class AccessControlObjectBase {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+        setDirty(true);
     }
 
     public Date getCreationDate() {
@@ -47,6 +49,7 @@ public abstract class AccessControlObjectBase {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+        setDirty(true);
     }
 
     public Rating getRating() {
@@ -55,6 +58,7 @@ public abstract class AccessControlObjectBase {
 
     public void setRating(Rating rating) {
         this.rating = rating;
+        setDirty(true);
     }
 
     public String getOwnerId() {
@@ -63,6 +67,7 @@ public abstract class AccessControlObjectBase {
 
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+        setDirty(true);
     }
 
     public String getDescription() {
@@ -71,5 +76,15 @@ public abstract class AccessControlObjectBase {
 
     public void setDescription(String description) {
         this.description = description;
+        setDirty(true);
     }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    protected void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
 }

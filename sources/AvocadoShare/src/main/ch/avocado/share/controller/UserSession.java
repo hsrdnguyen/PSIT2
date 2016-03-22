@@ -4,7 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.AccessLevelEnum;
+import ch.avocado.share.model.data.EmailAddress;
+import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
@@ -85,7 +89,7 @@ public class UserSession {
      * @param requiredLevel The required access level
      * @param target The accessed object
      * @return True if the user has the required permissions
-     */
+     *
     public boolean hasAccess(AccessLevelEnum requiredLevel, AccessControlObjectBase target) {
         User user = getUser();
         AccessLevelEnum grantedLevel;
@@ -101,7 +105,7 @@ public class UserSession {
             grantedLevel = securityHandler.getAnonymousAccessLevel(target);
         }
         return grantedLevel.containsLevel(requiredLevel);
-    }
+    }*/
 
 	public void clearAuthentication() {
         user = null;

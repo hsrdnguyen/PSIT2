@@ -8,6 +8,7 @@ import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
+import ch.avocado.share.service.IUserDataHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -29,7 +30,8 @@ public class LoginServletTest {
 
     private static final String INVALID_LOGIN_EMAIL = "nobody@zhaw.ch";
     private static final String INVALID_LOGIN_PASSWORD = "notexisting";
-    
+
+
     @Before
     public void setUp() {
         servlet = new LoginServlet();

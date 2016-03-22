@@ -13,4 +13,5 @@ public interface IGroupDataHandler {
     boolean deleteGroup(Group group);
     Group getGroupByName(String name);
     User[] getGroupMembers(Group group);
+    Group[] getGroupsOfUser(User user);
 }
