@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.HexEncoder;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.FileConstants;
 import ch.avocado.share.model.factory.FileFactory;
@@ -7,12 +8,14 @@ import ch.avocado.share.service.IFileStorageHandler;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
+import java.security.DigestException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by bergm on 21/03/2016.
@@ -22,6 +25,8 @@ public class FileUploadBean implements Serializable {
     private String title;
     private String description;
     private String author;
+
+    private final int FILE_READ_BUFFER_SIZE = 512;
 
     public void saveFile(FileItem fileItem) {
 
@@ -88,9 +93,24 @@ public class FileUploadBean implements Serializable {
         this.author = author;
     }
 
-    private String createFileHashName(FileItem fileItem) {
-        //TODO Cyril do your magic
-
-        return String.valueOf(Math.round(Math.random() * 10000)) + fileItem.getName().substring(fileItem.getName().lastIndexOf("."));
+    private String createFileHashName(FileItem fileItem) throws IOException, DigestException{
+        byte[] buffer = new byte[FILE_READ_BUFFER_SIZE];
+        int readBytes = 0;
+        MessageDigest messageDigest;
+        try{
+            messageDigest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 digest doesn't exist");
+        }
+        InputStream inputStream = fileItem.getInputStream();
+        while(readBytes >= 0) {
+            readBytes = inputStream.read(buffer);
+            if(readBytes >= 0) {
+                messageDigest.update(buffer, 0, readBytes);
+            }
+        }
+        // finalize digest (padding etc.)
+        byte[] digest = messageDigest.digest();
+        return HexEncoder.bytesToHex(digest);
     }
 }
