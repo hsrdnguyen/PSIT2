@@ -1,13 +1,11 @@
 package ch.avocado.share.controller;
 
+import javax.imageio.spi.IIOServiceProvider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.EmailAddress;
-import ch.avocado.share.model.data.EmailAddressVerification;
-import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
@@ -82,7 +80,30 @@ public class UserSession {
         this.user = user;
 		session.setAttribute(SESSION_UID, user.getId());
 	}
-	
+
+    /**
+     * Check if the session user has access to the target.
+     * @param requiredLevel The required access level
+     * @param target The accessed object
+     * @return True if the user has the required permissions
+     */
+    public boolean hasAccess(AccessLevelEnum requiredLevel, AccessControlObjectBase target) {
+        User user = getUser();
+        AccessLevelEnum grantedLevel;
+        ISecurityHandler securityHandler;
+        try {
+            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
+        } catch (ServiceNotFoundException e) {
+            return false;
+        }
+        if(user != null) {
+            grantedLevel = securityHandler.getAccessLevel(user, target);
+        } else {
+            grantedLevel = securityHandler.getAnonymousAccessLevel(target);
+        }
+        return grantedLevel.containsLevel(requiredLevel);
+    }
+
 	public void clearAuthentication() {
         user = null;
 		session.removeAttribute(SESSION_UID);

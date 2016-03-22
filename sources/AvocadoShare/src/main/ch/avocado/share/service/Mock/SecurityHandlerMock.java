@@ -11,6 +11,11 @@ import ch.avocado.share.service.ISecurityHandler;
 public class SecurityHandlerMock implements ISecurityHandler {
     @Override
     public AccessLevelEnum getAccessLevel(User user, AccessControlObjectBase target) {
-        return null;
+        return AccessLevelEnum.NONE;
+    }
+
+    @Override
+    public AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) {
+        return AccessLevelEnum.NONE;
     }
 }

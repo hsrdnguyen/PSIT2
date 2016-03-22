@@ -1,6 +1,7 @@
 package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.User;
 
 /**
  * Created by coffeemakr on 21.03.16.
@@ -11,4 +12,5 @@ public interface IGroupDataHandler {
     boolean updateGroup(Group group);
     boolean deleteGroup(Group group);
     Group getGroupByName(String name);
+    User[] getGroupMembers(Group group);
 }
