@@ -2,6 +2,9 @@ package ch.avocado.share.common;
 
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.ISecurityHandler;
+import ch.avocado.share.servlet.LoginServlet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -60,19 +63,31 @@ public class AuthenticationFilter implements Filter {
 	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		UserSession userSession = new UserSession((HttpServletRequest) request);
-		User user = userSession.getUser();
-		if(!request.isSecure()) {
-			// TODO redirect to HTTPS://
-		} else {
-			// Check if user is authenticated
-		}
-		if(user == null) {
+        boolean hasAccess = true;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+		UserSession userSession = new UserSession(httpServletRequest);
+        ISecurityHandler securityHandler;
+        try {
+            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
+        } catch (ServiceNotFoundException e) {
+
+        }
+        User user = userSession.getUser();
+        request.setAttribute("session", userSession);
+        if(!request.isSecure()) {
+            // TODO redirect to HTTPS://
+        }
+
+        if(user == null && httpServletRequest.getMethod() != "GET") {
+            hasAccess = false;
+        }
+
+		if(hasAccess) {
 			// pass the request along the filter chain
 			chain.doFilter(request, response);
 		} else {
-			httpResponse.sendRedirect(getLoginUrl((HttpServletRequest) request));
+			httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 	}
 
