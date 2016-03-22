@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Avocado Share</title>
-  <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/octicons.css">
   <link rel="stylesheet" href="css/app.css">
   <meta charset="utf-8" />
 </head>
@@ -85,7 +85,7 @@
  	<h2>Senden Sie uns eine Nachricht</h2>
 	</a>
 	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
-	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
+	<p class="text-block">Die Felder mit * mï¿½ssen ausgefï¿½llt werden.</p><div id="xform" class="xform">
 
     <form action="" method="post" id="form_formular" class="contact_action">
 
@@ -141,6 +141,6 @@
 
 </footer>
 <script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
-<script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="application/javascript" src="js/bootstrap.min.js"></script>
 </body>
 </html>
