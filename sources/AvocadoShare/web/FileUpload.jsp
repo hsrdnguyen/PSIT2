@@ -6,13 +6,29 @@
 <%@ page import="org.apache.commons.io.output.*" %>
 <jsp:useBean id="uploadBean" scope="request" class="ch.avocado.share.controller.FileUploadBean"/>
 <%
-    uploadBean.setTitle(request.getParameter("title"));
-    uploadBean.setDescription(request.getParameter("description"));
-    uploadBean.setAuthor(request.getParameter("author"));
-
     String contentType = request.getContentType();
+    FileItem file = null;
+
     if ((contentType.indexOf("multipart/form-data") >= 0)) {
-        uploadBean.uploadFile(request);
+        List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+        for (FileItem item : items) {
+            if (item.isFormField()) {
+                switch (item.getFieldName()){
+                    case "description":
+                        uploadBean.setDescription(item.getString());
+                        break;
+                    case "title":
+                        uploadBean.setTitle(item.getString());
+                        break;
+                    case "author":
+                        uploadBean.setAuthor(item.getString());
+                        break;
+                }
+            } else {
+                file = item;
+            }
+        }
+        uploadBean.saveFile(file);
     }
     /*File file ;
     int maxFileSize = 5000 * 1024;

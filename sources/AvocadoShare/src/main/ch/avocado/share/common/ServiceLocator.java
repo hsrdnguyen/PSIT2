@@ -4,6 +4,7 @@ import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Impl.DatabaseConnectionHandler;
+import ch.avocado.share.service.Impl.FileStorageHandler;
 import ch.avocado.share.service.Impl.MailingService;
 import ch.avocado.share.service.Mock.*;
 
@@ -31,9 +32,10 @@ public class ServiceLocator {
     }
 
     private static void registerServices() {
-        services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
+        //services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
+        services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandlerMock());
         services.put(IUserDataHandler.class, new UserDataHandlerMock());
-        services.put(IFileStorageHandler.class, new FileStorageHandlerMock());
+        services.put(IFileStorageHandler.class, new FileStorageHandler());
         services.put(ISecurityHandler.class, new SecurityHandlerMock());
         services.put(IFileDataHandler.class, new FileDataHandlerMock());
         services.put(IMailingService.class, new MailingService());

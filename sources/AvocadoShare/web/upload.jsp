@@ -100,9 +100,9 @@
       <input class="form-control" name="title" id="title" value="" type="text">
       </div>
 
-      <div class="form-group" id="formular-msg">
+      <div class="form-group" id="formular-description">
           <label class="control-label" for="description">Beschreibung *</label>
-          <textarea class="form-control" name="msg" id="description" rows="10"></textarea>
+          <textarea class="form-control" name="description" id="description" rows="10"></textarea>
           </div>
   <div class="form-group" id="formular-author">
       <label class="control-label" for="author">Author *</label>

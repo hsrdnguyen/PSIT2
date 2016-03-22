@@ -1,12 +1,12 @@
-package ch.avocado.share.service.Mock;
+package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.IFileDataHandler;
 
 /**
- * Created by bergm on 19/03/2016.
+ * Created by bergm on 22/03/2016.
  */
-public class FileDataHandlerMock implements IFileDataHandler {
+public class FileDataHandler implements IFileDataHandler {
     @Override
     public boolean addFile(File file) {
         return false;

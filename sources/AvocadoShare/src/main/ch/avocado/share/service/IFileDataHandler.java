@@ -8,26 +8,32 @@ import ch.avocado.share.model.data.File;
 public interface IFileDataHandler {
 
     /**
-     * Saves a given file to the server
-     * @param file file to be saved
-     * @return Path to the file-location
+     * adds the given File to the Database and saves it on the server
+     * @param file file to be added
+     * @return true if it could be added
      */
-    String saveFile(File file);
+    boolean addFile(File file);
 
     /**
-     * Gets the file on the given location
-     * @param path relative path to the file without filename
-     * @param fileName name of the file on the server
-     * @return file that is found on the given location
+     * deletes the given file rom the database and the server
+     * @param file file to be deleted
+     * @return true if was successfully deleted
      */
-    File getFile(String path, String fileName);
+    boolean deleteFile(File file);
 
     /**
-     * Checks if a file on the given location exists
-     * @param path relative path to the file without filename
-     * @param fileName name of the file on the server
-     * @return true if the file exists
+     * Returns the file from the server with the data from the database
+     * @param fileId id of the requested file
+     * @return File from server
      */
-    boolean fileExists(String path, String fileName);
+    File getFile(String fileId);
+
+    /**
+     * updates a file on the server and database and creates a new version number
+     * @param file file with updated data
+     * @return true if it was successfully updated
+     */
+    boolean updateFile(File file);
 
 }
+
