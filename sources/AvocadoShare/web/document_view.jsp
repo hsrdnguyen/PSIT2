@@ -159,7 +159,7 @@
   </div>
 
 </footer>
-<script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="js/jquery.min.js"></script>
 <script type="application/javascript" src="js/bootstrap.min.js"></script>
 </body>
 </html>
