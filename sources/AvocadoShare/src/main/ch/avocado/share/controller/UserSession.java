@@ -1,6 +1,5 @@
 package ch.avocado.share.controller;
 
-import javax.imageio.spi.IIOServiceProvider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 

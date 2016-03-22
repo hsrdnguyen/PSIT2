@@ -4,7 +4,6 @@ import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
-import ch.avocado.share.servlet.LoginServlet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

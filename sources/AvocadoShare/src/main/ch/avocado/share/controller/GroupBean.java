@@ -6,9 +6,7 @@ import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.Impl.GroupDataHandler;
 
-import javax.servlet.annotation.WebServlet;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -102,7 +100,6 @@ public class GroupBean implements Serializable {
         }
         return true;
     }
-
 
     private boolean loadMembers() {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();

@@ -1,7 +1,10 @@
 package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.model.data.Group;
+<<<<<<< HEAD
 import ch.avocado.share.model.data.User;
+=======
+>>>>>>> 61fbff3800537ff29580806ccfe2e58a46155f3d
 import ch.avocado.share.service.IGroupDataHandler;
 
 /**
@@ -37,4 +40,5 @@ public class GroupDataHandlerMock implements IGroupDataHandler {
     public User[] getGroupMembers(Group group) {
         return new User[0];
     }
+
 }
