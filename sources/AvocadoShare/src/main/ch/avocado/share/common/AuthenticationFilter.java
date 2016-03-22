@@ -1,5 +1,10 @@
 package ch.avocado.share.common;
 
+import ch.avocado.share.controller.UserSession;
+import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.ISecurityHandler;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -15,9 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet Filter implementation class AuthentificationFilter
+ * Servlet Filter implementation class AuthenticationFilter
  */
-@WebFilter(description = "Check authentification")
+@WebFilter(description = "Check authentication")
 public class AuthenticationFilter implements Filter {
 	
 	/**
@@ -57,18 +62,31 @@ public class AuthenticationFilter implements Filter {
 	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		boolean authenticated = true;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		if(!request.isSecure()) {
-			// TODO redirect to HTTPS://
-		} else {
-			// Check if user is authenticated
-		}
-		if(authenticated) {
+        boolean hasAccess = true;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+		UserSession userSession = new UserSession(httpServletRequest);
+        ISecurityHandler securityHandler;
+        try {
+            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
+        } catch (ServiceNotFoundException e) {
+
+        }
+        User user = userSession.getUser();
+        request.setAttribute("session", userSession);
+        if(!request.isSecure()) {
+            // TODO redirect to HTTPS://
+        }
+
+        if(user == null && httpServletRequest.getMethod() != "GET") {
+            hasAccess = false;
+        }
+
+		if(hasAccess) {
 			// pass the request along the filter chain
 			chain.doFilter(request, response);
 		} else {
-			httpResponse.sendRedirect(getLoginUrl((HttpServletRequest) request));
+			httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 	}
 

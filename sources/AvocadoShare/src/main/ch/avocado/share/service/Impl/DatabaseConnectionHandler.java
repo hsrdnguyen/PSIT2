@@ -31,7 +31,6 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     public ResultSet executeQuery(String query) throws SQLException {
         ensureConnection();
         Statement stmt = conn.createStatement();
-
         ResultSet result = stmt.executeQuery(query);
 
         conn.close();

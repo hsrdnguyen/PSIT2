@@ -60,4 +60,5 @@ public interface IUserDataHandler {
      * @return true if user was successfully added
      */
     boolean addUserToGroup(User user, Group group);
+
 }

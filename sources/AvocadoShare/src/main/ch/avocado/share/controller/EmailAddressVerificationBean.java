@@ -4,12 +4,11 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IUserDataHandler;
-import org.w3c.dom.UserDataHandler;
 
 import java.io.Serializable;
 
 /**
- * Created by coffeemakr on 21.03.16.
+ * Created by kunzlio on 21.03.16.
  */
 public class EmailAddressVerificationBean implements Serializable {
     private String code;

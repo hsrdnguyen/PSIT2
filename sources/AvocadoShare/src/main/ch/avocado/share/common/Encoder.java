@@ -787,10 +787,13 @@ public class Encoder {
         return result;
     }
 
+    public static String encodeForHTMLBody(String value) {
+        if(value == null) value = "";
+        return htmlEntities(value);
+    }
+
     public static String encodeForAttribute(String value) {
-        if(value == null) {
-            value = "";
-        }
+        if(value == null) value = "";
         return htmlEntities(value);
     }
 }
