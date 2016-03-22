@@ -44,7 +44,14 @@ public class FileUploadBean implements Serializable {
         ch.avocado.share.model.data.File file = FileFactory.getDefaultFile();
         file.setTitle(title);
         file.setVersion("1.0");
-        String filename = createFileHashName(fileItem);
+        String filename = null;
+        try {
+            filename = createFileHashName(fileItem);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (DigestException e) {
+            e.printStackTrace();
+        }
         file.setFilename(filename);
         file.setPath(FileConstants.FILE_DESTINATION_ON_SERVER + "\\" + filename);
         file.setDescription(description);
