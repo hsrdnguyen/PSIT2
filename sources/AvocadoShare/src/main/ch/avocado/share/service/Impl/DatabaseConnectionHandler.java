@@ -13,7 +13,7 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.postgresql.Driver";
-    static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_share";
+    static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/avocado_share";
 
     //  Database credentials
     static final String USER = "avocado_tomcat";
@@ -35,6 +35,16 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
         conn.close();
         return result;
+    }
+
+    @Override
+    public ResultSet executeQuery(PreparedStatement preparedStatement) throws SQLException {
+        return preparedStatement.executeQuery();
+    }
+
+    @Override
+    public PreparedStatement getPreparedStatement(String statement) throws SQLException {
+        return conn.prepareStatement(statement);
     }
 
     @Override
