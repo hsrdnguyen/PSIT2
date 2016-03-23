@@ -17,15 +17,77 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class should be used for all resources and does the following things:
+ * * Check access
+ * * Execute appropriate method (get, create, index, etc.)
+ * * Include the template accordingly.
+ * <p>
+ * Once handleRequest is called, this class checks the method of the request.<br/>
+ * * GET: Display a form to edit or create an object, display a single element or display a list of elements.<br/>
+ * * POST: create a new object (if there is no method parameter in the request)<br/>
+ * * PATCH: update the object<br/>
+ * * PUT: Replace an element (not implemented yet)
+ * <p>
+ * The GET request is somewhat special. There are four different cases for a GET-request. Checking is performed
+ * in this order:
+ * <ul>
+ * <li>If {@link #hasIdentifier()} is {@code true}:</li>
+ * <ul>
+ * <li>  If the attribute {@link #getAction() action} is set to {@value ACTION_EDIT} {@link #get()}
+ *       is called an the template {@link #getEditDispatcher(HttpServletRequest)} is included.
+ * </li>
+ * <li>  Otherwise {@link #get()} is called and  {@link #getDetailDispatcher(HttpServletRequest)} is included</li>
+ * </ul>
+ * <li>
+ *    If {@link #hasIdentifier()} is {@code false}:
+ * </li><ul><li>
+ *       If the attribute {@link #getAction() action} is set to {@value ACTION_CREATE}
+ *       the template {@link #getCreateDispatcher(HttpServletRequest)} to create a new
+ *       object is included.
+ * </li>
+ * <li>
+ *       Otherwise {@link #index()} is called and the template
+ *        {@link #getIndexDispatcher(HttpServletRequest)} is included
+ * </li></ul></ul>
+ *
+ * @param <E> The subclass of AccessControlObjectBase to handle.
+ */
 public abstract class ResourceBean<E extends AccessControlObjectBase> implements Serializable {
-    public static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
-    public static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
-    public static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
+    private static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
+    private static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
+    private static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
+    private static final String ERROR_NOT_LOGGED_IN = "Sie müssen angemeldet sein für diese Aktion.";
 
+    /**
+     * The default template returned by {@link #getIndexDispatcher(HttpServletRequest)}.
+     */
+    private static final String TEMPLATE_LIST = "list.jsp";
+    /**
+     * The default template returned by {@link #getDetailDispatcher(HttpServletRequest)}.
+     */
+    private static final String TEMPLATE_DETAILS = "details.jsp";
+    /**
+     * The default template returned by {@link #getEditDispatcher(HttpServletRequest)}.
+     */
+    private static final String TEMPLATE_EDIT = "edit.jsp";
+    /**
+     * The default template returned by {@link #getErrorDispatcher(HttpServletRequest)}.
+     */
+    private static final String TEMPLATE_ERROR = "error.jsp";
+    /**
+     * The default template returned by {@link #getCreateDispatcher(HttpServletRequest)}.
+     */
+    private static final String TEMPLATE_CREATE = "create.jsp";
+
+    /**
+     * The object which is returned by {@link #get()} is stored in this field.
+     * @see #getObject()
+     */
     private E object;
 
     private String id;
-
+    private String method;
     private Map<String, String> formErrors = new HashMap<>();
 
     /**
@@ -56,6 +118,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * to find a unique element. (key or unique attribute)
      * This method is used to determinate if the list of elements is requested (index())
      * or a single object get().
+     *
      * @return True if the bean has a valid identifier
      */
     protected abstract boolean hasIdentifier();
@@ -82,6 +145,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     /**
      * Updates the object which can be accessed through getObject().
      * Use addFormError if there are invalid or missing parameters.
+     *
      * @throws HttpBeanException
      */
     public abstract void update() throws HttpBeanException;
@@ -105,39 +169,54 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
 
     /**
+     * Get the dispatcher to render a list of objects. This list will be available in the
+     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
+     * named {@link #getPluralAttributeName()} and has the type {@link E E[]}.
      * @param request The http request
-     * @return the {@link RequestDispatcher} to present a list of objects.
+     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_LIST} in the same folder.
      */
     protected RequestDispatcher getIndexDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("list.jsp");
+        return request.getRequestDispatcher(TEMPLATE_LIST);
     }
 
     /**
+     * Get the dispatcher to render a single object. This object will be available in the
+     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
+     * named {@link #getAttributeName()}} and has the type {@link E}.
      * @param request The http request
-     * @return the {@link RequestDispatcher} to present a details of an object.
+     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_DETAILS} in the same folder.
      */
     protected RequestDispatcher getDetailDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("details.jsp");
+        return request.getRequestDispatcher(TEMPLATE_DETAILS);
     }
 
     /**
+     * Get the dispatcher to edit a single object. This object will be available in the
+     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
+     * named {@link #getAttributeName()}} and has the type {@link E}.
      * @param request The http request
-     * @return the {@link RequestDispatcher} to present a form to edit an object.
+     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_EDIT} in the same folder.
      */
     protected RequestDispatcher getEditDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("edit.jsp");
+        return request.getRequestDispatcher(TEMPLATE_EDIT);
     }
 
     /**
+     * Get the dispatcher to render a unknown fatal error.
      * @param request The http request
-     * @return the {@link RequestDispatcher} to present a form display fatal errors.
+     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_ERROR} in the same folder.
      */
     protected RequestDispatcher getErrorDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("error.jsp");
+        return request.getRequestDispatcher(TEMPLATE_ERROR);
     }
 
+    /**
+     * Get the dispatcher to render a create a new  object.
+     * @param request The http request
+     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_CREATE} in the same folder.
+     */
     protected RequestDispatcher getCreateDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("create.jsp");
+        return request.getRequestDispatcher(TEMPLATE_CREATE);
     }
 
     private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws ServletException {
@@ -181,10 +260,16 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
         return securityHandler;
     }
 
-    void ensureHasAccess(E target, AccessLevelEnum requiredLevel) throws HttpBeanException {
+    private void ensureIsAuthenticated() throws HttpBeanException {
+        if (accessingUser == null) {
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ERROR_NOT_LOGGED_IN);
+        }
+    }
+
+    private void ensureHasAccess(E target, AccessLevelEnum requiredLevel) throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
         AccessLevelEnum grantedAccessLevel;
-        if(accessingUser == null) {
+        if (accessingUser == null) {
             grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
         } else {
             grantedAccessLevel = securityHandler.getAccessLevel(accessingUser, target);
@@ -195,11 +280,8 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     }
 
     private TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException {
-        TemplateType templateType = TemplateType.ERROR;
-        E object;
-        E[] objectList;
-
-        switch (request.getMethod()) {
+        TemplateType templateType;
+        switch (getMethod()) {
             case "PATCH":
                 templateType = doPatch(request);
                 break;
@@ -222,6 +304,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Handle DELETE request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
@@ -231,7 +314,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
         object = get();
         ensureHasAccess(object, AccessLevelEnum.OWNER);
         destroy();
-        if(!hasErrors()) {
+        if (!hasErrors()) {
             templateType = TemplateType.INDEX;
         } else {
             templateType = TemplateType.EDIT;
@@ -242,12 +325,14 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Handle POST request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
      */
     private TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
         TemplateType templateType;
+        System.out.println("PATCH");
         object = get();
         update();
         if (!hasErrors()) {
@@ -261,43 +346,76 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
         return templateType;
     }
 
+
     /**
      * Handle GET request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
      */
     private TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
         TemplateType templateType;
-        E object;
-        E[] objectList;
         if (hasIdentifier()) {
-            object = get();
-            if (isEdit()) {
-                templateType = TemplateType.EDIT;
-                ensureHasAccess(object, AccessLevelEnum.WRITE);
-            } else {
-                templateType = TemplateType.DETAIL;
-                ensureHasAccess(object, AccessLevelEnum.READ);
-            }
-            request.setAttribute(getAttributeName(), object);
+            templateType = doGetOnObject(request);
         } else {
-            if(isCreate()) {
-                templateType = TemplateType.CREATE;
-            } else {
-                objectList = index();
-                for (E objectInList : objectList) {
-                    ensureHasAccess(objectInList, AccessLevelEnum.READ);
-                }
-                templateType = TemplateType.INDEX;
-                request.setAttribute(getPluralAttributeName(), objectList);
-            }
+            templateType = doGetOnIndex(request);
         }
         return templateType;
     }
 
     /**
+     * Handle GET requests on a single object
+     *
+     * @param request
+     * @return The template type
+     * @throws HttpBeanException
+     */
+    private TemplateType doGetOnObject(HttpServletRequest request) throws HttpBeanException {
+        TemplateType templateType;
+        object = get();
+        if (isEdit()) {
+            System.out.println("EDIT");
+            templateType = TemplateType.EDIT;
+            ensureHasAccess(object, AccessLevelEnum.WRITE);
+        } else {
+            System.out.println("DETAIL");
+            templateType = TemplateType.DETAIL;
+            ensureHasAccess(object, AccessLevelEnum.READ);
+        }
+        request.setAttribute(getAttributeName(), object);
+        return templateType;
+    }
+
+    /**
+     * Handle GET request on the index (not on a single object)
+     *
+     * @param request
+     * @return The template type
+     * @throws HttpBeanException
+     */
+    private TemplateType doGetOnIndex(HttpServletRequest request) throws HttpBeanException {
+        TemplateType templateType;
+        if (isCreate()) {
+            System.out.println("CREATE");
+            ensureIsAuthenticated();
+            templateType = TemplateType.CREATE;
+        } else {
+            E[] objectList = index();
+            System.out.println("INDEX");
+            for (E objectInList : objectList) {
+                ensureHasAccess(objectInList, AccessLevelEnum.READ);
+            }
+            templateType = TemplateType.INDEX;
+            request.setAttribute(getPluralAttributeName(), objectList);
+        }
+        return templateType;
+    }
+
+
+    /**
      * Handle PUT request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
@@ -306,7 +424,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
         TemplateType templateType;
         E object = create();
         request.setAttribute(getAttributeName(), object);
-        if(hasErrors()) {
+        if (hasErrors()) {
             templateType = TemplateType.CREATE;
         } else {
             templateType = TemplateType.DETAIL;
@@ -317,12 +435,21 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Execute a request
+     *
      * @param request
      * @param response
      * @throws ServletException
      */
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        if (request == null) throw new IllegalArgumentException("request is null");
+        if (response == null) throw new IllegalArgumentException("response is null");
         setAccessingUserFromRequest(request);
+        if (request.getMethod().equals("GET")) {
+            // Another request can't be simulated with GET.
+            setMethod("GET");
+        } else if (getMethod() == null) {
+            setMethod(request.getMethod());
+        }
         TemplateType templateType;
         try {
             templateType = executeRequest(request, response);
@@ -334,7 +461,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
             }
             return;
         }
-        if(hasErrors()) {
+        if (hasErrors()) {
             request.setAttribute(ATTRIBUTE_FORM_ERRORS, this.formErrors);
         }
         dispatchEvent(request, response, templateType);
@@ -363,8 +490,9 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Add a error related to a parameter
+     *
      * @param parameter the parameter
-     * @param message the message describing the error
+     * @param message   the message describing the error
      */
     protected void addFormError(String parameter, String message) {
         this.formErrors.put(parameter, message);
@@ -374,7 +502,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @return True if there occured errors while processing a request
      */
     public boolean hasErrors() {
-        return formErrors.isEmpty();
+        return !formErrors.isEmpty();
     }
 
     /**
@@ -400,6 +528,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Set the action parameter
+     *
      * @param action
      */
     public void setAction(String action) {
@@ -416,6 +545,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Returns the if of the object
+     *
      * @return
      */
     public String getId() {
@@ -424,9 +554,32 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Set the identifiert of the object
+     *
      * @param id
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Returns the HTTP method which will be used to process the request
+     *
+     * @return
+     */
+    public String getMethod() {
+        return method;
+    }
+
+    /**
+     * Sets the HTTP method.
+     *
+     * @param method
+     */
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public Map<String, String> getFormErrors() {
+        return new HashMap<>(this.formErrors);
     }
 }

@@ -21,7 +21,7 @@ public class UserSession {
 	private User user;
 	private HttpSession session;
     // TODO: remove when authentication users are implemented;
-    private final boolean ALWAYS_AUTHENTICATED = true;
+    private final boolean ALWAYS_AUTHENTICATED = false;
 
 	/**
 	 * Helper method to check if the request is null.

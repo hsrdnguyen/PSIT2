@@ -1,9 +1,7 @@
 package ch.avocado.share.model.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,7 +10,7 @@ import java.util.List;
 public class Group extends AccessControlObjectBase implements Serializable {
 
     private String name;
-    private List<User> members;
+    private List<String> memberIds;
 
     public Group(String id,
                  List<Category> categories,
@@ -21,12 +19,12 @@ public class Group extends AccessControlObjectBase implements Serializable {
                  String ownerId,
                  String description,
                  String name,
-                 List<User> members) {
+                 List<String> memberIds) {
         super(id, categories, creationDate, rating, ownerId, description);
         if(name == null) throw new IllegalArgumentException("name is null");
         this.name = name;
-        if(members == null) throw new IllegalArgumentException("member is null");
-        this.members = members;
+        if(memberIds == null) throw new IllegalArgumentException("member is null");
+        this.memberIds = memberIds;
     }
 
     public String getName() {
@@ -41,18 +39,18 @@ public class Group extends AccessControlObjectBase implements Serializable {
         }
     }
 
-    public User[] getMembers() {
-        User[] users = new User[members.size()];
-        return members.toArray(users);
+    public User[] getMemberIds() {
+        User[] users = new User[memberIds.size()];
+        return memberIds.toArray(users);
     }
 
-    public void addMember(User member) {
-        members.add(member);
+    public void addMember(String memberId) {
+        memberIds.add(memberId);
         setDirty(true);
     }
 
-    public void removeMember(User removedMember) {
-        members.remove(removedMember);
+    public void removeMember(String memberId) {
+        memberIds.remove(memberId);
         setDirty(true);
     }
 }

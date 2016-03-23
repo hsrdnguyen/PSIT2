@@ -37,9 +37,4 @@ public class UserDataHandlerMock implements IUserDataHandler {
     public boolean verifyUser(User user, String code) {
         return false;
     }
-
-    @Override
-    public boolean addUserToGroup(User user, Group group) {
-        return false;
-    }
 }

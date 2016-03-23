@@ -28,27 +28,26 @@ public class GroupBean extends ResourceBean<Group> {
     private String description;
 
 
-    private boolean checkParameterName() throws HttpBeanException {
+    private void checkParameterName(boolean checkUnique) throws HttpBeanException {
         if (name == null || name.trim().isEmpty()) {
             addFormError("name", ERROR_NO_NAME);
-            return false;
+        } else {
+            name = name.trim();
+            if(checkUnique) {
+                IGroupDataHandler groupDataHandler = getGroupDataHandler();
+                if (groupDataHandler.getGroupByName(name) != null) {
+                    addFormError("name", ERROR_GROUP_NAME_ALREADY_EXISTS);
+                }
+            }
         }
-        name = name.trim();
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        if (groupDataHandler.getGroupByName(name) != null) {
-            addFormError("name", ERROR_GROUP_NAME_ALREADY_EXISTS);
-            return false;
-        }
-        return true;
     }
 
-    private boolean checkParameterDescription() {
+    private void checkParameterDescription() {
         if (description == null || description.trim().isEmpty()) {
             addFormError("description", ERROR_NO_DESCRIPTION);
-            return false;
+        } else {
+            description = description.trim();
         }
-        description = description.trim();
-        return false;
     }
 
     @Override
@@ -61,12 +60,11 @@ public class GroupBean extends ResourceBean<Group> {
     public Group create() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
         IUserDataHandler userDataHandler = getUserDataHandler();
-        checkParameterName();
+        checkParameterName(true);
         checkParameterDescription();
         if (!hasErrors()) {
-            Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name, new ArrayList<User>());
-            if (!groupDataHandler.addGroup(group) ||
-                    !userDataHandler.addUserToGroup(getAccessingUser(), group)) {
+            Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name, new ArrayList<String>());
+            if (!groupDataHandler.addGroup(group)) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
             }
             return group;
@@ -76,11 +74,15 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     public Group get() throws HttpBeanException {
+        if(!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
         Group group = null;
-        if (name != null) {
+        if(getId() != null) {
+            group = groupDataHandler.getGroup(getId());
+        }else if (name != null) {
             group = groupDataHandler.getGroupByName(name);
         }
+
         if (group == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_NO_SUCH_GROUP);
         }
@@ -97,7 +99,7 @@ public class GroupBean extends ResourceBean<Group> {
     public void update() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
         checkParameterDescription();
-        checkParameterName();
+        checkParameterName(false);
         if (!hasErrors()) {
             getObject().setName(name);
             getObject().setDescription(description);
