@@ -4,7 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.AccessLevelEnum;
+import ch.avocado.share.model.data.EmailAddress;
+import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
@@ -17,7 +21,7 @@ public class UserSession {
 	private User user;
 	private HttpSession session;
     // TODO: remove when authentication users are implemented;
-    private final boolean ALWAYS_AUTHENTICATED = true;
+    private final boolean ALWAYS_AUTHENTICATED = false;
 
 	/**
 	 * Helper method to check if the request is null.
@@ -54,7 +58,7 @@ public class UserSession {
         user = null;
         findUser(userId);
         if(ALWAYS_AUTHENTICATED) {
-            user = new User("???", null, new Date(System.currentTimeMillis()), null,  "", "???", UserPassword.fromPassword("1234") ,"prename", "surname",  "avatar", new EmailAddress(true, "muellcy1@students.zhaw.ch", null));
+            user = new User("???", null, new Date(System.currentTimeMillis()), 0,  "", "???", UserPassword.fromPassword("1234") ,"prename", "surname",  "avatar", new EmailAddress(true, "muellcy1@students.zhaw.ch", null));
         }
     }
 
@@ -85,7 +89,7 @@ public class UserSession {
      * @param requiredLevel The required access level
      * @param target The accessed object
      * @return True if the user has the required permissions
-     */
+     *
     public boolean hasAccess(AccessLevelEnum requiredLevel, AccessControlObjectBase target) {
         User user = getUser();
         AccessLevelEnum grantedLevel;
@@ -101,7 +105,7 @@ public class UserSession {
             grantedLevel = securityHandler.getAnonymousAccessLevel(target);
         }
         return grantedLevel.containsLevel(requiredLevel);
-    }
+    }*/
 
 	public void clearAuthentication() {
         user = null;

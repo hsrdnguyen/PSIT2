@@ -62,12 +62,4 @@ public interface IUserDataHandler {
      */
     boolean verifyUser(User user);
 
-    /**
-     * Adds a user to a given group
-     * @param user user to be added
-     * @param group group to be added to
-     * @return true if user was successfully added
-     */
-    boolean addUserToGroup(User user, Group group);
-
 }

@@ -38,7 +38,19 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     }
 
     @Override
-    public String insertDataSet(String query) throws SQLException {
+    public boolean insertDataSet(String query) throws SQLException {
+        return updateDataSet(query);
+    public ResultSet executeQuery(PreparedStatement preparedStatement) throws SQLException {
+        ensureConnection();
+        return preparedStatement.executeQuery();
+    }
+
+    @Override
+    public PreparedStatement getPreparedStatement(String statement) throws SQLException {
+        return conn.prepareStatement(statement);
+    }
+
+public String insertDataSet(String query) throws SQLException {
         ensureConnection();
 
         Statement stmt = conn.createStatement();
@@ -52,8 +64,6 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
                 throw new SQLException("Creating user failed, no ID obtained.");
             }
         }
-
-
     }
 
     @Override
@@ -78,4 +88,6 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
             setSchema.execute("SET search_path TO avocado_share;");
         }
     }
+
+
 }

@@ -3,7 +3,7 @@
 -- Create users with password set to a secret password.
 -- keiM2h0ciOgw;4)-/x-4nvRU5BgD#Y7N
 
-CREATE ROLE avocado_tomcat WITH ENCRYPTED PASSWORD '77eb2c2e52824f26bd47f6d0bc6e1dcb' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOLOGIN;
+CREATE ROLE avocado_tomcat WITH ENCRYPTED PASSWORD '77eb2c2e52824f26bd47f6d0bc6e1dcb' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN;
 
 CREATE SCHEMA avocado_share;
 
@@ -21,21 +21,12 @@ CREATE TABLE access_control
 CREATE TABLE file
 (
   id INTEGER NOT NULL,
-  Title VARCHAR(50) NOT NULL,
+  title VARCHAR(50) NOT NULL,
   description VARCHAR(512) NOT NULL,
-  LastChanged timestamp NOT NULL,
-  CONSTRAINT pk_File PRIMARY KEY(id),
-  CONSTRAINT fk_File FOREIGN KEY(id) REFERENCES access_control(id)
-);
-
-CREATE TABLE file_version
-(
-  id INTEGER NOT NULL,
-  type VARCHAR(32) NOT NULL,
-  filename VARCHAR(32) NOT NULL,
-  creation_date timestamp NOT NULL,
-  CONSTRAINT pk_file_version PRIMARY KEY(id, filename),
-  CONSTRAINT fk_file_version FOREIGN KEY(id) REFERENCES file(id)
+  last_changed timestamp NOT NULL,
+  path VARCHAR(64) NOT NULL,
+  CONSTRAINT pk_file PRIMARY KEY(id),
+  CONSTRAINT fk_file FOREIGN KEY(id) REFERENCES access_control(id)
 );
 
 CREATE TABLE access_group

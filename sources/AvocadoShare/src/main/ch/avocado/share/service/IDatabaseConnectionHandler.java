@@ -1,5 +1,6 @@
 package ch.avocado.share.service;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -15,6 +16,9 @@ public interface IDatabaseConnectionHandler {
      */
     ResultSet executeQuery(String query) throws SQLException;
 
+    ResultSet executeQuery(PreparedStatement query) throws SQLException;
+
+    PreparedStatement getPreparedStatement(String statement) throws SQLException;
 
     /**
      * Executes an insert query on the database
