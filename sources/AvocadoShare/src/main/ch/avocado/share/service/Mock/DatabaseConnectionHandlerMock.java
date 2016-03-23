@@ -13,8 +13,8 @@ public class DatabaseConnectionHandlerMock implements IDatabaseConnectionHandler
     }
 
     @Override
-    public boolean insertDataSet(String query) {
-        return false;
+    public String insertDataSet(String query) {
+        return "";
     }
 
     @Override
