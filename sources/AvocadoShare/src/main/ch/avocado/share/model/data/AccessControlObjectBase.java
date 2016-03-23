@@ -11,12 +11,12 @@ public abstract class AccessControlObjectBase {
     private String id;
     private List<Category> categories;
     private Date creationDate;
-    private Rating rating;
+    private float rating;
     private String ownerId;
     private String description;
     private boolean dirty;
 
-    public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, Rating rating, String ownerId, String description) {
+    public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
         this.id = id;
         this.categories = categories;
         this.creationDate = creationDate;
@@ -52,13 +52,12 @@ public abstract class AccessControlObjectBase {
         setDirty(true);
     }
 
-    public Rating getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(Rating rating) {
+    public void setRating(float rating) {
         this.rating = rating;
-        setDirty(true);
     }
 
     public String getOwnerId() {

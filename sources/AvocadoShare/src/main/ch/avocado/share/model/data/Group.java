@@ -3,6 +3,7 @@ package ch.avocado.share.model.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class Group extends AccessControlObjectBase implements Serializable {
     public Group(String id,
                  List<Category> categories,
                  Date creationDate,
-                 Rating rating,
+                 float rating,
                  String ownerId,
                  String description,
                  String name,
@@ -46,10 +47,12 @@ public class Group extends AccessControlObjectBase implements Serializable {
     }
 
     public void addMember(User member) {
-        this.members.add(member);
+        members.add(member);
+        setDirty(true);
     }
 
-    public void removeMember(User member) {
-        this.members.remove(member);
+    public void removeMember(User removedMember) {
+        members.remove(removedMember);
+        setDirty(true);
     }
 }

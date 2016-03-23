@@ -15,7 +15,7 @@ public class File extends AccessControlObjectBase {
     private String type;
     private String version;
 
-    public File(String id, List<Category> categories, Date creationDate, Rating rating, String ownerId, String description, String title, String filename, String path, Date lastChanged, String type, String version) {
+    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String filename, String path, Date lastChanged, String type, String version) {
         super(id, categories, creationDate, rating, ownerId, description);
         setFilename(filename);
         setLastChanged(lastChanged);

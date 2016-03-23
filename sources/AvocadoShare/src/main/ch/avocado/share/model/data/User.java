@@ -14,7 +14,7 @@ public class User extends AccessControlObjectBase{
     private String avatar;
     private EmailAddress mail;
 
-    public User(String id, List<Category> categories, Date creationDate, Rating rating, String ownerId, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
+    public User(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
         super(id, categories, creationDate, rating, ownerId, description);
         setAvatar(avatar);
         setMail(mail);
