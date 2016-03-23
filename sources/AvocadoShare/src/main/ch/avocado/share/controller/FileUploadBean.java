@@ -3,7 +3,10 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.HexEncoder;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.FileConstants;
+import ch.avocado.share.model.data.Category;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
+import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IFileStorageHandler;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -16,6 +19,7 @@ import java.io.Serializable;
 import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * Created by bergm on 21/03/2016.
@@ -25,6 +29,7 @@ public class FileUploadBean implements Serializable {
     private String title;
     private String description;
     private String author;
+    private List<Category> categories;
 
     private final int FILE_READ_BUFFER_SIZE = 512;
 
@@ -44,6 +49,7 @@ public class FileUploadBean implements Serializable {
         ch.avocado.share.model.data.File file = FileFactory.getDefaultFile();
         file.setTitle(title);
         file.setVersion("1.0");
+        file.setCategories(categories);
         String filename = null;
         try {
             filename = createFileHashName(fileItem);
@@ -98,6 +104,40 @@ public class FileUploadBean implements Serializable {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public List<Category> getCategories(){
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories){
+        this.categories = categories;
+    }
+
+    //TODO @kunzlio1: wie Rechte kontrollieren?
+    //TODO @kunzlio1: Fragen, wie wissen wir welches File gerade im Web offen ist? Bzw. wie wird es ins Web geladen?
+    //TODO @kunzlio1: Fragen, ob Kategorien auf Infoseite beabeitet werden können, oder über bearbeiten Seite?
+    public void addCategory(String name){
+        if (name == null || name.trim() == null){
+            //TODO @kunzlio1: Error Message
+            return;
+        }else {
+            ICategoryDataHandler categoryDataHandler = getCategoryDataHandler();
+            if (categoryDataHandler.getCategoryByName(name.trim()) != null){
+                categories.add(new Category(name));
+            }else {
+                //TODO: @kunzlio1: Message das es Category schon gibt, bzw vorschau einbauen...
+            }
+        }
+
+    }
+
+    private ICategoryDataHandler getCategoryDataHandler() {
+        try {
+            return ServiceLocator.getService(ICategoryDataHandler.class);
+        } catch (ServiceNotFoundException e) {
+            return null;
+        }
     }
 
     private String createFileHashName(FileItem fileItem) throws IOException, DigestException{

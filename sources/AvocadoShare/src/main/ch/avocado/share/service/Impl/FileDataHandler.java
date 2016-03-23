@@ -1,7 +1,14 @@
 package ch.avocado.share.service.Impl;
 
+import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.ICategoryDataHandler;
+import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
+
+import java.util.List;
 
 /**
  * Created by bergm on 22/03/2016.
@@ -25,5 +32,25 @@ public class FileDataHandler implements IFileDataHandler {
     @Override
     public boolean updateFile(File file) {
         return false;
+    }
+
+    private boolean addCategories(List<Category> categories, String fileId){
+        ICategoryDataHandler categoryHandler = getCategoryDataHandler();
+        if(categoryHandler == null) return false;
+        for (Category category : categories) {
+            //TODO @kunzlio1: ev. noch kontrollieren + try/catch...
+            //TODO @kunzlio1: Fragen wie wir das eig Handeln das Daten konsistent bleiben, also wenn hier zum bsp. fehler...
+            categoryHandler.addCategory(category, fileId);
+        }
+
+        return true;
+    }
+
+    private ICategoryDataHandler getCategoryDataHandler() {
+        try {
+            return ServiceLocator.getService(ICategoryDataHandler.class);
+        } catch (ServiceNotFoundException e) {
+            return null;
+        }
     }
 }
