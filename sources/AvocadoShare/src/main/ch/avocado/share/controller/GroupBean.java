@@ -11,8 +11,6 @@ import ch.avocado.share.service.IUserDataHandler;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * GroupBean is used to create, change and delete {@link Group}s.
@@ -55,7 +53,7 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     protected boolean hasIdentifier() {
-        return name != null;
+        return name != null || getId() != null;
     }
 
 
@@ -66,7 +64,7 @@ public class GroupBean extends ResourceBean<Group> {
         checkParameterName();
         checkParameterDescription();
         if (!hasErrors()) {
-            Group group = new Group(null, null, new Date(System.currentTimeMillis()), null, getAccessingUser().getId(), description, name, new ArrayList<User>());
+            Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name, new ArrayList<User>());
             if (!groupDataHandler.addGroup(group) ||
                     !userDataHandler.addUserToGroup(getAccessingUser(), group)) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);

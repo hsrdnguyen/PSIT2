@@ -5,7 +5,6 @@ import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.RequestParameterException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 
@@ -21,8 +20,11 @@ import java.util.Map;
 public abstract class ResourceBean<E extends AccessControlObjectBase> implements Serializable {
     public static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
     public static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
+    public static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
 
     private E object;
+
+    private String id;
 
     private Map<String, String> formErrors = new HashMap<>();
 
@@ -78,12 +80,12 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     public abstract E[] index() throws HttpBeanException;
 
     /**
+     * Updates the object which can be accessed through getObject().
      * Use addFormError if there are invalid or missing parameters.
-     * @return
      * @throws HttpBeanException
-     * @throws RequestParameterException
      */
     public abstract void update() throws HttpBeanException;
+
 
     public abstract void destroy() throws HttpBeanException;
 
@@ -97,27 +99,44 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     public abstract String getAttributeName();
 
-    public String getPluralName() {
+    public String getPluralAttributeName() {
         return getAttributeName() + "s";
     }
 
-    private RequestDispatcher getIndexDispatcher(HttpServletRequest request) {
+
+    /**
+     * @param request The http request
+     * @return the {@link RequestDispatcher} to present a list of objects.
+     */
+    protected RequestDispatcher getIndexDispatcher(HttpServletRequest request) {
         return request.getRequestDispatcher("list.jsp");
     }
 
-    private RequestDispatcher getDetailDispatcher(HttpServletRequest request) {
+    /**
+     * @param request The http request
+     * @return the {@link RequestDispatcher} to present a details of an object.
+     */
+    protected RequestDispatcher getDetailDispatcher(HttpServletRequest request) {
         return request.getRequestDispatcher("details.jsp");
     }
 
-    private RequestDispatcher getEditDispatcher(HttpServletRequest request) {
+    /**
+     * @param request The http request
+     * @return the {@link RequestDispatcher} to present a form to edit an object.
+     */
+    protected RequestDispatcher getEditDispatcher(HttpServletRequest request) {
         return request.getRequestDispatcher("edit.jsp");
     }
 
-    private RequestDispatcher getErrorDispatcher(HttpServletRequest request) {
+    /**
+     * @param request The http request
+     * @return the {@link RequestDispatcher} to present a form display fatal errors.
+     */
+    protected RequestDispatcher getErrorDispatcher(HttpServletRequest request) {
         return request.getRequestDispatcher("error.jsp");
     }
 
-    private RequestDispatcher getCreateDispatcher(HttpServletRequest request) {
+    protected RequestDispatcher getCreateDispatcher(HttpServletRequest request) {
         return request.getRequestDispatcher("create.jsp");
     }
 
@@ -271,7 +290,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
                     ensureHasAccess(objectInList, AccessLevelEnum.READ);
                 }
                 templateType = TemplateType.INDEX;
-                request.setAttribute(getPluralName(), objectList);
+                request.setAttribute(getPluralAttributeName(), objectList);
             }
         }
         return templateType;
@@ -296,18 +315,27 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     }
 
+    /**
+     * Execute a request
+     * @param request
+     * @param response
+     * @throws ServletException
+     */
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         setAccessingUserFromRequest(request);
         TemplateType templateType;
         try {
             templateType = executeRequest(request, response);
-        } catch (HttpBeanException httpExeption) {
+        } catch (HttpBeanException httpException) {
             try {
-                response.sendError(httpExeption.getStatusCode(), httpExeption.getDescription());
+                response.sendError(httpException.getStatusCode(), httpException.getDescription());
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return;
+        }
+        if(hasErrors()) {
+            request.setAttribute(ATTRIBUTE_FORM_ERRORS, this.formErrors);
         }
         dispatchEvent(request, response, templateType);
     }
@@ -333,31 +361,72 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     }
 
 
+    /**
+     * Add a error related to a parameter
+     * @param parameter the parameter
+     * @param message the message describing the error
+     */
     protected void addFormError(String parameter, String message) {
         this.formErrors.put(parameter, message);
     }
 
+    /**
+     * @return True if there occured errors while processing a request
+     */
     public boolean hasErrors() {
         return formErrors.isEmpty();
     }
 
+    /**
+     * @return True of the request has the action parameter set to {@value ACTION_EDIT}
+     */
     private boolean isEdit() {
         return ACTION_EDIT.equals(action);
     }
 
+    /**
+     * @return True of the request has the action parameter set to {@value ACTION_CREATE}
+     */
     private boolean isCreate() {
         return ACTION_CREATE.equals(action);
     }
 
+    /**
+     * @return The action parameter
+     */
     public String getAction() {
         return action;
     }
 
+    /**
+     * Set the action parameter
+     * @param action
+     */
     public void setAction(String action) {
         this.action = action;
     }
 
+    /**
+     * Returns the object or null if get() wasn't called or failed.
+     * @return The object or null.
+     */
     protected E getObject() {
         return object;
+    }
+
+    /**
+     * Returns the if of the object
+     * @return
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Set the identifiert of the object
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 }

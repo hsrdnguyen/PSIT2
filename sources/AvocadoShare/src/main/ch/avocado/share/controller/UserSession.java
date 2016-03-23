@@ -58,7 +58,7 @@ public class UserSession {
         user = null;
         findUser(userId);
         if(ALWAYS_AUTHENTICATED) {
-            user = new User("???", null, new Date(System.currentTimeMillis()), null,  "", "???", UserPassword.fromPassword("1234") ,"prename", "surname",  "avatar", new EmailAddress(true, "muellcy1@students.zhaw.ch", null));
+            user = new User("???", null, new Date(System.currentTimeMillis()), 0,  "", "???", UserPassword.fromPassword("1234") ,"prename", "surname",  "avatar", new EmailAddress(true, "muellcy1@students.zhaw.ch", null));
         }
     }
 
