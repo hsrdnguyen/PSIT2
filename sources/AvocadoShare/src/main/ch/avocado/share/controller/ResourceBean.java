@@ -73,6 +73,8 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     private static final String TEMPLATE_CREATE = "create.jsp";
 
+    private static final String TEMPLATES_FOLDER = "templates/";
+
     /**
      * The object which is returned by {@link #get()} is stored in this field.
      * @see #getObject()
@@ -160,7 +162,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_LIST} in the same folder.
      */
     protected RequestDispatcher getIndexDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(TEMPLATE_LIST);
+        return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_LIST);
     }
 
     /**
@@ -171,7 +173,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_DETAILS} in the same folder.
      */
     protected RequestDispatcher getDetailDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(TEMPLATE_DETAILS);
+        return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_DETAILS);
     }
 
     /**
@@ -182,7 +184,11 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_EDIT} in the same folder.
      */
     protected RequestDispatcher getEditDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(TEMPLATE_EDIT);
+        return request.getRequestDispatcher(getTemplateFolder() +  TEMPLATE_EDIT);
+    }
+
+    private String getTemplateFolder() {
+        return TEMPLATES_FOLDER;
     }
 
     /**
