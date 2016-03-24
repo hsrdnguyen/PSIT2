@@ -23,8 +23,8 @@ public class FileDataHandler implements IFileDataHandler {
     @Override
     public boolean addFile(File file) {
         try {
-            databaseConnection.insertDataSet(String.format(SQLQueryConstants.INSERT_FILE_QUERY, "NULL", file.getTitle(), file.getDescription(), file.getLastChanged()));
-        } catch (SQLException e) {
+            //TODO databaseConnection.insertDataSet(String.format(SQLQueryConstants.INSERT_FILE_QUERY, "NULL", file.getTitle(), file.getDescription(), file.getLastChanged()));
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

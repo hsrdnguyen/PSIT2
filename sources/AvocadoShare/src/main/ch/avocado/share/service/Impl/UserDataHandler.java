@@ -8,6 +8,7 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IUserDataHandler;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -26,23 +27,30 @@ public class UserDataHandler implements IUserDataHandler {
         if (user ==  null) throw new IllegalArgumentException("user is null");
 
         try {
-            user.setId(db.insertDataSet(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY));
 
-            db.insertDataSet(String.format(SQLQueryConstants.INSERT_USER_QUERY,
-                    user.getId(),
-                    user.getPrename(),
-                    user.getSurname(),
-                    user.getAvatar(),
-                    user.getDescription(),
-                    user.getPassword()));
-            db.insertDataSet(String.format(SQLQueryConstants.INSERT_MAIL_QUERY,
-                    user.getId(),
-                    user.getMail().getAddress()));
-            db.insertDataSet(String.format(SQLQueryConstants.INSERT_MAIL_VERIFICATION_QUERY,
-                    user.getId(),
-                    user.getMail().getAddress(),
-                    user.getMail().getVerification().getExpiry(),
-                    user.getMail().getVerification().getCode()));
+            PreparedStatement stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY);
+            user.setId(db.insertDataSet(stmt));
+
+            stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_USER_QUERY);
+            stmt.setString(0,user.getId());
+            stmt.setString(1,user.getPrename());
+            stmt.setString(2,user.getSurname());
+            stmt.setString(3,user.getAvatar());
+            stmt.setString(4,user.getDescription());
+            stmt.setString(5,user.getPassword().getDigest());
+
+
+            stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_QUERY);
+            stmt.setString(0,user.getId());
+            stmt.setString(1,user.getMail().getAddress());
+            stmt.setDate(2,java.sql.Date.valueOf(user.getMail().getVerification().getExpiry().toString()));
+            stmt.setString(3,user.getMail().getVerification().getCode());
+            db.insertDataSet(stmt);
+
+            stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_VERIFICATION_QUERY);
+            stmt.setString(0,user.getId());
+            stmt.setString(1,user.getMail().getAddress());
+            db.insertDataSet(stmt);
             return user.getId();
 
         } catch (SQLException e) {
@@ -80,7 +88,9 @@ public class UserDataHandler implements IUserDataHandler {
     @Override
     public boolean verifyUser(User user) {
         try {
-            db.updateDataSet(String.format(SQLQueryConstants.SET_MAIL_TO_VERIFIED, user.getId()));
+            PreparedStatement stmt = db.getPreparedStatement(SQLQueryConstants.SET_MAIL_TO_VERIFIED);
+            stmt.setString(0,user.getId());
+            db.updateDataSet(stmt);
         } catch (SQLException e) {
             return false;
         }

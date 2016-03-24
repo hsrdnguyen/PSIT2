@@ -29,7 +29,7 @@ public class UserDataHandlerMock extends DataHandlerMock<User> implements IUserD
     }
 
     @Override
-    public boolean addUser(User user) {
+    public String addUser(User user) {
         return add(user);
     }
 

@@ -32,7 +32,7 @@ public class GroupDataHandlerMock extends DataHandlerMock<Group> implements IGro
 
     @Override
     public boolean addGroup(Group group) {
-        return add(group);
+        return add(group) != null;
     }
 
     @Override

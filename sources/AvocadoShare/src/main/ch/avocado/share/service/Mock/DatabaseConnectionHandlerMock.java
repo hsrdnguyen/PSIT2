@@ -11,22 +11,27 @@ import java.sql.SQLException;
  */
 public class DatabaseConnectionHandlerMock implements IDatabaseConnectionHandler {
     @Override
-    public ResultSet executeQuery(String query) {
+    public PreparedStatement getPreparedStatement(String query) throws SQLException {
         return null;
     }
 
     @Override
-    public String insertDataSet(String query) {
-        return "";
+    public ResultSet executeQuery(PreparedStatement statement) throws SQLException {
+        return null;
     }
 
     @Override
-    public boolean deleteDataSet(String query) {
+    public String insertDataSet(PreparedStatement statement) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean deleteDataSet(PreparedStatement statement) throws SQLException {
         return false;
     }
 
     @Override
-    public boolean updateDataSet(String query) {
+    public boolean updateDataSet(PreparedStatement statement) throws SQLException {
         return false;
     }
 }
