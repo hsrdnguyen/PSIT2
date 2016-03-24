@@ -59,7 +59,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     /**
      * The default template returned by {@link #getDetailDispatcher(HttpServletRequest)}.
      */
-    private static final String TEMPLATE_DETAILS = "details.jsp";
+    private static final String TEMPLATE_DETAILS = "view.jsp";
     /**
      * The default template returned by {@link #getEditDispatcher(HttpServletRequest)}.
      */

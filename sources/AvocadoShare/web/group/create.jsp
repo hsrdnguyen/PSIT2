@@ -11,6 +11,7 @@
     <title>Title</title>
 </head>
 <body>
+<h1>Create new Group</h1>
 
 </body>
 </html>
