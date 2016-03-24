@@ -9,7 +9,7 @@ import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.testhelper.GroupDataHandlerMock;
 import ch.avocado.share.testhelper.SecurityHandlerMock;
-import ch.avocado.share.testhelper.ServiceLocatorModifier;
+import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.testhelper.UserDataHandlerMock;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package ch.avocado.share.testhelper;
+package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.common.ServiceLocator;
 

@@ -1,4 +1,4 @@
-package ch.avocado.share.testhelper;
+package ch.avocado.share.service.Mock;
 
 /**
  * Created by coffeemakr on 23.03.16.
@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public abstract class DataHandlerMock<E extends AccessControlObjectBase>{
+public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
     protected List<E> objects;
 
-    public DataHandlerMock() {
+    public DataHandlerMockBase() {
         objects = new ArrayList<>();
     }
 

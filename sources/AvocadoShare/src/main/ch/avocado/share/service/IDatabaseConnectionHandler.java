@@ -25,7 +25,7 @@ public interface IDatabaseConnectionHandler {
      * @param query query to be executed on the database
      * @return returns the key of the inserted dataset
      */
-    String insertDataSet(String query) throws SQLException;
+    boolean insertDataSet(String query) throws SQLException;
 
     /**
      * Executes an delete query on the database
