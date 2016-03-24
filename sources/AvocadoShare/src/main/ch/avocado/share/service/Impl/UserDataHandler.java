@@ -32,24 +32,24 @@ public class UserDataHandler implements IUserDataHandler {
             user.setId(db.insertDataSet(stmt));
 
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_USER_QUERY);
-            stmt.setString(0,user.getId());
-            stmt.setString(1,user.getPrename());
-            stmt.setString(2,user.getSurname());
-            stmt.setString(3,user.getAvatar());
-            stmt.setString(4,user.getDescription());
-            stmt.setString(5,user.getPassword().getDigest());
+            stmt.setString(1,user.getId());
+            stmt.setString(2,user.getPrename());
+            stmt.setString(3,user.getSurname());
+            stmt.setString(4,user.getAvatar());
+            stmt.setString(5,user.getDescription());
+            stmt.setString(6,user.getPassword().getDigest());
 
 
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_QUERY);
-            stmt.setString(0,user.getId());
-            stmt.setString(1,user.getMail().getAddress());
-            stmt.setDate(2,java.sql.Date.valueOf(user.getMail().getVerification().getExpiry().toString()));
-            stmt.setString(3,user.getMail().getVerification().getCode());
+            stmt.setString(1,user.getId());
+            stmt.setString(2,user.getMail().getAddress());
+            stmt.setDate(3,new java.sql.Date(user.getMail().getVerification().getExpiry().getTime()));
+            stmt.setString(4,user.getMail().getVerification().getCode());
             db.insertDataSet(stmt);
 
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_VERIFICATION_QUERY);
-            stmt.setString(0,user.getId());
-            stmt.setString(1,user.getMail().getAddress());
+            stmt.setString(1,user.getId());
+            stmt.setString(2,user.getMail().getAddress());
             db.insertDataSet(stmt);
             return user.getId();
 
@@ -89,7 +89,7 @@ public class UserDataHandler implements IUserDataHandler {
     public boolean verifyUser(User user) {
         try {
             PreparedStatement stmt = db.getPreparedStatement(SQLQueryConstants.SET_MAIL_TO_VERIFIED);
-            stmt.setString(0,user.getId());
+            stmt.setString(1,user.getId());
             db.updateDataSet(stmt);
         } catch (SQLException e) {
             return false;

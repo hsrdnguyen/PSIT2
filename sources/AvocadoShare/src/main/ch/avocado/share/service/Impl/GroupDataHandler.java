@@ -33,7 +33,7 @@ public class GroupDataHandler implements IGroupDataHandler {
         ResultSet resultSet;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SQL_SELECT_GROUP_BY_ID);
-            preparedStatement.setString(0, id);
+            preparedStatement.setString(1, id);
             getDatabaseHandler().executeQuery(preparedStatement);
         } catch (SQLException e) {
             return null;
