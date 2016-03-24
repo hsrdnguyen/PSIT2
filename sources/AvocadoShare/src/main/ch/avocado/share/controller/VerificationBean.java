@@ -13,23 +13,48 @@ import java.io.Serializable;
  */
 public class VerificationBean implements Serializable {
 
-    public boolean verifyCode(String code, String email){
+    private String code;
+    private String email;
+
+    public boolean verifyEmailCode(){
+
+        IUserDataHandler userDataHandler = null;
+        boolean isVerified = false;
         try {
-            IUserDataHandler userdata = ServiceLocator.getService(IUserDataHandler.class);
-
-            User user = userdata.getUserByEmailAddress(email, true);
-
-            if (user.getMail().isVerified() != true &&
-                    user.getMail().getVerification().isExpired() &&
-                    user.getMail().getVerification().getCode().equals(code)){
-                userdata.verifyUser(user);
-                return true;
-            }
-
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            e.printStackTrace();
         }
-        return false;
+        if(userDataHandler != null) {
+            if(email != null && code != null) {
+                User user = userDataHandler.getUserByEmailAddress(email);
+                if(user != null) {
+                    userDataHandler.verifyUser(user);
+                }
+            }
+        }
+        return isVerified;
+    }
+
+
+    public boolean verifyPasswordReset(){
+        //todo implement password reset
+        return true;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 }

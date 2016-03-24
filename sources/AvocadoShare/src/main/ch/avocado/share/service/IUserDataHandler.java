@@ -11,9 +11,9 @@ public interface IUserDataHandler {
     /**
      * adds the given user to the Database
      * @param user user to be added
-     * @return true if it could be added
+     * @return Id of the added user. Null if error occured
      */
-    boolean addUser(User user);
+    String addUser(User user);
 
     /**
      * deletes the given user from the database
@@ -62,4 +62,5 @@ public interface IUserDataHandler {
      */
     boolean verifyUser(User user);
 
+    boolean addUserToGroup(User user, Group group);
 }

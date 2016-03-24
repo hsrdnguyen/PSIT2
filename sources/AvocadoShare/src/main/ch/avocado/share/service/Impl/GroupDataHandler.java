@@ -1,6 +1,7 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
@@ -15,9 +16,6 @@ import java.sql.SQLException;
  * Created by coffeemakr on 21.03.16.
  */
 public class GroupDataHandler implements IGroupDataHandler {
-    private static final String SQL_SELECT_GROUP_BY_ID = "SELECT id, name, description, creation_date " +
-            "FROM access_group AS g JOIN access_control AS o ON g.id = o.id " +
-            "WHERE g.id = {}";
 
     private IDatabaseConnectionHandler getDatabaseHandler() {
         try {
@@ -34,13 +32,10 @@ public class GroupDataHandler implements IGroupDataHandler {
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQL_SELECT_GROUP_BY_ID);
-            preparedStatement.setString(0, id);
-            resultSet = preparedStatement.executeQuery();
+            getDatabaseHandler().executeQuery(String.format(SQLQueryConstants.SQL_SELECT_GROUP_BY_ID, id));
         } catch (SQLException e) {
             return null;
         }
-
         return null;
     }
 

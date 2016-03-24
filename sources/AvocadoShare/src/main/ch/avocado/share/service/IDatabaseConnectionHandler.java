@@ -16,10 +16,6 @@ public interface IDatabaseConnectionHandler {
      */
     ResultSet executeQuery(String query) throws SQLException;
 
-    ResultSet executeQuery(PreparedStatement query) throws SQLException;
-
-    PreparedStatement getPreparedStatement(String statement) throws SQLException;
-
     /**
      * Executes an insert query on the database
      * @param query query to be executed on the database

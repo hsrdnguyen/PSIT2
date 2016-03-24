@@ -22,8 +22,34 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     @Override
-    public boolean addUser(User user) {
-        return false;
+    public String addUser(User user) {
+        if (user ==  null) throw new IllegalArgumentException("user is null");
+
+        try {
+            user.setId(db.insertDataSet(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY));
+
+            db.insertDataSet(String.format(SQLQueryConstants.INSERT_USER_QUERY,
+                    user.getId(),
+                    user.getPrename(),
+                    user.getSurname(),
+                    user.getAvatar(),
+                    user.getDescription(),
+                    user.getPassword()));
+            db.insertDataSet(String.format(SQLQueryConstants.INSERT_MAIL_QUERY,
+                    user.getId(),
+                    user.getMail().getAddress()));
+            db.insertDataSet(String.format(SQLQueryConstants.INSERT_MAIL_VERIFICATION_QUERY,
+                    user.getId(),
+                    user.getMail().getAddress(),
+                    user.getMail().getVerification().getExpiry(),
+                    user.getMail().getVerification().getCode()));
+            return user.getId();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override
@@ -59,5 +85,10 @@ public class UserDataHandler implements IUserDataHandler {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean addUserToGroup(User user, Group group) {
+        return false;
     }
 }

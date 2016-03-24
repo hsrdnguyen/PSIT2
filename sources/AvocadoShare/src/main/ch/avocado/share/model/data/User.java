@@ -23,6 +23,15 @@ public class User extends AccessIdentity {
         setSurname(surname);
     }
 
+    public User(UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
+        super("", null, new Date(), 0.0f, "", "");
+        setAvatar(avatar);
+        setMail(mail);
+        setPassword(password);
+        setPrename(prename);
+        setSurname(surname);
+    }
+
     public UserPassword getPassword() {
     	return this.password;
     }

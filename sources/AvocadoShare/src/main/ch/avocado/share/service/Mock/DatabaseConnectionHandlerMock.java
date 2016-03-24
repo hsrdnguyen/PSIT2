@@ -16,18 +16,8 @@ public class DatabaseConnectionHandlerMock implements IDatabaseConnectionHandler
     }
 
     @Override
-    public ResultSet executeQuery(PreparedStatement query) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public PreparedStatement getPreparedStatement(String statement) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public boolean insertDataSet(String query) {
-        return false;
+    public String insertDataSet(String query) {
+        return "";
     }
 
     @Override
