@@ -28,21 +28,28 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     }
 
     @Override
-    public ResultSet executeQuery(String query) throws SQLException {
+    public PreparedStatement getPreparedStatement(String query) throws SQLException {
         ensureConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery(query);
+        PreparedStatement ps = conn.prepareStatement(query);
+
+        return ps;
+    }
+
+    @Override
+    public ResultSet executeQuery(PreparedStatement statement) throws SQLException {
+        ensureConnection();
+        ResultSet result = statement.executeQuery();
 
         conn.close();
         return result;
     }
 
     @Override
-    public String insertDataSet(String query) throws SQLException {
+    public String insertDataSet(PreparedStatement statement) throws SQLException {
         ensureConnection();
 
         Statement stmt = conn.createStatement();
-        stmt.execute(query, Statement.RETURN_GENERATED_KEYS);
+        stmt.execute(statement.toString(), Statement.RETURN_GENERATED_KEYS);
 
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {
@@ -55,15 +62,14 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     }
 
     @Override
-    public boolean deleteDataSet(String query) throws SQLException {
-        return updateDataSet(query);
+    public boolean deleteDataSet(PreparedStatement statement) throws SQLException {
+        return updateDataSet(statement);
     }
 
     @Override
-    public boolean updateDataSet(String query) throws SQLException {
+    public boolean updateDataSet(PreparedStatement statement) throws SQLException {
         ensureConnection();
-        Statement stmt = conn.createStatement();
-        boolean result = stmt.executeUpdate(query) != 0;
+        boolean result = statement.executeUpdate() != 0;
         conn.close();
         return result;
     }

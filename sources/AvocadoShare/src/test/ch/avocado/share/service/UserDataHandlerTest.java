@@ -49,7 +49,7 @@ public class UserDataHandlerTest {
             UserPassword pwd = new UserPassword("123456789");
             User user = new User("", null, new Date(), 0.0f, "", "", pwd, "Max", "Muster", "123456789.jpg", emailAddress);
 
-            assertTrue(service.addUser(user));
+            assertNotNull(service.addUser(user));
         } catch (ParseException e) {
             e.printStackTrace();
         }

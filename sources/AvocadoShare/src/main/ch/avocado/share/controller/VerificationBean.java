@@ -3,7 +3,6 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IUserDataHandler;
 
 import java.io.Serializable;
@@ -46,6 +45,7 @@ public class VerificationBean implements Serializable {
     }
 
     public void setCode(String code) {
+        if (code == null) throw new IllegalArgumentException("code is null");
         this.code = code;
     }
 
@@ -54,6 +54,7 @@ public class VerificationBean implements Serializable {
     }
 
     public void setEmail(String email) {
+        if (email == null) throw new IllegalArgumentException("email is null");
         this.email = email;
     }
 

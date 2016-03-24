@@ -46,7 +46,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         ResultSet resultSet;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_SELECT_CATEGORY_BY_ID);
-            preparedStatement.setString(0, id);
+            preparedStatement.setString(1, id);
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
             return null;
@@ -62,8 +62,8 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_ADD_CATEGORY);
-            preparedStatement.setString(0, accessObjectReferenceId);
-            preparedStatement.setString(1, category.getName());
+            preparedStatement.setString(1, accessObjectReferenceId);
+            preparedStatement.setString(2, category.getName());
             preparedStatement.executeQuery();
         } catch (SQLException e) {
             return false;
@@ -79,8 +79,8 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_UPDATE_CATEGORY);
-            preparedStatement.setString(0, category.getName());
-            preparedStatement.setString(1, category.getId());
+            preparedStatement.setString(1, category.getName());
+            preparedStatement.setString(2, category.getId());
             preparedStatement.executeQuery();
         } catch (SQLException e) {
             return false;

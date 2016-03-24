@@ -28,7 +28,7 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
         return null;
     }
 
-    protected boolean add(E object) {
+    protected String add(E object) {
         if(object == null) throw new IllegalArgumentException("object is null");
         if(object.getId() != null) {
             throw new RuntimeException("can't add object with non-null id");
@@ -36,7 +36,7 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
         Random random = new Random();
         object.setId("object" + random.nextLong() + random.nextLong());
         objects.add(object);
-        return true;
+        return object.getId();
     }
 
     protected boolean delete(E object) {
