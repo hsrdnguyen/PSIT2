@@ -1,44 +1,65 @@
 package ch.avocado.share.service.Mock;
 
+import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IGroupDataHandler;
 
+import java.util.ArrayList;
+import java.util.Date;
 
-public class GroupDataHandlerMock implements IGroupDataHandler {
-    @Override
-    public Group getGroup(String Id) {
-        return null;
+/**
+ * Created by coffeemakr on 23.03.16.
+ */
+public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements IGroupDataHandler {
+
+    public static final int NUMBER_OF_GROUPS = 100;
+    public static final String EXISTING_GROUP_NAME = "groupName0";
+    public static final String EXISTING_GROUP0 = "group0";
+    public static final String EXISTING_GROUP1 = "group1";
+    public static final String EXISTING_GROUP2 = "group2";
+    public static final String EXISTING_GROUP3 = "group3";
+
+    public static final String NOT_EXISTING_GROUP_NAME = "Not existing Name";
+
+    public GroupDataHandlerMock() {
+        super();
+        for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
+            objects.add(new Group("group" + i, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, "groupName" + i, new ArrayList<String>()));
+        }
     }
 
     @Override
-    public boolean addGroup(Group group) {
-        return false;
+    public Group getGroup(String id) {
+        return get(id);
+    }
+
+    @Override
+    public String addGroup(Group group) {
+        return add(group);
     }
 
     @Override
     public boolean updateGroup(Group group) {
-        return false;
+        return update(group);
     }
 
     @Override
     public boolean deleteGroup(Group group) {
-        return false;
+        return delete(group);
     }
 
     @Override
     public Group getGroupByName(String name) {
+        for (Group group : objects) {
+            if(group.getName().equals(name)) {
+                return group;
+            }
+        }
         return null;
     }
 
-    @Override
-    public User[] getGroupMembers(Group group) {
-        return new User[0];
+    public static void use() throws Exception{
+        ServiceLocatorModifier.setService(IGroupDataHandler.class, new GroupDataHandlerMock());
     }
-
-    @Override
-    public Group[] getGroupsOfUser(User user) {
-        return new Group[0];
-    }
-
 }

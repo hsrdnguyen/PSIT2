@@ -66,14 +66,4 @@ public class GroupDataHandler implements IGroupDataHandler {
     public Group getGroupByName(String name) {
         return null;
     }
-
-    @Override
-    public User[] getGroupMembers(Group group) {
-        return new User[0];
-    }
-
-    @Override
-    public Group[] getGroupsOfUser(User user) {
-        return new Group[0];
-    }
 }
