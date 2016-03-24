@@ -5,13 +5,24 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by bergm on 15/03/2016.
+ * Group model
  */
-public class Group extends AccessControlObjectBase implements Serializable {
+public class Group extends AccessIdentity implements Serializable {
 
     private String name;
     private List<String> memberIds;
 
+    /**
+     * Create a new Group.
+     * @param id The unqiue identifier.
+     * @param categories A list of all categories
+     * @param creationDate The date of the creation
+     * @param rating Average rating
+     * @param ownerId Identifier of the owner.
+     * @param description A description of the group
+     * @param name The name of the group
+     * @param memberIds List of all member ids
+     */
     public Group(String id,
                  List<Category> categories,
                  Date creationDate,
@@ -27,10 +38,17 @@ public class Group extends AccessControlObjectBase implements Serializable {
         this.memberIds = memberIds;
     }
 
+    /**
+     * @return the name of the group
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set the group name.
+     * @param name
+     */
     public void setName(String name) {
         if (name == null) throw new IllegalArgumentException("name is null");
         if(!this.name.equals(name)) {
@@ -39,18 +57,11 @@ public class Group extends AccessControlObjectBase implements Serializable {
         }
     }
 
-    public User[] getMemberIds() {
-        User[] users = new User[memberIds.size()];
-        return memberIds.toArray(users);
-    }
-
-    public void addMember(String memberId) {
-        memberIds.add(memberId);
-        setDirty(true);
-    }
-
-    public void removeMember(String memberId) {
-        memberIds.remove(memberId);
-        setDirty(true);
+    /**
+     * @return A list of all members of this group.
+     */
+    public String[] getMemberIds() {
+        String[] idArray = new String[memberIds.size()];
+        return memberIds.toArray(idArray);
     }
 }
