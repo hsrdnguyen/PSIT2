@@ -69,7 +69,7 @@ public class GroupBeanTest {
         request.setMethod("GET");
         assertFalse(bean.hasIdentifier());
         assertFalse(bean.hasErrors());
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertFalse(bean.hasErrors());
         assertStatusCodeEquals(STATUS_OK, response);
         Group[] groups = (Group[]) request.getAttribute("Groups");
@@ -85,7 +85,7 @@ public class GroupBeanTest {
         bean.setName(groupName);
         assertFalse(bean.hasErrors());
         assertTrue(bean.hasIdentifier());
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertBeanHasNoErrors();
         assertStatusCodeEquals(STATUS_OK, response);
         // Group have to be set if the access is permitted.
@@ -100,12 +100,12 @@ public class GroupBeanTest {
         request.setMethod("GET");
 
         // Set identifier
-        final String groupId = GroupDataHandlerMock.EXISTING_GROUP_ID;
+        final String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
         bean.setId(groupId);
         assertTrue(bean.hasIdentifier());
 
         // Execute request
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertBeanHasNoErrors();
         assertStatusCodeEquals(STATUS_OK, response);
 
@@ -120,7 +120,7 @@ public class GroupBeanTest {
         authenticateAccess(AccessLevelEnum.NONE);
         request.setMethod("GET");
         bean.setName("groupName0");
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_FORBIDDEN, response);
         // Group must not be set if the access is denied.
         Group group = (Group) request.getAttribute("Group");
@@ -134,7 +134,7 @@ public class GroupBeanTest {
         bean.setName("groupName0");
         bean.setAction("edit");
         assertTrue(bean.hasIdentifier());
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_OK, response);
         // Group must be set if the user has access.
         Group group = (Group) request.getAttribute("Group");
@@ -148,7 +148,7 @@ public class GroupBeanTest {
         bean.setName(GroupDataHandlerMock.EXISTING_GROUP_NAME);
         bean.setAction("edit");
         assertTrue(bean.hasIdentifier());
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_FORBIDDEN, response);
         // Group must not be set if the access is denied.
         Group group = (Group) request.getAttribute("Group");
@@ -160,7 +160,7 @@ public class GroupBeanTest {
         authenticateAccess(AccessLevelEnum.NONE);
         request.setMethod("GET");
         bean.setAction("create");
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
         // Group must not exist prior to generation (this shows only the form to create it)
         Group group = (Group) request.getAttribute("Group");
@@ -172,7 +172,7 @@ public class GroupBeanTest {
         assertFalse(session.isAuthenticated());
         request.setMethod("GET");
         bean.setAction("create");
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_FORBIDDEN, response);
         Group group = (Group) request.getAttribute("Group");
         assertNull(group);
@@ -202,7 +202,7 @@ public class GroupBeanTest {
         bean.setName(name);
         bean.setDescription(description);
         bean.setId(null);
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_OK, response);
         assertBeanHasNoErrors();
         // check if the group has been stored
@@ -225,7 +225,7 @@ public class GroupBeanTest {
         bean.setName(name);
         bean.setDescription(description);
         bean.setId(null);
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_OK, response);
         assertTrue(bean.hasErrors());
 
@@ -261,7 +261,7 @@ public class GroupBeanTest {
         request.setMethod("PATCH");
         bean.setName(name);
         bean.setDescription(description);
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_OK, response);
         assertBeanHasNoErrors();
 
@@ -281,7 +281,7 @@ public class GroupBeanTest {
     @Test
     public void testUpdateById() throws Exception {
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
-        final String groupId = GroupDataHandlerMock.EXISTING_GROUP_ID;
+        final String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
         final String description = "My new group description";
         // ensure name already exists
         Group existingGroup = groupDataHandler.getGroup(groupId);
@@ -296,7 +296,7 @@ public class GroupBeanTest {
         bean.setId(groupId);
         bean.setName(name);
         bean.setDescription(description);
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_OK, response);
         assertBeanHasNoErrors();
 
@@ -313,18 +313,64 @@ public class GroupBeanTest {
         assertEquals("Description not updated in DB", description, changedGroup.getDescription());
         assertEquals("name not changed in DB", name, changedGroup.getName());
         assertEquals("ID changed in DB", groupId, changedGroup.getId());
+    }
 
+    @Test
+    public void testUpdateWithInsufficientRights() throws Exception {
+        IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+        final String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
+
+        // ensure name already exists
+        Group existingGroup = groupDataHandler.getGroup(groupId);
+        assertNotNull(existingGroup);
+
+        final String newDescription = existingGroup.getDescription() + " different";
+        final String newName = existingGroup.getName() + " different";
+
+        authenticateAccess(AccessLevelEnum.READ);
+
+        request.setMethod("PATCH");
+        bean.setId(groupId);
+        bean.setName(newName);
+        bean.setDescription(newDescription);
+        bean.renderRequest(request, response);
+        assertStatusCodeEquals(STATUS_FORBIDDEN, response);
     }
 
 
     @Test
     public void testDestroy() throws Exception {
-
+        authenticateAccess(AccessLevelEnum.OWNER);
+        IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+        String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
+        assertNotNull(groupDataHandler.getGroup(groupId));
+        request.setMethod("DELETE");
+        bean.setId(groupId);
+        bean.renderRequest(request, response);
+        assertBeanHasNoErrors();
+        assertStatusCodeEquals(STATUS_OK, response);
+        assertNull(groupDataHandler.getGroup(groupId));
     }
 
     @Test
-    public void testGetAttributeName() throws Exception {
+    public void testDestroyWithInsufficientRights() throws Exception {
+        authenticateAccess(AccessLevelEnum.WRITE);
+        IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+        String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
+        assertNotNull(groupDataHandler.getGroup(groupId));
+        request.setMethod("DELETE");
+        bean.setId(groupId);
+        bean.renderRequest(request, response);
+        assertBeanHasNoErrors();
+        assertStatusCodeEquals(STATUS_FORBIDDEN, response);
+        assertNotNull(groupDataHandler.getGroup(groupId));
+    }
 
+
+    @Test
+    public void testGetAttributeName() throws Exception {
+        assertEquals(bean.getAttributeName(), "Group");
+        assertEquals(bean.getPluralAttributeName(), "Groups");
     }
 
     @Test
@@ -334,12 +380,12 @@ public class GroupBeanTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testHandleRequestWithRequestIsNull() throws Exception {
-        bean.handleRequest(null, response);
+        bean.renderRequest(null, response);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testHandleRequestWithResponseIsNull() throws Exception {
-        bean.handleRequest(request, null);
+        bean.renderRequest(request, null);
     }
 
 /*    @Test(expected = IllegalArgumentException.class)

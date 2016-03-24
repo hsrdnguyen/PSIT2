@@ -1,12 +1,8 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ISecurityHandler;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -23,7 +19,7 @@ import java.util.Map;
  * * Execute appropriate method (get, create, index, etc.)
  * * Include the template accordingly.
  * <p>
- * Once handleRequest is called, this class checks the method of the request.<br/>
+ * Once renderRequest is called, this class checks the method of the request.<br/>
  * * GET: Display a form to edit or create an object, display a single element or display a list of elements.<br/>
  * * POST: create a new object (if there is no method parameter in the request)<br/>
  * * PATCH: update the object<br/>
@@ -53,11 +49,8 @@ import java.util.Map;
  *
  * @param <E> The subclass of AccessControlObjectBase to handle.
  */
-public abstract class ResourceBean<E extends AccessControlObjectBase> implements Serializable {
-    private static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
-    private static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
-    private static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
-    private static final String ERROR_NOT_LOGGED_IN = "Sie müssen angemeldet sein für diese Aktion.";
+public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase implements Serializable {
+    protected static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
 
     /**
      * The default template returned by {@link #getIndexDispatcher(HttpServletRequest)}.
@@ -87,7 +80,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     private E object;
 
     private String id;
-    private String method;
     private Map<String, String> formErrors = new HashMap<>();
 
     /**
@@ -107,10 +99,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * The action parameter
      */
     private String action;
-
-    private User accessingUser;
-
-    private ISecurityHandler securityHandler = null;
 
 
     /**
@@ -150,15 +138,11 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      */
     public abstract void update() throws HttpBeanException;
 
-
+    /**
+     * Destroy the object
+     * @throws HttpBeanException
+     */
     public abstract void destroy() throws HttpBeanException;
-
-
-    void setAccessingUserFromRequest(HttpServletRequest request) {
-        UserSession userSession = new UserSession(request);
-        User accessingUser = userSession.getUser();
-        setAccessingUser(accessingUser);
-    }
 
 
     public abstract String getAttributeName();
@@ -220,6 +204,9 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     }
 
     private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws ServletException {
+        if(request == null) throw new IllegalArgumentException("request is null");
+        if(response == null) throw new IllegalArgumentException("response is null");
+        if(templateType == null) throw new IllegalArgumentException("templateType is null");
         RequestDispatcher dispatcher = null;
         switch (templateType) {
             case INDEX:
@@ -237,69 +224,17 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
             case ERROR:
                 dispatcher = getErrorDispatcher(request);
                 break;
+            default:
+                throw new RuntimeException("Template type not found: " + templateType);
         }
-        if (dispatcher == null) {
-            throw new RuntimeException("Template not found: " + templateType);
-        }
-        try {
-            dispatcher.include(request, response);
-            // TODO: error handling
-        } catch (IOException e) {
-            throw new RuntimeException(e.toString());
-        }
-    }
-
-    private ISecurityHandler getSecurityHandler() throws HttpBeanException {
-        if (securityHandler == null) {
+        if(dispatcher != null) {
             try {
-                securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-            } catch (ServiceNotFoundException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Security handler not found");
+                dispatcher.include(request, response);
+                // TODO: error handling
+            } catch (IOException e) {
+                throw new RuntimeException(e.toString());
             }
         }
-        return securityHandler;
-    }
-
-    private void ensureIsAuthenticated() throws HttpBeanException {
-        if (accessingUser == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ERROR_NOT_LOGGED_IN);
-        }
-    }
-
-    private void ensureHasAccess(E target, AccessLevelEnum requiredLevel) throws HttpBeanException {
-        ISecurityHandler securityHandler = getSecurityHandler();
-        AccessLevelEnum grantedAccessLevel;
-        if (accessingUser == null) {
-            grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
-        } else {
-            grantedAccessLevel = securityHandler.getAccessLevel(accessingUser, target);
-        }
-        if (!grantedAccessLevel.containsLevel(requiredLevel)) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ERROR_ACCESS_DENIED);
-        }
-    }
-
-    private TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException {
-        TemplateType templateType;
-        switch (getMethod()) {
-            case "PATCH":
-                templateType = doPatch(request);
-                break;
-            case "POST":
-                templateType = doPost(request);
-                break;
-            case "GET":
-                templateType = doGet(request);
-                break;
-            case "DELETE":
-                templateType = doDelete(request);
-                break;
-            case "PUT":
-                // TODO: replace element
-            default:
-                throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ERROR_INVALID_REQUEST);
-        }
-        return templateType;
     }
 
     /**
@@ -309,7 +244,8 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
+    protected TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         object = get();
         ensureHasAccess(object, AccessLevelEnum.OWNER);
@@ -330,10 +266,12 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
+    protected TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         System.out.println("PATCH");
         object = get();
+        ensureHasAccess(object, AccessLevelEnum.WRITE);
         update();
         if (!hasErrors()) {
             // On success show details
@@ -354,7 +292,8 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
+    protected TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         if (hasIdentifier()) {
             templateType = doGetOnObject(request);
@@ -414,13 +353,14 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
 
     /**
-     * Handle PUT request
+     * Handle POST request
      *
      * @param request
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
+    protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
+        ensureIsAuthenticated();
         TemplateType templateType;
         E object = create();
         request.setAttribute(getAttributeName(), object);
@@ -430,61 +370,24 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
             templateType = TemplateType.DETAIL;
         }
         return templateType;
-
     }
 
     /**
-     * Execute a request
-     *
+     * Execute a request and include a rendered template.
      * @param request
      * @param response
      * @throws ServletException
      */
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
-        setAccessingUserFromRequest(request);
-        if (request.getMethod().equals("GET")) {
-            // Another request can't be simulated with GET.
-            setMethod("GET");
-        } else if (getMethod() == null) {
-            setMethod(request.getMethod());
-        }
-        TemplateType templateType;
-        try {
-            templateType = executeRequest(request, response);
-        } catch (HttpBeanException httpException) {
-            try {
-                response.sendError(httpException.getStatusCode(), httpException.getDescription());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return;
-        }
+        TemplateType templateType = executeRequest(request, response);
         if (hasErrors()) {
             request.setAttribute(ATTRIBUTE_FORM_ERRORS, this.formErrors);
         }
-        dispatchEvent(request, response, templateType);
-    }
-
-
-    /**
-     * Sets the the user which accesses the object.
-     *
-     * @param accessingUser the user or null if the user is not authenticated.
-     */
-    public void setAccessingUser(User accessingUser) {
-        this.accessingUser = accessingUser;
-    }
-
-    /**
-     * Get the accessing user.
-     *
-     * @return Returns the accessing user object if the user is authenticated.
-     * Otherwise null is returned.
-     */
-    public User getAccessingUser() {
-        return accessingUser;
+        if(templateType != null) {
+            dispatchEvent(request, response, templateType);
+        }
     }
 
 
@@ -559,24 +462,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Returns the HTTP method which will be used to process the request
-     *
-     * @return
-     */
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * Sets the HTTP method.
-     *
-     * @param method
-     */
-    public void setMethod(String method) {
-        this.method = method;
     }
 
     public Map<String, String> getFormErrors() {

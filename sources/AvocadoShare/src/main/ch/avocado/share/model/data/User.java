@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by bergm on 15/03/2016.
+ * User model.
  */
-public class User extends AccessControlObjectBase{
+public class User extends AccessIdentity {
 
     private UserPassword password;
     private String prename;

@@ -15,7 +15,11 @@ public class GroupDataHandlerMock extends DataHandlerMock<Group> implements IGro
 
     public static final int NUMBER_OF_GROUPS = 100;
     public static final String EXISTING_GROUP_NAME = "groupName0";
-    public static final String EXISTING_GROUP_ID = "group0";
+    public static final String EXISTING_GROUP0 = "group0";
+    public static final String EXISTING_GROUP1 = "group1";
+    public static final String EXISTING_GROUP2 = "group2";
+    public static final String EXISTING_GROUP3 = "group3";
+
     public static final String NOT_EXISTING_GROUP_NAME = "Not existing Name";
 
     public GroupDataHandlerMock() {
