@@ -38,18 +38,18 @@ public class UserDataHandler implements IUserDataHandler {
             stmt.setString(4,user.getAvatar());
             stmt.setString(5,user.getDescription());
             stmt.setString(6,user.getPassword().getDigest());
-
+            db.insertDataSet(stmt);
 
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_QUERY);
             stmt.setString(1,user.getId());
             stmt.setString(2,user.getMail().getAddress());
-            stmt.setDate(3,new java.sql.Date(user.getMail().getVerification().getExpiry().getTime()));
-            stmt.setString(4,user.getMail().getVerification().getCode());
             db.insertDataSet(stmt);
 
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_VERIFICATION_QUERY);
             stmt.setString(1,user.getId());
             stmt.setString(2,user.getMail().getAddress());
+            stmt.setDate(3,new java.sql.Date(user.getMail().getVerification().getExpiry().getTime()));
+            stmt.setString(4,user.getMail().getVerification().getCode());
             db.insertDataSet(stmt);
             return user.getId();
 
