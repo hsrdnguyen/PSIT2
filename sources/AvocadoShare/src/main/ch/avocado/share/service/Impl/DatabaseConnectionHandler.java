@@ -38,19 +38,7 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     }
 
     @Override
-    public boolean insertDataSet(String query) throws SQLException {
-        return updateDataSet(query);
-    public ResultSet executeQuery(PreparedStatement preparedStatement) throws SQLException {
-        ensureConnection();
-        return preparedStatement.executeQuery();
-    }
-
-    @Override
-    public PreparedStatement getPreparedStatement(String statement) throws SQLException {
-        return conn.prepareStatement(statement);
-    }
-
-public String insertDataSet(String query) throws SQLException {
+    public String insertDataSet(String query) throws SQLException {
         ensureConnection();
 
         Statement stmt = conn.createStatement();

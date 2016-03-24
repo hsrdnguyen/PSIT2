@@ -22,7 +22,7 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     @Override
-    public boolean addUser(User user) {
+    public String addUser(User user) {
         if (user ==  null) throw new IllegalArgumentException("user is null");
 
         try {
@@ -43,12 +43,13 @@ public class UserDataHandler implements IUserDataHandler {
                     user.getMail().getAddress(),
                     user.getMail().getVerification().getExpiry(),
                     user.getMail().getVerification().getCode()));
-            return true;
+            return user.getId();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return null;
     }
 
     @Override

@@ -54,17 +54,22 @@ public class UserDataHandlerMock extends DataHandlerMock<User> implements IUserD
     }
 
     @Override
+    public User getUserByEmailAddress(String emailAddress, boolean getVerification) {
+        return null;
+    }
+
+    @Override
     public boolean updateUser(User user) {
         return update(user);
     }
 
     @Override
-    public boolean verifyUser(User user, String code) {
+    public boolean verifyUser(User user) {
         return false;
     }
 
-
-    public static void use() throws Exception{
-        ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
+    @Override
+    public boolean addUserToGroup(User user, Group group) {
+        return false;
     }
 }

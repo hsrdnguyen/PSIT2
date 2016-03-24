@@ -16,5 +16,8 @@ public class SQLQueryConstants {
 
     public static final String SET_MAIL_TO_VERIFIED = "UPDATE avocado_share.email SET verified=TRUE WHERE identity_id='%s'";
 
+    //GROUP
+    public static final String SQL_SELECT_GROUP_BY_ID = "SELECT id, name, description, creation_date FROM access_group AS g JOIN access_control AS o ON g.id = o.id WHERE g.id = %s";
+
 
 }

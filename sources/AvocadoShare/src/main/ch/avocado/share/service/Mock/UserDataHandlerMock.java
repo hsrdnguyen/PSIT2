@@ -9,8 +9,8 @@ import ch.avocado.share.service.IUserDataHandler;
  */
 public class UserDataHandlerMock implements IUserDataHandler {
     @Override
-    public boolean addUser(User user) {
-        return false;
+    public String addUser(User user) {
+        return "";
     }
 
     @Override
@@ -40,6 +40,11 @@ public class UserDataHandlerMock implements IUserDataHandler {
 
     @Override
     public boolean verifyUser(User user) {
+        return false;
+    }
+
+    @Override
+    public boolean addUserToGroup(User user, Group group) {
         return false;
     }
 }

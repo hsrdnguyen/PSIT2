@@ -9,10 +9,10 @@ import static org.junit.Assert.*;
  * Created by coffeemakr on 21.03.16.
  */
 public class EmailAddressVerificationBeanTest {
-    private EmailAddressVerificationBean bean;
+    private VerificationBean bean;
     @Before
     public void setUp() throws Exception {
-        bean = new EmailAddressVerificationBean();
+        bean = new VerificationBean();
     }
 
     @Test
