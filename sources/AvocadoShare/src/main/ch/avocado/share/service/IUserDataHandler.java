@@ -39,6 +39,16 @@ public interface IUserDataHandler {
     User getUserByEmailAddress(String emailAddress);
 
     /**
+     * Returns the user from the database selected by its
+     * email address.
+     * @param emailAddress email address of the user
+     * @param getVerification sets if verification should be loaded from database
+     * @return user if there is a user with this email address
+     *              or otherwise null.
+     */
+    User getUserByEmailAddress(String emailAddress, boolean getVerification);
+
+    /**
      * updates a user on the database
      * @param user user with updated data
      * @return true if it was successfully updated
@@ -46,11 +56,10 @@ public interface IUserDataHandler {
     boolean updateUser(User user);
 
     /**
-     * verifies the user if the code is valid and not expired
+     * verifies the user in the database
      * @param user user to be verified
-     * @param code code inserted by the user
      * @return true if verification was successful
      */
-    boolean verifyUser(User user, String code);
+    boolean verifyUser(User user);
 
 }

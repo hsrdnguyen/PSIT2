@@ -33,7 +33,7 @@ public class EmailAddressVerificationBean implements Serializable {
             if(email != null && code != null) {
                 User user = userDataHandler.getUserByEmailAddress(email);
                 if(user != null) {
-                    userDataHandler.verifyUser(user, code);
+                    userDataHandler.verifyUser(user);
                 }
             }
         }
