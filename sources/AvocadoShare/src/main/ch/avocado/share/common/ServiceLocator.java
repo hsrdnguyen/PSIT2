@@ -3,10 +3,7 @@ package ch.avocado.share.common;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
-import ch.avocado.share.service.Impl.DatabaseConnectionHandler;
-import ch.avocado.share.service.Impl.FileStorageHandler;
-import ch.avocado.share.service.Impl.GroupDataHandler;
-import ch.avocado.share.service.Impl.MailingService;
+import ch.avocado.share.service.Impl.*;
 import ch.avocado.share.service.Mock.*;
 
 import java.lang.reflect.Type;
@@ -41,5 +38,6 @@ public class ServiceLocator {
         services.put(IFileDataHandler.class, new FileDataHandlerMock());
         services.put(IMailingService.class, new MailingService());
         services.put(IGroupDataHandler.class, new GroupDataHandler());
+        services.put(ICategoryDataHandler.class, new CategoryDataHandler());
     }
 }
