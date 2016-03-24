@@ -4,12 +4,7 @@ import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,31 +44,8 @@ import java.util.Map;
  *
  * @param <E> The subclass of AccessControlObjectBase to handle.
  */
-public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase implements Serializable {
+public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
     protected static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
-
-    /**
-     * The default template returned by {@link #getIndexDispatcher(HttpServletRequest)}.
-     */
-    private static final String TEMPLATE_LIST = "list.jsp";
-    /**
-     * The default template returned by {@link #getDetailDispatcher(HttpServletRequest)}.
-     */
-    private static final String TEMPLATE_DETAILS = "view.jsp";
-    /**
-     * The default template returned by {@link #getEditDispatcher(HttpServletRequest)}.
-     */
-    private static final String TEMPLATE_EDIT = "edit.jsp";
-    /**
-     * The default template returned by {@link #getErrorDispatcher(HttpServletRequest)}.
-     */
-    private static final String TEMPLATE_ERROR = "error.jsp";
-    /**
-     * The default template returned by {@link #getCreateDispatcher(HttpServletRequest)}.
-     */
-    private static final String TEMPLATE_CREATE = "create.jsp";
-
-    private static final String TEMPLATES_FOLDER = "templates/";
 
     /**
      * The object which is returned by {@link #get()} is stored in this field.
@@ -83,19 +55,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
 
     private String id;
     private Map<String, String> formErrors = new HashMap<>();
-
-    /**
-     * When the parameter action is set to this value
-     * and a single element is requested by GET request
-     * we use the edit dispatcher provided by getEditDispatcher().
-     */
-    public static final String ACTION_EDIT = "edit";
-    /**
-     * If the parameter action is set to this value
-     * and the index is requested by a GET request we use
-     * getCreateDispatcher().
-     */
-    public static final String ACTION_CREATE = "create";
 
     /**
      * The action parameter
@@ -155,101 +114,13 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
 
 
     /**
-     * Get the dispatcher to render a list of objects. This list will be available in the
-     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
-     * named {@link #getPluralAttributeName()} and has the type {@link E E[]}.
-     * @param request The http request
-     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_LIST} in the same folder.
-     */
-    protected RequestDispatcher getIndexDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_LIST);
-    }
-
-    /**
-     * Get the dispatcher to render a single object. This object will be available in the
-     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
-     * named {@link #getAttributeName()}} and has the type {@link E}.
-     * @param request The http request
-     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_DETAILS} in the same folder.
-     */
-    protected RequestDispatcher getDetailDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_DETAILS);
-    }
-
-    /**
-     * Get the dispatcher to edit a single object. This object will be available in the
-     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
-     * named {@link #getAttributeName()}} and has the type {@link E}.
-     * @param request The http request
-     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_EDIT} in the same folder.
-     */
-    protected RequestDispatcher getEditDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(getTemplateFolder() +  TEMPLATE_EDIT);
-    }
-
-    private String getTemplateFolder() {
-        return TEMPLATES_FOLDER;
-    }
-
-    /**
-     * Get the dispatcher to render a unknown fatal error.
-     * @param request The http request
-     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_ERROR} in the same folder.
-     */
-    protected RequestDispatcher getErrorDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(TEMPLATE_ERROR);
-    }
-
-    /**
-     * Get the dispatcher to render a create a new  object.
-     * @param request The http request
-     * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_CREATE} in the same folder.
-     */
-    protected RequestDispatcher getCreateDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(TEMPLATE_CREATE);
-    }
-
-    private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws ServletException {
-        if(request == null) throw new IllegalArgumentException("request is null");
-        if(response == null) throw new IllegalArgumentException("response is null");
-        if(templateType == null) throw new IllegalArgumentException("templateType is null");
-        RequestDispatcher dispatcher = null;
-        switch (templateType) {
-            case INDEX:
-                dispatcher = getIndexDispatcher(request);
-                break;
-            case DETAIL:
-                dispatcher = getDetailDispatcher(request);
-                break;
-            case CREATE:
-                dispatcher = getCreateDispatcher(request);
-                break;
-            case EDIT:
-                dispatcher = getEditDispatcher(request);
-                break;
-            case ERROR:
-                dispatcher = getErrorDispatcher(request);
-                break;
-            default:
-                throw new RuntimeException("Template type not found: " + templateType);
-        }
-        if(dispatcher != null) {
-            try {
-                dispatcher.include(request, response);
-                // TODO: error handling
-            } catch (IOException e) {
-                throw new RuntimeException(e.toString());
-            }
-        }
-    }
-
-    /**
      * Handle DELETE request
      *
      * @param request
      * @return
      * @throws HttpBeanException
      */
+    @Override
     protected TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
         if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
@@ -272,6 +143,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return
      * @throws HttpBeanException
      */
+    @Override
     protected TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
         if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
@@ -298,6 +170,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return
      * @throws HttpBeanException
      */
+    @Override
     protected TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
         if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
@@ -309,9 +182,12 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         return templateType;
     }
 
+
     /**
      * Handle GET requests on a single object
-     *
+     * This object will be available in the
+     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
+     * named {@link #getAttributeName()}} and has the type {@link AccessControlObjectBase}.
      * @param request
      * @return The template type
      * @throws HttpBeanException
@@ -334,7 +210,9 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
 
     /**
      * Handle GET request on the index (not on a single object)
-     *
+     * This list will be available in the
+     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
+     * named {@link #getPluralAttributeName()} and has the type {@link AccessControlObjectBase E[]}.
      * @param request
      * @return The template type
      * @throws HttpBeanException
@@ -365,6 +243,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return
      * @throws HttpBeanException
      */
+    @Override
     protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
         ensureIsAuthenticated();
         TemplateType templateType;
@@ -376,24 +255,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             templateType = TemplateType.DETAIL;
         }
         return templateType;
-    }
-
-    /**
-     * Execute a request and include a rendered template.
-     * @param request
-     * @param response
-     * @throws ServletException
-     */
-    public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        if (response == null) throw new IllegalArgumentException("response is null");
-        TemplateType templateType = executeRequest(request, response);
-        if (hasErrors()) {
-            request.setAttribute(ATTRIBUTE_FORM_ERRORS, this.formErrors);
-        }
-        if(templateType != null) {
-            dispatchEvent(request, response, templateType);
-        }
     }
 
 

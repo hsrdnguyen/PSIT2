@@ -110,14 +110,20 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     protected TemplateType doPut(HttpServletRequest request) throws HttpBeanException {
         if(request == null) throw new IllegalArgumentException("request is null");
         replaceAccess();
-        return TemplateType.INDEX;
+        return null;
     }
 
     @Override
     protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
         if(request == null) throw new IllegalArgumentException("request is null");
         createAccess();
-        return TemplateType.INDEX;
+        return null;
+    }
+
+
+    @Override
+    protected TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
+        return null;
     }
 
     /**
