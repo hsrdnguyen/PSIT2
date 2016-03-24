@@ -37,9 +37,6 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
         return result;
     }
 
-    @Override
-    public boolean insertDataSet(String query) throws SQLException {
-        return updateDataSet(query);
     public ResultSet executeQuery(PreparedStatement preparedStatement) throws SQLException {
         ensureConnection();
         return preparedStatement.executeQuery();
@@ -50,21 +47,11 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
         return conn.prepareStatement(statement);
     }
 
-public String insertDataSet(String query) throws SQLException {
-        ensureConnection();
-
-        Statement stmt = conn.createStatement();
-        stmt.execute(query, Statement.RETURN_GENERATED_KEYS);
-
-        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-            if (generatedKeys.next()) {
-                return generatedKeys.getString(1);
-            }
-            else {
-                throw new SQLException("Creating user failed, no ID obtained.");
-            }
-        }
+    @Override
+    public boolean insertDataSet(String query) throws SQLException {
+        return false;
     }
+
 
     @Override
     public boolean deleteDataSet(String query) throws SQLException {
