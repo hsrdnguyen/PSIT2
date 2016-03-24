@@ -64,7 +64,7 @@ public class GroupBean extends ResourceBean<Group> {
         checkParameterDescription();
         if (!hasErrors()) {
             Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name, new ArrayList<String>());
-            if (!groupDataHandler.addGroup(group)) {
+            if (null != groupDataHandler.addGroup(group)) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
             }
             return group;
@@ -92,7 +92,7 @@ public class GroupBean extends ResourceBean<Group> {
     @Override
     public Group[] index() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        return groupDataHandler.getGroupsOfUser(getAccessingUser());
+        return null;
     }
 
     @Override

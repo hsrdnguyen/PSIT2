@@ -42,10 +42,10 @@ public class GroupDataHandler implements IGroupDataHandler {
     }
 
     @Override
-    public boolean addGroup(Group group) {
+    public String addGroup(Group group) {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return false;
-        return false;
+        if(connectionHandler == null) return null;
+        return null;
     }
 
     @Override
