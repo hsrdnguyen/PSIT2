@@ -35,7 +35,7 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     }
 
     @Override
-    public boolean addGroup(Group group) {
+    public String addGroup(Group group) {
         return add(group);
     }
 
@@ -57,17 +57,6 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
             }
         }
         return null;
-    }
-
-    @Override
-    public User[] getGroupMembers(Group group) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Group[] getGroupsOfUser(User user) {
-        Group[] groups = new Group[objects.size()];
-        return objects.toArray(groups);
     }
 
     public static void use() throws Exception{

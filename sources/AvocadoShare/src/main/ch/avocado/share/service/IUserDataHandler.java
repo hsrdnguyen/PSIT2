@@ -62,5 +62,4 @@ public interface IUserDataHandler {
      */
     boolean verifyUser(User user);
 
-    boolean addUserToGroup(User user, Group group);
 }

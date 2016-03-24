@@ -96,9 +96,4 @@ public class UserDataHandler implements IUserDataHandler {
         }
         return true;
     }
-
-    @Override
-    public boolean addUserToGroup(User user, Group group) {
-        return false;
-    }
 }

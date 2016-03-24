@@ -1,15 +1,20 @@
-package ch.avocado.share.service.Mock;
+package ch.avocado.share.testhelper;
 
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.EmailAddress;
+import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.service.IUserDataHandler;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
-public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IUserDataHandler {
+/**
+ * Created by coffeemakr on 23.03.16.
+ */
+public class UserDataHandlerMock extends DataHandlerMock<User> implements IUserDataHandler {
 
     public static final String EXISTING_USER0 = "user0";
     public static final String EXISTING_USER1 = "user1";
@@ -24,7 +29,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public String addUser(User user) {
+    public boolean addUser(User user) {
         return add(user);
     }
 
@@ -49,19 +54,15 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public User getUserByEmailAddress(String emailAddress, boolean getVerification) {
-        return null;
-    }
-
-    @Override
     public boolean updateUser(User user) {
         return update(user);
     }
 
     @Override
-    public boolean verifyUser(User user) {
+    public boolean verifyUser(User user, String code) {
         return false;
     }
+
 
     public static void use() throws Exception{
         ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
