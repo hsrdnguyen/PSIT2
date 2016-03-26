@@ -7,13 +7,12 @@
 <%@ page import="ch.avocado.share.model.data.AccessLevelEnum" %>
 <%@ page import="ch.avocado.share.service.Mock.UserDataHandlerMock" %>
 <%@ page import="ch.avocado.share.service.Mock.GroupDataHandlerMock" %>
+<%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="members" class="ch.avocado.share.controller.GroupMemberControlBean" />
-<jsp:setProperty name="members" property="level" />
-<jsp:setProperty name="members" property="ownerId" />
-<jsp:setProperty name="members" property="targetId" />
+<jsp:setProperty name="members" property="*" />
+<% // Display, change members %>
 <%
-
     UserSession userSession = new UserSession(request);
     SecurityHandlerMock securityHandler = new SecurityHandlerMock();
     ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
@@ -21,4 +20,7 @@
     ServiceLocatorModifier.setService(ISecurityHandler.class, securityHandler);
     userSession.authenticate(securityHandler.getUserWithAccess(AccessLevelEnum.OWNER));
     members.executeRequest(request, response);
+    if(response.getStatus() == HttpServletResponse.SC_OK) {
+        response.sendRedirect("?id=" + Encoder.forUrl(members.getTargetId()));
+    }
 %>

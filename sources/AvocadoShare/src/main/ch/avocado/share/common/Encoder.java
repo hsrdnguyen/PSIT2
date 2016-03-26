@@ -1,5 +1,7 @@
 package ch.avocado.share.common;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 /**
@@ -795,5 +797,13 @@ public class Encoder {
     public static String forHtmlAttribute(String value) {
         if(value == null) value = "";
         return htmlEntities(value);
+    }
+
+    public static String forUrlAttribute(String value) throws UnsupportedEncodingException {
+        return htmlEntities(URLEncoder.encode(value, "UTF-8"));
+    }
+
+    public static String forUrl(String value) throws UnsupportedEncodingException {
+        return URLEncoder.encode(value, "UTF-8");
     }
 }

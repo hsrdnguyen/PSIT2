@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by coffeemakr on 23.03.16.
+ * Mock handler for group data.
  */
 public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements IGroupDataHandler {
 
@@ -61,5 +61,9 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
 
     public static void use() throws Exception{
         ServiceLocatorModifier.setService(IGroupDataHandler.class, new GroupDataHandlerMock());
+    }
+
+    public Group[] getAllGroups() {
+        return getAll(Group.class);
     }
 }

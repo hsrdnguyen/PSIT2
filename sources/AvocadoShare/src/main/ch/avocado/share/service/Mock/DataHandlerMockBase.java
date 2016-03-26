@@ -5,7 +5,9 @@ package ch.avocado.share.service.Mock;
  */
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.Group;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Random;
 
 public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
     protected List<E> objects;
+
 
     public DataHandlerMockBase() {
         objects = new ArrayList<>();
@@ -62,4 +65,8 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
         return false;
     }
 
+    protected E[] getAll(Class<E> type) {
+        E[] objectArray = (E[]) Array.newInstance(type, objects.size());
+        return objects.toArray(objectArray);
+    }
 }

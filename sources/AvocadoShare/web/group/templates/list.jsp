@@ -6,5 +6,6 @@
 <% for(Group group: groups) { %>
     <div>
         Gruppe <%=Encoder.forHtml(group.getName()) %>
+        <a href="?id=<%=Encoder.forUrlAttribute(group.getId())%>">Details</a>
     </div>
 <% } // for groups %>

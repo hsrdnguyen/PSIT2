@@ -9,6 +9,9 @@ import ch.avocado.share.service.IUserDataHandler;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Mock handler for user data
+ */
 public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IUserDataHandler {
 
     public static final String EXISTING_USER0 = "user0";
@@ -65,5 +68,9 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
 
     public static void use() throws Exception{
         ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
+    }
+
+    public User[] getAllUsers() {
+        return getAll(User.class);
     }
 }
