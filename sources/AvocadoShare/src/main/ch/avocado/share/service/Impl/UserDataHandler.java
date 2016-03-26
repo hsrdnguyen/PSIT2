@@ -87,6 +87,7 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public boolean verifyUser(User user) {
+        if(user == null) throw new IllegalArgumentException("user is null");
         try {
             PreparedStatement stmt = db.getPreparedStatement(SQLQueryConstants.SET_MAIL_TO_VERIFIED);
             stmt.setString(1,user.getId());

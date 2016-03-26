@@ -8,7 +8,6 @@ import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 
-import javax.management.RuntimeErrorException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -95,7 +94,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
                 return ownerIdentity;
             }
         } else {
-            ownerIdentity = getGroupDataHandler().getGroup(getUserId());
+            ownerIdentity = getGroupDataHandler().getGroup(getGroupId());
             if (ownerIdentity != null) {
                 return ownerIdentity;
             }
@@ -108,7 +107,11 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.OWNER);
         AccessIdentity identityWhichRightsAreToChange = getOwnerIdentity();
         ISecurityHandler securityHandler = getSecurityHandler();
-        if(!securityHandler.setAccessLevel(identityWhichRightsAreToChange, getTarget(), level)) {
+        T target = getTarget();
+        if(target.getId().equals(identityWhichRightsAreToChange.getId())) {
+            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, "Besitzer der Rechte und Ziel sind gleich.");
+        }
+        if(!securityHandler.setAccessLevel(identityWhichRightsAreToChange, target, level)) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_UNABLE_TO_SET_RIGHTS);
         }
     }
@@ -197,7 +200,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     public User[] getMemberUsers() throws HttpBeanException {
         checkAccessLevel();
         ISecurityHandler securityHandler = getSecurityHandler();
-        return securityHandler.getUsersWithAccess(getLevel(), getTarget());
+        return securityHandler.getUsersWithAccessIncluding(getLevel(), getTarget());
     }
 
 
@@ -246,14 +249,6 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         }
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     /**
      * @param target the target to which the access belongs.
      */
@@ -269,8 +264,10 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     }
 
     public void setTargetId(String targetId) {
-        this.targetId = targetId;
-        target = null;
+        if(this.targetId == null || !this.targetId.equals(targetId)) {
+            this.targetId = targetId;
+            target = null;
+        }
     }
 
     public T getTarget() throws HttpBeanException {
@@ -291,11 +288,27 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         this.action = action;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        if(this.userId == null || !this.userId.equals(userId)) {
+            ownerIdentity = null;
+            this.userId = userId;
+            groupId = null;
+        }
+    }
+
     public String getGroupId() {
         return groupId;
     }
 
     public void setGroupId(String groupId) {
-        this.groupId = groupId;
+        if(this.groupId == null || !userId.equals(groupId)) {
+            ownerIdentity = null;
+            this.groupId = groupId;
+            userId = null;
+        }
     }
 }

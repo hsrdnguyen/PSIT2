@@ -15,6 +15,7 @@ public class HttpBeanException extends Exception{
 
 
     public HttpBeanException(int statusCode, String description) {
+        super(description);
         this.statusCode = statusCode;
         this.description = description;
         //this.headers = null;

@@ -39,6 +39,9 @@ public class SecurityHandlerMock implements ISecurityHandler {
     public AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) {
         if(identity == null) throw new IllegalArgumentException("identity is null");
         if(target == null) throw new IllegalArgumentException("target is null");
+        if(identity.getId().equals(target.getId())) {
+            return AccessLevelEnum.NONE;
+        }
         String identityId = identity.getId();
         if(identityWithAccess.containsKey(identityId)) {
             return identityWithAccess.get(identityId);
@@ -73,7 +76,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         for (Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue().containsLevel(accessLevelEnum)) {
                 Group group = groupDataHandler.getGroup(entry.getKey());
-                if(group != null) {
+                if(group != null && !group.getId().equals(target.getId())) {
                     identityList.add(group);
                 }
             }
@@ -83,7 +86,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     @Override
-    public User[] getUsersWithAccess(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) {
+    public User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) {
         if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum is null");
         if(target == null) throw new IllegalArgumentException("target is null");
         List<User> identityList = new ArrayList<>();
@@ -96,7 +99,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         for (Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue().containsLevel(accessLevelEnum)) {
                 User user = userDataHandler.getUser(entry.getKey());
-                if(user != null) {
+                if(user != null && !user.getId().equals(target.getId())) {
                     identityList.add(user);
                 }
             }
@@ -126,7 +129,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     @Override
-    public <I extends AccessControlObjectBase> I[] getObjectsOnWithIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum) {
+    public <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum) {
         if(clazz == null) throw new IllegalArgumentException("clazz can't be null");
         if(identity == null) throw new IllegalArgumentException("identity can't be null");
         if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum can't be null");

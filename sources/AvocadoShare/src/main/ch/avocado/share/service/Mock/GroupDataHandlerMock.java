@@ -2,7 +2,6 @@ package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IGroupDataHandler;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.Date;
  */
 public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements IGroupDataHandler {
 
-    public static final int NUMBER_OF_GROUPS = 100;
+    private static final int NUMBER_OF_GROUPS = 100;
     public static final String EXISTING_GROUP_NAME = "groupName0";
     public static final String EXISTING_GROUP0 = "group0";
     public static final String EXISTING_GROUP1 = "group1";
@@ -24,8 +23,21 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
 
     public GroupDataHandlerMock() {
         super();
+        reset();
+    }
+
+    public int getNumberOfGroups() {
+        return objects.size();
+    }
+
+    /**
+     * Reset all mock groups to initial state.
+     */
+    public void reset() {
+        objects.clear();
         for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
-            objects.add(new Group("group" + i, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, "groupName" + i, new ArrayList<String>()));
+            String id = "group" + i;
+            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, "groupName" + i, new ArrayList<String>()));
         }
     }
 
@@ -36,6 +48,9 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
 
     @Override
     public String addGroup(Group group) {
+        if(getGroupByName(group.getName()) != null) {
+            return null;
+        }
         return add(group);
     }
 
@@ -51,7 +66,7 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
 
     @Override
     public Group getGroupByName(String name) {
-        for (Group group : objects) {
+        for (Group group : objects.values()) {
             if(group.getName().equals(name)) {
                 return group;
             }

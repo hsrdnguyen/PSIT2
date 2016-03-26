@@ -78,7 +78,12 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         return getId() != null;
     }
 
-
+    /**
+     * Make sure you set an error with {@link #addFormError(String, String)}
+     * if you return null!
+     * @return The new created object or null if there are errors.
+     * @throws HttpBeanException
+     */
     public abstract E create() throws HttpBeanException;
 
     /**
@@ -272,7 +277,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         ensureIsAuthenticated();
         TemplateType templateType;
         E object = create();
-        if(object == null) {
+        if(object == null && !hasErrors()) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_CREATE_FAILED);
         }
         request.setAttribute(getAttributeName(), object);

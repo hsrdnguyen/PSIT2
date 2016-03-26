@@ -35,7 +35,7 @@ public interface ISecurityHandler {
 
     Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target);
 
-    User[] getUsersWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+    User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target);
 
-    <I extends AccessControlObjectBase> I[] getObjectsOnWithIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum);
+    <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum);
 }

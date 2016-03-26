@@ -3,7 +3,6 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
@@ -61,12 +60,17 @@ public class GroupBean extends ResourceBean<Group> {
     @Override
     public Group create() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        IUserDataHandler userDataHandler = getUserDataHandler();
+        // IUserDataHandler userDataHandler = getUserDataHandler();
         checkParameterName(true);
         checkParameterDescription();
         if (!hasErrors()) {
             Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name, new ArrayList<String>());
-            if (null != groupDataHandler.addGroup(group)) {
+            String newGroupId = groupDataHandler.addGroup(group);
+            if (newGroupId == null) {
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+            }
+            group = groupDataHandler.getGroup(newGroupId);
+            if (group == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
             }
             return group;
@@ -94,7 +98,7 @@ public class GroupBean extends ResourceBean<Group> {
     @Override
     public Group[] index() throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
-        return securityHandler.getObjectsOnWithIdentityHasAccessLevel(Group.class, getAccessingUser(), AccessLevelEnum.READ);
+        return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Group.class, getAccessingUser(), AccessLevelEnum.READ);
     }
 
     @Override
