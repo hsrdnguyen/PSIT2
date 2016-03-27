@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Mock;
 
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.User;
@@ -33,7 +34,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
         objects.clear();
         for (int i = 0; i < 100; i++) {
             String id = "user" + i;
-            objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, DEFAULT_PASSWORD , "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
+            objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, DEFAULT_PASSWORD, "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
         }
     }
 
@@ -55,7 +56,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     @Override
     public User getUserByEmailAddress(String emailAddress) {
         for (User user : objects.values()) {
-            if(user.getMail().getAddress().equals(emailAddress)) {
+            if (user.getMail().getAddress().equals(emailAddress)) {
                 return user;
             }
         }
@@ -77,8 +78,10 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
         return false;
     }
 
-    public static void use() throws Exception{
-        ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
+    public static void use() throws Exception {
+        if (!ServiceLocator.getService(IUserDataHandler.class).getClass().equals(UserDataHandlerMock.class)) {
+            ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
+        }
     }
 
     public User[] getAllUsers() {

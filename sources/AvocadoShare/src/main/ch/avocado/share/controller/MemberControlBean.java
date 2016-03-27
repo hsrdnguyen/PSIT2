@@ -270,6 +270,10 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         }
     }
 
+    /**
+     * @return The target on which access will be changed or created
+     * @throws HttpBeanException
+     */
     public T getTarget() throws HttpBeanException {
         if(target == null && targetId != null) {
             target = getTargetById(targetId);
@@ -279,7 +283,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         }
         return target;
     }
-
+    
     public String getAction() {
         return action;
     }
@@ -288,10 +292,16 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         this.action = action;
     }
 
+    /**
+     * @return the id of the user whose rights will be changed
+     */
     public String getUserId() {
         return userId;
     }
 
+    /**
+     * @param userId the id of the user whose rights will be changed
+     */
     public void setUserId(String userId) {
         if(this.userId == null || !this.userId.equals(userId)) {
             ownerIdentity = null;
@@ -300,10 +310,16 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         }
     }
 
+    /**
+     * @return the id of the group whose rights will be changed
+     */
     public String getGroupId() {
         return groupId;
     }
 
+    /**
+     * @param groupId the id of the group whose rights will be changed
+     */
     public void setGroupId(String groupId) {
         if(this.groupId == null || !userId.equals(groupId)) {
             ownerIdentity = null;

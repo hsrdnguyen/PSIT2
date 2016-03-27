@@ -196,4 +196,12 @@ public class SecurityHandlerMock implements ISecurityHandler {
         if(anonymousAccess == null) throw new IllegalArgumentException("anonymousAccess is null");
         this.anonymousAccess = anonymousAccess;
     }
+
+    static public void use() throws Exception {
+        UserDataHandlerMock.use();
+        GroupDataHandlerMock.use();
+        if(!ServiceLocator.getService(ISecurityHandler.class).getClass().equals(SecurityHandlerMock.class)) {
+            ServiceLocatorModifier.setService(ISecurityHandler.class, new SecurityHandlerMock());
+        }
+    }
 }

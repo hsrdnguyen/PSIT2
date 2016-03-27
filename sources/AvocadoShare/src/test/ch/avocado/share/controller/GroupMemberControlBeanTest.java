@@ -1,9 +1,6 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.Mock.GroupDataHandlerMock;
@@ -16,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import static org.junit.Assert.*;
 
 /**
- * Created by coffeemakr on 26.03.16.
+ * Tests for {@link GroupMemberControlBean}
  */
 public class GroupMemberControlBeanTest extends BeanTestBase {
 
@@ -119,17 +116,32 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
     }
 
 
-    private void createAccessWithPost(User owner, AccessControlObjectBase target, AccessLevelEnum level) throws Exception {
+    private void createAccessWithPost(AccessIdentity owner, AccessControlObjectBase target, AccessLevelEnum level) throws Exception {
         request.setMethod("POST");
-        bean.setUserId(owner.getId());
+        if(owner instanceof User) {
+            bean.setUserId(owner.getId());
+        }
+        if(owner instanceof Group) {
+            bean.setGroupId(owner.getId());
+        }
         bean.setTargetId(target.getId());
         bean.setLevel(level);
         bean.renderRequest(request, response);
     }
 
     @Test
-    public void testDoPost() throws Exception {
+    public void testDoPostForUserRights() throws Exception {
         User owner = securityHandlerMock.getUserWithAccess(AccessLevelEnum.NONE);
+        authenticateAccess(AccessLevelEnum.OWNER);
+        AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
+        createAccessWithPost(owner, target, AccessLevelEnum.WRITE);
+        assertStatusCodeEquals(STATUS_OK, response);
+        assertEquals(getSecurityHandler().getAccessLevel(owner, target), AccessLevelEnum.WRITE);
+    }
+
+    @Test
+    public void testDoPostForGroupRights() throws Exception {
+        Group owner = securityHandlerMock.getGroupWithAccess(AccessLevelEnum.NONE);
         authenticateAccess(AccessLevelEnum.OWNER);
         AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
         createAccessWithPost(owner, target, AccessLevelEnum.WRITE);
@@ -148,8 +160,23 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
         bean.renderRequest(request, response);
         assertStatusCodeEquals(HttpServletResponse.SC_BAD_REQUEST, response);
         assertEquals(AccessLevelEnum.NONE, getSecurityHandler().getAccessLevel(owner, target));
+        assertTrue(response.getErrorMessage().toLowerCase().contains("level"));
     }
 
+    @Test
+    public void testDoPostMissingOwner() throws Exception {
+        User owner = securityHandlerMock.getUserWithAccess(AccessLevelEnum.NONE);
+        authenticateAccess(AccessLevelEnum.OWNER);
+        AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
+        request.setMethod("POST");
+        bean.setLevel(AccessLevelEnum.READ);
+        bean.setTargetId(target.getId());
+        bean.renderRequest(request, response);
+        assertStatusCodeEquals(HttpServletResponse.SC_BAD_REQUEST, response);
+        assertEquals(AccessLevelEnum.NONE, getSecurityHandler().getAccessLevel(owner, target));
+        assertTrue(response.getErrorMessage().toLowerCase().contains("group"));
+        assertTrue(response.getErrorMessage().toLowerCase().contains("user"));
+    }
 
     @Test
     public void testDoPostUnauthenticated() throws Exception {
@@ -174,10 +201,30 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
     @Test
     public void testDoGet() throws Exception {
         request.setMethod("GET");
+        authenticateAccess(AccessLevelEnum.READ);
+        AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
+        bean.setTargetId(target.getId());
+        bean.renderRequest(request, response);
+        assertStatusCodeEquals(STATUS_OK, response);
     }
 
     @Test
+    public void testDoGetUnauthenticated() throws Exception {
+        request.setMethod("GET");
+        AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
+        bean.setTargetId(target.getId());
+        bean.renderRequest(request, response);
+        assertStatusCodeEquals(STATUS_FORBIDDEN, response);
+    }
+
+
+    @Test
     public void testDoPut() throws Exception {
+        request.setMethod("PUT");
+        AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
+        bean.setTargetId(target.getId());
+        bean.renderRequest(request, response);
+        assertStatusCodeEquals(STATUS_FORBIDDEN, response);
 
     }
 
