@@ -23,15 +23,10 @@
     ServiceLocatorModifier.setService(IGroupDataHandler.class, new GroupDataHandlerMock());
     ServiceLocatorModifier.setService(ISecurityHandler.class, securityHandler);
     userSession.authenticate(securityHandler.getUserWithAccess(AccessLevelEnum.OWNER));
-    System.out.println("HI");
     groupBean.renderRequest(request, response);
-    System.out.println("THERE");
     if(response.getStatus() == 200 && groupBean.getRendererTemplateType() == TemplateType.DETAIL) {
-        System.out.println("rendering members");
         Group group = (Group) request.getAttribute("Group");
         groupMemberBean.setTarget(group);
         groupMemberBean.renderRequest(request, response);
-    } else {
-        System.out.println("NOT " + groupBean.getRendererTemplateType());
     }
 %>
