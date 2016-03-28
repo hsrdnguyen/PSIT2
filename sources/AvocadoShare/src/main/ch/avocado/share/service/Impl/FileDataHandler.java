@@ -24,6 +24,8 @@ public class FileDataHandler implements IFileDataHandler {
     public boolean addFile(File file) {
         try {
             //TODO databaseConnection.insertDataSet(String.format(SQLQueryConstants.INSERT_FILE_QUERY, "NULL", file.getTitle(), file.getDescription(), file.getLastChanged()));
+            //TODO @bergmsas: Irgendwie AccesControlObject Id zurück geben, damit ich Categorien in DB speichern kann.
+            //addCategories(file);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -46,14 +48,22 @@ public class FileDataHandler implements IFileDataHandler {
         return false;
     }
 
-    private boolean addCategories(List<Category> categories, String fileId){
+    private boolean addCategories(File file){
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if(categoryHandler == null) return false;
-        for (Category category : categories) {
-            //TODO @kunzlio1: ev. noch kontrollieren + try/catch...
-            //TODO @kunzlio1: Fragen wie wir das eig Handeln das Daten konsistent bleiben, also wenn hier zum bsp. fehler...
-            categoryHandler.addCategory(category, fileId);
-        }
+        if(categoryHandler == null)
+            return false;
+        if (!categoryHandler.addAccessObjectCategories(file))
+            return false;
+
+        return true;
+    }
+
+    private boolean updateCategories(File oldFile, File changedFile){
+        ICategoryDataHandler categoryHandler = getCategoryDataHandler();
+        if(categoryHandler == null)
+            return false;
+        if (!categoryHandler.updateAccessObjectCategories(oldFile, changedFile))
+            return false;
 
         return true;
     }

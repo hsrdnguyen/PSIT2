@@ -19,5 +19,12 @@ public class SQLQueryConstants {
     //GROUP
     public static final String SQL_SELECT_GROUP_BY_ID = "SELECT id, name, description, creation_date FROM access_group AS g JOIN access_control AS o ON g.id = o.id WHERE g.id = %s";
 
+    //CATEGORY
+    public static final String SQL_SELECT_CATEGORY_BY_NAME = "SELECT object_id, name FROM category WHERE name = '{}'";
 
+    public static final String SQL_SELECT_CATEGORY_BY_NAME_AND_OBJECT_ID = "SELECT object_id, name FROM category WHERE name = {} AND object_id = {}";
+
+    public static final String SQL_ADD_CATEGORY = "INSERT INTO category (object_id, name) ({}, '{}')";
+
+    public static final String SQL_DELETE_CATEGORY_FROM_OBJECT = "DELETE FROM category WHERE name = {} AND object_id = {}";
 }

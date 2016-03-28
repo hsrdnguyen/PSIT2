@@ -1,10 +1,23 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.model.data.AccessLevelEnum;
+import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.User;
+import ch.avocado.share.service.IGroupDataHandler;
+import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Mock.GroupDataHandlerMock;
+import ch.avocado.share.service.Mock.SecurityHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.Mock.UserDataHandlerMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
