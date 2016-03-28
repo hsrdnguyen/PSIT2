@@ -114,30 +114,17 @@ public class FileUploadBean implements Serializable {
         this.categories = categories;
     }
 
-    //TODO @kunzlio1: wie Rechte kontrollieren?
-    //TODO @kunzlio1: Fragen, wie wissen wir welches File gerade im Web offen ist? Bzw. wie wird es ins Web geladen?
-    //TODO @kunzlio1: Fragen, ob Kategorien auf Infoseite beabeitet werden können, oder über bearbeiten Seite?
     public void addCategory(String name){
-        if (name == null || name.trim() == null){
+        name = name.trim();
+        if (name == null){
             //TODO @kunzlio1: Error Message
             return;
+        }else if (!categories.contains(new Category(name))){
+            categories.add(new Category(name.trim()));
         }else {
-            ICategoryDataHandler categoryDataHandler = getCategoryDataHandler();
-            if (categoryDataHandler.getCategoryByName(name.trim()) != null){
-                categories.add(new Category(name));
-            }else {
-                //TODO: @kunzlio1: Message das es Category schon gibt, bzw vorschau einbauen...
-            }
+            //TODO @kunzlio1: Message das diese Kategorie schon hinzugefügt wurde
         }
 
-    }
-
-    private ICategoryDataHandler getCategoryDataHandler() {
-        try {
-            return ServiceLocator.getService(ICategoryDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            return null;
-        }
     }
 
     private String createFileHashName(FileItem fileItem) throws IOException, DigestException{
