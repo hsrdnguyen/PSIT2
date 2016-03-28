@@ -32,4 +32,10 @@ public interface ISecurityHandler {
      * @return access level of an anonymous user
      */
     AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target);
+
+    Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+
+    User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+
+    <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum);
 }

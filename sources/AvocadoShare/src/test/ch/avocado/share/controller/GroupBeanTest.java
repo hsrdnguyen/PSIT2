@@ -3,19 +3,12 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IGroupDataHandler;
-import ch.avocado.share.service.ISecurityHandler;
-import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.GroupDataHandlerMock;
-import ch.avocado.share.service.Mock.SecurityHandlerMock;
-import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import org.junit.ComparisonFailure;
 
-import ch.avocado.share.service.Mock.UserDataHandlerMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,45 +16,14 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class GroupBeanTest {
-
-    public static final int STATUS_FORBIDDEN = 403;
-    public static final int STATUS_OK = 200;
-
-    public GroupBeanTest() throws Exception{
-        ServiceLocatorModifier.setService(IGroupDataHandler.class, new GroupDataHandlerMock());
-        ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
-        securityHandlerMock = new SecurityHandlerMock();
-        ServiceLocatorModifier.setService(ISecurityHandler.class, securityHandlerMock);
-    }
+public class GroupBeanTest extends BeanTestBase {
 
     private GroupBean bean;
-    private MockHttpServletRequest request;
-    private MockHttpServletResponse response;
-    private SecurityHandlerMock securityHandlerMock;
-    private UserSession session;
+
+
     @Before
-    public void setUp() throws Exception {
-        securityHandlerMock.setAnonymousAccess(AccessLevelEnum.NONE);
+    public void setUpBean() {
         bean = new GroupBean();
-        request = new MockHttpServletRequest();
-        request.setMethod("GET");
-        session = new UserSession(request);
-        response = new MockHttpServletResponse();
-        assertEquals(ServiceLocator.getService(ISecurityHandler.class), securityHandlerMock);
-    }
-
-    private static void assertStatusCodeEquals(int status, MockHttpServletResponse response) {
-        assertEquals(response.getErrorMessage(), status, response.getStatus());
-    }
-
-    private void authenticateAccess(AccessLevelEnum accessLevel) throws Exception {
-        User user = securityHandlerMock.getUserWithAccess(accessLevel);
-        assertNotNull(user);
-        assertNotNull(user.getId());
-        session.authenticate(user);
-        assertTrue(session.isAuthenticated());
-        assertEquals(securityHandlerMock.getAccessLevel(user, user), accessLevel);
     }
 
     @Test
@@ -75,7 +37,7 @@ public class GroupBeanTest {
         assertStatusCodeEquals(STATUS_OK, response);
         Group[] groups = (Group[]) request.getAttribute("Groups");
         assertNotNull(groups);
-        assertEquals(groups.length, GroupDataHandlerMock.NUMBER_OF_GROUPS);
+        assertEquals(groups.length, ((GroupDataHandlerMock) ServiceLocator.getService(IGroupDataHandler.class)).getNumberOfGroups());
     }
 
     @Test
@@ -198,6 +160,7 @@ public class GroupBeanTest {
     public void testCreate() throws Exception {
         final String name = GroupDataHandlerMock.NOT_EXISTING_GROUP_NAME;
         final String description = "My group description";
+        assertNull(ServiceLocator.getService(IGroupDataHandler.class).getGroupByName(name));
         authenticateAccess(AccessLevelEnum.NONE);
         request.setMethod("POST");
         bean.setName(name);
@@ -279,8 +242,8 @@ public class GroupBeanTest {
         assertEquals("ID changed", previousId, changedGroup.getId());
     }
 
-    @Test
-    public void testUpdateById() throws Exception {
+
+    private void testUpdateById() throws Exception {
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         final String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
         final String description = "My new group description";
@@ -293,7 +256,6 @@ public class GroupBeanTest {
         assertNotEquals(existingGroup.getDescription(), description);
 
         authenticateAccess(AccessLevelEnum.WRITE);
-        request.setMethod("PATCH");
         bean.setId(groupId);
         bean.setName(name);
         bean.setDescription(description);
@@ -314,6 +276,33 @@ public class GroupBeanTest {
         assertEquals("Description not updated in DB", description, changedGroup.getDescription());
         assertEquals("name not changed in DB", name, changedGroup.getName());
         assertEquals("ID changed in DB", groupId, changedGroup.getId());
+    }
+
+    @Test
+    public void testUpdateByIdFromHTTPMethod() throws Exception {
+        request.setMethod("PATCH");
+        testUpdateById();
+    }
+
+    @Test
+    public void testUpdateByIdFromSimulatedMethod() throws Exception {
+        request.setMethod("POST");
+        bean.setMethod("patch");
+        testUpdateById();
+    }
+
+    @Test
+    public void testUpdateByIdFromSimulatedMethodWithUppercaseLetter() throws Exception {
+        request.setMethod("POST");
+        bean.setMethod("pAtCh");
+        testUpdateById();
+    }
+
+    @Test(expected = ComparisonFailure.class)
+    public void testUpdateSimulatedButWithGet() throws Exception {
+        request.setMethod("GET");
+        bean.setMethod("patch");
+        testUpdateById();
     }
 
     @Test

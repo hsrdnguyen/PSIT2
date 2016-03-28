@@ -21,6 +21,9 @@ public enum AccessLevelEnum {
      * @return True if this level contains the other. Otherwise false is returned.
      */
     public boolean containsLevel(AccessLevelEnum other) {
+        if(other == null) {
+            throw new IllegalArgumentException("other can't be null");
+        }
         return (numericLevel >= other.numericLevel);
     }
 }
