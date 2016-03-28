@@ -1,10 +1,20 @@
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="ch.avocado.share.common.FormBuilder" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="ch.avocado.share.controller.GroupBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% Group group = (Group) request.getAttribute("Group"); %>
-<form method="post" action="?id=<%=Encoder.forHtmlAttribute(group.getId())%>">
-    <input type="text" name="name" value="<%=Encoder.forHtmlAttribute(group.getName())%>"/>
-    <input type="text" name="description" value="<%=Encoder.forHtmlAttribute(group.getDescription())%>"/>
-    <input type="hidden" name="method" value="patch" />
-    <input type="submit" value="Speichern" />
-</form>
+<%
+    FormBuilder formBuilder = new FormBuilder("", (Group) request.getAttribute("Group"), Group.class, (Map<String, String>) request.getAttribute(GroupBean.ATTRIBUTE_FORM_ERRORS));
+    formBuilder.setReadableFieldName("description", "Beschreibung");
+    formBuilder.setReadableFieldName("name", "Name");
+%>
+<h1>Create new Group</h1>
+<%=formBuilder.getFormErrors()%>
+<%=formBuilder.getFormBegin("PATCH") %>
+<%=formBuilder.getLabelFor("name") %>
+<%=formBuilder.getInputFor("name") %>
+<%=formBuilder.getLabelFor("description") %>
+<%=formBuilder.getInputFor("description") %>
+<input type="submit" value="Gruppe erstellen" />
+<%=formBuilder.getFormEnd() %>

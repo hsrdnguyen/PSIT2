@@ -45,8 +45,8 @@ import java.util.Map;
  *
  * @param <E> The subclass of AccessControlObjectBase to handle.
  */
-public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
-    protected static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
+public abstract class AccessControlObject<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
+    public static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
     public static final String ERROR_INDEX_FAILED = "Index konnte nicht geladen werden.";
     public static final String ERROR_CREATE_FAILED = "Es konnte kein Objekt erstellt werden.";
     public static final String ERROR_GET_FAILED = "Objekt konnte nicht gefunden werden.";
@@ -148,10 +148,11 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         ensureAccessingUserHasAccess(object, AccessLevelEnum.OWNER);
         destroy();
         if (!hasErrors()) {
-            templateType = TemplateType.INDEX;
-        } else {
+            setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.EDIT;
             request.setAttribute(getAttributeName(), object);
+        } else {
+            templateType = TemplateType.INDEX;
         }
         return templateType;
     }
@@ -178,7 +179,8 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             // On success show details
             templateType = TemplateType.DETAIL;
         } else {
-            // On failure show edit formular again
+            // On failure show edit form again
+            setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.EDIT;
         }
         request.setAttribute(getAttributeName(), object);
@@ -282,6 +284,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         }
         request.setAttribute(getAttributeName(), object);
         if (hasErrors()) {
+            setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.CREATE;
         } else {
             templateType = TemplateType.DETAIL;
@@ -365,5 +368,9 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
 
     public Map<String, String> getFormErrors() {
         return new HashMap<>(this.formErrors);
+    }
+
+    private void setFormErrorsInRequestAttribute(HttpServletRequest request) {
+        request.setAttribute(ATTRIBUTE_FORM_ERRORS, getFormErrors());
     }
 }
