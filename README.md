@@ -31,3 +31,15 @@ Eine Methode hat (oder sollte) immer einen aussagekräftigen Namen. Dies bringt 
 Wenn wir Methoden schreiben, müssen wir uns immer bewusst sein, was diese Funktion machen soll. Sobald wir uns nicht sicher sind oder einem mehrere Dinge in den Sinn kommen sollte man die Methode nochmals überdenken und gegebenenfalls in mehrere Methoden aufteilen.
 
 Eine hilfreiche Technik ist, zu versuchen aus einer Methode eine weitere Methode zu extrahieren, die nicht das selbe tut, sondern nur einen Bruchteil der Funktionalität der ersten Methode hat.
+
+### Use Intention-Revealing Names
+
+*Choosing good names takes time but saves more than it takes.*
+
+Beim vergeben von Namen für Klassen, Variabeln, Methoden usw. sollte man sich genügend Zeit nehmen und sich etwas dabei überlegen. So ein Name sollte alle grösseren Fragen klären, die beim lesen des Codes allenfalls auftretten. Man sollte intuitiv auf den Zweck des Elements kommen.
+Der Name sollte einem sagen wieso diese Klasse, Variable oder Methode existiert, was sie macht und wie sie gebraucht wird.
+Wenn ein Kommentar für den Namen benötigt wird, sollte man diesen nochmals überdenken.
+
+Wer sich bei der Namensgebung Mühe gibt, macht es für andere zum lesen oder für sich selbst im Nachhinein um so vieles leichter den Code zu verstehen und man muss sich nicht noch durch Zeilen von Kommentaren lesen bzw. diese schreiben. Wodurch erheblich Zeit eingespaart werden kann.
+
+Wenn einem beim nachträglichen lesen von Code noch bessere Namen einfallen, welche präziser sind, sollte man diese auch umbedingt noch ändern. Oder wenn man beim lesen von Code eines anderen Programmieres schlechte Namensgebung entdeckt, sollte man ihn darauf aufmerksam machen oder es gleich verbessern.
