@@ -10,7 +10,6 @@ import java.util.List;
 public class Group extends AccessIdentity implements Serializable {
 
     private String name;
-    private List<String> memberIds;
 
     /**
      * Create a new Group.
@@ -21,7 +20,6 @@ public class Group extends AccessIdentity implements Serializable {
      * @param ownerId Identifier of the owner.
      * @param description A description of the group
      * @param name The name of the group
-     * @param memberIds List of all member ids
      */
     public Group(String id,
                  List<Category> categories,
@@ -29,13 +27,10 @@ public class Group extends AccessIdentity implements Serializable {
                  float rating,
                  String ownerId,
                  String description,
-                 String name,
-                 List<String> memberIds) {
+                 String name) {
         super(id, categories, creationDate, rating, ownerId, description);
         if(name == null) throw new IllegalArgumentException("name is null");
         this.name = name;
-        if(memberIds == null) throw new IllegalArgumentException("member is null");
-        this.memberIds = memberIds;
     }
 
     /**
@@ -46,22 +41,9 @@ public class Group extends AccessIdentity implements Serializable {
     }
 
     /**
-     * Set the group name.
-     * @param name
+     * @param name The name of the group
      */
     public void setName(String name) {
-        if (name == null) throw new IllegalArgumentException("name is null");
-        if(!this.name.equals(name)) {
-            this.name = name;
-            setDirty(true);
-        }
-    }
-
-    /**
-     * @return A list of all members of this group.
-     */
-    public String[] getMemberIds() {
-        String[] idArray = new String[memberIds.size()];
-        return memberIds.toArray(idArray);
+        this.name = name;
     }
 }

@@ -67,7 +67,7 @@ public class GroupBean extends ResourceBean<Group> {
         checkNameIsUnique();
         checkParameterDescription();
         if (!hasErrors()) {
-            Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name, new ArrayList<String>());
+            Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name);
             String newGroupId = groupDataHandler.addGroup(group);
             if (newGroupId == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
