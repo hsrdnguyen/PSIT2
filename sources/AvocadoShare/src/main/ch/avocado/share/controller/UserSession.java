@@ -20,8 +20,6 @@ public class UserSession {
 	static final String SESSION_UID = "uid";
 	private User user;
 	private HttpSession session;
-    // TODO: remove when authentication users are implemented;
-    private final boolean ALWAYS_AUTHENTICATED = false;
 
 	/**
 	 * Helper method to check if the request is null.
@@ -57,9 +55,6 @@ public class UserSession {
         String userId = (String) this.session.getAttribute(SESSION_UID);
         user = null;
         findUser(userId);
-        if(ALWAYS_AUTHENTICATED) {
-            user = new User("???", null, new Date(System.currentTimeMillis()), 0,  "", "???", UserPassword.fromPassword("1234") ,"prename", "surname",  "avatar", new EmailAddress(true, "muellcy1@students.zhaw.ch", null));
-        }
     }
 
     private void findUser(String userId) {
@@ -84,7 +79,7 @@ public class UserSession {
 		session.setAttribute(SESSION_UID, user.getId());
 	}
 
-    /**
+    /*
      * Check if the session user has access to the target.
      * @param requiredLevel The required access level
      * @param target The accessed object

@@ -5,61 +5,53 @@ package ch.avocado.share.service.Mock;
  */
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.Group;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
-    protected List<E> objects;
+    protected Map<String, E> objects;
+
 
     public DataHandlerMockBase() {
-        objects = new ArrayList<>();
+        objects = new HashMap<>();
     }
 
     protected E get(String id) {
         if(id == null) throw new IllegalArgumentException("id is null");
-        for (E object : objects) {
-            if(object.getId().equals(id)) {
-                return object;
-            }
-        }
-        return null;
+        return objects.get(id);
     }
 
     protected String add(E object) {
         if(object == null) throw new IllegalArgumentException("object is null");
-        if(object.getId() != null) {
-            throw new RuntimeException("can't add object with non-null id");
-        }
+        if(object.getId() != null) throw new IllegalArgumentException("object.getId() is not null");
         Random random = new Random();
-        object.setId("object" + random.nextLong() + random.nextLong());
-        objects.add(object);
+        object.setId("object_" + random.nextLong() + random.nextLong());
+        objects.put(object.getId(), object);
+        System.out.println("Created object with id " + object.getId());
         return object.getId();
     }
 
     protected boolean delete(E object) {
-        Iterator<E> groupIterator = objects.iterator();
-        while (groupIterator.hasNext()) {
-            E currentGroup = groupIterator.next();
-            if (currentGroup.getId().equals(object.getId())) {
-                groupIterator.remove();
-                return true;
-            }
+        if(objects.containsKey(object.getId())) {
+            objects.remove(object.getId());
+            return true;
         }
         return false;
     }
 
     protected boolean update(E object) {
         if(object == null) throw new IllegalArgumentException("object is null");
-        for (int i = 0; i < objects.size(); i++) {
-            if (objects.get(i).getId().equals(object.getId())) {
-                objects.set(i, object);
-                return true;
-            }
+        if(objects.containsKey(object.getId())) {
+            objects.put(object.getId(), object);
+            return true;
         }
         return false;
     }
 
+    protected E[] getAll(Class<E> type) {
+        E[] objectArray = (E[]) Array.newInstance(type, objects.size());
+        return objects.values().toArray(objectArray);
+    }
 }

@@ -7,10 +7,9 @@ import ch.avocado.share.service.IFileDataHandler;
  * Created by bergm on 19/03/2016.
  */
 public class FileDataHandlerMock implements IFileDataHandler {
+
     @Override
-    public boolean addFile(File file) {
-        return false;
-    }
+    public String addFile(File file) { return null; }
 
     @Override
     public boolean deleteFile(File file) {
@@ -21,6 +20,9 @@ public class FileDataHandlerMock implements IFileDataHandler {
     public File getFile(String fileId) {
         return null;
     }
+
+    @Override
+    public File getFileByTitle(String fileTitle) { return null; }
 
     @Override
     public boolean updateFile(File file) {

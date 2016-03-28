@@ -48,11 +48,6 @@
               <span class="octicon octicon-person"></span>
             </button>
 
-
-
-
-
-
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
               <form action="indexlog.html" method="POST" action="#login">
                 <fieldset>

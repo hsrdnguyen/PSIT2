@@ -82,6 +82,10 @@ public class User extends AccessIdentity {
         this.mail = mail;
     }
 
+    public String getFullName() {
+        return getPrename() + " " + getSurname();
+    }
+
     public boolean resetPassword(String password, String code) {
         PasswordResetVerification verification = getPassword().getPasswordResetVerification();
         if (verification != null && !verification.isExpired() && verification.getCode().equals(code)) {

@@ -8,7 +8,6 @@ import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 
-import javax.crypto.IllegalBlockSizeException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,38 +51,39 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     protected User accessingUser;
     private String method;
     private ISecurityHandler securityHandler = null;
-    protected final String ERROR_METHOD_NOT_ALLOWED = "Methode nicht erlaubt.";
+    protected final String ERROR_METHOD_NOT_ALLOWED_FORMAT = "Methode nicht erlaubt: %s";
     protected static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
     protected static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
     protected static final String ERROR_NOT_LOGGED_IN = "Sie müssen angemeldet sein für diese Aktion.";
+    private TemplateType rendererTemplateType;
 
-
-    private void methodNotAllowed() throws HttpBeanException {
-        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, ERROR_METHOD_NOT_ALLOWED);
+    private void throwMethodNotAllowed(String method) throws HttpBeanException {
+        if(method == null) throw new IllegalArgumentException("method is null");
+        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, String.format(ERROR_METHOD_NOT_ALLOWED_FORMAT, method));
     }
 
     protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
-        methodNotAllowed();
+        throwMethodNotAllowed("POST");
         return null;
     }
 
     protected TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
-        methodNotAllowed();
+        throwMethodNotAllowed("GET");
         return null;
     }
 
     protected TemplateType doPut(HttpServletRequest request) throws HttpBeanException {
-        methodNotAllowed();
+        throwMethodNotAllowed("PUT");
         return null;
     }
 
     protected TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
-        methodNotAllowed();
+        throwMethodNotAllowed("PATCH");
         return null;
     }
 
     protected TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
-        methodNotAllowed();
+        throwMethodNotAllowed("DELETE");
         return null;
     }
 
@@ -117,12 +117,6 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_EDIT);
     }
 
-    /**
-     * @return The template folder.
-     */
-    protected String getTemplateFolder() {
-        return TEMPLATES_FOLDER;
-    }
 
     /**
      * Get the dispatcher to render a create a new  object.
@@ -131,8 +125,16 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_CREATE} in the same folder.
      */
     protected RequestDispatcher getCreateDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(TEMPLATE_CREATE);
+        return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_CREATE);
     }
+
+    /**
+     * @return The template folder.
+     */
+    protected String getTemplateFolder() {
+        return TEMPLATES_FOLDER;
+    }
+
 
     private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws ServletException {
         if (request == null) throw new IllegalArgumentException("request is null");
@@ -180,7 +182,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         } else if (getMethod() == null) {
             setMethod(request.getMethod());
         }
-        TemplateType templateType;
+        TemplateType templateType = null;
         switch (getMethod()) {
             case "PATCH":
                 templateType = doPatch(request);
@@ -196,14 +198,15 @@ public abstract class RequestHandlerBeanBase implements Serializable {
                 break;
             case "PUT":
                 templateType = doPut(request);
+                break;
             default:
-                throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ResourceBean.ERROR_INVALID_REQUEST);
+                throwMethodNotAllowed(getMethod());
         }
         return templateType;
     }
 
 
-    private TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) {
+    public TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) {
         setAccessingUserFromRequest(request);
         try {
             return callHttpMethodMethod(request);
@@ -250,7 +253,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      * @param requiredLevel The required level of access on the target.
      * @throws HttpBeanException If the required access is not met.
      */
-    protected void ensureHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws HttpBeanException {
+    protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws HttpBeanException {
         if (target == null) throw new IllegalArgumentException("target is null");
         if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
         ISecurityHandler securityHandler = getSecurityHandler();
@@ -300,7 +303,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      * @see #renderRequest(HttpServletRequest, HttpServletResponse)
      */
     public void setMethod(String method) {
-        this.method = method;
+        this.method = method.toUpperCase();
     }
 
     /**
@@ -323,9 +326,13 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
-        TemplateType templateType = executeRequest(request, response);
-        if (templateType != null) {
-            dispatchEvent(request, response, templateType);
+        rendererTemplateType = executeRequest(request, response);
+        if (rendererTemplateType != null) {
+            dispatchEvent(request, response, rendererTemplateType);
         }
+    }
+
+    public TemplateType getRendererTemplateType() {
+        return rendererTemplateType;
     }
 }

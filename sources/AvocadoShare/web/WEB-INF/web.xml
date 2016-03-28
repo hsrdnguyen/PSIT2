@@ -16,11 +16,16 @@
         <url-pattern>/group/templates/*</url-pattern>
     </filter-mapping>
 
+    <filter-mapping>
+        <filter-name>HiddenFilesFilter</filter-name>
+        <url-pattern>/group/member_templates/*</url-pattern>
+    </filter-mapping>
 
     <session-config>
         <session-timeout>10</session-timeout>
         <cookie-config>
             <http-only>true</http-only>
+            <name>SESSION</name>
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>

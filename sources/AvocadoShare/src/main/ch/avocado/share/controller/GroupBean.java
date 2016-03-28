@@ -1,11 +1,12 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
+import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,17 +29,18 @@ public class GroupBean extends ResourceBean<Group> {
     private String description;
 
 
-    private void checkParameterName(boolean checkUnique) throws HttpBeanException {
+    private void checkNameNotEmpty() {
         if (name == null || name.trim().isEmpty()) {
             addFormError("name", ERROR_NO_NAME);
         } else {
             name = name.trim();
-            if(checkUnique) {
-                IGroupDataHandler groupDataHandler = getGroupDataHandler();
-                if (groupDataHandler.getGroupByName(name) != null) {
-                    addFormError("name", ERROR_GROUP_NAME_ALREADY_EXISTS);
-                }
-            }
+        }
+    }
+
+    private void checkNameIsUnique() throws HttpBeanException {
+        IGroupDataHandler groupDataHandler = getGroupDataHandler();
+        if (groupDataHandler.getGroupByName(name) != null) {
+            addFormError("name", ERROR_GROUP_NAME_ALREADY_EXISTS);
         }
     }
 
@@ -50,6 +52,7 @@ public class GroupBean extends ResourceBean<Group> {
         }
     }
 
+
     @Override
     protected boolean hasIdentifier() {
         return name != null || getId() != null;
@@ -59,16 +62,23 @@ public class GroupBean extends ResourceBean<Group> {
     @Override
     public Group create() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        IUserDataHandler userDataHandler = getUserDataHandler();
-        checkParameterName(true);
+        // IUserDataHandler userDataHandler = getUserDataHandler();
+        checkNameNotEmpty();
+        checkNameIsUnique();
         checkParameterDescription();
         if (!hasErrors()) {
             Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name, new ArrayList<String>());
-            if (null != groupDataHandler.addGroup(group)) {
+            String newGroupId = groupDataHandler.addGroup(group);
+            if (newGroupId == null) {
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+            }
+            group = groupDataHandler.getGroup(newGroupId);
+            if (group == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
             }
             return group;
         }
+        // TODO: return group even when parameters were incorrect
         return null;
     }
 
@@ -91,19 +101,25 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     public Group[] index() throws HttpBeanException {
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        return null;
+        ISecurityHandler securityHandler = getSecurityHandler();
+        return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Group.class, getAccessingUser(), AccessLevelEnum.READ);
     }
 
     @Override
     public void update() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
         checkParameterDescription();
-        checkParameterName(false);
+        checkNameNotEmpty();
+        Group group = getObject();
         if (!hasErrors()) {
-            getObject().setName(name);
-            getObject().setDescription(description);
-            if (!groupDataHandler.updateGroup(getObject())) {
+            if (!name.equals(group.getName())) {
+                checkNameIsUnique();
+            }
+        }
+        if(!hasErrors()) {
+            group.setName(name);
+            group.setDescription(description);
+            if (!groupDataHandler.updateGroup(group)) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
             }
         }

@@ -21,14 +21,16 @@ public class FileDataHandler implements IFileDataHandler {
     public IDatabaseConnectionHandler databaseConnection;
 
     @Override
-    public boolean addFile(File file) {
+    public String addFile(File file) {
         try {
             //TODO databaseConnection.insertDataSet(String.format(SQLQueryConstants.INSERT_FILE_QUERY, "NULL", file.getTitle(), file.getDescription(), file.getLastChanged()));
+            //TODO @kunzlio1: Irgendwie AccesControlObject Id zurück geben...
+            //addCategories(file);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return "";
         }
-        return true;
+        return "";
     }
 
     @Override
@@ -42,18 +44,32 @@ public class FileDataHandler implements IFileDataHandler {
     }
 
     @Override
+    public File getFileByTitle(String fileTitle) {
+        //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
+        return null;
+    }
+
+    @Override
     public boolean updateFile(File file) {
         return false;
     }
 
-    private boolean addCategories(List<Category> categories, String fileId){
+    private boolean addCategories(File file){
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if(categoryHandler == null) return false;
-        for (Category category : categories) {
-            //TODO @kunzlio1: ev. noch kontrollieren + try/catch...
-            //TODO @kunzlio1: Fragen wie wir das eig Handeln das Daten konsistent bleiben, also wenn hier zum bsp. fehler...
-            categoryHandler.addCategory(category, fileId);
-        }
+        if(categoryHandler == null)
+            return false;
+        if (!categoryHandler.addAccessObjectCategories(file))
+            return false;
+
+        return true;
+    }
+
+    private boolean updateCategories(File oldFile, File changedFile){
+        ICategoryDataHandler categoryHandler = getCategoryDataHandler();
+        if(categoryHandler == null)
+            return false;
+        if (!categoryHandler.updateAccessObjectCategories(oldFile, changedFile))
+            return false;
 
         return true;
     }
