@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package ch.avocado.share.servlet;
 
@@ -13,92 +13,104 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Impl.UserDataHandler;
 
 /**
  * @author coffeemakr
- *
  */
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-	static final String LOGIN_FORM_URL = "/login_form.jsp";
-	
-	static final public String LOGIN_ERROR = "login_error";
-	static final public String FIELD_EMAIL = "email";
-	static final public String FIELD_PASSWORD = "password";
+    static final String LOGIN_FORM_URL = "/login_form.jsp";
 
-	static private final String COOKIE_CHECK_NAME = "are_cookies_enabled";
-	static private final String COOKIE_CHECK_VALUE = "yes! :)";
-	
-	private static final long serialVersionUID = 5348852043943606854L;
-	
-	
-	public User checkLogin(String email, String password) {
+    static final public String LOGIN_ERROR = "login_error";
+    static final public String FIELD_EMAIL = "email";
+    static final public String FIELD_PASSWORD = "password";
 
-		//User user = UserController.findByEmail(email);
-		User user = null;
-		if (user != null && user.getPassword().matchesPassword(password)) {
-			return user;
-		}
-		return null;
-	}
+    static private final String COOKIE_CHECK_NAME = "are_cookies_enabled";
+    static private final String COOKIE_CHECK_VALUE = "yes! :)";
 
-	private void renderLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher(LOGIN_FORM_URL);
-		dispatcher.forward(request, response);
-	}
+    private static final long serialVersionUID = 5348852043943606854L;
 
 
-	private void addTestCookie(HttpServletResponse response) {
-		Cookie checkCookie = new Cookie(COOKIE_CHECK_NAME, COOKIE_CHECK_VALUE);
-		response.addCookie(checkCookie);
-	}
+    private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) {
+        User user = userDataHandler.getUserByEmailAddress(email);
+        if (user != null && user.getPassword().matchesPassword(password)) {
+            return user;
+        }
+        return null;
+    }
 
-	public boolean checkTestCookie(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		if(cookies == null) {
-			return false;
-		}
-		for(Cookie cookie: cookies) {
-			String name = cookie.getName();
-			String value = cookie.getValue();
-			if(name.equals(COOKIE_CHECK_NAME) && value.equals(COOKIE_CHECK_VALUE)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private void renderLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher(LOGIN_FORM_URL);
+        dispatcher.forward(request, response);
+    }
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		addTestCookie(response);
-		renderLogin(request, response);
-	}
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, java.io.IOException {
-		String email = request.getParameter(FIELD_EMAIL);
-		String password = request.getParameter(FIELD_PASSWORD);
-		if(email == null) {
-			request.setAttribute(LOGIN_ERROR, "Kein Passwort eingegeben.");
-			renderLogin(request, response);
-		} else if (password == null) {
-			request.setAttribute(LOGIN_ERROR, "Kein Passwort eingegeben.");
-			renderLogin(request, response);
-		} else {
-			if(!checkTestCookie(request)) {
-				request.setAttribute(LOGIN_ERROR, "Cookies scheinen deaktiviert zu sein. Bitte überprüfen Sie das.");
-			}
-			User user = checkLogin(email, password);
-			if (user != null) {
-				
-			} else {
-				request.setAttribute(LOGIN_ERROR, "Passwort oder E-Mail-Adresse stimmt nicht.");
-				renderLogin(request, response);			
-			}			
-		}
-	}
+    private void addTestCookie(HttpServletResponse response) {
+        Cookie checkCookie = new Cookie(COOKIE_CHECK_NAME, COOKIE_CHECK_VALUE);
+        response.addCookie(checkCookie);
+    }
+
+    public boolean checkTestCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return false;
+        }
+        for (Cookie cookie : cookies) {
+            String name = cookie.getName();
+            String value = cookie.getValue();
+            if (name.equals(COOKIE_CHECK_NAME) && value.equals(COOKIE_CHECK_VALUE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        addTestCookie(response);
+        renderLogin(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, java.io.IOException {
+        String email = request.getParameter(FIELD_EMAIL);
+        String password = request.getParameter(FIELD_PASSWORD);
+        IUserDataHandler userDataHandler = null;
+        try {
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+        } catch (ServiceNotFoundException e) {
+            request.setAttribute(LOGIN_ERROR, "Interner Fehler");
+            renderLogin(request, response);
+        }
+        if (userDataHandler != null) {
+            if (email == null) {
+                request.setAttribute(LOGIN_ERROR, "Kein Passwort eingegeben.");
+                renderLogin(request, response);
+            } else if (password == null) {
+                request.setAttribute(LOGIN_ERROR, "Kein Passwort eingegeben.");
+                renderLogin(request, response);
+            } else {
+                if (!checkTestCookie(request)) {
+                    request.setAttribute(LOGIN_ERROR, "Cookies scheinen deaktiviert zu sein. Bitte überprüfen Sie das.");
+                }
+                User user = getUserWithLogin(userDataHandler, email, password);
+                if (user != null) {
+                    UserSession userSession = new UserSession(request);
+                    userSession.authenticate(user);
+                } else {
+                    request.setAttribute(LOGIN_ERROR, "Passwort oder E-Mail-Adresse stimmt nicht.");
+                    renderLogin(request, response);
+                }
+            }
+        }
+    }
 }

@@ -19,7 +19,7 @@ class MockObject extends AccessControlObjectBase {
     }
 }
 
-class MockObjectBean extends  ResourceBean<MockObject> {
+class MockObjectBean extends ResourceBean<MockObject> {
 
     private String id;
 
