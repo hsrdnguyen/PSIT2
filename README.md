@@ -24,7 +24,7 @@ Fehlerresistenz des Produktes nehmen zu.
 
 ### Do one thing
 
-*Functions should do one thing. They should do it well. They should do it only. [...].*
+*Functions should do one thing. They should do it well. They should do it only.*
 
 Eine Methode hat (oder sollte) immer einen aussagekräftigen Namen. Dies bringt aber nur dann etwas, wenn eine Methode auch macht was ihr Name ankündigt. Wenn sie aber etwas ganz anderes oder mehrere Dinge tut könnte der Name auch abcd sein und wir wüssten genau gleich viel über ihre Tätigkeit.
 
