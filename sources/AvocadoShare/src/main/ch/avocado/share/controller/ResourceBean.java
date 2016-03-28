@@ -45,7 +45,7 @@ import java.util.Map;
  *
  * @param <E> The subclass of AccessControlObjectBase to handle.
  */
-public abstract class AccessControlObject<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
+public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
     public static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
     public static final String ERROR_INDEX_FAILED = "Index konnte nicht geladen werden.";
     public static final String ERROR_CREATE_FAILED = "Es konnte kein Objekt erstellt werden.";

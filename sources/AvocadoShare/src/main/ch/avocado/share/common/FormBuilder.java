@@ -6,7 +6,6 @@ import ch.avocado.share.model.exceptions.FormBuilderException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;

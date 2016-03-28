@@ -117,12 +117,6 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_EDIT);
     }
 
-    /**
-     * @return The template folder.
-     */
-    protected String getTemplateFolder() {
-        return TEMPLATES_FOLDER;
-    }
 
     /**
      * Get the dispatcher to render a create a new  object.
@@ -131,8 +125,16 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      * @return A {@link RequestDispatcher} which renders the file {@value TEMPLATE_CREATE} in the same folder.
      */
     protected RequestDispatcher getCreateDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher(TEMPLATE_CREATE);
+        return request.getRequestDispatcher(getTemplateFolder() + TEMPLATE_CREATE);
     }
+
+    /**
+     * @return The template folder.
+     */
+    protected String getTemplateFolder() {
+        return TEMPLATES_FOLDER;
+    }
+
 
     private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws ServletException {
         if (request == null) throw new IllegalArgumentException("request is null");

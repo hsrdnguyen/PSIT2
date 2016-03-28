@@ -79,7 +79,7 @@ public class UserSession {
 		session.setAttribute(SESSION_UID, user.getId());
 	}
 
-    /**
+    /*
      * Check if the session user has access to the target.
      * @param requiredLevel The required access level
      * @param target The accessed object
