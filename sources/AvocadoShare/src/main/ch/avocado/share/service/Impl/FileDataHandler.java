@@ -21,16 +21,16 @@ public class FileDataHandler implements IFileDataHandler {
     public IDatabaseConnectionHandler databaseConnection;
 
     @Override
-    public boolean addFile(File file) {
+    public String addFile(File file) {
         try {
             //TODO databaseConnection.insertDataSet(String.format(SQLQueryConstants.INSERT_FILE_QUERY, "NULL", file.getTitle(), file.getDescription(), file.getLastChanged()));
-            //TODO @bergmsas: Irgendwie AccesControlObject Id zurück geben, damit ich Categorien in DB speichern kann.
+            //TODO @kunzlio1: Irgendwie AccesControlObject Id zurück geben...
             //addCategories(file);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return "";
         }
-        return true;
+        return "";
     }
 
     @Override
@@ -40,6 +40,12 @@ public class FileDataHandler implements IFileDataHandler {
 
     @Override
     public File getFile(String fileId) {
+        return null;
+    }
+
+    @Override
+    public File getFileByTitle(String fileTitle) {
+        //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
         return null;
     }
 
