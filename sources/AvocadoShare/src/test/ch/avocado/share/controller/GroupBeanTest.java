@@ -192,7 +192,7 @@ public class GroupBeanTest extends BeanTestBase {
         bean.renderRequest(request, response);
         assertStatusCodeEquals(STATUS_OK, response);
         assertTrue(bean.hasErrors());
-
+        assertNotNull(request.getAttribute(ResourceBean.ATTRIBUTE_FORM_ERRORS));
         // make sure the existing group wasn't overwritten
         Group existingGroup = groupDataHandler.getGroupByName(name);
         assertNotNull(existingGroup);
@@ -303,6 +303,31 @@ public class GroupBeanTest extends BeanTestBase {
         request.setMethod("GET");
         bean.setMethod("patch");
         testUpdateById();
+    }
+
+    @Test
+    public void testUpdateExistingName() throws Exception {
+        request.setMethod("POST");
+        bean.setMethod("patch");
+        IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+        final String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
+        final String description = "My new group description";
+        // ensure name already exists
+        Group existingGroup = groupDataHandler.getGroup(groupId);
+        String name = groupDataHandler.getGroup(GroupDataHandlerMock.EXISTING_GROUP1).getName();
+        assertNotNull(groupDataHandler.getGroupByName(name));
+        assertNotNull(existingGroup);
+        // ensure description can be changed
+        assertNotEquals(existingGroup.getDescription(), description);
+        authenticateAccess(AccessLevelEnum.WRITE);
+        bean.setId(groupId);
+        bean.setName(name);
+        bean.setDescription(description);
+        bean.renderRequest(request, response);
+        assertStatusCodeEquals(STATUS_OK, response);
+        assertTrue(bean.hasErrors());
+        assertNotNull(request.getAttribute(ResourceBean.ATTRIBUTE_FORM_ERRORS));
+        assertTrue(bean.getFormErrors().containsKey("name"));
     }
 
     @Test
