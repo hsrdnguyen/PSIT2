@@ -4,10 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class EmailAddressVerificationTest {
+public class BaseMailVerificationTest {
 
 	@Test
-	public void test_code_generation() {
+	public void testCodeGeneration() {
 		String code = BaseMailVerification.generateCode();
 		assertNotNull(code);
 		assertTrue(code.length() == 32);

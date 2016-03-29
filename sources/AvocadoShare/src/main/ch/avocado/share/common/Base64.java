@@ -1,7 +1,7 @@
 package ch.avocado.share.common;
 
 /**
- * Created by coffeemakr on 19.03.16.
+ * Base64 encoder
  */
 public class Base64 {
 
