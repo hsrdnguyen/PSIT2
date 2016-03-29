@@ -1,10 +1,8 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.HexEncoder;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.FileConstants;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
@@ -17,15 +15,13 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.tika.Tika;
-import org.apache.tika.detect.Detector;
-import org.apache.tika.detect.MagicDetector;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MimeType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.CharBuffer;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 /**

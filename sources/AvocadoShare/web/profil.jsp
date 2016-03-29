@@ -13,7 +13,7 @@
 
         registrationBean.updateUser();
 
-        String redirectURL = "http://127.0.0.1:8080";
+        String redirectURL = "http://127.0.0.1:8080/index.jsp";
         response.sendRedirect(redirectURL);
     }else
     {

@@ -7,8 +7,10 @@
           <element id="module-output" name="AvocadoShare" />
         </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.postgresql:postgresql:9.4.1208" />
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.1.0" />
           <element id="library" level="project" name="Maven: javax.mail:javax.mail-api:1.5.5" />
+          <element id="library" level="project" name="Maven: org.apache.tika:tika-core:1.12" />
           <element id="library" level="project" name="Maven: com.sun.mail:javax.mail:1.5.5" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
           <element id="library" level="project" name="Maven: commons-fileupload:commons-fileupload:1.3.1" />
@@ -16,10 +18,6 @@
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
           <element id="library" level="project" name="Maven: org.bouncycastle:bcprov-jdk15on:1.54" />
           <element id="library" level="project" name="Maven: org.glassfish.web:jstl-impl:1.2" />
-          <element id="library" level="project" name="commons-io:commons-io:2.4" />
-          <element id="library" level="project" name="commons-fileupload:commons-fileupload:1.3.1" />
-          <element id="library" level="project" name="net.israfil.services.mail:israfil-mail-service-javamail:0.6" />
-          <element id="library" level="project" name="org.postgresql:postgresql:9.4.1208.jre7" />
         </element>
       </element>
       <element id="directory" name="META-INF">
