@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Avocado Share</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/octicons.css">
+  <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -47,7 +47,7 @@
               <span class="octicon octicon-person"></span>
             </button>
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
-              <form method="POST" action="document_view2.html">
+              <form action="indexlog.html" method="POST" action="#login">
                 <fieldset>
                   <div class="input-group dropdown-item">
                     <label for="navbar-login-username" class="input-group-addon">
@@ -65,9 +65,12 @@
                     </label>
                     <input id="navbar-login-password" type="password" class="form-control" placeholder="Passwort">
                   </div>
-                  <input type="submit" value="Anmelden" class="dropdown-item"/>
-                </fieldset>
-              </form>
+                  </fieldset>
+                  </form>
+                  <a href="document_view2.html"><input type="submit" value="Anmelden" class="dropdown-item"/>
+                  </a>
+                  <a href="register.html"><input action="contact.html" class="dropdown-item" type="submit" value="Registrieren">
+                  </a>
             </div>
           </div>
         </li>
@@ -110,9 +113,9 @@
         <div class="list-group-item">
           <div id="single-post-info">
                         <p>
-                        <i>30 Feb, 2016  Author: Max M�sli</i></p>
+                        <i>30 Feb, 2016  Author: Max Müsli</i></p>
         							</div>
-          <h3 class="list-group-item-heading">Analysis f�r Dummies</h3>
+          <h3 class="list-group-item-heading">Analysis für Dummies</h3>
 
           <p class="list-group-item-text"><h4>Lorem ipsum dolor sit amet</h4>
 <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mattis, nulla id pretium malesuada, dui est laoreet risus, ac rhoncus eros diam id odio. Duis elementum ligula eu ipsum condimentum accumsan. </p>
@@ -143,7 +146,7 @@
 
 
         <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign f�r Nerds</h4>
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
           <p class="list-group-item-text">HTML &amp; Unicode im Web.</p>
         </a>
         <a href="#" class="list-group-item">
@@ -162,12 +165,12 @@
       <li><a href="contact.html" href="#contact">Kontakt</a></li>
       <li><a href="#something">Fehler melden</a></li>
     </ul>
-    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril M�ller</span>.</p>
+    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
   </div>
 
 </footer>
-<script type="application/javascript" src="js/jquery.min.js"></script>
-<script type="application/javascript" src="js/bootstrap.min.js"></script>
+<script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

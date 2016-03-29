@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Avocado Share</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/octicons.css">
+  <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -72,9 +72,14 @@
                     </label>
                     <input id="navbar-login-password" type="password" class="form-control" placeholder="Passwort">
                   </div>
-                  <input type="submit" value="Anmelden" class="dropdown-item"/>
-                </fieldset>
-              </form>
+                  </fieldset>
+                  </form>
+                  <a href="indexlog.html"><input type="submit" value="Anmelden" class="dropdown-item"/>
+                  </a>
+                  <a href="register.html"><input action="contact.html" class="dropdown-item" type="submit" value="Registrieren">
+                  </a>
+
+
             </div>
           </div>
         </li>
@@ -99,7 +104,7 @@
         <!-- Second Module -->
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode îm Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
         </a>
         <!-- Third Module -->
         <a href="#" class="list-group-item">
@@ -117,7 +122,7 @@
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode á·m Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">MANIT</h4>
@@ -134,7 +139,7 @@
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode á·m Web.</p>
+          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
         </a>
         <a href="#" class="list-group-item">
           <h4 class="list-group-item-heading">MANIT</h4>
@@ -148,16 +153,16 @@
 <footer class="text-muted">
   <div class="container">
     <ul>
-      <li><a href="#about">Ãber uns</a></li>
+      <li><a href="#about">Über uns</a></li>
       <li><a href="contact.html" href="#contact">Kontakt</a></li>
       <li><a href="#something">Fehler melden</a></li>
     </ul>
-    <p>SorgfÃ¤lltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
+    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
   </div>
 
 </footer>
-<script type="application/javascript" src="js/jquery.min.js"></script>
-<script type="application/javascript" src="js/bootstrap.min.js"></script>
+<script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
