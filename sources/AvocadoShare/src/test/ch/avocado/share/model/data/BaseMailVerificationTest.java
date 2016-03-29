@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class BaseMailVerificationTest {
-
 	@Test
 	public void testCodeGeneration() {
 		String code = BaseMailVerification.generateCode();

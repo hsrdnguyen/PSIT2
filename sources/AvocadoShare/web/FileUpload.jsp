@@ -5,10 +5,11 @@
 <%@ page import="org.apache.commons.fileupload.servlet.*" %>
 <%@ page import="org.apache.commons.io.output.*" %>
 <jsp:useBean id="uploadBean" scope="request" class="ch.avocado.share.controller.FileUploadBean"/>
+<jsp:setProperty name="uploadBean" property="description" />
+<jsp:setProperty name="uploadBean" property="title" />
 <%
     String contentType = request.getContentType();
     FileItem file = null;
-
     if ((contentType.indexOf("multipart/form-data") >= 0)) {
         List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
         for (FileItem item : items) {

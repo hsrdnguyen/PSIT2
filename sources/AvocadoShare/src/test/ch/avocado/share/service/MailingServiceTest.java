@@ -38,7 +38,7 @@ public class MailingServiceTest {
     public void test_requestSendMail()
     {
         User user = new User("123", new ArrayList<Category>(), new Date(01, 01, 1999), 0, "", "", new UserPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new EmailAddressVerification( new Date(01, 01, 1999), "123456" )));
-        File file = new File("123", new ArrayList<Category>(), new Date(01, 01, 1999), 0, "", "", "", "", "",  new Date(01, 01, 1999), "", "");
+        File file = new File("123", new ArrayList<Category>(), new Date(01, 01, 1999), 0, "", "", "", "", "",  new Date(01, 01, 1999), "", "", "");
 
         assertTrue(service.sendRequestAccessEmail(user, file, "MESSAGE"));
     }

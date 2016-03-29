@@ -3,9 +3,7 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.HexEncoder;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.FileConstants;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.data.File;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
@@ -15,13 +13,16 @@ import ch.avocado.share.service.ISecurityHandler;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.bouncycastle.math.raw.Mod;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,24 +33,54 @@ public class FileUploadBean extends ResourceBean<File> {
     private static final String ERROR_NO_TITLE = "Bitte einen Titel eingeben.";
     private static final String ERROR_NO_DESCRIPTION = "Bitte eine Beschreibung angeben.";
     private static final String ERROR_NO_CATEGORY_NAME = "Bitte einen Kategorien Namen eingeben.";
-    private static final String ERROR_NO_AUTHOR = "Bitte einen Author eingeben.";
+    // private static final String ERROR_NO_AUTHOR = "Bitte einen Author eingeben.";
     private static final String ERROR_INTERNAL_SERVER = "Interner Server-Fehler.";
     private static final String ERROR_FILE_TITLE_ALREADY_EXISTS = "Ein File mit diesem Titel existiert bereits.";
     private static final String ERROR_CATEGORY_ALREADY_ADDED = "Diese Kategorie wurde schon hinzugefügt.";
     public static final String ERROR_NO_SUCH_FILE = "File existiert nicht.";
     public static final String ERROR_DATABASE = "File konnte nicht in der Datenbank gespeichert werden.";
+    public static final String ERROR_CONTENT_TYPE_NOT_ALLOWED = "Ungültiger Content-Type";
+    private static final String ERROR_NO_MODULE_ID = "Module nicht ausgewählt.";
+
 
     private String title;
     private String description;
-    private String author;   //TODO @kunzlio1: Sascha fragen für was author? eg. ersteller?
+    // private String author;   //TODO @kunzlio1: Sascha fragen für was author? eg. ersteller?
     private List<Category> categories;
     private FileItem fileItem;
+    private String moduleId;
 
     private final int FILE_READ_BUFFER_SIZE = 512;
 
     @Override
     protected boolean hasIdentifier() {
         return title != null || getId() != null;
+    }
+
+
+    private void checkContentType(String contentType) throws HttpBeanException {
+        if (contentType == null) throw new IllegalArgumentException("contentType is null");
+        if (!contentType.contains("multipart/form-data")) {
+            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ERROR_CONTENT_TYPE_NOT_ALLOWED);
+        }
+    }
+
+    @Override
+    public TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
+        checkContentType(request.getContentType());
+        return super.doPost(request);
+    }
+
+    @Override
+    public TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
+        checkContentType(request.getContentType());
+        return super.doPatch(request);
+    }
+
+    @Override
+    public TemplateType doPut(HttpServletRequest request) throws HttpBeanException {
+        checkContentType(request.getContentType());
+        return super.doPut(request);
     }
 
     @Override
@@ -74,14 +105,33 @@ public class FileUploadBean extends ResourceBean<File> {
         return null;
     }
 
+    static public Module[] getModuleForAccessingUser(HttpServletRequest request) throws HttpBeanException {
+        ISecurityHandler securityHandler;
+        try {
+            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
+        }catch (ServiceNotFoundException e) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_SECURITY_HANDLER);
+        }
+        UserSession session = new UserSession(request);
+        User user = session.getUser();
+        if (user == null) {
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ERROR_ACCESS_DENIED);
+        }
+        Module[] modules = securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Module.class, user, AccessLevelEnum.READ);
+        if(modules == null) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+        }
+        return modules;
+    }
+
     @Override
     public File get() throws HttpBeanException {
-        if(!hasIdentifier()) throw new IllegalStateException("get() without identifier");
+        if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IFileDataHandler fileDataHandler = getFileDataHandler();
         File file = null;
-        if(getId() != null) {
+        if (getId() != null) {
             file = fileDataHandler.getFile(getId());
-        }else if (title != null) {
+        } else if (title != null) {
             file = fileDataHandler.getFileByTitle(title);
         }
 
@@ -115,10 +165,17 @@ public class FileUploadBean extends ResourceBean<File> {
         }
     }
 
-    //TODO @kunzlio1: Fragen für was index()....
+    /**
+     * @return A list of all files for the module.
+     * @throws HttpBeanException
+     */
     @Override
     public File[] index() throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
+        // TODO: what files are to list when user is not authenticated?
+        if(getAccessingUser() == null) {
+            return new File[0];
+        }
         return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(File.class, getAccessingUser(), AccessLevelEnum.READ);
     }
 
@@ -147,7 +204,7 @@ public class FileUploadBean extends ResourceBean<File> {
         // maximum file size to be uploaded.
         upload.setSizeMax(FileConstants.MAX_FILE_SIZE);
         try {
-                ServiceLocator.getService(IFileStorageHandler.class).saveFile(fileItem, fileData);
+            ServiceLocator.getService(IFileStorageHandler.class).saveFile(fileItem, fileData);
         } catch (Exception ex) {
         }
     }
@@ -168,6 +225,7 @@ public class FileUploadBean extends ResourceBean<File> {
         this.description = description;
     }
 
+    /*
     public String getAuthor() {
         return author;
     }
@@ -175,25 +233,30 @@ public class FileUploadBean extends ResourceBean<File> {
     public void setAuthor(String author) {
         this.author = author;
     }
+    */
 
-    public FileItem getFileItem(){ return fileItem;}
+    public FileItem getFileItem() {
+        return fileItem;
+    }
 
-    public void setFileItem(FileItem fileItem){ this.fileItem = fileItem;}
+    public void setFileItem(FileItem fileItem) {
+        this.fileItem = fileItem;
+    }
 
-    public List<Category> getCategories(){
+    public List<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Category> categories){
+    public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
 
-    public void addCategory(String name){
-        if (name == null || name.trim().isEmpty()){
+    public void addCategory(String name) {
+        if (name == null || name.trim().isEmpty()) {
             addFormError("category", ERROR_NO_CATEGORY_NAME);
-        }else if (!categories.contains(new Category(name))){
+        } else if (!categories.contains(new Category(name))) {
             categories.add(new Category(name.trim()));
-        }else {
+        } else {
             addFormError("category", ERROR_CATEGORY_ALREADY_ADDED);
         }
     }
@@ -223,19 +286,25 @@ public class FileUploadBean extends ResourceBean<File> {
         return file;
     }
 
-    private String createFileHashName(FileItem fileItem) throws IOException, DigestException{
+    /**
+     * @param fileItem The file
+     * @return The hash of the file.
+     * @throws IOException
+     * @throws DigestException
+     */
+    private String createFileHashName(FileItem fileItem) throws IOException, DigestException {
         byte[] buffer = new byte[FILE_READ_BUFFER_SIZE];
         int readBytes = 0;
         MessageDigest messageDigest;
-        try{
+        try {
             messageDigest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-256 digest doesn't exist");
         }
         InputStream inputStream = fileItem.getInputStream();
-        while(readBytes >= 0) {
+        while (readBytes >= 0) {
             readBytes = inputStream.read(buffer);
-            if(readBytes >= 0) {
+            if (readBytes >= 0) {
                 messageDigest.update(buffer, 0, readBytes);
             }
         }
@@ -250,7 +319,7 @@ public class FileUploadBean extends ResourceBean<File> {
         } else {
             title = title.trim();
             IFileDataHandler fileDataHandler = getFileDataHandler();
-            if (fileDataHandler.getFileByTitle(title) != null){
+            if (fileDataHandler.getFileByTitle(title) != null) {
                 addFormError("title", ERROR_FILE_TITLE_ALREADY_EXISTS);
             }
             //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
@@ -262,6 +331,14 @@ public class FileUploadBean extends ResourceBean<File> {
             addFormError("description", ERROR_NO_DESCRIPTION);
         } else {
             description = description.trim();
+        }
+    }
+
+    private void checkParameterModuleId() {
+        if (moduleId == null || moduleId.trim().isEmpty()) {
+            addFormError("moduleId", ERROR_NO_MODULE_ID);
+        } else {
+            moduleId = moduleId.trim();
         }
     }
 
@@ -281,5 +358,13 @@ public class FileUploadBean extends ResourceBean<File> {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_INTERNAL_SERVER);
         }
         return fileDataHandler;
+    }
+
+    public String getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(String moduleId) {
+        this.moduleId = moduleId;
     }
 }

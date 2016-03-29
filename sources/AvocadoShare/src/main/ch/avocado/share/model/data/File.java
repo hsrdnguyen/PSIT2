@@ -14,8 +14,9 @@ public class File extends AccessControlObjectBase {
     private Date lastChanged;
     private String type;
     private String version;
+    private String moduleId;
 
-    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String filename, String path, Date lastChanged, String type, String version) {
+    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String filename, String path, Date lastChanged, String type, String version, String moduleId) {
         super(id, categories, creationDate, rating, ownerId, description);
         setFilename(filename);
         setLastChanged(lastChanged);
@@ -23,6 +24,7 @@ public class File extends AccessControlObjectBase {
         setTitle(title);
         setType(type);
         setVersion(version);
+        setModuleId(moduleId);
     }
 
     public String getTitle() {
@@ -77,5 +79,16 @@ public class File extends AccessControlObjectBase {
     public void setVersion(String version) {
         if (version == null) throw new IllegalArgumentException("version is null");
         this.version = version;
+    }
+
+    public String getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(String moduleId) {
+        if(moduleId == null) {
+            throw new IllegalArgumentException("moduleId is null");
+        }
+        this.moduleId = moduleId;
     }
 }
