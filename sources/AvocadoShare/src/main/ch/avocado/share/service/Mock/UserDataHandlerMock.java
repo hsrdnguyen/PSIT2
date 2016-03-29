@@ -7,6 +7,7 @@ import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.service.IUserDataHandler;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -61,6 +62,11 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean addMail(User user) throws SQLException {
+        return false;
     }
 
     @Override

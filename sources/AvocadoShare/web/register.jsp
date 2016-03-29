@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
-<jsp:useBean id="registrationBean" class="ch.avocado.share.controller.UserRegistrationBean" />
+<jsp:useBean id="registrationBean" class="ch.avocado.share.controller.UserHandlerBean" />
 <%
    if (request.getParameter("anrede") != null &&
        request.getParameter("vorname") != null &&

@@ -1,4 +1,27 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
+<jsp:useBean id="registrationBean" class="ch.avocado.share.controller.UserHandlerBean" />
+<%
+    if (request.getParameter("vorname") != null &&
+        request.getParameter("nachname") != null &&
+        request.getParameter("id") != null &&
+        request.getParameter("email") != null)
+    {
+        registrationBean.setName(request.getParameter("nachname"));
+        registrationBean.setPrename(request.getParameter("vorname"));
+        registrationBean.setEmailAddress(request.getParameter("email"));
+        registrationBean.setId(request.getParameter("id"));
 
+        registrationBean.updateUser();
+
+        String redirectURL = "http://127.0.0.1:8080";
+        response.sendRedirect(redirectURL);
+    }else
+    {
+
+        //TODO get actualUser
+        registrationBean.setId("31");
+        registrationBean.loadUser();
+%>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -93,59 +116,29 @@
 
     <form action="" method="post" id="form_formular" class="contact_action">
 
-<div class="form-group" id="formular-anrede">
-    <label class="control-label" for="formular-field-1">Anrede</label>
-        <select class="form-control" id="formular-field-1" name="anrede">
-                    <option value="Frau">Frau</option>
-                    <option value="Herr">Herr</option>
-            </select>
-        </div>
 <div class="form-group" id="formular-vorname">
     <label class="control-label" for="formular-field-2">Vorname *</label>
-    <input class="form-control" name="vorname" id="formular-field-2" value="Studentname" type="text">
-    </div>
+    <input class="form-control" name="vorname" value="<%out.print(registrationBean.getPrename());%>" id="formular-field-2" type="text">
+    </input>
+</div>
 <div class="form-group" id="formular-nachname">
     <label class="control-label" for="formular-field-3">Nachname *</label>
-    <input class="form-control" name="nachname" id="formular-field-3" value="Studentnachname" type="text">
-    </div>
-<div class="form-group" id="formular-class">
-    <label class="control-label" for="formular-field-4">Klasse</label>
-    <input class="form-control" name="class" id="formular-field-4" value="TB15 Win" type="text">
-    </div>
+    <input class="form-control" name="nachname" value="<%out.print(registrationBean.getName());%>" id="formular-field-3" type="text">
+    </input>
+
+</div>
 <div class="form-group form-email" id="formular-email">
     <label class="control-label" for="formular-field-5">E-mail *</label>
-    <input class="form-control" name="email" id="formular-field-5" value="student@zhaw.ch" type="email">
-    </div>
-<div class="form-group" id="formular-betreff">
-    <label class="control-label" for="formular-field-6">Passwort *</label>
-    <input class="form-control" name="Passwort" id="formular-field-6" value="world123" type="text">
-    </div>
-    <div class="form-group" id="formular-betreff">
-        <label class="control-label" for="formular-field-6">Passwort bestätigen *</label>
-        <input class="form-control" name="Passwort" id="formular-field-6" value="world123" type="text">
-        </div>
-<div class="form-group" id="formular-msg">
-    <label class="control-label" for="formular-field-7">Berechtigung</label>
-    <input class="form-control" name="Passwort" id="formular-field-6" value="Student" type="text">
-    </div>
+    <input class="form-control" name="email" value="<%out.print(registrationBean.getEmailAddress());%>" id="formular-field-5" type="email">
+    </input>
 
-
-
-    <div class="form-group" id="formular-msg">
-        <label class="control-label" for="formular-field-7">
-          Profilbild</label>
-  <div class="form-group" id="formular-msg">
-          <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Datei auswählen...</button>
-          <input name="send" value="1" type="hidden">
-        <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Hochladen</button>
-        <input name="send" value="1" type="hidden">
-
-        </div></div>
-
-
+</div>
 
 <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Senden</button>
 <input name="send" value="1" type="hidden">
+        <input name="id" type="hidden" value="<%out.print(registrationBean.getId());%>">
+        </input>
+
 </form>
 </div>
 </div>
@@ -169,3 +162,4 @@
 <script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+<%}%>

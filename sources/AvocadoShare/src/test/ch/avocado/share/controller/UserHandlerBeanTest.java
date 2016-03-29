@@ -1,39 +1,26 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.data.User;
-import ch.avocado.share.service.IGroupDataHandler;
-import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.Mock.GroupDataHandlerMock;
-import ch.avocado.share.service.Mock.SecurityHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.Mock.UserDataHandlerMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
 /**
  * Created by bergm on 24/03/2016.
  */
-public class UserRegistrationBeanTest {
+public class UserHandlerBeanTest {
 
-    public UserRegistrationBean bean;
+    public UserHandlerBean bean;
 
-    public UserRegistrationBeanTest() throws Exception{
+    public UserHandlerBeanTest() throws Exception{
         ServiceLocatorModifier.setService(IUserDataHandler.class, new UserDataHandlerMock());
     }
     @Before
     public void setUp() throws Exception {
-        bean = new UserRegistrationBean();
+        bean = new UserHandlerBean();
     }
 
     @Test(expected = IllegalArgumentException.class)

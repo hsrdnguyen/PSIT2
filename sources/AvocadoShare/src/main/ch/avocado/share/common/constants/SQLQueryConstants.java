@@ -8,13 +8,18 @@ public class SQLQueryConstants {
 
     //ACCESS CONTROL DATA OBJECT
     public static final String INSERT_ACCESS_CONTROL_QUERY = "INSERT INTO avocado_share.access_control(id, creation_date) VALUES (DEFAULT, DEFAULT) ";
+    public static final String SELECT_ACCESS_CONTROL_QUERY = "SELECT id, creation_date FROM avocado_share.access_control WHERE id=?";
 
     //USER DATA QUERIES
     public static final String INSERT_USER_QUERY = "INSERT INTO avocado_share.identity(id, prename, surname, avatar, description, password) VALUES (?, ?, ?, ?, ?, ?)";
+    public static final String SELECT_USER_QUERY = "SELECT id, prename, surname, avatar, description, password FROM  avocado_share.identity WHERE id=?";
+    public static final String UPDATE_USER_QUERY = "UPDATE avocado_share.identity SET prename=?, surname=?, avatar=?, description=?, password=? WHERE id=?";
     public static final String INSERT_MAIL_QUERY = "INSERT INTO avocado_share.email(identity_id, address, verified)VALUES (?, ?, FALSE)";
+    public static final String SELECT_MAIL_QUERY = "SELECT identity_id, address, verified FROM avocado_share.email WHERE identity_id=?";
     public static final String INSERT_MAIL_VERIFICATION_QUERY = "INSERT INTO avocado_share.email_verification(identity_id, address, expiry, verification_code) VALUES (?, ?, ?, ?)";
 
     public static final String SET_MAIL_TO_VERIFIED = "UPDATE avocado_share.email SET verified=TRUE WHERE identity_id=?";
+
 
     //GROUP
     public static final String INSERT_GROUP_QUERY = "INSERT INTO avocado_share.access_group(name, description) VALUES (?, ?)";

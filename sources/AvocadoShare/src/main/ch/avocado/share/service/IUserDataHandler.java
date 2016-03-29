@@ -3,6 +3,8 @@ package ch.avocado.share.service;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.User;
 
+import java.sql.SQLException;
+
 /**
  * Created by bergm on 15/03/2016.
  */
@@ -37,6 +39,13 @@ public interface IUserDataHandler {
      *              or otherwise null.
      */
     User getUserByEmailAddress(String emailAddress);
+
+    /**
+     * Adds a new mail address to the database
+     * @param user user with the new email
+     * @return true if adding succeeded
+     */
+    boolean addMail(User user) throws SQLException;
 
     /**
      * Returns the user from the database selected by its

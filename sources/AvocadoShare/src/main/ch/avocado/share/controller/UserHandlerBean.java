@@ -8,6 +8,7 @@ import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Impl.UserDataHandler;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,7 +16,8 @@ import java.util.Date;
 /**
  * Created by bergm on 24/03/2016.
  */
-public class UserRegistrationBean implements Serializable {
+public class UserHandlerBean implements Serializable {
+    private String id;
     private String name;
     private String prename;
     private String avatar;
@@ -45,6 +47,52 @@ public class UserRegistrationBean implements Serializable {
         }
     }
 
+    public void loadUser()
+    {
+        if(id == null) throw new IllegalArgumentException("id is null");
+
+        IUserDataHandler userDataHandler;
+        try {
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+            User oldUser = userDataHandler.getUser(id);
+
+            setEmailAddress(oldUser.getMail().getAddress());
+            setPrename(oldUser.getPrename());
+            setName(oldUser.getFullName());
+        } catch (ServiceNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateUser() {
+        if(id == null) throw new IllegalArgumentException("id is null");
+        if(name == null) throw new IllegalArgumentException("name is null");
+        if(prename == null) throw new IllegalArgumentException("prename is null");
+        if(emailAddress == null) throw new IllegalArgumentException("emailAddress is null");
+
+        try {
+                IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+                User oldUser = userDataHandler.getUser(id);
+                if(oldUser != null) {
+                    if (!oldUser.getMail().getAddress().equals(emailAddress)) {
+                        long theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
+                        Date nextWeek = new Date(theFuture);
+
+                        EmailAddressVerification verification = new EmailAddressVerification(nextWeek);
+                        EmailAddress mail = new EmailAddress(false, emailAddress, verification);
+                        oldUser.setMail(mail);
+                        userDataHandler.addMail(oldUser);
+                        ServiceLocator.getService(IMailingService.class).sendVerificationEmail(oldUser);
+                    }
+                    oldUser.setPrename(prename);
+                    oldUser.setSurname(name);
+                    userDataHandler.updateUser(oldUser);
+                }
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+    }
 
     public String getName() {
         return name;
@@ -91,5 +139,13 @@ public class UserRegistrationBean implements Serializable {
     public void setPassword(String password) {
         if (password == null) throw new IllegalArgumentException("password is null");
         this.password = password;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
