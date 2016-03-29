@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Avocado Share</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/octicons.css">
+  <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -76,23 +76,33 @@
     </nav>
 </header>
 <main class="container">
-  <h1>Dokumentenansicht</h1>
+  <h1>Dokumentenansicht
+<form id="edit-doc" method="POST" action="#">
+    <button id="navbar-login-toggle-button" class="btn  btn-secondary btn-secondary12 "
+              type="submit">Rechte anfordern</button>
+</form>
+  </h1>
 
 
     <section class="document-show">
       <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Kurzeinstieg in Anlysis
 
+<form id="edit-doc" method="POST" action="#download">
 
   <button id="navbar-login-toggle-button" class="btn  btn-secondary btn-secondary1 "
             type="submit">Download</button>
-
+</form>
+<form id="edit-doc" method="POST" action="#print">
             <button id="navbar-login-toggle-button" class="btn btn-secondary "
               type="submit">Print</button>
+</form>
+<form id="edit-doc"action="edit_document.html" method="POST" action="#edit">
 
       <button id="navbar-login-toggle-button" class="btn btn-secondary "
                 type="submit">Edit</button>
 
+              </form>
         </h2></div>
         <div class="list-group-item">
 
@@ -155,7 +165,7 @@
   </div>
 
 </footer>
-<script type="application/javascript" src="js/jquery.min.js"></script>
-<script type="application/javascript" src="js/bootstrap.min.js"></script>
+<script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Avocado Share</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/octicons.css">
+  <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -82,39 +82,40 @@
   	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
   	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
 
-      <form action="FileUpload.jsp" method="post" id="form_formular" class="contact_action" enctype="multipart/form-data">
+      <form action="" method="post" id="form_formular" class="contact_action">
 
 
   <div class="form-group" id="formular-anrede">
-      <label class="control-label" for="category">Kathegorie auswählen</label>
-          <select class="form-control" id="category" name="category">
-                      <option value="1">Analysis für Dummies</option>
-                      <option value="2">Webdesign für Nerds</option>
-                      <option value="3">Manit</option>
-                      <option value="4">PSIT</option>
+      <label class="control-label" for="formular-field-1">Kathegorie auswählen</label>
+          <select class="form-control" id="formular-field-1" name="anrede">
+                      <option value="Frau">Analysis für Dummies</option>
+                      <option value="Herr">Webdesign für Nerds</option>
+                      <option value="Frau">Manit</option>
+                      <option value="Herr">PSIT</option>
               </select>
           </div>
-          <input type="file" name="file" size="50" />
-  <div class="form-group" id="formular-title">
-      <label class="control-label" for="title">Titel *</label>
-      <input class="form-control" name="title" id="title" value="" type="text">
+          <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Datei auswählen...</button>
+          <input name="send" value="1" type="hidden">
+  <div class="form-group" id="formular-vorname">
+      <label class="control-label" for="formular-field-2">Titel *</label>
+      <input class="form-control" name="vorname" id="formular-field-2" value="" type="text">
       </div>
 
-      <div class="form-group" id="formular-description">
-          <label class="control-label" for="description">Beschreibung *</label>
-          <textarea class="form-control" name="description" id="description" rows="10"></textarea>
+      <div class="form-group" id="formular-msg">
+          <label class="control-label" for="formular-field-7">Beschreibung *</label>
+          <textarea class="form-control" name="msg" id="formular-field-7" rows="10"></textarea>
           </div>
-  <div class="form-group" id="formular-author">
-      <label class="control-label" for="author">Author *</label>
-      <input class="form-control" name="author" id="author" value="" type="text">
+  <div class="form-group" id="formular-nachname">
+      <label class="control-label" for="formular-field-3">Author *</label>
+      <input class="form-control" name="nachname" id="formular-field-3" value="" type="text">
       </div>
   <div class="form-group" id="formular-class">
-      <label class="control-label" for="class">Klasse</label>
-      <input class="form-control" name="class" id="class" value="" type="text">
+      <label class="control-label" for="formular-field-4">Klasse</label>
+      <input class="form-control" name="class" id="formular-field-4" value="" type="text">
       </div>
 
   <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Hochladen</button>
-
+  <input name="send" value="1" type="hidden">
   </form>
   </div>
   </div>
@@ -135,7 +136,7 @@
   </div>
 
 </footer>
-<script type="application/javascript" src="js/jquery.min.js"></script>
-<script type="application/javascript" src="js/bootstrap.min.js"></script>
+<script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

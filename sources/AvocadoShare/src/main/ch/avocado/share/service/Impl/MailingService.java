@@ -2,6 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.constants.MailingConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IMailingService;
 
@@ -14,6 +15,7 @@ import java.util.Properties;
  * Created by bergm on 21/03/2016.
  */
 public class MailingService implements IMailingService {
+
     @Override
     public boolean sendVerificationEmail(User user) {
         if (user == null) throw new IllegalArgumentException("user is Null");
@@ -31,16 +33,17 @@ public class MailingService implements IMailingService {
     }
 
     @Override
-    public boolean sendRequestAccessEmail(User requestingUser, AccessControlObjectBase accessObject, String message) {
+    public boolean sendRequestAccessEmail(User requestingUser, User owningUser, File file) {
         if (requestingUser == null) throw new IllegalArgumentException("user is Null");
-        if (accessObject == null) throw new IllegalArgumentException("emailAddressVerification is Null");
-        if (message == null) throw new IllegalArgumentException("message is Null");
+        if (file == null) throw new IllegalArgumentException("file is Null");
+        if (owningUser == null) throw new IllegalArgumentException("owningUser is Null");
 
         Session session = prepareMessage();
 
         try {
 
-            sendEmail(requestingUser, session, MailingConstants.REQUEST_SUBJECT, MailingConstants.REQUEST_MESSAGE);
+            String link = String.format(MailingConstants.REQUEST_RESPONSE_URL, file.getId(), requestingUser.getId(), owningUser.getId());
+            sendEmail(owningUser, session, MailingConstants.REQUEST_SUBJECT, String.format(MailingConstants.REQUEST_MESSAGE, requestingUser.getFullName(), file.getTitle(), link));
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }

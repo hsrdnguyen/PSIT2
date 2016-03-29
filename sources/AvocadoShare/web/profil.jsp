@@ -85,73 +85,80 @@
     </nav>
 </header>
 <main class="container">
-  <h1>Dein Portfolio</h1>
-  <div class="row">
-    <!-- 3 columns on extra large screen,
-         2 on large and 1 on smaller screens -->
-    <section class="col-xl-4 col-lg-6">
-      <div class="list-group">
-        <div class="list-group-item list-group-header"><h2>Module</h2></div>
-        <!-- First Module -->
-        <a href="document_viewlog.html" class="list-group-item">
-          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
-          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
-        </a>
-        <!-- Second Module -->
-        <a href="document_view.html" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
-        </a>
-        <!-- Third Module -->
-        <a href="document_view.html" class="list-group-item">
-          <h4 class="list-group-item-heading">MANIT</h4>
-          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-        </a>
-      </div>
-    </section>
-    <section class="col-xl-4 col-lg-6">
-      <div class="list-group">
-        <div class="list-group-item list-group-header"><h2>Kürzlich hinzugefügte Dateien</h2></div>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
-          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">MANIT</h4>
-          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-        </a>
-      </div>
-    </section>
-    <section class="col-xl-4 col-lg-6">
-      <div class="list-group">
-        <div class="list-group-item list-group-header"><h2>Zuletzt besucht</h2></div>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
-          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode ጷm Web.</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">MANIT</h4>
-          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-        </a>
-      </div>
-    </section>
-  </div>
+  <h1>Benutzerdaten aktualisieren</h1>
+  <div class="text-contact">
+
+	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
+	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
+
+    <form action="" method="post" id="form_formular" class="contact_action">
+
+<div class="form-group" id="formular-anrede">
+    <label class="control-label" for="formular-field-1">Anrede</label>
+        <select class="form-control" id="formular-field-1" name="anrede">
+                    <option value="Frau">Frau</option>
+                    <option value="Herr">Herr</option>
+            </select>
+        </div>
+<div class="form-group" id="formular-vorname">
+    <label class="control-label" for="formular-field-2">Vorname *</label>
+    <input class="form-control" name="vorname" id="formular-field-2" value="Studentname" type="text">
+    </div>
+<div class="form-group" id="formular-nachname">
+    <label class="control-label" for="formular-field-3">Nachname *</label>
+    <input class="form-control" name="nachname" id="formular-field-3" value="Studentnachname" type="text">
+    </div>
+<div class="form-group" id="formular-class">
+    <label class="control-label" for="formular-field-4">Klasse</label>
+    <input class="form-control" name="class" id="formular-field-4" value="TB15 Win" type="text">
+    </div>
+<div class="form-group form-email" id="formular-email">
+    <label class="control-label" for="formular-field-5">E-mail *</label>
+    <input class="form-control" name="email" id="formular-field-5" value="student@zhaw.ch" type="email">
+    </div>
+<div class="form-group" id="formular-betreff">
+    <label class="control-label" for="formular-field-6">Passwort *</label>
+    <input class="form-control" name="Passwort" id="formular-field-6" value="world123" type="text">
+    </div>
+    <div class="form-group" id="formular-betreff">
+        <label class="control-label" for="formular-field-6">Passwort bestätigen *</label>
+        <input class="form-control" name="Passwort" id="formular-field-6" value="world123" type="text">
+        </div>
+<div class="form-group" id="formular-msg">
+    <label class="control-label" for="formular-field-7">Berechtigung</label>
+    <input class="form-control" name="Passwort" id="formular-field-6" value="Student" type="text">
+    </div>
+
+
+
+    <div class="form-group" id="formular-msg">
+        <label class="control-label" for="formular-field-7">
+          Profilbild</label>
+  <div class="form-group" id="formular-msg">
+          <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Datei auswählen...</button>
+          <input name="send" value="1" type="hidden">
+        <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Hochladen</button>
+        <input name="send" value="1" type="hidden">
+
+        </div></div>
+
+
+
+<button class="btn-primary" type="submit" name="submit" id="formular-field-8">Senden</button>
+<input name="send" value="1" type="hidden">
+</form>
+</div>
+</div>
+</div>
 </main>
 </div> <!-- /#footerpusher -->
 <footer class="text-muted">
   <div class="container">
     <ul>
-      <li><a href="#about">Über uns</a></li>
-      <li><a href="contact.html" href="#contact">Kontakt</a></li>
-      <li><a href="#something">Fehler melden</a></li>
+      <li><a href="#">Über uns</a></li>
+      <li><a href="contact.html">Kontakt</a></li>
+      <li><a href="#">Fehler melden</a></li>
+      <li><a href="profil.html">Profil Bearbeiten</a></li>
     </ul>
     <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>

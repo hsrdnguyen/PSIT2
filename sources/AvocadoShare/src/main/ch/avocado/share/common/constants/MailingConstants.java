@@ -19,8 +19,9 @@ public class MailingConstants {
     public static final String VERIFICATION_MESSAGE = "Guten Tag\n\n Um ihr Konto zu aktivieren und Ihre E-Mail-Addresse zu verifizieren, rufen Sie bitte folgenden Link auf: \n\n %s";
 
     // For permission-request
-    public static final String REQUEST_SUBJECT = "E-Mail Verifikation";
-    public static final String REQUEST_MESSAGE = "Dear Mail Crawler,\n\n No spam to my email, please!";
+    public static final String REQUEST_RESPONSE_URL = "http://127.0.0.1:8080/JSP/grantaccess.jsp?fileId=%s&ruserId=%s&ouserId=%s";
+    public static final String REQUEST_SUBJECT = "Zugriff beantragt";
+    public static final String REQUEST_MESSAGE = "Der User %s möchte auf das Objekt %s zugreiffen. Um Ihm den Zugriff zu gewähren, klicken Sie auf folgenden Link: %s";
 
     // For password reset request
     public static final String PASSWORD_RESET_SUBJECT = "Password zurücksetzten";

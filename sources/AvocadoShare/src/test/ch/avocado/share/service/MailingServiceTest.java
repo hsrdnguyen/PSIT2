@@ -26,7 +26,7 @@ public class MailingServiceTest {
 
     @Test(expected=IllegalArgumentException.class)
     public void test_verificationEmail_noParameter() {
-        service.sendRequestAccessEmail(null, null, "");
+        service.sendRequestAccessEmail(null, null, null);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -40,7 +40,7 @@ public class MailingServiceTest {
         User user = new User("123", new ArrayList<Category>(), new Date(01, 01, 1999), 0, "", "", new UserPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new EmailAddressVerification( new Date(01, 01, 1999), "123456" )));
         File file = new File("123", new ArrayList<Category>(), new Date(01, 01, 1999), 0, "", "", "", "", "",  new Date(01, 01, 1999), "", "", "");
 
-        assertTrue(service.sendRequestAccessEmail(user, file, "MESSAGE"));
+        assertTrue(service.sendRequestAccessEmail(user, user, file));
     }
 
     @Test
