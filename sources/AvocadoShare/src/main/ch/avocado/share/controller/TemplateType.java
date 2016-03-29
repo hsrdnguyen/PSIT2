@@ -8,6 +8,5 @@ public enum TemplateType {
     INDEX,
     DETAIL,
     CREATE,
-    EDIT,
-    ERROR
+    EDIT
 }

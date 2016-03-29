@@ -1,8 +1,6 @@
 package ch.avocado.share.service;
 
-import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.data.*;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -10,12 +8,22 @@ import ch.avocado.share.model.data.User;
 public interface ISecurityHandler {
 
     /**
-     * checks and returns what access the given user has on the target.
-     * @param user user to be checked
+     * checks and returns what access the given user or group has on the target.
+     * @param identity user or group to be checked
      * @param target target that should be accessed
      * @return access-level of the user in the target
      */
-    AccessLevelEnum getAccessLevel(User user, AccessControlObjectBase target);
+    AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target);
+
+
+    /**
+     * Sets the access from the user on target to the given level.
+     * @param identity owner of the new access level
+     * @param target accessed object
+     * @param accessLevel the new level
+     * @return {@code true} if the execution was successful.
+     */
+    boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel);
 
     /**
      * checks and returns what access level an anonymous (unauthenticated) user
@@ -24,4 +32,10 @@ public interface ISecurityHandler {
      * @return access level of an anonymous user
      */
     AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target);
+
+    Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+
+    User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+
+    <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum);
 }

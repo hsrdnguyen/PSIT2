@@ -22,7 +22,8 @@ public class MailingService implements IMailingService {
         Session session = prepareMessage();
 
         try {
-            sendEmail(user, session, MailingConstants.VERIFICATION_SUBJECT, MailingConstants.VERIFICATION_MESSAGE);
+            sendEmail(user, session, MailingConstants.VERIFICATION_SUBJECT, String.format(MailingConstants.VERIFICATION_MESSAGE,
+                                    String.format(MailingConstants.VERIFICTAION_URL, user.getMail().getVerification().getCode(), user.getMail().getAddress())));
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }

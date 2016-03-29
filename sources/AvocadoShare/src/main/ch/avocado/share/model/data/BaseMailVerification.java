@@ -63,7 +63,7 @@ public abstract class BaseMailVerification {
     }
 
     public boolean isExpired() {
-        // TODO: implement
-        return false;
+        Date now = new Date();
+        return expiry.compareTo(now) >= 0;
     }
 }

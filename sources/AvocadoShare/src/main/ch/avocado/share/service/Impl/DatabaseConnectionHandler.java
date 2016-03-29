@@ -28,41 +28,48 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     }
 
     @Override
-    public ResultSet executeQuery(String query) throws SQLException {
+    public PreparedStatement getPreparedStatement(String query) throws SQLException {
         ensureConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery(query);
+        PreparedStatement ps = conn.prepareStatement(query);
+
+        return ps;
+    }
+
+    @Override
+    public ResultSet executeQuery(PreparedStatement statement) throws SQLException {
+        ensureConnection();
+        ResultSet result = statement.executeQuery();
 
         conn.close();
         return result;
     }
 
     @Override
-    public ResultSet executeQuery(PreparedStatement preparedStatement) throws SQLException {
+    public String insertDataSet(PreparedStatement statement) throws SQLException {
         ensureConnection();
-        return preparedStatement.executeQuery();
-    }
 
-    @Override
-    public PreparedStatement getPreparedStatement(String statement) throws SQLException {
-        return conn.prepareStatement(statement);
-    }
-
-    @Override
-    public boolean insertDataSet(String query) throws SQLException {
-        return updateDataSet(query);
-    }
-
-    @Override
-    public boolean deleteDataSet(String query) throws SQLException {
-        return updateDataSet(query);
-    }
-
-    @Override
-    public boolean updateDataSet(String query) throws SQLException {
-        ensureConnection();
         Statement stmt = conn.createStatement();
-        boolean result = stmt.executeUpdate(query) != 0;
+        stmt.execute(statement.toString(), Statement.RETURN_GENERATED_KEYS);
+
+        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                return generatedKeys.getString(1);
+            }
+            else {
+                throw new SQLException("Creating user failed, no ID obtained.");
+            }
+        }
+    }
+
+    @Override
+    public boolean deleteDataSet(PreparedStatement statement) throws SQLException {
+        return updateDataSet(statement);
+    }
+
+    @Override
+    public boolean updateDataSet(PreparedStatement statement) throws SQLException {
+        ensureConnection();
+        boolean result = statement.executeUpdate() != 0;
         conn.close();
         return result;
     }

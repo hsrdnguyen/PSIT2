@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by bergm on 15/03/2016.
+ * Module model
  */
 public class Module extends AccessControlObjectBase {
 

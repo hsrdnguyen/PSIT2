@@ -19,7 +19,7 @@ class MockObject extends AccessControlObjectBase {
     }
 }
 
-class MockObjectBean extends  ResourceBean<MockObject> {
+class MockObjectBean extends ResourceBean<MockObject> {
 
     private String id;
 
@@ -95,7 +95,7 @@ public class ResourceBeanTest {
     public void test_index_when_no_identifier() throws ServletException {
         request.setMethod("GET");
         assertFalse(bean.hasIdentifier());
-        bean.handleRequest(request, response);
+        bean.renderRequest(request, response);
         System.out.println(response.getStatus());
         System.out.println(response.getErrorMessage());
     }

@@ -8,7 +8,13 @@ import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
+import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.controller.UserSession;
+import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Mock.SecurityHandlerMock;
+import ch.avocado.share.service.Mock.UserDataHandlerMock;
+import org.apache.commons.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -52,6 +58,8 @@ public class LoginServletTest {
 		String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
 		assertNotNull(loginError);
 		assertFalse(loginError.isEmpty());
+        UserSession userSession = new UserSession(request);
+        assertFalse(userSession.isAuthenticated());
 	}
 
 	@Test
@@ -61,6 +69,8 @@ public class LoginServletTest {
 		String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
 		assertNotNull(loginError);
 		assertFalse(loginError.isEmpty());
+        UserSession userSession = new UserSession(request);
+        assertFalse(userSession.isAuthenticated());
 	}
 
 	@Test
@@ -70,10 +80,23 @@ public class LoginServletTest {
 		String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
 		assertNotNull(loginError);
 		assertFalse(loginError.isEmpty());
+        UserSession userSession = new UserSession(request);
+        assertFalse(userSession.isAuthenticated());
 	}
 
-
-	public void testDoLoginWithValidCredentials() {
-		// TODO: Implement
+    @Test
+	public void testDoLoginWithValidCredentials() throws Exception {
+        UserDataHandlerMock.use();
+        SecurityHandlerMock.use();
+        String password = "1234";
+        User user = ServiceLocator.getService(IUserDataHandler.class).getUser(UserDataHandlerMock.EXISTING_USER0);
+		assertTrue(user.getPassword().matchesPassword(password));
+        request.setParameter(LoginServlet.FIELD_PASSWORD, password);
+        request.setParameter(LoginServlet.FIELD_EMAIL, user.getMail().getAddress());
+        servlet.doPost(request, response);
+        String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
+        //assertNull(loginError);
+        UserSession userSession = new UserSession(request);
+        assertTrue(userSession.isAuthenticated());
 	}
 }

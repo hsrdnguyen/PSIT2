@@ -8,21 +8,15 @@ import ch.avocado.share.service.IUserDataHandler;
 import java.io.Serializable;
 
 /**
- * Created by kunzlio on 21.03.16.
+ * Created by bergm on 23/03/2016.
  */
-public class EmailAddressVerificationBean implements Serializable {
+public class VerificationBean implements Serializable {
+
     private String code;
     private String email;
 
-    public EmailAddressVerificationBean() {
+    public boolean verifyEmailCode(){
 
-    }
-
-    /**
-     * Verify the users email address
-     * @return
-     */
-    public boolean verify() {
         IUserDataHandler userDataHandler = null;
         boolean isVerified = false;
         try {
@@ -33,11 +27,17 @@ public class EmailAddressVerificationBean implements Serializable {
             if(email != null && code != null) {
                 User user = userDataHandler.getUserByEmailAddress(email);
                 if(user != null) {
-                    userDataHandler.verifyUser(user, code);
+                    userDataHandler.verifyUser(user);
                 }
             }
         }
         return isVerified;
+    }
+
+
+    public boolean verifyPasswordReset(){
+        //todo implement password reset
+        return true;
     }
 
     public String getCode() {
@@ -45,7 +45,7 @@ public class EmailAddressVerificationBean implements Serializable {
     }
 
     public void setCode(String code) {
-        if(code == null) throw new IllegalArgumentException("code can't be null");
+        if (code == null) throw new IllegalArgumentException("code is null");
         this.code = code;
     }
 
@@ -54,7 +54,8 @@ public class EmailAddressVerificationBean implements Serializable {
     }
 
     public void setEmail(String email) {
-        if(email == null) throw new IllegalArgumentException("email can't be null");
+        if (email == null) throw new IllegalArgumentException("email is null");
         this.email = email;
     }
+
 }

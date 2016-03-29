@@ -10,9 +10,9 @@ public interface IFileDataHandler {
     /**
      * adds the given File to the Database and saves it on the server
      * @param file file to be added
-     * @return true if it could be added
+     * @return the file id
      */
-    boolean addFile(File file);
+    String addFile(File file);
 
     /**
      * deletes the given file rom the database and the server
@@ -27,6 +27,8 @@ public interface IFileDataHandler {
      * @return File from server
      */
     File getFile(String fileId);
+
+    File getFileByTitle(String fileTitle);
 
     /**
      * updates a file on the server and database and creates a new version number

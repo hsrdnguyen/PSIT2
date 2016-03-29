@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by bergm on 15/03/2016.
+ * User model.
  */
-public class User extends AccessControlObjectBase{
+public class User extends AccessIdentity {
 
     private UserPassword password;
     private String prename;
@@ -16,6 +16,15 @@ public class User extends AccessControlObjectBase{
 
     public User(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
         super(id, categories, creationDate, rating, ownerId, description);
+        setAvatar(avatar);
+        setMail(mail);
+        setPassword(password);
+        setPrename(prename);
+        setSurname(surname);
+    }
+
+    public User(UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
+        super("", null, new Date(), 0.0f, "", "");
         setAvatar(avatar);
         setMail(mail);
         setPassword(password);
@@ -71,6 +80,10 @@ public class User extends AccessControlObjectBase{
     public void setMail(EmailAddress mail) {
         if (mail == null) throw new IllegalArgumentException("mail is null");
         this.mail = mail;
+    }
+
+    public String getFullName() {
+        return getPrename() + " " + getSurname();
     }
 
     public boolean resetPassword(String password, String code) {

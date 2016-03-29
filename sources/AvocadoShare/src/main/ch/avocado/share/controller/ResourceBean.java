@@ -1,54 +1,69 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ISecurityHandler;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ResourceBean<E extends AccessControlObjectBase> implements Serializable {
-    public static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
-    public static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
+/**
+ * This class should be used for all resources and does the following things:
+ * * Check access
+ * * Execute appropriate method (get, create, index, etc.)
+ * * Include the template accordingly.
+ * <p>
+ * Once renderRequest is called, this class checks the method of the request.<br/>
+ * * GET: Display a form to edit or create an object, display a single element or display a list of elements.<br/>
+ * * POST: create a new object (if there is no method parameter in the request)<br/>
+ * * PATCH: update the object<br/>
+ * * PUT: Replace an element (not implemented yet)
+ * <p>
+ * The GET request is somewhat special. There are four different cases for a GET-request. Checking is performed
+ * in this order:
+ * <ul>
+ * <li>If {@link #hasIdentifier()} is {@code true}:</li>
+ * <ul>
+ * <li>  If the attribute {@link #getAction() action} is set to {@value ACTION_EDIT} {@link #get()}
+ *       is called an the template {@link #getEditDispatcher(HttpServletRequest)} is included.
+ * </li>
+ * <li>  Otherwise {@link #get()} is called and  {@link #getDetailDispatcher(HttpServletRequest)} is included</li>
+ * </ul>
+ * <li>
+ *    If {@link #hasIdentifier()} is {@code false}:
+ * </li><ul><li>
+ *       If the attribute {@link #getAction() action} is set to {@value ACTION_CREATE}
+ *       the template {@link #getCreateDispatcher(HttpServletRequest)} to create a new
+ *       object is included.
+ * </li>
+ * <li>
+ *       Otherwise {@link #index()} is called and the template
+ *        {@link #getIndexDispatcher(HttpServletRequest)} is included
+ * </li></ul></ul>
+ *
+ * @param <E> The subclass of AccessControlObjectBase to handle.
+ */
+public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
     public static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
+    public static final String ERROR_INDEX_FAILED = "Index konnte nicht geladen werden.";
+    public static final String ERROR_CREATE_FAILED = "Es konnte kein Objekt erstellt werden.";
+    public static final String ERROR_GET_FAILED = "Objekt konnte nicht gefunden werden.";
 
+    /**
+     * The object which is returned by {@link #get()} is stored in this field.
+     * @see #getObject()
+     */
     private E object;
 
     private String id;
-
     private Map<String, String> formErrors = new HashMap<>();
-
-    /**
-     * When the parameter action is set to this value
-     * and a single element is requested by GET request
-     * we use the edit dispatcher provided by getEditDispatcher().
-     */
-    public static final String ACTION_EDIT = "edit";
-    /**
-     * If the parameter action is set to this value
-     * and the index is requested by a GET request we use
-     * getCreateDispatcher().
-     */
-    public static final String ACTION_CREATE = "create";
 
     /**
      * The action parameter
      */
     private String action;
-
-    private User accessingUser;
-
-    private ISecurityHandler securityHandler = null;
 
 
     /**
@@ -56,11 +71,19 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * to find a unique element. (key or unique attribute)
      * This method is used to determinate if the list of elements is requested (index())
      * or a single object get().
+     *
      * @return True if the bean has a valid identifier
      */
-    protected abstract boolean hasIdentifier();
+    protected boolean hasIdentifier() {
+        return getId() != null;
+    }
 
-
+    /**
+     * Make sure you set an error with {@link #addFormError(String, String)}
+     * if you return null!
+     * @return The new created object or null if there are errors.
+     * @throws HttpBeanException
+     */
     public abstract E create() throws HttpBeanException;
 
     /**
@@ -82,20 +105,24 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     /**
      * Updates the object which can be accessed through getObject().
      * Use addFormError if there are invalid or missing parameters.
+     *
      * @throws HttpBeanException
      */
     public abstract void update() throws HttpBeanException;
 
-
+    /**
+     * Destroy the object
+     * @throws HttpBeanException
+     */
     public abstract void destroy() throws HttpBeanException;
 
-
-    void setAccessingUserFromRequest(HttpServletRequest request) {
-        UserSession userSession = new UserSession(request);
-        User accessingUser = userSession.getUser();
-        setAccessingUser(accessingUser);
+    /**
+     * Replace the object
+     * @throws HttpBeanException
+     */
+    public void replace() throws HttpBeanException {
+        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Replacement not allowed");
     }
-
 
     public abstract String getAttributeName();
 
@@ -103,268 +130,174 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
         return getAttributeName() + "s";
     }
 
-
-    /**
-     * @param request The http request
-     * @return the {@link RequestDispatcher} to present a list of objects.
-     */
-    protected RequestDispatcher getIndexDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("list.jsp");
-    }
-
-    /**
-     * @param request The http request
-     * @return the {@link RequestDispatcher} to present a details of an object.
-     */
-    protected RequestDispatcher getDetailDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("details.jsp");
-    }
-
-    /**
-     * @param request The http request
-     * @return the {@link RequestDispatcher} to present a form to edit an object.
-     */
-    protected RequestDispatcher getEditDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("edit.jsp");
-    }
-
-    /**
-     * @param request The http request
-     * @return the {@link RequestDispatcher} to present a form display fatal errors.
-     */
-    protected RequestDispatcher getErrorDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("error.jsp");
-    }
-
-    protected RequestDispatcher getCreateDispatcher(HttpServletRequest request) {
-        return request.getRequestDispatcher("create.jsp");
-    }
-
-    private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws ServletException {
-        RequestDispatcher dispatcher = null;
-        switch (templateType) {
-            case INDEX:
-                dispatcher = getIndexDispatcher(request);
-                break;
-            case DETAIL:
-                dispatcher = getDetailDispatcher(request);
-                break;
-            case CREATE:
-                dispatcher = getCreateDispatcher(request);
-                break;
-            case EDIT:
-                dispatcher = getEditDispatcher(request);
-                break;
-            case ERROR:
-                dispatcher = getErrorDispatcher(request);
-                break;
-        }
-        if (dispatcher == null) {
-            throw new RuntimeException("Template not found: " + templateType);
-        }
-        try {
-            dispatcher.include(request, response);
-            // TODO: error handling
-        } catch (IOException e) {
-            throw new RuntimeException(e.toString());
-        }
-    }
-
-    private ISecurityHandler getSecurityHandler() throws HttpBeanException {
-        if (securityHandler == null) {
-            try {
-                securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-            } catch (ServiceNotFoundException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Security handler not found");
-            }
-        }
-        return securityHandler;
-    }
-
-    void ensureHasAccess(E target, AccessLevelEnum requiredLevel) throws HttpBeanException {
-        ISecurityHandler securityHandler = getSecurityHandler();
-        AccessLevelEnum grantedAccessLevel;
-        if(accessingUser == null) {
-            grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
-        } else {
-            grantedAccessLevel = securityHandler.getAccessLevel(accessingUser, target);
-        }
-        if (!grantedAccessLevel.containsLevel(requiredLevel)) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ERROR_ACCESS_DENIED);
-        }
-    }
-
-    private TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException {
-        TemplateType templateType = TemplateType.ERROR;
-        E object;
-        E[] objectList;
-
-        switch (request.getMethod()) {
-            case "PATCH":
-                templateType = doPatch(request);
-                break;
-            case "POST":
-                templateType = doPost(request);
-                break;
-            case "GET":
-                templateType = doGet(request);
-                break;
-            case "DELETE":
-                templateType = doDelete(request);
-                break;
-            case "PUT":
-                // TODO: replace element
-            default:
-                throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ERROR_INVALID_REQUEST);
-        }
-        return templateType;
-    }
-
     /**
      * Handle DELETE request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
+    @Override
+    protected TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         object = get();
-        ensureHasAccess(object, AccessLevelEnum.OWNER);
+        if(object == null) {
+            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_GET_FAILED);
+        }
+        ensureAccessingUserHasAccess(object, AccessLevelEnum.OWNER);
         destroy();
-        if(!hasErrors()) {
-            templateType = TemplateType.INDEX;
-        } else {
+        if (!hasErrors()) {
+            setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.EDIT;
             request.setAttribute(getAttributeName(), object);
+        } else {
+            templateType = TemplateType.INDEX;
         }
         return templateType;
     }
 
     /**
      * Handle POST request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
+    @Override
+    protected TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
+        System.out.println("PATCH");
         object = get();
+        if(object == null) {
+            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_GET_FAILED);
+        }
+        ensureAccessingUserHasAccess(object, AccessLevelEnum.WRITE);
         update();
         if (!hasErrors()) {
             // On success show details
             templateType = TemplateType.DETAIL;
         } else {
-            // On failure show edit formular again
+            // On failure show edit form again
+            setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.EDIT;
         }
         request.setAttribute(getAttributeName(), object);
         return templateType;
     }
 
+
     /**
      * Handle GET request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
+    @Override
+    protected TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
-        E object;
-        E[] objectList;
         if (hasIdentifier()) {
-            object = get();
-            if (isEdit()) {
-                templateType = TemplateType.EDIT;
-                ensureHasAccess(object, AccessLevelEnum.WRITE);
-            } else {
-                templateType = TemplateType.DETAIL;
-                ensureHasAccess(object, AccessLevelEnum.READ);
-            }
-            request.setAttribute(getAttributeName(), object);
+            templateType = doGetOnObject(request);
         } else {
-            if(isCreate()) {
-                templateType = TemplateType.CREATE;
-            } else {
-                objectList = index();
-                for (E objectInList : objectList) {
-                    ensureHasAccess(objectInList, AccessLevelEnum.READ);
-                }
-                templateType = TemplateType.INDEX;
-                request.setAttribute(getPluralAttributeName(), objectList);
-            }
+            templateType = doGetOnIndex(request);
         }
         return templateType;
     }
 
+
     /**
-     * Handle PUT request
+     * Handle GET requests on a single object
+     * This object will be available in the
+     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
+     * named {@link #getAttributeName()}} and has the type {@link AccessControlObjectBase}.
+     * @param request
+     * @return The template type
+     * @throws HttpBeanException
+     */
+    private TemplateType doGetOnObject(HttpServletRequest request) throws HttpBeanException {
+        TemplateType templateType;
+        object = get();
+        if(object == null) {
+            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_GET_FAILED);
+        }
+        if (isEdit()) {
+            System.out.println("EDIT");
+            templateType = TemplateType.EDIT;
+            ensureAccessingUserHasAccess(object, AccessLevelEnum.WRITE);
+        } else {
+            System.out.println("DETAIL");
+            templateType = TemplateType.DETAIL;
+            ensureAccessingUserHasAccess(object, AccessLevelEnum.READ);
+        }
+        request.setAttribute(getAttributeName(), object);
+        return templateType;
+    }
+
+    /**
+     * Handle GET request on the index (not on a single object)
+     * This list will be available in the
+     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
+     * named {@link #getPluralAttributeName()} and has the type {@link AccessControlObjectBase E[]}.
+     * @param request
+     * @return The template type
+     * @throws HttpBeanException
+     */
+    private TemplateType doGetOnIndex(HttpServletRequest request) throws HttpBeanException {
+        TemplateType templateType;
+        if (isCreate()) {
+            System.out.println("CREATE");
+            ensureIsAuthenticated();
+            templateType = TemplateType.CREATE;
+        } else {
+            E[] objectList = index();
+            if(objectList == null) {
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_INDEX_FAILED);
+            }
+            System.out.println("INDEX");
+            for (E objectInList : objectList) {
+                ensureAccessingUserHasAccess(objectInList, AccessLevelEnum.READ);
+            }
+            templateType = TemplateType.INDEX;
+            request.setAttribute(getPluralAttributeName(), objectList);
+        }
+        return templateType;
+    }
+
+
+    /**
+     * Handle POST request
+     *
      * @param request
      * @return
      * @throws HttpBeanException
      */
-    private TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
+    @Override
+    protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
+        ensureIsAuthenticated();
         TemplateType templateType;
         E object = create();
+        if(object == null && !hasErrors()) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_CREATE_FAILED);
+        }
         request.setAttribute(getAttributeName(), object);
-        if(hasErrors()) {
+        if (hasErrors()) {
+            setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.CREATE;
         } else {
             templateType = TemplateType.DETAIL;
         }
         return templateType;
-
-    }
-
-    /**
-     * Execute a request
-     * @param request
-     * @param response
-     * @throws ServletException
-     */
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        setAccessingUserFromRequest(request);
-        TemplateType templateType;
-        try {
-            templateType = executeRequest(request, response);
-        } catch (HttpBeanException httpException) {
-            try {
-                response.sendError(httpException.getStatusCode(), httpException.getDescription());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return;
-        }
-        if(hasErrors()) {
-            request.setAttribute(ATTRIBUTE_FORM_ERRORS, this.formErrors);
-        }
-        dispatchEvent(request, response, templateType);
-    }
-
-
-    /**
-     * Sets the the user which accesses the object.
-     *
-     * @param accessingUser the user or null if the user is not authenticated.
-     */
-    public void setAccessingUser(User accessingUser) {
-        this.accessingUser = accessingUser;
-    }
-
-    /**
-     * Get the accessing user.
-     *
-     * @return Returns the accessing user object if the user is authenticated.
-     * Otherwise null is returned.
-     */
-    public User getAccessingUser() {
-        return accessingUser;
     }
 
 
     /**
      * Add a error related to a parameter
+     *
      * @param parameter the parameter
-     * @param message the message describing the error
+     * @param message   the message describing the error
      */
     protected void addFormError(String parameter, String message) {
         this.formErrors.put(parameter, message);
@@ -374,7 +307,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @return True if there occured errors while processing a request
      */
     public boolean hasErrors() {
-        return formErrors.isEmpty();
+        return !formErrors.isEmpty();
     }
 
     /**
@@ -400,6 +333,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Set the action parameter
+     *
      * @param action
      */
     public void setAction(String action) {
@@ -416,6 +350,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Returns the if of the object
+     *
      * @return
      */
     public String getId() {
@@ -424,9 +359,18 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * Set the identifiert of the object
+     *
      * @param id
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Map<String, String> getFormErrors() {
+        return new HashMap<>(this.formErrors);
+    }
+
+    private void setFormErrorsInRequestAttribute(HttpServletRequest request) {
+        request.setAttribute(ATTRIBUTE_FORM_ERRORS, getFormErrors());
     }
 }
