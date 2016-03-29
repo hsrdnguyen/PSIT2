@@ -17,6 +17,7 @@ import java.util.Random;
 public class FormBuilder {
     private Map<String, String> formErrors;
     private String path;
+    private String encodingType = null;
     private AccessControlObjectBase object;
     private Class<? extends AccessControlObjectBase> objectClass;
     private String idPrefix = null;
@@ -87,6 +88,9 @@ public class FormBuilder {
         }
 
         form += formatAttribute("method", formMethod);
+        if(getEncodingType() != null) {
+            form += formatAttribute("enctype", getEncodingType());
+        }
         form += ">\n" + formContent;
         return form;
     }
@@ -215,5 +219,13 @@ public class FormBuilder {
             inputField.setError(formErrors.get(fieldName));
         }
         return inputField.toString();
+    }
+
+    public String getEncodingType() {
+        return encodingType;
+    }
+
+    public void setEncodingType(String encodingType) {
+        this.encodingType = encodingType;
     }
 }
