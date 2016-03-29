@@ -14,12 +14,12 @@ public class MailingConstants {
     public static final String PASSWORD = "Gruppe13";
 
     // For Verification
-    public static final String VERIFICTAION_URL = "http://127.0.0.1:8080/JSP/verification.jsp?code=%s&mail=%s";
+    public static final String VERIFICTAION_URL = "http://127.0.0.1:8080/verify.jsp?code=%s&email=%s";
     public static final String VERIFICATION_SUBJECT = "E-Mail Verifikation";
     public static final String VERIFICATION_MESSAGE = "Guten Tag\n\n Um ihr Konto zu aktivieren und Ihre E-Mail-Addresse zu verifizieren, rufen Sie bitte folgenden Link auf: \n\n %s";
 
     // For permission-request
-    public static final String REQUEST_RESPONSE_URL = "http://127.0.0.1:8080/JSP/grantaccess.jsp?fileId=%s&ruserId=%s&ouserId=%s";
+    public static final String REQUEST_RESPONSE_URL = "http://127.0.0.1:8080/grantaccess.jsp?fileId=%s&ruserId=%s&ouserId=%s";
     public static final String REQUEST_SUBJECT = "Zugriff beantragt";
     public static final String REQUEST_MESSAGE = "Der User %s möchte auf das Objekt %s zugreiffen. Um Ihm den Zugriff zu gewähren, klicken Sie auf folgenden Link: %s";
 
