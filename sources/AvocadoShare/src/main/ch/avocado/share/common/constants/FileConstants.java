@@ -7,7 +7,14 @@ public class FileConstants {
     public static final String FILE_DESTINATION_ON_SERVER = "C:\\avocadoshare\\documents";
     public static final String FILE_TEMP_DESTINATION_ON_SERVER = "C:\\avocadoshare\\TMP";
 
-    public static final int MAX_FILE_SIZE = 5000 * 1024;
+    /**
+     * The maximal size of file in bytes.
+     * -1 indicates there is no limit.
+     */
+    public static final long MAX_FILE_SIZE = 500 * 1024 * 1024;
+    /**
+     * The size of the biggest file stored in memory in bytes.
+     */
     public static final int MAX_MEM_SIZE = 5000 * 1024;
 
 

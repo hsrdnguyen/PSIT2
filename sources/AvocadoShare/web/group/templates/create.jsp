@@ -1,4 +1,4 @@
-<%@ page import="ch.avocado.share.common.FormBuilder" %>
+<%@ page import="ch.avocado.share.common.form.FormBuilder" %>
 <%@ page import="ch.avocado.share.controller.GroupBean" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.controller.ResourceBean" %>

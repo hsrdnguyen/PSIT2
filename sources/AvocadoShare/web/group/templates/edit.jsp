@@ -1,6 +1,6 @@
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page import="ch.avocado.share.common.FormBuilder" %>
+<%@ page import="ch.avocado.share.common.form.FormBuilder" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.controller.GroupBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

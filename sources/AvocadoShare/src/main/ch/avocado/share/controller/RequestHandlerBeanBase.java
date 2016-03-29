@@ -205,17 +205,20 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         return templateType;
     }
 
+    protected void sendErrorFromHttpBeanException(HttpBeanException httpException, HttpServletResponse response) {
+        try {
+            response.sendError(httpException.getStatusCode(), httpException.getDescription());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) {
         setAccessingUserFromRequest(request);
         try {
             return callHttpMethodMethod(request);
         } catch (HttpBeanException httpException) {
-            try {
-                response.sendError(httpException.getStatusCode(), httpException.getDescription());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            sendErrorFromHttpBeanException(httpException, response);
         }
         return null;
     }
