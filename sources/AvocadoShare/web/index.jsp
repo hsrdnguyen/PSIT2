@@ -71,7 +71,7 @@
                   </form>
                   <a href="indexlog.html"><input type="submit" value="Anmelden" class="dropdown-item"/>
                   </a>
-                  <a href="register.html"><input action="contact.html" class="dropdown-item" type="submit" value="Registrieren">
+                  <a href="register.jsp"><input action="contact.html" class="dropdown-item" type="submit" value="Registrieren">
                   </a>
 
 

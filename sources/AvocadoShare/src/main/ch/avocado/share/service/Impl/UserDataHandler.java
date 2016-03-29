@@ -32,7 +32,6 @@ public class UserDataHandler implements IUserDataHandler {
             user.setId(db.insertDataSet(stmt));
 
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_USER_QUERY);
-            // TODO: ID should be set by the database and getId() should be null?;
             stmt.setString(1,user.getId());
             stmt.setString(2,user.getPrename());
             stmt.setString(3,user.getSurname());

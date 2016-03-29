@@ -20,7 +20,7 @@ public abstract class BaseMailVerification {
 
     public BaseMailVerification(Date expiry) {
         setExpiry(expiry);
-        generateCode();
+        code = generateCode();
     }
 
     public BaseMailVerification(Date expiry, String code) {
