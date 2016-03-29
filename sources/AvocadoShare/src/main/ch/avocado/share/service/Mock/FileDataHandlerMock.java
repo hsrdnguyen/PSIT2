@@ -8,8 +8,11 @@ import ch.avocado.share.service.IFileDataHandler;
  */
 public class FileDataHandlerMock implements IFileDataHandler {
 
+
     @Override
-    public String addFile(File file) { return null; }
+    public String addFile(File file) {
+        return null;
+    }
 
     @Override
     public boolean deleteFile(File file) {
@@ -17,12 +20,14 @@ public class FileDataHandlerMock implements IFileDataHandler {
     }
 
     @Override
-    public File getFile(String fileId) {
+    public File getFileById(String fileId) {
         return null;
     }
 
     @Override
-    public File getFileByTitle(String fileTitle) { return null; }
+    public File getFileByTitle(String fileTitle) {
+        return null;
+    }
 
     @Override
     public boolean updateFile(File file) {

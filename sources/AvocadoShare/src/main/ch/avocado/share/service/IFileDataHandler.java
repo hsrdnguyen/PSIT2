@@ -26,7 +26,7 @@ public interface IFileDataHandler {
      * @param fileId id of the requested file
      * @return File from server
      */
-    File getFile(String fileId);
+    File getFileById(String fileId);
 
     File getFileByTitle(String fileTitle);
 

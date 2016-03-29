@@ -65,7 +65,7 @@ public class FileUploadBean extends ResourceBean<File> {
             if (newFileId == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
             }
-            file = fileDataHandler.getFile(newFileId);
+            file = fileDataHandler.getFileById(newFileId);
             if (file == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
             }
@@ -80,7 +80,7 @@ public class FileUploadBean extends ResourceBean<File> {
         IFileDataHandler fileDataHandler = getFileDataHandler();
         File file = null;
         if(getId() != null) {
-            file = fileDataHandler.getFile(getId());
+            file = fileDataHandler.getFileById(getId());
         }else if (title != null) {
             file = fileDataHandler.getFileByTitle(title);
         }

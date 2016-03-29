@@ -31,7 +31,7 @@ public class FileAccessBean implements Serializable {
             IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
 
             User user = userDataHandler.getUserByEmailAddress(requestingUserMail);
-            File file = fileDataHandler.getFile(fileId);
+            File file = fileDataHandler.getFileById(fileId);
             User owningUser = userDataHandler.getUser(file.getOwnerId());
             mailingService.sendRequestAccessEmail(user, owningUser, file);
             return true;
