@@ -26,9 +26,14 @@ public interface IFileDataHandler {
      * @param fileId id of the requested file
      * @return File from server
      */
-    File getFile(String fileId);
+    File getFileById(String fileId);
 
-    File getFileByTitle(String fileTitle);
+    /**
+     * @param fileTitle its title
+     * @param moduleId module id in which it was uploaded
+     * @return The file object
+     */
+    File getFileByTitleAndModule(String fileTitle, String moduleId);
 
     /**
      * updates a file on the server and database and creates a new version number

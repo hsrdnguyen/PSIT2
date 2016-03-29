@@ -18,7 +18,7 @@
         &#9776;
       </button>
       <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
-      <a href="index.html" class="navbar-brand" href="#">Avocado Share</a>
+      <a href="index.jsp" class="navbar-brand" href="#">Avocado Share</a>
       <ul class="nav navbar-nav">
         <!-- Links for mobile users -->
         <li class="nav-item hidden-sm-up">
@@ -29,7 +29,7 @@
         </li>
         <!-- Navbar Search -->
         <li class="nav-item pull-md-right">
-          <form action="document_view.html" class="form-inline">
+          <form action="document_view.jsp" class="form-inline">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Search for...">
               <span class="input-group-btn">
@@ -48,7 +48,7 @@
             </button>
 
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
-              <form action="indexlog.html" method="POST" action="#login">
+              <form action="indexlog.jsp" method="POST" action="#login">
                 <fieldset>
                   <div class="input-group dropdown-item">
                     <label for="navbar-login-username" class="input-group-addon">
@@ -68,9 +68,9 @@
                   </div>
                   </fieldset>
                   </form>
-                  <a href="document_viewlog.html"><input type="submit" value="Anmelden" class="dropdown-item"/>
+                  <a href="document_viewlog.jsp"><input type="submit" value="Anmelden" class="dropdown-item"/>
                   </a>
-                  <a href="register.html"><input action="contact.html" class="dropdown-item" type="submit" value="Registrieren">
+                  <a href="register.jsp"><input action="contact.jsp" class="dropdown-item" type="submit" value="Registrieren">
                   </a>
             </div>
           </div>
@@ -133,7 +133,7 @@
     <section class="document-show">
       <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
-        <a href="document_view0.html" class="list-group-item">
+        <a href="document_view0.jsp" class="list-group-item">
           <h4 class="list-group-item-heading">Analysis für Dummies</h4>
           <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
         </a>
@@ -154,7 +154,7 @@
   <div class="container">
     <ul>
       <li><a href="#about">Über uns</a></li>
-      <li><a href="contact.html" href="#contact">Kontakt</a></li>
+      <li><a href="contact.jsp" href="#contact">Kontakt</a></li>
       <li><a href="#something">Fehler melden</a></li>
     </ul>
     <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>

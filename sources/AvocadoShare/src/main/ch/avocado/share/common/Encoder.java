@@ -5,7 +5,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 
 /**
- * Created by coffeemakr on 21.03.16.
+ * Encoder for servlets.
  */
 public class Encoder {
 
@@ -789,20 +789,44 @@ public class Encoder {
         return result;
     }
 
+    /**
+     * Encodes a value for inside a html tag.
+     * @param value The value to encode
+     * @return The encoded value.
+     */
     public static String forHtml(String value) {
         if(value == null) value = "";
         return htmlEntities(value);
     }
 
+    /**
+     * Encodes a value for inside a HTML attribute.
+     * @param value The value to encode
+     * @return The encoded value
+     */
     public static String forHtmlAttribute(String value) {
         if(value == null) value = "";
         return htmlEntities(value);
     }
 
+    /**
+     * Encodes a value for inside a url inside a HTML attribute.
+     * For example if you need to encode a name for inside a parameter
+     * of the href attribute of a link.
+     * @param value The value to be encoded.
+     * @return The encoded value
+     * @throws UnsupportedEncodingException If "UTF-8" is not supported.
+     */
     public static String forUrlAttribute(String value) throws UnsupportedEncodingException {
         return htmlEntities(URLEncoder.encode(value, "UTF-8"));
     }
 
+    /**
+     * Encodes a value for use inside a url.
+     * @param value The value to encode
+     * @return The encoded value.
+     * @throws UnsupportedEncodingException If "UTF-8" is not supported.
+     */
     public static String forUrl(String value) throws UnsupportedEncodingException {
         return URLEncoder.encode(value, "UTF-8");
     }

@@ -18,7 +18,7 @@
         &#9776;
       </button>
       <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
-      <a href="indexlog.html" class="navbar-brand" href="#">Avocado Share</a>
+      <a href="indexlog.jsp" class="navbar-brand" href="#">Avocado Share</a>
       <ul class="nav navbar-nav">
         <!-- Links for mobile users -->
         <li class="nav-item hidden-sm-up">
@@ -29,7 +29,7 @@
         </li>
         <!-- Navbar Search -->
         <li class="nav-item pull-md-right">
-          <form action="document_viewlog.html" class="form-inline">
+          <form action="document_viewlog.jsp" class="form-inline">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Search for...">
               <span class="input-group-btn">
@@ -49,7 +49,7 @@
 
 
 
-            <a href="upload.html">
+            <a href="upload.jsp">
 
 
 
@@ -58,7 +58,7 @@
 
 
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
-              <form action="index.html" method="POST" action="#login">
+              <form action="index.jsp" method="POST" action="#login">
                 <fieldset>
                   <div class="input-group dropdown-item">
                     <label for="navbar-login-username" class="input-group-addon">
@@ -128,8 +128,13 @@
     <section class="document-show">
       <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
-        <a href="document_view2.html" class="list-group-item">
-          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
+        <a href="document_view2.jsp" class="list-group-item">
+          <h4 class="list-group-item-heading">Analysis für Dummies
+            <form id="edit-doc" method="POST" action="#">
+                <button id="navbar-login-toggle-button" class="btn  btn-secondary btn-secondary12 "
+                          type="submit">Rechte anfordern</button>
+            </form>
+          </h4>
           <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
         </a>
         <a href="#" class="list-group-item">
@@ -149,7 +154,7 @@
   <div class="container">
     <ul>
       <li><a href="#">Über uns</a></li>
-      <li><a href="contact.html">Kontakt</a></li>
+      <li><a href="contact.jsp">Kontakt</a></li>
       <li><a href="#">Fehler melden</a></li>
       <li><a href="#">Profil Bearbeiten</a></li>
     </ul>

@@ -27,7 +27,7 @@
 
 
       <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
-      <a href="indexlog.html" class="navbar-brand" href="#">Avocado Share</a>
+      <a href="indexlog.jsp" class="navbar-brand" href="#">Avocado Share</a>
       <ul class="nav navbar-nav">
         <!-- Links for mobile users -->
         <li class="nav-item hidden-sm-up">
@@ -38,7 +38,7 @@
         </li>
         <!-- Navbar Search -->
         <li class="nav-item pull-md-right">
-          <form action="document_view.html" class="form-inline">
+          <form action="document_view.jsp" class="form-inline">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Search for...">
               <span class="input-group-btn">
@@ -58,7 +58,7 @@
 
 
 
-            <a href="upload.html">
+            <a href="upload.jsp">
 
 
 
@@ -67,7 +67,7 @@
 
 
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
-              <form action="index.html" method="POST" action="#login">
+              <form action="index.jsp" method="POST" action="#login">
                 <fieldset>
                   <div class="input-group dropdown-item">
                     <label for="navbar-login-username" class="input-group-addon">
@@ -189,7 +189,7 @@
 
 
 
-                      <form id="edit-doc"action="document_view2.html" method="POST" action="#edit">
+                      <form id="edit-doc"action="document_view2.jsp" method="POST" action="#edit">
 
 
 
@@ -208,9 +208,9 @@
   <div class="container">
     <ul>
       <li><a href="#">Über uns</a></li>
-      <li><a href="contact.html">Kontakt</a></li>
+      <li><a href="contact.jsp">Kontakt</a></li>
       <li><a href="#">Fehler melden</a></li>
-      <li><a href="profil.html">Profil Bearbeiten</a></li>
+      <li><a href="profil.jsp">Profil Bearbeiten</a></li>
     </ul>
     <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
