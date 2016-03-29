@@ -14,7 +14,7 @@ public class FileFactory {
 
     public static File getDefaultFile()
     {
-        return new File("", new ArrayList<Category>(), new Date(), 0, "", "", "", "", "", new Date(), "", "", "");
+        return new File(null, new ArrayList<Category>(), new Date(0), 0, "", "", "", "", new Date(0), "", "");
     }
 
 }

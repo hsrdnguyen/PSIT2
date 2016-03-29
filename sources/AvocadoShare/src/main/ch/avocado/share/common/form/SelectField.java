@@ -1,5 +1,6 @@
 package ch.avocado.share.common.form;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -10,8 +11,10 @@ class SelectField extends FieldBase {
 
     private Map<String, String> valuesWithName;
 
+
     SelectField(String name, String id) {
         super(name, id);
+        valuesWithName = new HashMap<>();
     }
 
     private String getHtmlOption(String name, String value, boolean selected) {

@@ -44,8 +44,8 @@ public class FileDataHandler implements IFileDataHandler {
     }
 
     @Override
-    public File getFileByTitle(String fileTitle) {
-        //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
+    public File getFileByTitleAndModule(String fileTitle, String moduleId) {
+        //TODO @kunzlio1: noch implementieren
         return null;
     }
 

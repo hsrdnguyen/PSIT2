@@ -18,15 +18,16 @@ public class ServiceLocator {
 
     private static Map<Type, Object> services;
 
-    static{
+    static {
         services = new HashMap<>();
         registerServices();
     }
 
     public static <T> T getService(Class<T> clazz) throws ServiceNotFoundException {
-        if (!services.containsKey(clazz)) throw new ServiceNotFoundException(clazz.toString(), ServiceLocator.class.toString());
+        if (!services.containsKey(clazz))
+            throw new ServiceNotFoundException(clazz.toString(), ServiceLocator.class.toString());
 
-        return (T)services.get(clazz);
+        return (T) services.get(clazz);
     }
 
     private static void registerServices() {
@@ -35,13 +36,13 @@ public class ServiceLocator {
             //services.put(IUserDataHandler.class, new UserDataHandlerMock());
             services.put(ISecurityHandler.class, new SecurityHandlerMock());
             services.put(IFileDataHandler.class, new FileDataHandlerMock());
-
-        services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
-        services.put(IUserDataHandler.class, new UserDataHandler());
-        services.put(IFileStorageHandler.class, new FileStorageHandler());
-        services.put(IMailingService.class, new MailingService());
-        services.put(IGroupDataHandler.class, new GroupDataHandler());
-        services.put(ICategoryDataHandler.class, new CategoryDataHandler());
+            services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
+            services.put(IUserDataHandler.class, new UserDataHandler());
+            services.put(IFileStorageHandler.class, new FileStorageHandlerMock());
+            services.put(IMailingService.class, new MailingService());
+            services.put(IGroupDataHandler.class, new GroupDataHandler());
+            services.put(ICategoryDataHandler.class, new CategoryDataHandler());
+            services.put(IModuleDataHandler.class, new ModuleDataHandlerMock());
         } catch (ServiceNotFoundException e) {
             e.printStackTrace();
         }

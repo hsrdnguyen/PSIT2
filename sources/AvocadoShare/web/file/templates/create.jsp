@@ -8,7 +8,7 @@
 <%
     SecurityHandlerMock.use();
 
-    FormBuilder formBuilder = new FormBuilder("FileUpload.jsp", (File) request.getAttribute("File"), File.class, (HashMap<String, String>) request.getAttribute(FileUploadBean.ATTRIBUTE_FORM_ERRORS));
+    FormBuilder formBuilder = new FormBuilder("", (File) request.getAttribute("File"), File.class, (HashMap<String, String>) request.getAttribute(FileUploadBean.ATTRIBUTE_FORM_ERRORS));
     formBuilder.setEncodingType("multipart/form-data");
     formBuilder.setReadableFieldName("title", "Titel *");
     formBuilder.setReadableFieldName("description", "Beschreibung *");
@@ -17,7 +17,7 @@
     Module[] userModules = FileUploadBean.getModuleForAccessingUser(request);
 %>
 <h2>Dateien Hochladen</h2>
-
+<%=formBuilder.getFormErrors() %>
 <div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
     <p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p>
     <div id="xform" class="xform">

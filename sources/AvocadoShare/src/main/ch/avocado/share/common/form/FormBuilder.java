@@ -86,7 +86,7 @@ public class FormBuilder {
         if (object != null) {
             formContent += getInputFor("id", "hidden");
         }
-
+        form += formatAttribute("action", path);
         form += formatAttribute("method", formMethod);
         if(getEncodingType() != null) {
             form += formatAttribute("enctype", getEncodingType());
@@ -183,7 +183,7 @@ public class FormBuilder {
         for(Module module: modules) {
             selectField.addChoice(module.getId(), module.getName());
         }
-        return selectField.toString();
+        return selectField.toHtml();
     }
 
     /**
@@ -218,7 +218,7 @@ public class FormBuilder {
         if (formErrors.containsKey(fieldName)) {
             inputField.setError(formErrors.get(fieldName));
         }
-        return inputField.toString();
+        return inputField.toHtml();
     }
 
     public String getEncodingType() {
