@@ -46,9 +46,8 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="octicon octicon-person"></span>
             </button>
-
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
-              <form action="indexlog.html" method="POST" action="#login">
+              <form method="POST" action="#login">
                 <fieldset>
                   <div class="input-group dropdown-item">
                     <label for="navbar-login-username" class="input-group-addon">
@@ -66,12 +65,9 @@
                     </label>
                     <input id="navbar-login-password" type="password" class="form-control" placeholder="Passwort">
                   </div>
-                  </fieldset>
-                  </form>
-                  <a href="document_viewlog.html"><input type="submit" value="Anmelden" class="dropdown-item"/>
-                  </a>
-                  <a href="register.html"><input action="contact.html" class="dropdown-item" type="submit" value="Registrieren">
-                  </a>
+                  <input type="submit" value="Anmelden" class="dropdown-item"/>
+                </fieldset>
+              </form>
             </div>
           </div>
         </li>
@@ -81,73 +77,71 @@
     </nav>
 </header>
 <main class="container">
-  <h1>Dokumentenüberblick</h1>
-   <form class="form-inline">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Suchwort">
-              <span class="input-group-btn">
-                <button class="btn btn-secondary" type="submit">Suchen</button>
-              </span>
+  <h1>Registrierung</h1>
+  <div class="text-contact">
 
-            </div>
-   </form><br>
-  <div class="row">
-    <!-- 3 columns on extra large screen,
-         2 on large and 1 on smaller screens -->
-    <section class="filter">
-      <div class="list-group">
-        <div class="list-group-item list-group-header"><h2>Filter</h2></div>
-        <!-- First Module -->
-        <div class="tags">
-        <label>
-            <input type="checkbox" rel="dab" />
-            Datenbank
-        </label><br>
-        <label>
-            <input type="checkbox" rel="web" />
-            Web
-        </label><br>
-        <label>
-            <input type="checkbox" rel="prog" />
-            Programmieren
-        </label><br>
-        <label>
-            <input type="checkbox" rel="thin" />
-            Theoretische Informatik
-        </label><br>
-        <label>
-            <input type="checkbox" rel="manit" />
-            Mathematik Analysis
-        </label><br>
-        <label>
-            <input type="checkbox" rel="mgmit" />
-           Diskrete Mathematik
-        </label><br>
-        <label>
-            <input type="checkbox" rel="etc" />
-            ...
-        </label><br>
+	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
+	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
+
+    <form action="" method="post" id="form_formular" class="contact_action">
+
+<div class="form-group" id="formular-anrede">
+    <label class="control-label" for="formular-field-1">Anrede</label>
+        <select class="form-control" id="formular-field-1" name="anrede">
+                    <option value="Frau">Frau</option>
+                    <option value="Herr">Herr</option>
+            </select>
+        </div>
+<div class="form-group" id="formular-vorname">
+    <label class="control-label" for="formular-field-2">Vorname *</label>
+    <input class="form-control" name="vorname" id="formular-field-2" value="" type="text">
     </div>
-      </div>
-    </section>
-    <section class="document-show">
-      <div class="list-group">
-        <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
-        <a href="document_view0.html" class="list-group-item">
-          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
-          <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode im Web.</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">MANIT</h4>
-          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-        </a>
-      </div>
-    </section>
-  </div>
+<div class="form-group" id="formular-nachname">
+    <label class="control-label" for="formular-field-3">Nachname *</label>
+    <input class="form-control" name="nachname" id="formular-field-3" value="" type="text">
+    </div>
+<div class="form-group" id="formular-class">
+    <label class="control-label" for="formular-field-4">Klasse</label>
+    <input class="form-control" name="class" id="formular-field-4" value="" type="text">
+    </div>
+<div class="form-group form-email" id="formular-email">
+    <label class="control-label" for="formular-field-5">E-mail *</label>
+    <input class="form-control" name="email" id="formular-field-5" value="" type="email">
+    </div>
+<div class="form-group" id="formular-betreff">
+    <label class="control-label" for="formular-field-6">Passwort *</label>
+    <input class="form-control" name="Passwort" id="formular-field-6" value="" type="text">
+    </div>
+    <div class="form-group" id="formular-betreff">
+        <label class="control-label" for="formular-field-6">Passwort bestätigen *</label>
+        <input class="form-control" name="Passwort" id="formular-field-6" value="" type="text">
+        </div>
+<div class="form-group" id="formular-msg">
+    <label class="control-label" for="formular-field-7">Berechtigung</label>
+    <input class="form-control" name="Passwort" id="formular-field-6" value="Wird durch Administrator erteilt..." type="text">
+    </div>
+
+
+
+    <div class="form-group" id="formular-msg">
+        <label class="control-label" for="formular-field-7">
+          Profilbild</label>
+  <div class="form-group" id="formular-msg">
+          <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Datei auswählen...</button>
+          <input name="send" value="1" type="hidden">
+        <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Hochladen</button>
+        <input name="send" value="1" type="hidden">
+
+        </div></div>
+
+      
+
+<button class="btn-primary" type="submit" name="submit" id="formular-field-8">Senden</button>
+<input name="send" value="1" type="hidden">
+</form>
+</div>
+</div>
+</div>
 </main>
 </div> <!-- /#footerpusher -->
 <footer class="text-muted">

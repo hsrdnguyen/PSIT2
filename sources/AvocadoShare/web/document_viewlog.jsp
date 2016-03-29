@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Avocado Share</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/octicons.css">
+  <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -76,7 +76,7 @@
     </nav>
 </header>
 <main class="container">
-  <h1>Dokumenten�berblick</h1>
+  <h1>Dokumentenüberblick</h1>
    <form class="form-inline">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Suchwort">
@@ -129,11 +129,11 @@
       <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
         <a href="document_view2.html" class="list-group-item">
-          <h4 class="list-group-item-heading">Analysis f�r Dummies</h4>
+          <h4 class="list-group-item-heading">Analysis für Dummies</h4>
           <p class="list-group-item-text">Kurzeinstieg in Anlysis.</p>
         </a>
         <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign f�r Nerds</h4>
+          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
           <p class="list-group-item-text">HTML &amp; Unicode im Web.</p>
         </a>
         <a href="#" class="list-group-item">
@@ -148,17 +148,17 @@
 <footer class="text-muted">
   <div class="container">
     <ul>
-      <li><a href="#">&Uuml;ber uns</a></li>
+      <li><a href="#">Über uns</a></li>
       <li><a href="contact.html">Kontakt</a></li>
       <li><a href="#">Fehler melden</a></li>
       <li><a href="#">Profil Bearbeiten</a></li>
     </ul>
-    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril M�ller</span>.</p>
+    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
     <p>&copy; 2015, All rights reserved.</p>
   </div>
 
 </footer>
-<script type="application/javascript" src="js/jquery.min.js"></script>
-<script type="application/javascript" src="js/bootstrap.min.js"></script>
+<script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
