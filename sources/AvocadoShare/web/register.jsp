@@ -1,3 +1,25 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
+<jsp:useBean id="registrationBean" class="ch.avocado.share.controller.UserRegistrationBean" />
+<%
+   if (request.getParameter("anrede") != null &&
+       request.getParameter("vorname") != null &&
+       request.getParameter("nachname") != null &&
+       request.getParameter("class") != null &&
+       request.getParameter("email") != null &&
+       request.getParameter("Passwort") != null){
+            registrationBean.setName(request.getParameter("nachname"));
+            registrationBean.setPrename(request.getParameter("vorname"));
+            registrationBean.setEmailAddress(request.getParameter("email"));
+            registrationBean.setPassword(request.getParameter("Passwort"));
+            registrationBean.setAvatar(request.getParameter("class"));
+
+            registrationBean.addUser();
+
+           String redirectURL = "http://127.0.0.1:8080";
+           response.sendRedirect(redirectURL);
+   }else
+   {
+%>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -83,7 +105,7 @@
 	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
 	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
 
-    <form action="" method="post" id="form_formular" class="contact_action">
+    <form action="register.jsp" method="post" id="form_formular" class="contact_action">
 
 <div class="form-group" id="formular-anrede">
     <label class="control-label" for="formular-field-1">Anrede</label>
@@ -118,7 +140,7 @@
         </div>
 <div class="form-group" id="formular-msg">
     <label class="control-label" for="formular-field-7">Berechtigung</label>
-    <input class="form-control" name="Passwort" id="formular-field-6" value="Wird durch Administrator erteilt..." type="text">
+    <input class="form-control" name="Passwort" id="formular-field-7" value="Wird durch Administrator erteilt..." type="text">
     </div>
 
 
@@ -160,3 +182,4 @@
 <script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+<% } %>

@@ -4,6 +4,23 @@ html {
 body {
     margin: 0;
 }
+
+header {
+  height:150px;
+   margin-top: -40px;
+
+
+   position: fixed;
+   width: 100%;
+   z-index: 1000;
+
+}
+
+main {
+
+   padding-top: 80px;
+}
+
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
     display: block;
 }
@@ -172,6 +189,10 @@ h2, h3 {
     font-size: 10px;
     font-family: cursive;
 
+}
+
+#text-groesse {
+  min-width: 50px;
 }
 /*--------------------------------------------------------------------------
 +	Extras Menu (Cart, Language, Login) Style
@@ -357,6 +378,16 @@ fieldset {
     min-width: 0;
     padding: 0;
 }
+
+form {
+    border: 0 none;
+    margin: 0;
+    min-width: 0;
+    padding: 0;
+    display: inline;
+}
+
+
 legend {
     display: block;
     font-size: 1.5rem;
@@ -1852,7 +1883,8 @@ a.btn.disabled, fieldset[disabled] a.btn {
     text-align: center;
     vertical-align: middle;
     white-space: nowrap;
-    margin: 0 0 10px 0;
+    margin-top: 10px;
+
 }
 .btn-primary:hover {
     background-color: #e6e6e6;
@@ -1887,7 +1919,9 @@ a.btn.disabled, fieldset[disabled] a.btn {
 .btn-secondary1 {
     margin-left: 15%;
 }
-
+.btn-secondary12 {
+    margin-left: 1%;
+}
 
 .btn-secondary {
     background-color: #fff;
@@ -1895,6 +1929,11 @@ a.btn.disabled, fieldset[disabled] a.btn {
     color: #373a3c;
 }
 .btn-secondary:hover {
+    background-color: #e6e6e6;
+    border-color: #adadad;
+    color: #373a3c;
+}
+.btn-secondary12:hover {
     background-color: #e6e6e6;
     border-color: #adadad;
     color: #373a3c;
@@ -2259,6 +2298,7 @@ input.btn-block[type="button"], input.btn-block[type="reset"], input.btn-block[t
 }
 .dropdown, .dropup {
     position: relative;
+    margin-right: 4px;
 }
 .dropdown-toggle::after {
     border-left: 0.3em solid transparent;
@@ -2297,6 +2337,12 @@ input.btn-block[type="button"], input.btn-block[type="reset"], input.btn-block[t
     text-align: left;
     top: 100%;
     z-index: 1000;
+}
+
+.dropdown-menu22 {
+
+    min-width: 60px !important;
+
 }
 .dropdown-divider {
     background-color: #e5e5e5;
@@ -2512,6 +2558,7 @@ input.btn-block[type="button"], input.btn-block[type="reset"], input.btn-block[t
     border-collapse: separate;
     display: table;
     position: relative;
+    margin-bottom: 20px;
 }
 .input-group .form-control {
     float: left;
@@ -2834,7 +2881,7 @@ input.btn-block[type="button"], input.btn-block[type="reset"], input.btn-block[t
     margin-top: -1px;
 }
 .navbar {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.1rem;
     position: relative;
 }
 .navbar::after {
@@ -2914,7 +2961,7 @@ input.btn-block[type="button"], input.btn-block[type="reset"], input.btn-block[t
     border-radius: 0.25rem;
     font-size: 1.25rem;
     line-height: 1;
-    padding: 0.5rem 0.75rem;
+
 }
 .navbar-toggler:focus, .navbar-toggler:hover {
     text-decoration: none;
@@ -2950,6 +2997,7 @@ input.btn-block[type="button"], input.btn-block[type="reset"], input.btn-block[t
 }
 .navbar-light .navbar-brand {
     color: rgba(0, 0, 0, 0.8);
+
 }
 .navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover {
     color: rgba(0, 0, 0, 0.8);
@@ -4514,6 +4562,8 @@ a.text-danger:focus, a.text-danger:hover {
 }
 .bg-faded {
     background-color: #f7f7f9;
+    height: 65px;
+    padding-top: 13px;
 }
 .bg-primary {
     background-color: #0275d8 !important;
