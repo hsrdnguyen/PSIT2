@@ -1,6 +1,9 @@
-package ch.avocado.share.common;
+package ch.avocado.share.common.form;
 
+import ch.avocado.share.common.Encoder;
+import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.Module;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.FormBuilderException;
 
@@ -10,102 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-enum InputType {
-    TEXT, NUMBER, PASSWORD, TEXTAREA, HIDDEN;
-
-    static InputType fromString(String string) {
-        for (InputType inputType : values()) {
-            if (inputType.name().toLowerCase().equals(string)) {
-                return inputType;
-            }
-        }
-        return null;
-    }
-}
-
-class InputField {
-    private String type;
-    private String value;
-    private String name;
-    private String id;
-    private String error;
-
-    public InputField(String name, String id, String type) {
-        setName(name);
-        setId(id);
-        setType(type);
-        this.value = "";
-    }
-
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        if (type == null) throw new IllegalArgumentException("type is null");
-        this.type = type;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        if (value == null) throw new IllegalArgumentException("value is null");
-        this.value = value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        if (name == null) throw new IllegalArgumentException("name is null");
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        if (id == null) throw new IllegalArgumentException("id is null");
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        String attributes = "";
-        attributes += FormBuilder.formatAttribute("name", getName());
-        attributes += FormBuilder.formatAttribute("id", getId());
-
-        if (error != null) {
-            attributes += FormBuilder.formatAttribute("class", "invalid");
-            attributes += FormBuilder.formatAttribute("data-input-error", error);
-        }
-
-        if (InputType.fromString(type) == InputType.TEXTAREA) {
-            return "<textarea " + attributes + ">" + Encoder.forHtml(value) + "</textarea>\n";
-        } else {
-            attributes += FormBuilder.formatAttribute("type", type.toLowerCase());
-            attributes += FormBuilder.formatAttribute("value", value);
-            return "<input " + attributes + "/>";
-        }
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-}
 
 public class FormBuilder {
     private Map<String, String> formErrors;
     private String path;
+    private String encodingType = null;
     private AccessControlObjectBase object;
     private Class<? extends AccessControlObjectBase> objectClass;
     private String idPrefix = null;
@@ -174,8 +86,11 @@ public class FormBuilder {
         if (object != null) {
             formContent += getInputFor("id", "hidden");
         }
-
+        form += formatAttribute("action", path);
         form += formatAttribute("method", formMethod);
+        if(getEncodingType() != null) {
+            form += formatAttribute("enctype", getEncodingType());
+        }
         form += ">\n" + formContent;
         return form;
     }
@@ -262,6 +177,15 @@ public class FormBuilder {
     }
 
 
+    public String getSelectForModules(String fieldName, Module[] modules) {
+        if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
+        SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
+        for(Module module: modules) {
+            selectField.addChoice(module.getId(), module.getName());
+        }
+        return selectField.toHtml();
+    }
+
     /**
      * @param fieldName The name of the field
      * @param type      null or the type of the element.
@@ -271,7 +195,6 @@ public class FormBuilder {
      */
     public String getInputFor(String fieldName, String type, String value) throws FormBuilderException {
         if (fieldName == null) throw new IllegalArgumentException("field is null");
-        ;
         if (type == null || value == null) {
             Method getter = getGetterMethod(fieldName);
             if (type == null) {
@@ -295,6 +218,14 @@ public class FormBuilder {
         if (formErrors.containsKey(fieldName)) {
             inputField.setError(formErrors.get(fieldName));
         }
-        return inputField.toString();
+        return inputField.toHtml();
+    }
+
+    public String getEncodingType() {
+        return encodingType;
+    }
+
+    public void setEncodingType(String encodingType) {
+        this.encodingType = encodingType;
     }
 }
