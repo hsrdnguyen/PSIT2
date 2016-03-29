@@ -19,7 +19,7 @@
         &#9776;
       </button>
       <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
-      <a href="indexlog.html" class="navbar-brand" href="#">Avocado Share</a>
+      <a href="indexlog.jsp" class="navbar-brand" href="#">Avocado Share</a>
       <ul class="nav navbar-nav">
         <!-- Links for mobile users -->
         <li class="nav-item hidden-sm-up">
@@ -30,7 +30,7 @@
         </li>
         <!-- Navbar Search -->
         <li class="nav-item pull-md-right">
-          <form action="document_viewlog.html" class="form-inline">
+          <form action="document_viewlog.jsp" class="form-inline">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Search for...">
               <span class="input-group-btn">
@@ -48,12 +48,12 @@
               <span class="octicon octicon-person"></span>
             </button>
 
-            <a href="upload.html"> <button id="navbar-login-toggle-button" class="btn btn-secondary "
+            <a href="upload.jsp"> <button id="navbar-login-toggle-button" class="btn btn-secondary "
               type="submit">Upload</button></a>
 
 
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
-              <form action="index.html" method="POST" action="#login">
+              <form action="index.jsp" method="POST" action="#login">
                 <fieldset>
                   <div class="input-group dropdown-item">
                     <label for="navbar-login-username" class="input-group-addon">
@@ -127,7 +127,7 @@
   <div class="container">
     <ul>
       <li><a href="#">Über uns</a></li>
-      <li><a href="contact.html">Kontakt</a></li>
+      <li><a href="contact.jsp">Kontakt</a></li>
       <li><a href="#">Fehler melden</a></li>
       <li><a href="#">Profil Bearbeiten</a></li>
     </ul>

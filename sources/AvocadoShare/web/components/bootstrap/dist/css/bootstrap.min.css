@@ -480,6 +480,14 @@ hr {
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
+
+.tags {
+  border: 1px solid #ddd;
+  border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    padding-left: 10px;
+    padding-top: 10px;
+}
 .small, small {
     font-size: 80%;
     font-weight: 400;
@@ -1920,7 +1928,8 @@ a.btn.disabled, fieldset[disabled] a.btn {
     margin-left: 15%;
 }
 .btn-secondary12 {
-    margin-left: 1%;
+    margin-left: 42%;
+    margin-bottom: -20px;
 }
 
 .btn-secondary {
@@ -3659,6 +3668,7 @@ a.label:focus, a.label:hover {
 .list-group {
     margin-bottom: 0;
     padding-left: 0;
+
 }
 .list-group-item {
     background-color: #fff;
