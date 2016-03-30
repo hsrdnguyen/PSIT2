@@ -5,16 +5,16 @@
 <%@ page import="ch.avocado.share.controller.GroupBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    FormBuilder formBuilder = new FormBuilder("", (Group) request.getAttribute("Group"), Group.class, (Map<String, String>) request.getAttribute(GroupBean.ATTRIBUTE_FORM_ERRORS));
+    FormBuilder formBuilder = new FormBuilder((Group) request.getAttribute("Group"), Group.class, (Map<String, String>) request.getAttribute(GroupBean.ATTRIBUTE_FORM_ERRORS));
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("name", "Name");
 %>
-<h1>Create new Group</h1>
+<h1>Gruppe bearbeiten</h1>
 <%=formBuilder.getFormErrors()%>
 <%=formBuilder.getFormBegin("PATCH") %>
 <%=formBuilder.getLabelFor("name") %>
 <%=formBuilder.getInputFor("name") %>
 <%=formBuilder.getLabelFor("description") %>
 <%=formBuilder.getInputFor("description") %>
-<input type="submit" value="Gruppe erstellen" />
+<%=formBuilder.getSubmit("Gruppe speichern")%>
 <%=formBuilder.getFormEnd() %>

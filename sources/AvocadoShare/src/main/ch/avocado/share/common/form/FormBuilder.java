@@ -16,29 +16,29 @@ import java.util.Random;
 
 public class FormBuilder {
     private Map<String, String> formErrors;
-    private String path;
+    private String action;
     private String encodingType = null;
     private AccessControlObjectBase object;
     private Class<? extends AccessControlObjectBase> objectClass;
+    private String htmlInputClass = "form-control";
     private String idPrefix = null;
     private Map<String, String> readableFieldNames;
 
-    public FormBuilder(String path, Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
-        this(path, null, resourceClass, formErrors);
+    public FormBuilder(Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
+        this(null, resourceClass, formErrors);
     }
 
 
-    public FormBuilder(String path, AccessControlObjectBase object, Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
-        if (path == null) throw new IllegalArgumentException("path is null");
+    public FormBuilder(AccessControlObjectBase object, Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
         if (resourceClass == null) throw new IllegalArgumentException("objectClass is null");
         if (formErrors == null) {
             formErrors = new HashMap<>();
         }
-        this.path = path;
         this.object = object;
         this.objectClass = resourceClass;
         this.formErrors = formErrors;
         readableFieldNames = new HashMap<>();
+        action = null;
     }
 
     public void setReadableFieldName(String fieldName, String readableName) {
@@ -86,7 +86,9 @@ public class FormBuilder {
         if (object != null) {
             formContent += getInputFor("id", "hidden");
         }
-        form += formatAttribute("action", path);
+        if(getAction() != null) {
+            form += formatAttribute("action", getAction());
+        }
         form += formatAttribute("method", formMethod);
         if(getEncodingType() != null) {
             form += formatAttribute("enctype", getEncodingType());
@@ -177,12 +179,18 @@ public class FormBuilder {
     }
 
 
+    public String getSubmit(String value) {
+        // TODO: make configurable
+        return "<input type=\"submit\" class=\"btn btn-primary\" " + formatAttribute("value", value) + "/>";
+    }
+
     public String getSelectForModules(String fieldName, Module[] modules) {
         if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
         SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
         for(Module module: modules) {
             selectField.addChoice(module.getId(), module.getName());
         }
+        selectField.setHtmlClass(getHtmlInputClass());
         return selectField.toHtml();
     }
 
@@ -212,6 +220,7 @@ public class FormBuilder {
         }
 
         InputField inputField = new InputField(fieldName, getIdForFieldName(fieldName), type);
+        inputField.setHtmlClass(getHtmlInputClass());
         if (value != null) {
             inputField.setValue(value);
         }
@@ -227,5 +236,28 @@ public class FormBuilder {
 
     public void setEncodingType(String encodingType) {
         this.encodingType = encodingType;
+    }
+
+    /**
+     * @return The http action
+     */
+    public String getAction() {
+        return action;
+    }
+
+    /**
+     * @param action The http action
+     */
+    public void setAction(String action) {
+        if (action == null) throw new IllegalArgumentException("action is null");
+        this.action = action;
+    }
+
+    public String getHtmlInputClass() {
+        return htmlInputClass;
+    }
+
+    public void setHtmlInputClass(String htmlInputClass) {
+        this.htmlInputClass = htmlInputClass;
     }
 }

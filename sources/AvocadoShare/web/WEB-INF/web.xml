@@ -18,6 +18,11 @@
 
     <filter-mapping>
         <filter-name>HiddenFilesFilter</filter-name>
+        <url-pattern>/includes/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HiddenFilesFilter</filter-name>
         <url-pattern>/group/member_templates/*</url-pattern>
     </filter-mapping>
 

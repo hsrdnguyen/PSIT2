@@ -66,41 +66,41 @@
                                 <div id="navbar-login" class="dropdown-menu"
                                      aria-labelledby="navbar-login-toggle-button">
                                     <% if(userSession.isAuthenticated()) { %>
-                                        <a class="dropdown-item" href="#">Profile</a>
-                                        <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
+                                    <a class="dropdown-item" href="#">Profile</a>
+                                    <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>
-                                        <!-- login formular -->
-                                        <form action="<%=baseUrl%>/login" method="POST" action="#login">
-                                            <fieldset>
-                                                <div class="input-group dropdown-item" style="margin-bottom: 0">
-                                                    <label for="navbar-login-username" class="input-group-addon">
-                                                        <span class="octicon octicon-person"></span><span class="sr-only">Benutzername</span>
-                                                    </label>
-                                                    <input id="navbar-login-username" type="text" class="form-control"
-                                                           name="<%=LoginServlet.FIELD_EMAIL %>" placeholder="E-Mail"/>
-                                                </div>
-                                                <div class="input-group dropdown-item" style="margin-bottom: 0">
-                                                    <label for="navbar-login-password" class="input-group-addon">
-                                                        <span class="octicon octicon-lock"></span><span class="sr-only">Passwort</span>
-                                                    </label>
-                                                    <input id="navbar-login-password" type="password" class="form-control"
-                                                           name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
-                                                </div>
-                                            </fieldset>
-                                            <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>" name="<%=LoginServlet.FIELD_REDIRECT_TO%>" />
-                                            <div class="dropdown-item">
-                                                <input type="submit" class="btn btn-secondary" value="Anmelden" />
+                                    <!-- login formular -->
+                                    <form action="<%=baseUrl%>/login" method="POST" action="#login">
+                                        <fieldset>
+                                            <div class="input-group dropdown-item" style="margin-bottom: 0">
+                                                <label for="navbar-login-username" class="input-group-addon">
+                                                    <span class="octicon octicon-person"></span><span class="sr-only">Benutzername</span>
+                                                </label>
+                                                <input id="navbar-login-username" type="text" class="form-control"
+                                                       name="<%=LoginServlet.FIELD_EMAIL %>" placeholder="E-Mail"/>
                                             </div>
-                                        </form>
-                                        <div class="dropdown-divider"></div>
+                                            <div class="input-group dropdown-item" style="margin-bottom: 0">
+                                                <label for="navbar-login-password" class="input-group-addon">
+                                                    <span class="octicon octicon-lock"></span><span class="sr-only">Passwort</span>
+                                                </label>
+                                                <input id="navbar-login-password" type="password" class="form-control"
+                                                       name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
+                                            </div>
+                                        </fieldset>
+                                        <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>" name="<%=LoginServlet.FIELD_REDIRECT_TO%>" />
+                                        <div class="dropdown-item">
+                                            <input type="submit" class="btn btn-secondary" value="Anmelden" />
+                                        </div>
+                                    </form>
+                                    <div class="dropdown-divider"></div>
                                     <!--
                                         <a href="<%=baseUrl%>/indexlog.jsp">
                                             <span class="dropdown-item">Anmelden</span>
                                         </a>
                                         -->
-                                        <a href="<%=baseUrl%>/register.jsp">
-                                            <span class="dropdown-item">Registrieren</span>
-                                        </a>
+                                    <a href="<%=baseUrl%>/register.jsp">
+                                        <span class="dropdown-item">Registrieren</span>
+                                    </a>
                                     <% } %>
                                 </div>
                             </div>

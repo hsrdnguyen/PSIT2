@@ -2,7 +2,8 @@
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page import="ch.avocado.share.model.data.AccessLevelEnum" %>
-<%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %><%--
+<%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %>
+<%@ page import="ch.avocado.share.common.form.FormBuilder" %><%--
   Created by IntelliJ IDEA.
   User: coffeemakr
   Date: 24.03.16
@@ -28,14 +29,29 @@
     }
 %>
 <h2>Rechte bearbeiten</h2>
-<form method="post" action="members.jsp">
-    <input type="hidden" name="<%=ownerFieldName %>" value="<%=Encoder.forHtmlAttribute(id)%>" />
-    <input type="hidden" name="targetId" value="<%=target.getId()%>" />
-    <select name="level">
-        <option value="<%=AccessLevelEnum.NONE.toString()%>">Keine</option>
-        <option selected="selected" value="<%=AccessLevelEnum.READ.toString()%>">Lesen</option>
-        <option value="<%=AccessLevelEnum.WRITE.toString()%>">Lesen und Schreiben</option>
-    </select>
-    <input type="hidden" name="method" value="put" />
-    <input type="submit" value="Speichern" />
-</form>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="members.jsp">
+            <div class="form-group">
+                <label><%=type%>
+                </label>
+                <input type="text" class="form-control" value="<%=Encoder.forHtmlAttribute(name) %>"
+                       disabled="disabled"/>
+            </div>
+            <input type="hidden" name="<%=ownerFieldName %>" value="<%=Encoder.forHtmlAttribute(id)%>"/>
+            <input type="hidden" name="targetId" value="<%=target.getId()%>"/>
+            <div class="form-group">
+                <label>Zugriffsrecht</label>
+                <select name="level" class="form-control">
+                    <option value="<%=AccessLevelEnum.NONE.toString()%>">Keine</option>
+                    <option selected="selected" value="<%=AccessLevelEnum.READ.toString()%>">Lesen</option>
+                    <option value="<%=AccessLevelEnum.WRITE.toString()%>">Lesen und Schreiben</option>
+                </select>
+            </div>
+            <input type="hidden" name="method" value="put"/>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Speichern"/>
+            </div>
+        </form>
+    </div>
+</div>

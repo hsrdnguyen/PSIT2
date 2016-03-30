@@ -1,13 +1,7 @@
 <%@ page import="ch.avocado.share.model.data.User" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %><%--
-  Created by IntelliJ IDEA.
-  User: coffeemakr
-  Date: 24.03.16
-  Time: 15:44
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     User[] userMembers = (User[]) request.getAttribute("MemberUsers");

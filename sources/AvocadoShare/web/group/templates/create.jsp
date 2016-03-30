@@ -11,16 +11,26 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    FormBuilder formBuilder = new FormBuilder("", Group.class, (Map<String, String>) request.getAttribute(GroupBean.ATTRIBUTE_FORM_ERRORS));
+    FormBuilder formBuilder = new FormBuilder(Group.class, (Map<String, String>) request.getAttribute(GroupBean.ATTRIBUTE_FORM_ERRORS));
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("name", "Name");
 %>
 <h1>Create new Group</h1>
 <%=formBuilder.getFormErrors()%>
 <%=formBuilder.getFormBegin("POST") %>
-<%=formBuilder.getLabelFor("name") %>
-<%=formBuilder.getInputFor("name") %>
-<%=formBuilder.getLabelFor("description") %>
-<%=formBuilder.getInputFor("description") %>
-<input type="submit" value="Gruppe erstellen" />
-<%=formBuilder.getFormEnd() %>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <%=formBuilder.getLabelFor("name") %>
+            <%=formBuilder.getInputFor("name") %>
+        </div>
+        <div class="form-group">
+            <%=formBuilder.getLabelFor("description") %>
+            <%=formBuilder.getInputFor("description", "textarea") %>
+        </div>
+        <div class="form-group">
+            <%=formBuilder.getSubmit("Gruppe erstellen")%>
+            <%=formBuilder.getFormEnd() %>
+        </div>
+    </div>
+</div>

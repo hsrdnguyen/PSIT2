@@ -2,12 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
 <jsp:useBean id="forgottenPassword" class="ch.avocado.share.controller.ForgottenPasswordBean"/>
 <jsp:setProperty name="forgottenPassword" property="email"/>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<% // TODO: include header %>
+<jsp:include page="includes/header.jsp" />
 <%
     boolean showFormular = true;
     if (request.getMethod() == "POST") {
@@ -38,6 +33,4 @@
 
     </form>
 <% } %>
-<% // TODO: include footer %>
-</body>
-</html>
+<jsp:include page="includes/footer.jsp" />

@@ -8,10 +8,14 @@ abstract class FieldBase {
     protected String error;
     private String name;
     private String id;
+    private String htmlClass;
+    private String htmlInvalidClass;
 
     FieldBase(String name, String id) {
         setName(name);
         setId(id);
+        htmlClass = "";
+        htmlInvalidClass = "invalid";
     }
 
     public String getName() {
@@ -32,13 +36,36 @@ abstract class FieldBase {
         this.id = id;
     }
 
+    private String concatHtmlClasses(String first, String second) {
+        if(first == null) throw new IllegalArgumentException("first is null");
+        if(second == null) throw new IllegalArgumentException("second is null");
+        if(first.isEmpty()) {
+            return second;
+        } else if(second.isEmpty()) {
+            return first;
+        } else {
+            return first + " " + second;
+        }
+    }
+
+    private String getClassAttribute() {
+        String htmlClass = getHtmlClass();
+        if(getError() != null) {
+            htmlClass = concatHtmlClasses(htmlClass, getHtmlInvalidClass());
+        }
+        if(!htmlClass.isEmpty()) {
+            htmlClass = FormBuilder.formatAttribute("class", htmlClass);
+        }
+        return htmlClass;
+    }
+
     protected String getHtmlAttributes() {
         String attributes = FormBuilder.formatAttribute("name", getName());
         attributes += FormBuilder.formatAttribute("id", getId());
         if (getError() != null) {
-            attributes += FormBuilder.formatAttribute("class", "invalid");
             attributes += FormBuilder.formatAttribute("data-input-error", getError());
         }
+        attributes += getClassAttribute();
         return attributes;
     }
 
@@ -51,4 +78,21 @@ abstract class FieldBase {
     }
 
     abstract String toHtml();
+
+    public String getHtmlClass() {
+        return htmlClass;
+    }
+
+    public void setHtmlClass(String htmlClass) {
+        if(htmlClass == null) throw new IllegalArgumentException("htmlClass is null");
+        this.htmlClass = htmlClass;
+    }
+
+    public String getHtmlInvalidClass() {
+        return htmlInvalidClass;
+    }
+
+    public void setHtmlInvalidClass(String htmlInvalidClass) {
+        this.htmlInvalidClass = htmlInvalidClass;
+    }
 }

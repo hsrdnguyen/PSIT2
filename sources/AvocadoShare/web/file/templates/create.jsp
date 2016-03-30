@@ -8,7 +8,7 @@
 <%
     SecurityHandlerMock.use();
 
-    FormBuilder formBuilder = new FormBuilder("", (File) request.getAttribute("File"), File.class, (HashMap<String, String>) request.getAttribute(FileUploadBean.ATTRIBUTE_FORM_ERRORS));
+    FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (HashMap<String, String>) request.getAttribute(FileUploadBean.ATTRIBUTE_FORM_ERRORS));
     formBuilder.setEncodingType("multipart/form-data");
     formBuilder.setReadableFieldName("title", "Titel *");
     formBuilder.setReadableFieldName("description", "Beschreibung *");
@@ -18,7 +18,7 @@
 %>
 <h2>Dateien Hochladen</h2>
 <%=formBuilder.getFormErrors() %>
-<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
+<div>
     <p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p>
     <div id="xform" class="xform">
         <%= formBuilder.getFormBegin("post") %>
@@ -36,8 +36,7 @@
             <%=formBuilder.getLabelFor("description") %>
             <%=formBuilder.getInputFor("description", "textarea") %>
         </div>
-        <input class="btn-primary" type="submit" value="Hochladen"/>
-
+        <%=formBuilder.getSubmit("Datei erstellen")%>
         <%=formBuilder.getFormEnd() %>
     </div>
 </div>
