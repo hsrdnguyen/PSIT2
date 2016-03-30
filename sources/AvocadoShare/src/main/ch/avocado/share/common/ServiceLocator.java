@@ -35,7 +35,8 @@ public class ServiceLocator {
             //services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandlerMock());
             //services.put(IUserDataHandler.class, new UserDataHandlerMock());
             services.put(ISecurityHandler.class, new SecurityHandlerMock());
-            services.put(IFileDataHandler.class, new FileDataHandlerMock());
+            //services.put(IFileDataHandler.class, new FileDataHandlerMock());
+            services.put(IFileDataHandler.class, new FileDataHandler());
             services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
             services.put(IUserDataHandler.class, new UserDataHandler());
             services.put(IFileStorageHandler.class, new FileStorageHandlerMock());

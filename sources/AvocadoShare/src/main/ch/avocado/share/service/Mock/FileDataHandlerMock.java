@@ -44,4 +44,9 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     public boolean updateFile(File file) {
         return false;
     }
+
+    @Override
+    public boolean grantAccess(String fileId, String userId) {
+        return false;
+    }
 }
