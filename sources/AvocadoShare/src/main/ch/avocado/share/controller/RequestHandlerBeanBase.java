@@ -159,7 +159,9 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         }
         if (dispatcher != null) {
             try {
+                response.flushBuffer();
                 dispatcher.include(request, response);
+                response.flushBuffer();
                 // TODO: error handling
             } catch (IOException e) {
                 throw new RuntimeException(e.toString());

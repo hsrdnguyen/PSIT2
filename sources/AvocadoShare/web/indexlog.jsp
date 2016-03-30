@@ -57,15 +57,6 @@
             </button>
 
 
-
-            <a href="upload.jsp">
-
-
-
-              <button id="navbar-login-toggle-button" class="btn btn-secondary "
-              type="submit">Upload</button></a>
-
-
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
               <form action="index.jsp" method="POST" action="#login">
                 <fieldset>
