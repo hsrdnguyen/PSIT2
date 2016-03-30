@@ -130,7 +130,8 @@
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
         <a href="document_view2.jsp" class="list-group-item">
           <h4 class="list-group-item-heading">Analysis für Dummies
-            <form id="edit-doc" method="POST" action="#">
+            <form id="edit-doc" method="POST" action="requestAccess.jsp">
+                <input type="hidden" name="fileId" value="13"/>
                 <button id="navbar-login-toggle-button" class="btn  btn-secondary btn-secondary12 "
                           type="submit">Rechte anfordern</button>
             </form>

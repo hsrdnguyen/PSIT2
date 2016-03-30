@@ -49,8 +49,14 @@ public class FileAccessBean implements Serializable {
         if(fileId == null) throw new IllegalArgumentException("fileId is null");
 
         try {
+            IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+            IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
 
-            //TODO Grant access
+            File file = fileDataHandler.getFileById(fileId);
+
+            if (file.getOwnerId().equals(ouserId)){
+                fileDataHandler.grantAccess(fileId, ruserId);
+            }
 
             return true;
 

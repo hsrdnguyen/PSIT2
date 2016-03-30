@@ -42,5 +42,13 @@ public interface IFileDataHandler {
      */
     boolean updateFile(File file);
 
+    /**
+     * Grants the given user reading access on a file with the given id
+     * @param fileId file to give access to
+     * @param userId user to give access
+     * @return true if access was granted
+     */
+    boolean grantAccess(String fileId, String userId);
+
 }
 

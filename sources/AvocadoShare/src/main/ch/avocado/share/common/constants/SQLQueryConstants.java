@@ -12,6 +12,7 @@ public class SQLQueryConstants {
     //USER DATA QUERIES
     public static final String INSERT_USER_QUERY = "INSERT INTO avocado_share.identity(id, prename, surname, avatar, description, password) VALUES (?, ?, ?, ?, ?, ?)";
     public static final String SELECT_USER_QUERY = "SELECT id, prename, surname, avatar, description, password FROM  avocado_share.identity WHERE id=?";
+    public static final String SELECT_USER_BY_MAIL_QUERY = "SELECT id, prename, surname, avatar, description, password, address, verified FROM avocado_share.identity AS I JOIN avocado_share.email AS E ON I.id=E.identity_id WHERE E.address=?";
     public static final String UPDATE_USER_QUERY = "UPDATE avocado_share.identity SET prename=?, surname=?, avatar=?, description=?, password=? WHERE id=?";
     public static final String INSERT_MAIL_QUERY = "INSERT INTO avocado_share.email(identity_id, address, verified)VALUES (?, ?, FALSE)";
     public static final String SELECT_MAIL_QUERY = "SELECT identity_id, address, verified FROM avocado_share.email WHERE identity_id=?";
@@ -53,4 +54,10 @@ public class SQLQueryConstants {
     public static final String INSERT_FILE_QUERY = "INSERT INTO file (id, title, description, last_changed, path) (?, ?, ?, ?, ?)";
     public static final String DELETE_FILE_QUERY = "DELETE FROM file WHERE id = ?";
     public static final String UPDATE_FILE_QUERY = "UPDATE file SET title=?, description=?, last_changed=?, path=? WHERE id = ?";
+
+    //PERMISSION
+    public static final String INSERT_RIGHTS_QUERY = "INSERT INTO avocado_share.rights(object_id, owner_id, level) VALUES (?, ?, ?)";
+    public static final String SELECT_OWNER_OF_FILE_QUERY = "SELECT owner_id, object_id FROM avocado_share.ownership WHERE object_id=?";
+    public static final String SELECT_READING_ACCESS_LEVEL = "SELECT level FROM avocado_share.access_level WHERE readable=TRUE AND writable=FALSE AND manageable=FALSE";
+
 }

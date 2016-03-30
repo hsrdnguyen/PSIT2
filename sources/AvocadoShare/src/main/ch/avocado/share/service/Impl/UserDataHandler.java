@@ -1,6 +1,7 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.MailingConstants;
 import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
@@ -128,6 +129,33 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public User getUserByEmailAddress(String emailAddress) {
+        try {
+            PreparedStatement ps = db.getPreparedStatement(SQLQueryConstants.SELECT_USER_BY_MAIL_QUERY);
+            ps.setString(1, emailAddress);
+
+            ResultSet rs = db.executeQuery(ps);
+
+            if (rs.next())
+            {
+                EmailAddress mail = new EmailAddress(rs.getBoolean(8), rs.getString(7), null);
+
+                User tmp = new User(rs.getString(1),
+                        null,
+                        new Date(),
+                        0.0f,
+                        "",
+                        rs.getString(5),
+                        new UserPassword(rs.getString(6)),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        mail);
+                return tmp;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
