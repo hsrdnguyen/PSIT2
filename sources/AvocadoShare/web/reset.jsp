@@ -5,14 +5,8 @@
 <jsp:setProperty name="forgottenPassword" property="code"/>
 <jsp:setProperty name="forgottenPassword" property="password"/>
 <jsp:setProperty name="forgottenPassword" property="passwordConfirmation"/>
-
-<% // TODO: include header and footer %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
-<% if(request.getMethod() == "POST") {
+<%@include file="includes/header.jsp"%>
+<% if(request.getMethod().equals("POST")) {
     if(forgottenPassword.resetPassword()) { %>
         <div class="alert alert-success">
             Password erfolgreich zurückgesetzt.
@@ -38,5 +32,4 @@
         versuchen Sie es erneut.
     </div>
 <% }%>
-</body>
-</html>
+<%@include file="includes/footer.jsp"%>

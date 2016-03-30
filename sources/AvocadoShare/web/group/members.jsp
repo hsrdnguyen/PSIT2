@@ -10,13 +10,6 @@
 <jsp:useBean id="members" class="ch.avocado.share.controller.GroupMemberControlBean" />
 <jsp:setProperty name="members" property="*" />
 <%
-    GroupDataHandlerMock.use();
-    UserDataHandlerMock.use();
-    SecurityHandlerMock.use();
-    SecurityHandlerMock securityHandlerMock = (SecurityHandlerMock ) ServiceLocator.getService(ISecurityHandler.class);
-    UserSession userSession = new UserSession(request);
-    userSession.authenticate(securityHandlerMock.getUserWithAccess(AccessLevelEnum.OWNER));
-
     members.executeRequest(request, response);
     if(response.getStatus() == HttpServletResponse.SC_OK) {
         // redirect to group view

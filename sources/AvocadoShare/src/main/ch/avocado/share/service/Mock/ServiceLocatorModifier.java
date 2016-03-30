@@ -15,7 +15,7 @@ import java.util.Objects;
  * Helper class to modify
  */
 public class ServiceLocatorModifier {
-    public static <T> void setService(Class<T> clazz,  T locater) throws Exception {
+    public static <T> void setService(Class<T> clazz,  T locater) throws IllegalAccessException {
         final Field fields[] =  ServiceLocator.class.getDeclaredFields();
         Field servicesField = null;
         for (int i = 0; i < fields.length; ++i) {

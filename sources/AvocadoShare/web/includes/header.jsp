@@ -23,18 +23,31 @@
     <header>
         <nav class="navbar navbar-light bg-faded">
             <div class="container">
-                <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse"
+                <button class="navbar-toggler hidden-md-up" type="button" data-toggle="collapse"
                     data-target="#exCollapsingNavbar2">
                     &#9776;
                 </button>
-                <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
-                    <a href="index.jsp" class="navbar-brand" href="#">Avocado Share</a>
+                <div class="collapse navbar-toggleable-sm" id="exCollapsingNavbar2">
+                    <a class="navbar-brand" href="<%=baseUrl%>/index.jsp">
+                        Avocado Share
+                    </a>
                     <ul class="nav navbar-nav">
+                        <% if(userSession.isAuthenticated()) { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%=baseUrl%>/group/">Gruppen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%=baseUrl%>/module/">Module</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%=baseUrl%>/file/">Dateien</a>
+                        </li>
+                        <% } %>
                         <!-- Links for mobile users -->
-                        <li class="nav-item hidden-sm-up">
+                        <li class="nav-item hidden-md-up">
                             <a class="nav-link" href="#login">Login</a>
                         </li>
-                        <li class="nav-item hidden-sm-up">
+                        <li class="nav-item hidden-md-up">
                             <a class="nav-link" href="#register">Register</a>
                         </li>
                         <!-- Navbar Search -->
@@ -55,7 +68,7 @@
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->
-                        <li class="nav-item hidden-xs-down pull-md-right">
+                        <li class="nav-item hidden-sm-down pull-md-right">
                             <div class="dropdown">
                                 <!-- User button -->
                                 <button class="btn btn-secondary dropdown-toggle"

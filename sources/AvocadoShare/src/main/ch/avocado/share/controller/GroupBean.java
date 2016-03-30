@@ -95,7 +95,10 @@ public class GroupBean extends ResourceBean<Group> {
     @Override
     public Group[] index() throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
-        return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Group.class, getAccessingUser(), AccessLevelEnum.READ);
+        if(getAccessingUser() != null) {
+            return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Group.class, getAccessingUser(), AccessLevelEnum.READ);
+        }
+        return new Group[0];
     }
 
     @Override

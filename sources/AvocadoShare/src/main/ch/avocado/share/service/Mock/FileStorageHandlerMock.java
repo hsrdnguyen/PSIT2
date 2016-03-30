@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Mock;
 
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.Impl.FileStorageHandler;
 
@@ -43,5 +44,11 @@ public class FileStorageHandlerMock extends FileStorageHandler implements IFileS
      */
     public void setTempDirectory(String tempDirectory) {
         this.tempDirectory = tempDirectory;
+    }
+
+    public static void use() throws Exception {
+        if(!ServiceLocator.getService(IFileStorageHandler.class).getClass().equals(FileStorageHandlerMock.class)) {
+            ServiceLocatorModifier.setService(IFileStorageHandler.class, new FileStorageHandlerMock());
+        }
     }
 }

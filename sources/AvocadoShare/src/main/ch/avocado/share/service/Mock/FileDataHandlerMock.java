@@ -1,6 +1,8 @@
 package ch.avocado.share.service.Mock;
 
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.File;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 
 /**
@@ -48,5 +50,11 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     @Override
     public boolean grantAccess(String fileId, String userId) {
         return false;
+    }
+
+    public static void use() throws Exception {
+        if(!ServiceLocator.getService(IFileDataHandler.class).getClass().equals(FileDataHandlerMock.class)) {
+            ServiceLocatorModifier.setService(IFileDataHandler.class, new FileDataHandlerMock());
+        }
     }
 }

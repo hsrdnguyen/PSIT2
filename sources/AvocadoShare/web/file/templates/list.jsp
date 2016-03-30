@@ -8,7 +8,10 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <% File[] files = (File[]) request.getAttribute("Files"); %>
-<h2>Liste aller Dateien</h2>
-<% for(File file: files) { %>
-    <h3><%=Encoder.forHtml(file.getTitle())%></h3>
+<h2>Meine Dateien</h2>
+<%
+    for(File file: files) {
+        String title = Encoder.forHtml(file.getTitle());
+%>
+    <h3><%=title %></h3>
 <% } %>

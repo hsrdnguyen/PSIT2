@@ -10,7 +10,7 @@ abstract class FieldBase {
     private String id;
     private String htmlClass;
     private String htmlInvalidClass;
-
+    private boolean required = true;
     FieldBase(String name, String id) {
         setName(name);
         setId(id);
@@ -66,6 +66,9 @@ abstract class FieldBase {
             attributes += FormBuilder.formatAttribute("data-input-error", getError());
         }
         attributes += getClassAttribute();
+        if(isRequired()) {
+            attributes += "required ";
+        }
         return attributes;
     }
 
@@ -94,5 +97,13 @@ abstract class FieldBase {
 
     public void setHtmlInvalidClass(String htmlInvalidClass) {
         this.htmlInvalidClass = htmlInvalidClass;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
     }
 }
