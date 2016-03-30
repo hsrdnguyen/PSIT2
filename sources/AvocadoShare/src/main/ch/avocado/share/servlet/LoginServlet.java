@@ -32,11 +32,14 @@ public class LoginServlet extends HttpServlet {
     static final public String LOGIN_ERROR = "login_error";
     static final public String FIELD_EMAIL = "email";
     static final public String FIELD_PASSWORD = "password";
+    static final public String FIELD_REDIRECT_TO = "redirect_to";
 
     static private final String COOKIE_CHECK_NAME = "are_cookies_enabled";
     static private final String COOKIE_CHECK_VALUE = "yes! :)";
 
     private static final long serialVersionUID = 5348852043943606854L;
+
+
 
 
     private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) {
@@ -79,6 +82,18 @@ public class LoginServlet extends HttpServlet {
         renderLogin(request, response);
     }
 
+    private void redirectTo(String url, HttpServletResponse response) {
+        if(url == null) throw  new IllegalArgumentException("url is null");
+        if(response == null) throw new IllegalArgumentException("response is null");
+        if((url.charAt(0) == '/')) {
+            try {
+                response.sendRedirect(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, java.io.IOException {
@@ -106,6 +121,10 @@ public class LoginServlet extends HttpServlet {
                 if (user != null) {
                     UserSession userSession = new UserSession(request);
                     userSession.authenticate(user);
+                    String redirectUrl= request.getParameter(FIELD_REDIRECT_TO);
+                    if(redirectUrl != null) {
+                        redirectTo(redirectUrl, response);
+                    }
                 } else {
                     request.setAttribute(LOGIN_ERROR, "Passwort oder E-Mail-Adresse stimmt nicht.");
                     renderLogin(request, response);

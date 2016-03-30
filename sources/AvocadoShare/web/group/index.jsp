@@ -7,7 +7,6 @@
 <%@ page import="ch.avocado.share.controller.TemplateType" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.ServiceLocator" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="groupBean" class="ch.avocado.share.controller.GroupBean" />
 <jsp:useBean id="groupMemberBean" class="ch.avocado.share.controller.GroupMemberControlBean" />
 <jsp:setProperty name="groupBean" property="*" />
@@ -15,6 +14,7 @@
 <jsp:setProperty name="groupMemberBean" property="groupId"/>
 <jsp:setProperty name="groupMemberBean" property="userId"/>
 <%
+    request.getRequestDispatcher("../includes/header.jsp").include(request, response);
     GroupDataHandlerMock.use();
     UserDataHandlerMock.use();
     SecurityHandlerMock.use();
@@ -32,4 +32,5 @@
         groupMemberBean.setMethod("GET");
         groupMemberBean.renderRequest(request, response);
     }
+    request.getRequestDispatcher("../includes/footer.jsp").include(request, response);
 %>
