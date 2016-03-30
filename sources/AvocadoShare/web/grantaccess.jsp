@@ -6,11 +6,11 @@
 <jsp:include page="includes/header.jsp" />
 <% if(accessBean.grantAccess()) { %>
 <div class="alert alert-success">
-    Der User wurde berechtigt.
+    Der Benutzer wurde berechtigt.
 </div>
 <% } else { %>
 <div class="alert alert-danger">
-    Der User konnte leider nicht berechtigt werden.
+    Der Benutzer konnte leider nicht berechtigt werden.
 </div>
 <% } %>
 <jsp:include page="includes/footer.jsp" />
