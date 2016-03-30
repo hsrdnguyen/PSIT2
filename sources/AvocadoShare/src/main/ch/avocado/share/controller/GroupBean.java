@@ -1,6 +1,7 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.exceptions.HttpBeanException;
@@ -10,7 +11,6 @@ import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -18,20 +18,13 @@ import java.util.Date;
  */
 public class GroupBean extends ResourceBean<Group> {
 
-    private static final String ERROR_NO_NAME = "Bitte einen Namen eingeben.";
-    private static final String ERROR_NO_DESCRIPTION = "Bitte eine Beschreibung angeben.";
-    private static final String ERROR_INTERNAL_SERVER = "Interner Server-Fehler.";
-    private static final String ERROR_GROUP_NAME_ALREADY_EXISTS = "Eine Gruppe mit diesem Namen existiert bereits.";
-    public static final String ERROR_NO_SUCH_GROUP = "Gruppe existiert nicht.";
-    public static final String ERROR_DATABASE = "Gruppe konnte nicht in der Datenbank gespeichert werden.";
-
     private String name;
     private String description;
 
 
     private void checkNameNotEmpty() {
         if (name == null || name.trim().isEmpty()) {
-            addFormError("name", ERROR_NO_NAME);
+            addFormError("name", ErrorMessageConstants.ERROR_NO_NAME);
         } else {
             name = name.trim();
         }
@@ -40,13 +33,13 @@ public class GroupBean extends ResourceBean<Group> {
     private void checkNameIsUnique() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
         if (groupDataHandler.getGroupByName(name) != null) {
-            addFormError("name", ERROR_GROUP_NAME_ALREADY_EXISTS);
+            addFormError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
         }
     }
 
     private void checkParameterDescription() {
         if (description == null || description.trim().isEmpty()) {
-            addFormError("description", ERROR_NO_DESCRIPTION);
+            addFormError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
         } else {
             description = description.trim();
         }
@@ -70,11 +63,11 @@ public class GroupBean extends ResourceBean<Group> {
             Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name);
             String newGroupId = groupDataHandler.addGroup(group);
             if (newGroupId == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
             }
             group = groupDataHandler.getGroup(newGroupId);
             if (group == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
             }
             return group;
         }
@@ -94,7 +87,7 @@ public class GroupBean extends ResourceBean<Group> {
         }
 
         if (group == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_NO_SUCH_GROUP);
+            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
         }
         return group;
     }
@@ -120,7 +113,7 @@ public class GroupBean extends ResourceBean<Group> {
             group.setName(name);
             group.setDescription(description);
             if (!groupDataHandler.updateGroup(group)) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
             }
         }
     }
@@ -129,7 +122,7 @@ public class GroupBean extends ResourceBean<Group> {
     public void destroy() throws HttpBeanException {
         IGroupDataHandler groupDataHandler = getGroupDataHandler();
         if (!groupDataHandler.deleteGroup(getObject())) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_DATABASE);
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
         }
     }
 
@@ -174,7 +167,7 @@ public class GroupBean extends ResourceBean<Group> {
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_INTERNAL_SERVER);
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INTERNAL_SERVER);
         }
         return userDataHandler;
     }
@@ -184,7 +177,7 @@ public class GroupBean extends ResourceBean<Group> {
         try {
             groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_INTERNAL_SERVER);
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INTERNAL_SERVER);
         }
         return groupDataHandler;
     }

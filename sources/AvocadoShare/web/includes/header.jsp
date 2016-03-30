@@ -24,7 +24,7 @@
         <nav class="navbar navbar-light bg-faded">
             <div class="container">
                 <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse"
-                        data-target="#exCollapsingNavbar2">
+                    data-target="#exCollapsingNavbar2">
                     &#9776;
                 </button>
                 <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
@@ -51,7 +51,7 @@
 
                         <% if(userSession.isAuthenticated()) { %>
                         <li class="nav-item pull-md-right">
-                            <a href="upload.jsp" class="btn btn-secondary">Upload</a>
+                            <a href="<%=baseUrl%>/file/?action=create" class="btn btn-secondary">Upload</a>
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->

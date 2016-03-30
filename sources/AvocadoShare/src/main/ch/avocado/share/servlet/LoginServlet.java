@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.Impl.UserDataHandler;
 
 /**
  * @author coffeemakr
@@ -38,8 +38,6 @@ public class LoginServlet extends HttpServlet {
     static private final String COOKIE_CHECK_VALUE = "yes! :)";
 
     private static final long serialVersionUID = 5348852043943606854L;
-
-
 
 
     private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) {
@@ -103,30 +101,31 @@ public class LoginServlet extends HttpServlet {
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            request.setAttribute(LOGIN_ERROR, "Interner Fehler");
+            request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_SECURITY_HANDLER);
             renderLogin(request, response);
         }
         if (userDataHandler != null) {
             if (email == null) {
-                request.setAttribute(LOGIN_ERROR, "Kein Passwort eingegeben.");
+                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_EMAIL);
                 renderLogin(request, response);
             } else if (password == null) {
-                request.setAttribute(LOGIN_ERROR, "Kein Passwort eingegeben.");
+                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_PASSWORD);
                 renderLogin(request, response);
             } else {
                 if (!checkTestCookie(request)) {
-                    request.setAttribute(LOGIN_ERROR, "Cookies scheinen deaktiviert zu sein. Bitte überprüfen Sie das.");
+                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_COOKIES_DISABLED);
                 }
                 User user = getUserWithLogin(userDataHandler, email, password);
                 if (user != null) {
                     UserSession userSession = new UserSession(request);
                     userSession.authenticate(user);
                     String redirectUrl= request.getParameter(FIELD_REDIRECT_TO);
-                    if(redirectUrl != null) {
-                        redirectTo(redirectUrl, response);
+                    if(redirectUrl == null) {
+                        redirectUrl = request.getContextPath();
                     }
+                    redirectTo(redirectUrl, response);
                 } else {
-                    request.setAttribute(LOGIN_ERROR, "Passwort oder E-Mail-Adresse stimmt nicht.");
+                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_WRONG_PASSWORD);
                     renderLogin(request, response);
                 }
             }

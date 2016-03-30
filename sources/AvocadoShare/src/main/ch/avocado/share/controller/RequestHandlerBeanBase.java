@@ -1,6 +1,7 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.User;
@@ -52,9 +53,6 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     private String method;
     private ISecurityHandler securityHandler = null;
     protected final String ERROR_METHOD_NOT_ALLOWED_FORMAT = "Methode nicht erlaubt: %s";
-    protected static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
-    protected static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
-    protected static final String ERROR_NOT_LOGGED_IN = "Sie müssen angemeldet sein für diese Aktion.";
     private TemplateType rendererTemplateType;
 
     private void throwMethodNotAllowed(String method) throws HttpBeanException {
@@ -247,7 +245,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      */
     protected void ensureIsAuthenticated() throws HttpBeanException {
         if (getAccessingUser() == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ResourceBean.ERROR_NOT_LOGGED_IN);
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_NOT_LOGGED_IN);
         }
     }
 
@@ -269,7 +267,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
             grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
         }
         if (!grantedAccessLevel.containsLevel(requiredLevel)) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ResourceBean.ERROR_ACCESS_DENIED);
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_ACCESS_DENIED);
         }
     }
 

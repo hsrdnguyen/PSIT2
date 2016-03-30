@@ -1,6 +1,7 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.PasswordResetVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
@@ -14,15 +15,6 @@ import java.util.Date;
  * Created by coffeemakr on 21.03.16.
  */
 public class ForgottenPasswordBean implements Serializable {
-    private static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage.";
-    private static final String ERROR_EMPTY_PASSWORD = "Passwort darf nicht leer sein.";
-    private static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Passwort-Bestätigung darf nicht leer sein.";
-    private static final String ERROR_INTERNAL_SERVER = "Interner Server Fehler.";
-    private static final String ERROR_INVALID_CODE_OR_EMAIL = "Bestätigungscode oder E-Mail-Adresse stimmen nicht.";
-    private static final String ERROR_PASSWORDS_DO_NOT_MATCH = "Passwörter stimmen nicht überein.";
-    private static final String ERROR_SEND_MAIL_FAILED = "Sender des E-Mail fehlgeschlagen.";
-    public static final String ERROR_GENERAL_FAILURE = "Password zurücksetzen schlug fehl.";
-    public static final String ERROR_EMPTY_EMAIL = "Bitte geben Sie ihre E-Mail-Adresse an.";
     private String email;
     private String code;
     private String password;
@@ -51,14 +43,14 @@ public class ForgottenPasswordBean implements Serializable {
         IUserDataHandler userDataHandler;
         User user;
         if (email == null || email.isEmpty()) {
-            errorMessage = ERROR_EMPTY_EMAIL;
+            errorMessage = ErrorMessageConstants.ERROR_EMPTY_EMAIL;
             return false;
         }
         try {
             mailingService = ServiceLocator.getService(IMailingService.class);
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            errorMessage = ERROR_INTERNAL_SERVER;
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return false;
         }
         user = userDataHandler.getUserByEmailAddress(email);
@@ -69,7 +61,7 @@ public class ForgottenPasswordBean implements Serializable {
         PasswordResetVerification passwordResetVerification = new PasswordResetVerification(expiry);
         user.getPassword().setPasswordResetVerification(passwordResetVerification);
         if (!mailingService.sendPasswordResetEmail(user)) {
-            errorMessage = ERROR_SEND_MAIL_FAILED;
+            errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
             return false;
         }
         userDataHandler.updateUser(user);
@@ -104,12 +96,12 @@ public class ForgottenPasswordBean implements Serializable {
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            this.errorMessage = ERROR_INTERNAL_SERVER;
+            this.errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;
         }
         User user = userDataHandler.getUserByEmailAddress(this.email);
         if (user == null) {
-            this.errorMessage = ERROR_INVALID_CODE_OR_EMAIL;
+            this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
             return null;
         }
         return user;
@@ -123,19 +115,19 @@ public class ForgottenPasswordBean implements Serializable {
      */
     public boolean resetPassword() {
         if (password == null || password.isEmpty()) {
-            errorMessage = ERROR_EMPTY_PASSWORD;
+            errorMessage = ErrorMessageConstants.ERROR_EMPTY_PASSWORD;
         } else if (passwordConfirmation == null || passwordConfirmation.isEmpty()) {
-            errorMessage = ERROR_EMPTY_PASSWORD_CONFIRMATION;
+            errorMessage = ErrorMessageConstants.ERROR_EMPTY_PASSWORD_CONFIRMATION;
         } else if (email == null || email.isEmpty() || code == null || code.isEmpty()) {
-            errorMessage = ERROR_INVALID_CODE_OR_EMAIL;
+            errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
         } else if (!password.equals(passwordConfirmation)) {
-            errorMessage = ERROR_PASSWORDS_DO_NOT_MATCH;
+            errorMessage = ErrorMessageConstants.ERROR_PASSWORDS_DO_NOT_MATCH;
         } else {
             User user = getUser();
             if (user != null && user.resetPassword(password, code)) {
                 return true;
             }else {
-                errorMessage = ERROR_GENERAL_FAILURE;
+                errorMessage = ErrorMessageConstants.ERROR_GENERAL_FAILURE;
             }
         }
         return false;
