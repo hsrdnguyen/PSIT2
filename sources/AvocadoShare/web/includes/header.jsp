@@ -89,9 +89,10 @@
                                             </fieldset>
                                             <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>" name="<%=LoginServlet.FIELD_REDIRECT_TO%>" />
                                             <div class="dropdown-item">
-                                            <input type="submit" class="btn btn-secondary" value="Anmelden" />
+                                                <input type="submit" class="btn btn-secondary" value="Anmelden" />
                                             </div>
                                         </form>
+                                        <div class="dropdown-divider"></div>
                                     <!--
                                         <a href="<%=baseUrl%>/indexlog.jsp">
                                             <span class="dropdown-item">Anmelden</span>
