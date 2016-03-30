@@ -4,7 +4,9 @@
 <jsp:setProperty name="accessBean" property="ruserId" />
 <jsp:setProperty name="accessBean" property="ouserId" />
 <jsp:include page="includes/header.jsp" />
-<% if(accessBean.grantAccess()) { %>
+<% if(accessBean.grantAccess()) {
+// TODO @bergmsas check access of user.
+%>
 <div class="alert alert-success">
     Der Benutzer wurde berechtigt.
 </div>
