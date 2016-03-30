@@ -17,6 +17,11 @@ class MockObject extends AccessControlObjectBase {
     public MockObject(String id) {
         super(id, new ArrayList<Category>(), new Date(System.currentTimeMillis()), 0, "User1", "Description");
     }
+
+    @Override
+    public String getReadableName() {
+        return "MockObject";
+    }
 }
 
 class MockObjectBean extends ResourceBean<MockObject> {

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean id="fileBean" class="ch.avocado.share.controller.FileUploadBean"/>
+<jsp:useBean id="fileBean" class="ch.avocado.share.controller.FileBean"/>
 <jsp:setProperty name="fileBean" property="id"/>
 <jsp:setProperty name="fileBean" property="moduleId"/>
 <jsp:setProperty name="fileBean" property="description" />

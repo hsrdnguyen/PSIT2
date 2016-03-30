@@ -44,7 +44,7 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
 
     @Override
     public boolean updateFile(File file) {
-        return false;
+        return update(file);
     }
 
     @Override

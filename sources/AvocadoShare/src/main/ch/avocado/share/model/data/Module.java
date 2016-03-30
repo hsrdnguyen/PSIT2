@@ -23,4 +23,10 @@ public class Module extends AccessControlObjectBase {
         if (name == null) throw new IllegalArgumentException("name is null");
         this.name = name;
     }
+
+
+    @Override
+    public String getReadableName() {
+        return getName();
+    }
 }

@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * Created by bergm on 21/03/2016.
  */
-public class FileUploadBean extends ResourceBean<File> {
+public class FileBean extends ResourceBean<File> {
 
     private String title;
     private String description;
@@ -46,7 +47,7 @@ public class FileUploadBean extends ResourceBean<File> {
 
     private void parseMultipartFormData(HttpServletRequest request) throws HttpBeanException {
         if (request == null) throw new IllegalArgumentException("request is null");
-        if (!request.getContentType().contains("multipart/form-data")) {
+        if (request.getContentType() == null || !request.getContentType().contains("multipart/form-data")) {
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ErrorMessageConstants.ERROR_CONTENT_TYPE_NOT_ALLOWED);
         }
         List<FileItem> items;
@@ -67,6 +68,15 @@ public class FileUploadBean extends ResourceBean<File> {
                     case "moduleId":
                         setModuleId(item.getString());
                         break;
+                    case "method":
+                        setMethod(item.getString());
+                        break;
+                    case "id":
+                        setId(item.getString());
+                        break;
+                    case "action":
+                        setAction(item.getString());
+                        break;
                 }
             } else {
                 setUploadedFileItem(item);
@@ -75,22 +85,18 @@ public class FileUploadBean extends ResourceBean<File> {
     }
 
     @Override
-    public TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
-        parseMultipartFormData(request);
-        return super.doPost(request);
+    public TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) {
+        if(request.getMethod().equalsIgnoreCase("POST") && request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
+            try {
+                parseMultipartFormData(request);
+            } catch (HttpBeanException e) {
+                sendErrorFromHttpBeanException(e, response);
+                return null;
+            }
+        }
+        return super.executeRequest(request, response);
     }
 
-    @Override
-    public TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
-        parseMultipartFormData(request);
-        return super.doPatch(request);
-    }
-
-    @Override
-    public TemplateType doPut(HttpServletRequest request) throws HttpBeanException {
-        parseMultipartFormData(request);
-        return super.doPut(request);
-    }
 
     private File newFileModel(String path) {
         File file = FileFactory.getDefaultFile();
@@ -163,19 +169,37 @@ public class FileUploadBean extends ResourceBean<File> {
     @Override
     public void update() throws HttpBeanException {
         IFileDataHandler fileDataHandler = getFileDataHandler();
-        checkParameterTitle();
-        checkParameterDescription();
-        checkParameterModuleId();
-        //checkParameterAuthor();
-        if (!hasErrors()) {
-            File file = getObject();
-            file.setTitle(getTitle());
-            file.setDescription(getDescription());
-            file.setCategories(getCategories());
-            if(getUploadedFileItem() != null) {
-                String path = uploadFile(getUploadedFileItem());
-                file.setPath(path);
+        File file = getObject();
+        if(getTitle() != null) {
+            checkParameterTitle();
+            if(!hasErrors()) {
+                file.setTitle(getTitle());
             }
+        }
+        if(getDescription() != null) {
+            checkParameterDescription();
+            if(!hasErrors()) {
+                file.setDescription(getDescription());
+            }
+        }
+
+        if(getModuleId() != null) {
+            checkParameterModuleId();
+            if(!hasErrors()) {
+                file.setModuleId(getModuleId());
+            }
+        }
+
+        if(getCategories() != null) {
+            if(!hasErrors()) {
+                file.setCategories(getCategories());
+            }
+        }
+        if(getUploadedFileItem() != null && !hasErrors()) {
+            String path = uploadFile(getUploadedFileItem());
+            file.setPath(path);
+        }
+        if(!hasErrors()) {
             if (!fileDataHandler.updateFile(getObject())) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
             }

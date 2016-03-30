@@ -1,5 +1,7 @@
 package ch.avocado.share.common.form;
 
+import ch.avocado.share.common.Encoder;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,11 +20,11 @@ class SelectField extends FieldBase {
     }
 
     private String getHtmlOption(String name, String value, boolean selected) {
-        String option = "\t<option " + FormBuilder.formatAttribute(name, value);
+        String option = "\t<option " + FormBuilder.formatAttribute("value", value);
         if(selected) {
             option += "selected=\"selected\"";
         }
-        option += ">" + value + "</option>\n";
+        option += ">" + Encoder.forHtml(name)+ "</option>\n";
         return option;
     }
 

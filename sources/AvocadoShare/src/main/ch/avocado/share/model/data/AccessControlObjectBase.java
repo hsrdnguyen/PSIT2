@@ -86,4 +86,6 @@ public abstract class AccessControlObjectBase {
         this.dirty = dirty;
     }
 
+    public abstract String getReadableName();
+
 }

@@ -1,42 +1,44 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ch.avocado.share.common.form.FormBuilder" %>
-<%@ page import="ch.avocado.share.model.data.File" %>
-<%@ page import="ch.avocado.share.controller.FileUploadBean" %>
-<%@ page import="java.util.HashMap" %>
 <%@ page import="ch.avocado.share.model.data.Module" %>
-<%@ page import="ch.avocado.share.service.Mock.SecurityHandlerMock" %>
+<%@ page import="ch.avocado.share.controller.FileBean" %>
+<%@ page import="ch.avocado.share.model.data.File" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    SecurityHandlerMock.use();
-
-    FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (HashMap<String, String>) request.getAttribute(FileUploadBean.ATTRIBUTE_FORM_ERRORS));
+    FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (Map<String, String>) request.getAttribute(FileBean.ATTRIBUTE_FORM_ERRORS));
     formBuilder.setEncodingType("multipart/form-data");
-    formBuilder.setReadableFieldName("title", "Titel *");
-    formBuilder.setReadableFieldName("description", "Beschreibung *");
+    formBuilder.setReadableFieldName("title", "Titel");
+    formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("moduleId", "Modul auswählen");
+    formBuilder.setReadableFieldName("file", "Datei auswählen");
 
-    Module[] userModules = FileUploadBean.getModuleForAccessingUser(request);
+    Module[] userModules = FileBean.getModuleForAccessingUser(request);
 %>
-<h2>Dateien Hochladen</h2>
+<h2>Dateien erstellen</h2>
 <%=formBuilder.getFormErrors() %>
 <div>
-    <p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p>
-    <div id="xform" class="xform">
+    <p class="text-block">Es müssen alle Felder ausfüllt werden.</p>
+    <div>
         <%= formBuilder.getFormBegin("post") %>
-        <div class="form-group" id="formular-anrede">
+        <div class="form-group">
             <%=formBuilder.getLabelFor("moduleId") %>
-            <%=formBuilder.getSelectForModules("moduleId", userModules) %>
+            <%=formBuilder.getSelectFor("moduleId", userModules) %>
         </div>
-        <input type="file" name="file" size="50"/>
-        <div class="form-group" id="formular-title">
+        <div class="form-group">
+            <%=formBuilder.getLabelFor("file")%>
+            <input class="form-control" type="file" name="file" size="50"/>
+        </div>
+        <div class="form-group">
             <%=formBuilder.getLabelFor("title") %>
             <%=formBuilder.getInputFor("title") %>
         </div>
 
-        <div class="form-group" id="formular-description">
+        <div class="form-group">
             <%=formBuilder.getLabelFor("description") %>
             <%=formBuilder.getInputFor("description", "textarea") %>
         </div>
-        <%=formBuilder.getSubmit("Datei erstellen")%>
+        <%=formBuilder.getSubmit("Speichern")%>
         <%=formBuilder.getFormEnd() %>
     </div>
 </div>

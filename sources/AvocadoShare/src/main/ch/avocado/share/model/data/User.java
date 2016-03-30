@@ -95,4 +95,8 @@ public class User extends AccessIdentity {
     }
 
 
+    @Override
+    public String getReadableName() {
+        return getFullName();
+    }
 }

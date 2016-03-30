@@ -85,4 +85,9 @@ public class File extends AccessControlObjectBase {
         }
         this.moduleId = moduleId;
     }
+
+    @Override
+    public String getReadableName() {
+        return getTitle();
+    }
 }

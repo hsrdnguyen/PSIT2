@@ -178,17 +178,26 @@ public class FormBuilder {
         return name + "=\"" + Encoder.forHtmlAttribute(value) + "\" ";
     }
 
-
     public String getSubmit(String value) {
-        // TODO: make configurable
-        return "<input type=\"submit\" class=\"btn btn-primary\" " + formatAttribute("value", value) + "/>";
+        return getSubmit(value, null);
     }
 
-    public String getSelectForModules(String fieldName, Module[] modules) {
+    public String getSubmit(String value, String htmlClass) {
+        // TODO: make configurable
+        return "<input type=\"submit\" class=\"btn btn-primary "+ Encoder.forHtmlAttribute(htmlClass) + "\" " + formatAttribute("value", value) + "/>";
+    }
+
+
+    public String getSelectFor(String fieldName, AccessControlObjectBase[] objects) throws FormBuilderException {
         if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
         SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
-        for(Module module: modules) {
-            selectField.addChoice(module.getId(), module.getName());
+        if(object != null) {
+            Method getter = getGetterMethod(fieldName);
+            String value = getValueFromGetter(getter);
+            selectField.setSelectedValue(value);
+        }
+        for(AccessControlObjectBase object: objects) {
+            selectField.addChoice(object.getReadableName(), object.getId());
         }
         selectField.setHtmlClass(getHtmlInputClass());
         return selectField.toHtml();
@@ -210,11 +219,7 @@ public class FormBuilder {
             }
             if (value == null) {
                 if (object != null && getter != null && !type.equals("password")) {
-                    try {
-                        value = getter.invoke(object).toString();
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new FormBuilderException(e.getMessage());
-                    }
+                    value = getValueFromGetter(getter);
                 }
             }
         }
@@ -228,6 +233,18 @@ public class FormBuilder {
             inputField.setError(formErrors.get(fieldName));
         }
         return inputField.toHtml();
+    }
+
+    private String getValueFromGetter(Method getter) throws FormBuilderException {
+        if(getter == null) throw new IllegalArgumentException("getter is null");
+        if(object == null) throw new IllegalStateException("object is null");
+        String value;
+        try {
+            value = getter.invoke(object).toString();
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new FormBuilderException(e.getMessage());
+        }
+        return value;
     }
 
     public String getEncodingType() {
