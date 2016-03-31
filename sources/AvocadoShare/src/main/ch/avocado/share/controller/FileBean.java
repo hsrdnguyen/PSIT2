@@ -16,6 +16,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -392,7 +395,19 @@ public class FileBean extends ResourceBean<File> {
         this.moduleId = moduleId;
     }
 
-    public void download(File file, HttpServletResponse response) throws HttpBeanException{
+    static public String getExtension(String mimeTypeString) {
+        // TODO: store extension in database
+        TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
+        MimeType mimeType;
+        try {
+            mimeType = tikaConfig.getMimeRepository().getRegisteredMimeType(mimeTypeString);
+        } catch (MimeTypeException e) {
+            return ".bin";
+        }
+        return mimeType.getExtension();
+    }
+
+    public void download(File file, HttpServletResponse response, boolean attached) throws HttpBeanException{
         byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
         if(!hasIdentifier()) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
@@ -408,8 +423,9 @@ public class FileBean extends ResourceBean<File> {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
 
-            response.setHeader("Content-Type", mimeType);
-
+            if(attached) {
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getTitle() + getExtension(mimeType) + "\"");
+            }
             try {
                 OutputStream outputStream = response.getOutputStream();
                 int bytesRead;

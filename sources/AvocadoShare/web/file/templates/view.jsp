@@ -20,4 +20,4 @@
 <%=previewGenerator.getPreview() %>
 </div>
 <a class="btn btn-primary" href="?action=edit&id=<%=id %>">Edit</a>
-<a class="btn btn-primary" href="/download?id=<%=id %>" target="_blank">Download</a>
+<a class="btn btn-primary" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>
