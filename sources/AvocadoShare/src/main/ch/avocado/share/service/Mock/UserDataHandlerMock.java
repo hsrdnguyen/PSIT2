@@ -1,10 +1,7 @@
 package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.data.EmailAddress;
-import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
 
 import java.sql.SQLException;
@@ -82,6 +79,16 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     @Override
     public boolean verifyUser(User user) {
         return false;
+    }
+
+    @Override
+    public boolean insertPasswordReset(PasswordResetVerification verification, String userId) {
+        return false;
+    }
+
+    @Override
+    public ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) {
+        return null;
     }
 
     public static void use() throws Exception {

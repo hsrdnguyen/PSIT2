@@ -25,5 +25,5 @@ public class MailingConstants {
 
     // For password reset request
     public static final String PASSWORD_RESET_SUBJECT = "Password zurücksetzten";
-    public static final String PASSWORD_RESET_MESSAGE = "???";
+    public static final String PASSWORD_RESET_MESSAGE = "Klicken Sie auf folgenden Link um das Passwort zurückzusetzen: http//localhost:8080/reset.jsp?code=%s&email=%s";
 }

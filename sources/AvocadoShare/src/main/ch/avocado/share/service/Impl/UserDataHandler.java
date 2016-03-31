@@ -11,6 +11,7 @@ import ch.avocado.share.service.IUserDataHandler;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -211,5 +212,46 @@ public class UserDataHandler implements IUserDataHandler {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean insertPasswordReset(PasswordResetVerification verification, String userId) {
+
+        try {
+            PreparedStatement stmt;
+            stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_PASSWORD_VERIFICATION_QUERY);
+            stmt.setInt(1, Integer.parseInt(userId));
+            stmt.setDate(2, new java.sql.Date(verification.getExpiry().getTime()));
+            stmt.setString(3, verification.getCode());
+            db.insertDataSet(stmt);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) {
+
+        ArrayList<PasswordResetVerification> result = new ArrayList<>();
+
+        try {
+            PreparedStatement stmt;
+            stmt = db.getPreparedStatement(SQLQueryConstants.SELECT_PASSWORD_VERIFICATION_QUERY);
+            stmt.setInt(1, Integer.parseInt(userId));
+            ResultSet rs = db.executeQuery(stmt);
+
+            while (rs.next())
+            {
+                result.add(new PasswordResetVerification(rs.getDate(2),rs.getString(3)));
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return result;
     }
 }

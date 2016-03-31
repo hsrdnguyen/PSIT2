@@ -6,7 +6,7 @@
 <%
     boolean showFormular = true;
     if (request.getMethod() == "POST") {
-        if (forgottenPassword.sendEmail()) {
+        if (forgottenPassword.createNewPassword()) {
             showFormular = false;
 %>
 <div class="alert alert-success">
@@ -25,7 +25,7 @@
 %>
     <form method="POST">
         <div class="input-group">
-            <input class="form-control" name="email" value="<%=Encoder.encodeForAttribute(forgottenPassword.getEmail()) %>"/>
+            <input class="form-control" name="email" value="<%=Encoder.forHtmlAttribute(forgottenPassword.getEmail())%>"/>
         </div>
         <div class="input-group">
             <input class="btn btn-primary" type="submit" value="Zurücksetzten"/>

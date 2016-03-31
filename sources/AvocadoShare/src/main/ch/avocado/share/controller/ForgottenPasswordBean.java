@@ -9,6 +9,7 @@ import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -38,7 +39,7 @@ public class ForgottenPasswordBean implements Serializable {
         return code;
     }
 
-    public boolean sendEmail() {
+    public boolean createNewPassword() {
         IMailingService mailingService;
         IUserDataHandler userDataHandler;
         User user;
@@ -60,6 +61,7 @@ public class ForgottenPasswordBean implements Serializable {
         Date expiry = PasswordResetVerification.getDateFromExpiryInHours(24 * 2);
         PasswordResetVerification passwordResetVerification = new PasswordResetVerification(expiry);
         user.getPassword().setPasswordResetVerification(passwordResetVerification);
+        userDataHandler.insertPasswordReset(passwordResetVerification, user.getId());
         if (!mailingService.sendPasswordResetEmail(user)) {
             errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
             return false;
@@ -100,6 +102,16 @@ public class ForgottenPasswordBean implements Serializable {
             return null;
         }
         User user = userDataHandler.getUserByEmailAddress(this.email);
+        ArrayList<PasswordResetVerification> verifications = userDataHandler.getPasswordVerifications(user.getId());
+        Date longest = verifications.get(0).getExpiry();
+        user.getPassword().setPasswordResetVerification(verifications.get(0));
+
+        for (PasswordResetVerification v: verifications) {
+            if (v.getExpiry().compareTo(longest) > 0){
+                user.getPassword().setPasswordResetVerification(v);
+                longest = v.getExpiry();
+            }
+        }
         if (user == null) {
             this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
             return null;
@@ -125,6 +137,11 @@ public class ForgottenPasswordBean implements Serializable {
         } else {
             User user = getUser();
             if (user != null && user.resetPassword(password, code)) {
+                try {
+                    ServiceLocator.getService(IUserDataHandler.class).updateUser(user);
+                } catch (ServiceNotFoundException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }else {
                 errorMessage = ErrorMessageConstants.ERROR_GENERAL_FAILURE;

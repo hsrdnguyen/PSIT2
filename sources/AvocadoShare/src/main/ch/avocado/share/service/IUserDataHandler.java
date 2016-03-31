@@ -1,9 +1,11 @@
 package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.PasswordResetVerification;
 import ch.avocado.share.model.data.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -70,5 +72,20 @@ public interface IUserDataHandler {
      * @return true if verification was successful
      */
     boolean verifyUser(User user);
+
+    /**
+     * adds a verificationCode to the db
+     * @param verification verification to be added
+     * @param userId user to use id from
+     * @return true if adding was successful
+     */
+    boolean insertPasswordReset(PasswordResetVerification verification, String userId);
+
+    /**
+     * gets the password resets for a user
+     * @param userId id of the user
+     * @return all verifications of a user
+     */
+    ArrayList<PasswordResetVerification> getPasswordVerifications(String userId);
 
 }

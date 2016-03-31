@@ -11,7 +11,9 @@ public class SQLQueryConstants {
 
     //USER DATA QUERIES
     public static final String INSERT_USER_QUERY = "INSERT INTO avocado_share.identity(id, prename, surname, avatar, description, password) VALUES (?, ?, ?, ?, ?, ?)";
+    public static final String INSERT_PASSWORD_VERIFICATION_QUERY = "INSERT INTO avocado_share.password_reset(id, expiry, code) VALUES (?, ?, ?)";
     public static final String SELECT_USER_QUERY = "SELECT id, prename, surname, avatar, description, password FROM  avocado_share.identity WHERE id=?";
+    public static final String SELECT_PASSWORD_VERIFICATION_QUERY = "SELECT id, expiry, code FROM avocado_share.password_reset WHERE id=?";
     public static final String SELECT_USER_BY_MAIL_QUERY = "SELECT id, prename, surname, avatar, description, password, address, verified FROM avocado_share.identity AS I JOIN avocado_share.email AS E ON I.id=E.identity_id WHERE E.address=?";
     public static final String UPDATE_USER_QUERY = "UPDATE avocado_share.identity SET prename=?, surname=?, avatar=?, description=?, password=? WHERE id=?";
     public static final String INSERT_MAIL_QUERY = "INSERT INTO avocado_share.email(identity_id, address, verified)VALUES (?, ?, FALSE)";

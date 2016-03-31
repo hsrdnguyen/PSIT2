@@ -22,8 +22,8 @@
     <form method="POST">
         <input name="password" type="password" />
         <input name="passwordConfirmation" type="password" />
-        <input type="hidden" name="code" value="<%=Encoder.encodeForAttribute(forgottenPassword.getCode()) %>">
-        <input type="hidden" name="email" value="<%=Encoder.encodeForAttribute(forgottenPassword.getEmail())%>">
+        <input type="hidden" name="code" value="<%=Encoder.forHtmlAttribute(forgottenPassword.getCode()) %>">
+        <input type="hidden" name="email" value="<%=Encoder.forHtmlAttribute(forgottenPassword.getEmail())%>">
         <input type="submit" value="Zurücksetzten" />
     </form>
 <% } else { %>

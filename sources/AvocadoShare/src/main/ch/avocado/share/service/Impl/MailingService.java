@@ -53,10 +53,10 @@ public class MailingService implements IMailingService {
     @Override
     public boolean sendPasswordResetEmail(User user) {
         if (user == null) throw new IllegalArgumentException("user is Null");
-        if (user.getMail().getVerification() == null) throw new IllegalArgumentException("emailAddressVerification is Null");
+
         Session session = prepareMessage();
         try {
-            sendEmail(user, session, MailingConstants.PASSWORD_RESET_SUBJECT, MailingConstants.PASSWORD_RESET_MESSAGE);
+            sendEmail(user, session, MailingConstants.PASSWORD_RESET_SUBJECT, String.format(MailingConstants.PASSWORD_RESET_MESSAGE, user.getPassword().getPasswordResetVerification().getCode(), user.getMail().getAddress()));
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
