@@ -11,7 +11,7 @@ public class FileConstants {
      * The maximal size of file in bytes.
      * -1 indicates there is no limit.
      */
-    public static final long MAX_FILE_SIZE = 500 * 1024 * 1024;
+    public static final long MAX_FILE_SIZE = 5000L * 1024L * 1024L;
     /**
      * The size of the biggest file stored in memory in bytes.
      */

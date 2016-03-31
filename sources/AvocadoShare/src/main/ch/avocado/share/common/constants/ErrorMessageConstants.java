@@ -34,4 +34,6 @@ public final class ErrorMessageConstants {
     public static final String ERROR_INVALID_CODE_OR_EMAIL = "Bestätigungscode oder E-Mail-Adresse stimmen nicht.";
     public static final String ERROR_PASSWORDS_DO_NOT_MATCH = "Passwörter stimmen nicht überein.";
     public static final String ERROR_SEND_MAIL_FAILED = "Sender des E-Mail fehlgeschlagen.";
+
+    public static final String ERROR_VIDEO_TYPE_NOT_SUPPORTED_IN_BROWSER = "Ihr Browser scheint das Video-Format leider nicth zu unterstützen.";
 }

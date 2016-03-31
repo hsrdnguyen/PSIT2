@@ -1,6 +1,5 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
@@ -12,11 +11,11 @@ import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.FileStorageException;
+import jdk.internal.util.xml.impl.Input;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tika.Tika;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -393,33 +392,29 @@ public class FileBean extends ResourceBean<File> {
         this.moduleId = moduleId;
     }
 
-    private String getContentType(InputStream inputStream) throws IOException {
-        Tika tika = new Tika();
-        return tika.detect(inputStream);
-    }
-
     public void download(File file, HttpServletResponse response) throws HttpBeanException{
         byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
         if(!hasIdentifier()) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
         } else {
-            java.io.File diskFile;
+            InputStream stream;
             IFileStorageHandler storageHandler;
             storageHandler = getStorageHandler();
+            String mimeType;
             try {
-                diskFile = storageHandler.getFile(file.getPath());
+                stream = storageHandler.readFile(file.getPath());
+                mimeType = storageHandler.getContentType(file.getPath());
             } catch (FileStorageException e) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
 
+            response.setHeader("Content-Type", mimeType);
+
             try {
-                String mimeType = getContentType(new FileInputStream(diskFile));
-                InputStream inputStream = new FileInputStream(diskFile);
-                response.setHeader("Content-Type", mimeType);
                 OutputStream outputStream = response.getOutputStream();
-                int read;
-                while((read = inputStream.read(buffer, 0, buffer.length)) != -1) {
-                    outputStream.write(buffer, 0, read);
+                int bytesRead;
+                while((bytesRead = stream.read(buffer, 0, buffer.length)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
                 }
                 outputStream.close();
             } catch (IOException e) {

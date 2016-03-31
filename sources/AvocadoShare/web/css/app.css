@@ -122,7 +122,14 @@ a.modul-link:hover .modul {
     position: relative;
     overflow: hidden;
 }
-* {fd
+
+.preview iframe, .preview frame {
+	width: 100%;
+	min-height: 800px;
+	height: 100%;
+}
+
+* {
     box-sizing: border-box;
 }
 

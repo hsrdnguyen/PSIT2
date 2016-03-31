@@ -3,7 +3,7 @@ package ch.avocado.share.service;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
 
-import java.io.File;
+import java.io.InputStream;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -20,9 +20,9 @@ public interface IFileStorageHandler {
     /**
      * Gets the file on the given location
      * @param reference reference to the file
-     * @return file that is found on the given location
+     * @return input stream for the file
      */
-    File getFile(String reference) throws FileStorageException;
+    InputStream readFile(String reference) throws FileStorageException;
 
     /**
      * Checks if a file on the given location exists
@@ -30,4 +30,8 @@ public interface IFileStorageHandler {
      * @return true if the file exists
      */
     boolean fileExists(String reference) throws FileStorageException;
+
+    String getContentType(String reference) throws FileStorageException;
+
+    long getFileSize(String reference) throws FileStorageException;
 }

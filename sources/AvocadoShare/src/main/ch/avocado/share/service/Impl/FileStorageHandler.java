@@ -5,12 +5,9 @@ import ch.avocado.share.common.constants.FileConstants;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.tika.Tika;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import java.io.*;
 import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +18,23 @@ import java.security.NoSuchAlgorithmException;
 public class FileStorageHandler implements IFileStorageHandler {
 
     private final int FILE_READ_BUFFER_SIZE = 512;
+
+    @Override
+    public String getContentType(String reference) throws FileStorageException {
+        InputStream inputStream = readFile(reference);
+        Tika tika = new Tika();
+        try {
+            return tika.detect(inputStream);
+        } catch (IOException e) {
+            throw new FileStorageException("Unable to determinate type: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public long getFileSize(String reference) throws FileStorageException {
+        File file = getFileByReference(reference);
+        return file.length();
+    }
 
     /**
      * @param fileItem The file
@@ -64,7 +78,7 @@ public class FileStorageHandler implements IFileStorageHandler {
 
     @Override
     public String saveFile(FileItem tempUploadedFile) throws FileStorageException {
-        if(tempUploadedFile.isFormField()) {
+        if (tempUploadedFile.isFormField()) {
             throw new IllegalArgumentException("tempUploadedFile isFormField and not an unploaded file");
         }
         File storedFile;
@@ -72,7 +86,7 @@ public class FileStorageHandler implements IFileStorageHandler {
         filename = createFileHashName(tempUploadedFile);
         try {
             storedFile = new File(getStoreDirectory(), filename);
-            if(!storedFile.exists()) {
+            if (!storedFile.exists()) {
                 tempUploadedFile.write(storedFile);
             }
         } catch (Exception e) {
@@ -90,12 +104,19 @@ public class FileStorageHandler implements IFileStorageHandler {
     }
 
     @Override
-    public File getFile(String reference) throws FileStorageException {
+    public InputStream readFile(String reference) throws FileStorageException {
         File file = getFileByReference(reference);
-        if(!file.exists()) {
+        InputStream stream = null;
+        if (file.exists() && file.canRead()) {
+            try {
+                stream = new FileInputStream(file);
+            } catch (FileNotFoundException ignored) {
+            }
+        }
+        if (stream == null) {
             throw new FileStorageException("File " + reference + " doesn't exist");
         }
-        return file;
+        return stream;
     }
 
     @Override
