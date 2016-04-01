@@ -57,6 +57,7 @@ public class UserPassword implements Serializable{
         this.passwordResetVerification = null;
 	}
 
+	
     public UserPassword(String digest, PasswordResetVerification passwordResetVerification) {
         setDigest(digest);
         setPasswordResetVerification(passwordResetVerification);

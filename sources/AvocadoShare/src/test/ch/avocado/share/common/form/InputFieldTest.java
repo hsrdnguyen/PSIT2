@@ -46,11 +46,9 @@ public class InputFieldTest {
 
     @Test
     public void testGetValue() throws Exception {
-
-    }
-
-    @Test
-    public void testSetValue() throws Exception {
-
+        String value = "A value";
+        assertTrue("Value not empty", field.getValue().isEmpty());
+        field.setValue(value);
+        assertEquals("Value not set correctly", value, field.getValue());
     }
 }
