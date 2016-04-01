@@ -1,8 +1,9 @@
-<%@ page import="ch.avocado.share.servlet.LoginServlet" %>
-<%@ page import="ch.avocado.share.controller.UserSession" %>
-<%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
-<%
+<%@
+        page import="ch.avocado.share.servlet.LoginServlet" %><%@
+        page import="ch.avocado.share.controller.UserSession" %><%@
+        page import="ch.avocado.share.common.Encoder" %><%@
+        page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %><%
+
     String baseUrl = request.getServletContext().getContextPath();
     String currentUrl = request.getRequestURI();
     UserSession userSession = new UserSession(request);
@@ -89,8 +90,8 @@
                                     <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>
                                     <!-- login formular -->
-                                    <form action="<%=baseUrl%>/login" method="POST" action="#login">
-                                        <fieldset>
+                                    <form action="<%=baseUrl%>/login" method="POST">
+
                                             <div class="input-group dropdown-item" style="margin-bottom: 0">
                                                 <label for="navbar-login-username" class="input-group-addon">
                                                     <span class="octicon octicon-person"></span><span class="sr-only">Benutzername</span>
@@ -105,7 +106,6 @@
                                                 <input id="navbar-login-password" type="password" class="form-control"
                                                        name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
                                             </div>
-                                        </fieldset>
                                         <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>" name="<%=LoginServlet.FIELD_REDIRECT_TO%>" />
                                         <div class="dropdown-item">
                                             <input type="submit" class="btn btn-secondary" value="Anmelden" />
