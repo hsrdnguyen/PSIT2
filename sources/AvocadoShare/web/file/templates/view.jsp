@@ -15,18 +15,20 @@
 %>
 <section class="document-show">
     <div class="list-group">
-        <div class="list-group-item list-group-header"><h2><%=title %></h2></div>
+        <div class="list-group-item list-group-header">
+            <h2><%=title %></h2>
+            <a class="btn btn-primary" href="?action=edit&id=<%=id %>">Edit</a>
+            <a class="btn btn-primary" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>
+        </div>
         <div class="list-group-item">
-            <h3 class="list-group-header">Beschreibung</h3>
+            <h3 class="list-group-item-heading">Beschreibung</h3>
             <p><%=description%></p>
         </div>
         <div class="list-group-item">
-            <h3 class="list-group-header">Vorschau</h3>
+            <h3 class="list-group-item-heading">Vorschau</h3>
             <div class="preview">
                 <%=previewGenerator.getPreview() %>
             </div>
         </div>
     </div>
 </section>
-<a class="btn btn-primary" href="?action=edit&id=<%=id %>">Edit</a>
-<a class="btn btn-primary" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>

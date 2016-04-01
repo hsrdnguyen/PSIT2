@@ -53,11 +53,19 @@ public class DefaultPreviewFactory  extends PreviewFactory{
         PreviewFactory previewFactory = null;
         contentType = getMimeType(file);
 
+        if(contentType.equals("application/x-matroska")) {
+            contentType = "video/webm";
+        }
+
+            System.out.println("Searching content-type: " + contentType);
         if(previewerFactories.containsKey(contentType)) {
             previewFactory = previewerFactories.get(contentType);
         }
+
+
         if(contentType.contains("/")) {
             topLevelType = contentType.split("/",2)[0];
+            System.out.println("Searching top-level type: " + topLevelType);
             if(previewerFactories.containsKey(topLevelType)) {
                 previewFactory = previewerFactories.get(topLevelType);
             }

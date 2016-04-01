@@ -6,7 +6,7 @@ import ch.avocado.share.common.preview.IPreviewGenerator;
 
 public class VideoPreviewer implements IPreviewGenerator {
 
-    private static final String VIDEO_TAG = "<video><source src=\"%s\" type=\"%s\">" + ErrorMessageConstants.ERROR_VIDEO_TYPE_NOT_SUPPORTED_IN_BROWSER + "</video>";
+    private static final String VIDEO_TAG = "<video controls=\"show\" ><source src=\"%s\" type=\"%s\">" + ErrorMessageConstants.ERROR_VIDEO_TYPE_NOT_SUPPORTED_IN_BROWSER + "</video>";
 
     private String streamUrl;
     private String contentType;

@@ -46,29 +46,30 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<%=baseUrl%>/file/">Dateien</a>
                         </li>
+                        <% } else { %>
+                        <%-- Links for mobile users --%>
+                        <li class="nav-item hidden-md-up">
+                            <a class="nav-link" href="<%=baseUrl%>/login">Login</a>
+                        </li>
+                        <li class="nav-item hidden-md-up">
+                            <a class="nav-link" href="<%=baseUrl%>/register.jsp">Register</a>
+                        </li>
                         <% } %>
-                        <!-- Links for mobile users -->
-                        <li class="nav-item hidden-md-up">
-                            <a class="nav-link" href="#login">Login</a>
-                        </li>
-                        <li class="nav-item hidden-md-up">
-                            <a class="nav-link" href="#register">Register</a>
-                        </li>
                         <!-- Navbar Search -->
                         <li class="nav-item pull-md-right">
                             <form action="document_view.jsp" class="form-inline">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search for...">
-              <span class="input-group-btn">
-                <button class="btn btn-secondary" type="submit">Los!</button>
-              </span>
+                                    <input type="text" class="form-control" placeholder="Suchen nach..." />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="submit">Los!</button>
+                                    </span>
                                 </div>
                             </form>
                         </li>
 
                         <% if(userSession.isAuthenticated()) { %>
                         <li class="nav-item pull-md-right">
-                            <a href="<%=baseUrl%>/file/?action=create" class="btn btn-secondary">Upload</a>
+                            <a href="<%=baseUrl%>/file/?action=create" class="btn btn-secondary"><span class="octicon octicon-plus"></span></a>
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->
@@ -83,7 +84,8 @@
                                 <div id="navbar-login" class="dropdown-menu"
                                      aria-labelledby="navbar-login-toggle-button">
                                     <% if(userSession.isAuthenticated()) { %>
-                                    <a class="dropdown-item" href="profil.jsp">Profil</a>
+                                    <a class="dropdown-item" href="<%=baseUrl%>/profil.jsp">Profil</a>
+                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>
                                     <!-- login formular -->
