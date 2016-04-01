@@ -122,15 +122,18 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         if (getAction() != null) {
             switch (getAction()) {
                 case ACTION_CREATE_MEMBER:
+                    System.out.println(ACTION_CREATE_MEMBER);
                     ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.OWNER);
                     return TemplateType.CREATE;
                 case ACTION_EDIT_MEMBER:
+                    System.out.println(ACTION_EDIT_MEMBER);
                     ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.OWNER);
+                    System.out.println("Has access :)");
                     AccessIdentity ownerIdentity = getOwnerIdentity();
                     if (ownerIdentity instanceof User) {
                         request.setAttribute("MemberUser", ownerIdentity);
                     } else if (ownerIdentity instanceof Group) {
-                        request.setAttribute("MemberUser", ownerIdentity);
+                        request.setAttribute("MemberGroup", ownerIdentity);
                     } else {
                         throw new RuntimeException("Unknown identity class");
                     }

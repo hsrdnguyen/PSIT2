@@ -98,6 +98,7 @@ public class FormBuilder {
             form += formatAttribute("action", getAction());
         }
         form += formatAttribute("method", formMethod);
+        form += formatAttribute("accept-charset", "UTF-8");
         if(getEncodingType() != null) {
             form += formatAttribute("enctype", getEncodingType());
         }
@@ -172,7 +173,7 @@ public class FormBuilder {
             content = fieldName;
         }
         String label = "<label ";
-        label += formatAttribute("id", getIdForFieldName(fieldName));
+        label += formatAttribute("for", getIdForFieldName(fieldName));
         if (htmlClass != null) {
             label += formatAttribute("class", htmlClass);
         }
@@ -180,6 +181,11 @@ public class FormBuilder {
         return label;
     }
 
+    /**
+     * @todo: return a label object
+     * @param fieldName
+     * @return
+     */
     public String getLabelFor(String fieldName) {
         return getLabelFor(fieldName, null);
     }

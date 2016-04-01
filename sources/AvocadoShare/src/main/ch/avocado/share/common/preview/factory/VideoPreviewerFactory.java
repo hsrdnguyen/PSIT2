@@ -13,13 +13,6 @@ public class VideoPreviewerFactory extends PreviewFactory {
     public IPreviewGenerator getInstance(File file) throws PreviewException {
         if(file == null) throw new IllegalArgumentException("file is null");
         String url = getStreamUrl(file);
-        String mimeType = getMimeType(file);
-        switch (mimeType) {
-            case "application/x-matroska":
-            case "video/x-matroska":
-                mimeType = "video/webm";
-                break;
-        }
-        return new VideoPreviewer(url, mimeType);
+        return new VideoPreviewer(url);
     }
 }

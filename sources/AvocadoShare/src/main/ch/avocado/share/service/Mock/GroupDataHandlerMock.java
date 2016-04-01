@@ -39,7 +39,7 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
         objects.clear();
         for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
             String id = "group" + i;
-            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, "groupName" + i));
+            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "Eine Beschreibung der Gruppe " + i + ".\n Vielleicht wiederspiegelt diese Gruppe eine Klasse, dann könnte das hier stehen.", "groupName" + i));
         }
     }
 

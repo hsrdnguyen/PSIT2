@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
 <jsp:include page="includes/header.jsp" />
-  <h1>Dein Portfolio</h1>
+  <h1>Ihr Portfolio</h1>
   <div class="row">
     <!-- 3 columns on extra large screen,
          2 on large and 1 on smaller screens -->

@@ -41,10 +41,10 @@
                             <a class="nav-link" href="<%=baseUrl%>/group/">Gruppen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<%=baseUrl%>/module/">Module</a>
+                            <a class="nav-link" href="#">Module</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<%=baseUrl%>/file/">Dateien</a>
+                            <a class="nav-link" href="<%=baseUrl%>/file/">Dokumente</a>
                         </li>
                         <% } else { %>
                         <%-- Links for mobile users --%>

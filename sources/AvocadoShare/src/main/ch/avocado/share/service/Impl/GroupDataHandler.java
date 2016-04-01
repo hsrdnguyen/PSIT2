@@ -53,6 +53,7 @@ public class GroupDataHandler implements IGroupDataHandler {
     }
 
     private Group getGroupFromResultSet(ResultSet resultSet) {
+        if(resultSet == null) throw new IllegalArgumentException("resultSet is null");
         String id, name, description;
         Date creationDate;
         // TODO: @muellcy1 fetch categories and rating .. and ownerId?
@@ -69,9 +70,11 @@ public class GroupDataHandler implements IGroupDataHandler {
 
     @Override
     public Group getGroup(String id) {
+        if(id == null) throw new IllegalArgumentException("id is null");
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement statement = getGetStatement(id);
         ResultSet resultSet = executeGetStatement(statement);
+        if(resultSet == null) return null;
         return getGroupFromResultSet(resultSet);
     }
 
@@ -114,6 +117,7 @@ public class GroupDataHandler implements IGroupDataHandler {
 
     @Override
     public boolean updateGroup(Group group) {
+        if(group == null) throw new IllegalArgumentException("group is null");
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if (connectionHandler == null) return false;
         return false;
@@ -121,6 +125,7 @@ public class GroupDataHandler implements IGroupDataHandler {
 
     @Override
     public boolean deleteGroup(Group group) {
+        if(group == null) throw new IllegalArgumentException("group is null");
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if (connectionHandler == null) return false;
         return false;

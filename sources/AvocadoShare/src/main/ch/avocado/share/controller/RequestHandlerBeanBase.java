@@ -218,6 +218,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         try {
             return callHttpMethodMethod(request);
         } catch (HttpBeanException httpException) {
+            System.out.println("Got error in execute request: " + httpException.getDescription());
             sendErrorFromHttpBeanException(httpException, response);
         }
         return null;

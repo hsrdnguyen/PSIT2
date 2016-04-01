@@ -9,12 +9,18 @@
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("name", "Name");
 %>
-<h1>Gruppe bearbeiten</h1>
+<h2>Gruppe bearbeiten</h2>
 <%=formBuilder.getFormErrors()%>
 <%=formBuilder.getFormBegin("PATCH") %>
-<%=formBuilder.getLabelFor("name") %>
-<%=formBuilder.getInputFor("name") %>
+<div class="form-group">
+    <%=formBuilder.getLabelFor("name") %>
+    <%=formBuilder.getInputFor("name") %>
+</div>
+<div class="form-group">
 <%=formBuilder.getLabelFor("description") %>
-<%=formBuilder.getInputFor("description") %>
+<%=formBuilder.getInputFor("description", "textarea") %>
+</div>
+<div class="form-group">
 <%=formBuilder.getSubmit("Gruppe speichern")%>
+</div>
 <%=formBuilder.getFormEnd() %>

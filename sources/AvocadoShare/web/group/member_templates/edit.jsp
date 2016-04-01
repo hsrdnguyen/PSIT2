@@ -3,13 +3,6 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page import="ch.avocado.share.model.data.AccessLevelEnum" %>
 <%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %>
-<%@ page import="ch.avocado.share.common.form.FormBuilder" %><%--
-  Created by IntelliJ IDEA.
-  User: coffeemakr
-  Date: 24.03.16
-  Time: 15:13
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     User user = (User) request.getAttribute("MemberUser");
@@ -28,10 +21,11 @@
         id = group.getId();
     }
 %>
+</div>
 <h2>Rechte bearbeiten</h2>
 <div class="row">
     <div class="col-md-6">
-        <form method="post" action="members.jsp">
+        <form method="post" action="<%=request.getContextPath() %>members.jsp">
             <div class="form-group">
                 <label><%=type%>
                 </label>
@@ -55,3 +49,4 @@
         </form>
     </div>
 </div>
+<div>

@@ -141,6 +141,10 @@ a.modul-link:hover .modul {
     padding: 1em;
 }
 
+.preview video {
+	width: 100%;
+}
+
 * {
     box-sizing: border-box;
 }
