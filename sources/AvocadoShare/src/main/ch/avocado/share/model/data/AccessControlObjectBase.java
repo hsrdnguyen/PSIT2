@@ -16,6 +16,15 @@ public abstract class AccessControlObjectBase {
     private String description;
     private boolean dirty;
 
+    /**
+     * Constructor
+     * @param id
+     * @param categories
+     * @param creationDate
+     * @param rating
+     * @param ownerId
+     * @param description
+     */
     public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
         this.id = id;
         this.categories = categories;
@@ -25,54 +34,91 @@ public abstract class AccessControlObjectBase {
         this.description = description;
     }
 
+    /**
+     * @return the unique identifier of this object.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * @todo: change id to number
+     * @param id The unique identifier of this object.
+     */
     public void setId(String id) {
         if (id == null) throw new IllegalArgumentException("id is null");
         this.id = id;
     }
 
+    /**
+     * @return The categories assigned to this object.
+     */
     public List<Category> getCategories() {
         return categories;
     }
 
+    /**
+     * @param categories The categories assigned to this object
+     */
     public void setCategories(List<Category> categories) {
         this.categories = categories;
         setDirty(true);
     }
 
+    /**
+     * @return The creation date
+     */
     public Date getCreationDate() {
         return creationDate;
     }
 
+    /**
+     * @param creationDate Set the creation date
+     */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
         setDirty(true);
     }
 
+    /**
+     * @return The average rating
+     */
     public float getRating() {
         return rating;
     }
 
+    /**
+     * @param rating The average rating
+     */
     public void setRating(float rating) {
         this.rating = rating;
     }
 
+    /**
+     * @return The if of the owner.
+     */
     public String getOwnerId() {
         return ownerId;
     }
 
+    /**
+     * @param ownerId Identifier of the owner object.
+     */
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
         setDirty(true);
     }
 
+    /**
+     * @return The description of the object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * @param description The description of the object.
+     */
     public void setDescription(String description) {
         this.description = description;
         setDirty(true);
@@ -86,6 +132,9 @@ public abstract class AccessControlObjectBase {
         this.dirty = dirty;
     }
 
+    /**
+     * @return A human readable name.
+     */
     public abstract String getReadableName();
 
 }

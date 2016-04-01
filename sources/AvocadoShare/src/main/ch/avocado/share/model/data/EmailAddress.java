@@ -12,6 +12,7 @@ public class EmailAddress {
     public EmailAddress(boolean verified, String address, EmailAddressVerification verification) {
         setVerified(verified);
         setAddress(address);
+        // verification can be null when created but not set.
         this.verification = verification;
     }
 
@@ -38,7 +39,6 @@ public class EmailAddress {
 
     public void setVerification(EmailAddressVerification verification) {
         if (verification == null) throw new IllegalArgumentException("verification is null");
-
         this.verification = verification;
     }
 

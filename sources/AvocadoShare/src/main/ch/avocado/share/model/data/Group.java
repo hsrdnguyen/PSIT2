@@ -2,10 +2,11 @@ package ch.avocado.share.model.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.IllformedLocaleException;
 import java.util.List;
 
 /**
- * Group model
+ * Group model.
  */
 public class Group extends AccessIdentity implements Serializable {
 
@@ -29,8 +30,7 @@ public class Group extends AccessIdentity implements Serializable {
                  String description,
                  String name) {
         super(id, categories, creationDate, rating, ownerId, description);
-        if(name == null) throw new IllegalArgumentException("name is null");
-        this.name = name;
+        setName(name);
     }
 
     /**
@@ -44,6 +44,7 @@ public class Group extends AccessIdentity implements Serializable {
      * @param name The name of the group
      */
     public void setName(String name) {
+        if(name == null) throw new IllegalArgumentException("name is null");
         this.name = name;
     }
 

@@ -2,9 +2,9 @@
 <% String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
     if (loginError != null) {
 %>
-<div class="alert alert-danger">
-    <%=loginError %>
-</div>
+        <div class="alert alert-danger">
+            <%=loginError %>
+        </div>
 <% } %>
 <div class="row">
     <div class="col-xl-offset-3 col-xl-6 col-lg-offset-2 col-lg-8 col-md-offset-1 col-md-10">

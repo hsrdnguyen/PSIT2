@@ -26,7 +26,7 @@ public class InputFieldTest {
     @Test
     public void testSetType() throws Exception {
         assertEquals(DEFAULT_TYPE, field.getType());
-        field.setValue("new_type");
+        field.setType("new_type");
         assertEquals("new_type", field.getType());
     }
 
