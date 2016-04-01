@@ -63,7 +63,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     private String action;
 
-
     /**
      * This method returns true if the bean is supplied with an identifier
      * to find a unique element. (key or unique attribute)
@@ -347,7 +346,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     }
 
     /**
-     * Returns the if of the object
+     * Returns the identifier of the object
      *
      * @return
      */
@@ -356,7 +355,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     }
 
     /**
-     * Set the identifiert of the object
+     * Set the identifier of the object
      *
      * @param id
      */

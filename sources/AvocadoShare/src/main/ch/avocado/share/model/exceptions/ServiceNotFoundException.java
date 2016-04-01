@@ -5,8 +5,20 @@ package ch.avocado.share.model.exceptions;
  */
 public class ServiceNotFoundException extends Exception {
 
+    private String service;
+    private String source;
+
     public ServiceNotFoundException(String service, String source) {
         super("Service: " + service + " not found in " + source);
+        this.service = service;
+        this.source = source;
     }
 
+    public String getService() {
+        return service;
+    }
+
+    public String getSource() {
+        return source;
+    }
 }

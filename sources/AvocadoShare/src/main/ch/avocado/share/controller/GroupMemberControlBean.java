@@ -8,7 +8,7 @@ public class GroupMemberControlBean extends MemberControlBean<Group> {
 
     @Override
     protected Group getTargetById(String id) throws HttpBeanException {
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
+        IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         return groupDataHandler.getGroup(id);
     }
 }

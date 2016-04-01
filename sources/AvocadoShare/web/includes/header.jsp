@@ -6,6 +6,10 @@
     String baseUrl = request.getServletContext().getContextPath();
     String currentUrl = request.getRequestURI();
     UserSession userSession = new UserSession(request);
+    String name;
+    if(userSession.isAuthenticated()) {
+        name = Encoder.forHtml(userSession.getUser().getFullName());
+    }
 %>
 <!DOCTYPE html>
 <html lang="de">
@@ -79,7 +83,7 @@
                                 <div id="navbar-login" class="dropdown-menu"
                                      aria-labelledby="navbar-login-toggle-button">
                                     <% if(userSession.isAuthenticated()) { %>
-                                    <a class="dropdown-item" href="#">Profile</a>
+                                    <a class="dropdown-item" href="profil.jsp">Profil</a>
                                     <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>
                                     <!-- login formular -->

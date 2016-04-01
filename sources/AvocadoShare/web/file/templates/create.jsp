@@ -4,6 +4,8 @@
 <%@ page import="ch.avocado.share.controller.FileBean" %>
 <%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="ch.avocado.share.controller.UserSession" %>
+<%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (Map<String, String>) request.getAttribute(FileBean.ATTRIBUTE_FORM_ERRORS));
@@ -13,7 +15,13 @@
     formBuilder.setReadableFieldName("moduleId", "Modul auswählen");
     formBuilder.setReadableFieldName("file", "Datei auswählen");
 
-    Module[] userModules = FileBean.getModuleForAccessingUser(request);
+    UserSession userSession = new UserSession(request);
+    Module[] userModules = new Module[0];
+    try {
+        userModules = FileBean.getModulesToUpload(userSession.getUser());
+    } catch (HttpBeanException e) {
+        response.sendError(e.getStatusCode(), e.getDescription());
+    }
 %>
 <h2>Dateien erstellen</h2>
 <%=formBuilder.getFormErrors() %>

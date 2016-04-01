@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by coffeemakr on 29.03.16.
  */
-class SelectField extends FieldBase {
+public class SelectField extends FieldBase {
     private String selectedValue = null;
 
     private Map<String, String> valuesWithName;
@@ -29,7 +29,7 @@ class SelectField extends FieldBase {
     }
 
     @Override
-    String toHtml() {
+    public String toHtml() {
         String select = "<select " + getHtmlAttributes() + ">\n";
         for(Map.Entry<String, String> valueWithName: valuesWithName.entrySet()) {
             String value = valueWithName.getKey();

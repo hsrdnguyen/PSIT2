@@ -12,6 +12,8 @@ public class VideoPreviewer implements IPreviewGenerator {
     private String contentType;
 
     public VideoPreviewer(String streamUrl, String contentType) {
+        if(streamUrl == null) throw new IllegalArgumentException("streamUrl is null");
+        if(contentType == null) throw new IllegalArgumentException("contentType is null");
         this.streamUrl = streamUrl;
         this.contentType = contentType;
     }

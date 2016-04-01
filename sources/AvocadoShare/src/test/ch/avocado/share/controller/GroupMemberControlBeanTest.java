@@ -220,11 +220,6 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
 
     @Test
     public void testDoPut() throws Exception {
-        request.setMethod("PUT");
-        AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
-        bean.setTargetId(target.getId());
-        bean.renderRequest(request, response);
-        assertStatusCodeEquals(STATUS_FORBIDDEN, response);
 
     }
 

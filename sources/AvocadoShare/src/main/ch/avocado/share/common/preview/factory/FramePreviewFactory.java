@@ -6,9 +6,13 @@ import ch.avocado.share.common.preview.generator.FramePreview;
 import ch.avocado.share.model.data.File;
 
 
+/**
+ * Factory for {@link FramePreview}.
+ */
 public class FramePreviewFactory extends PreviewFactory{
     @Override
     public IPreviewGenerator getInstance(File file) throws PreviewException {
-        return new FramePreview(getDownloadUrl(file));
+        if(file == null) throw new IllegalArgumentException("file is null");
+        return new FramePreview(getStreamUrl(file));
     }
 }

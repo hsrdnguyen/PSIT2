@@ -6,13 +6,13 @@ import ch.avocado.share.common.preview.generator.VideoPreviewer;
 import ch.avocado.share.model.data.File;
 
 /**
- * Created by coffeemakr on 30.03.16.
+ * Factory for {@link VideoPreviewer}
  */
 public class VideoPreviewerFactory extends PreviewFactory {
-
     @Override
     public IPreviewGenerator getInstance(File file) throws PreviewException {
-        String url = getDownloadUrl(file);
+        if(file == null) throw new IllegalArgumentException("file is null");
+        String url = getStreamUrl(file);
         String mimeType = getMimeType(file);
         return new VideoPreviewer(mimeType, url);
     }

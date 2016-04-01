@@ -83,7 +83,10 @@ public class LoginServlet extends HttpServlet {
     private void redirectTo(String url, HttpServletResponse response) {
         if(url == null) throw  new IllegalArgumentException("url is null");
         if(response == null) throw new IllegalArgumentException("response is null");
-        if((url.charAt(0) == '/')) {
+        if(url.isEmpty()) {
+            url = "/";
+        }
+        if(url.charAt(0) == '/') {
             try {
                 response.sendRedirect(url);
             } catch (IOException e) {

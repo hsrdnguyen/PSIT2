@@ -223,17 +223,21 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         return null;
     }
 
+    protected <E> E getService(Class<E> serviceClass) throws HttpBeanException {
+        try{
+            return ServiceLocator.getService(serviceClass);
+        } catch (ServiceNotFoundException e) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_SERVICE_NOT_FOUND + e.getService());
+        }
+    }
+
     /**
      * @return The security handler to use.
      * @throws HttpBeanException If there is an error while getting the security handler this excpetion is thrown.
      */
     protected ISecurityHandler getSecurityHandler() throws HttpBeanException {
         if (securityHandler == null) {
-            try {
-                securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-            } catch (ServiceNotFoundException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_SECURITY_HANDLER);
-            }
+            securityHandler = getService(ISecurityHandler.class);
         }
         return securityHandler;
     }

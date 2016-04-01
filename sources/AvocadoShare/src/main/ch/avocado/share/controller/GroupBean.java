@@ -1,14 +1,11 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
-import ch.avocado.share.service.IUserDataHandler;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -31,8 +28,7 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     private void checkNameIsUnique() throws HttpBeanException {
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        if (groupDataHandler.getGroupByName(name) != null) {
+        if (getService(IGroupDataHandler.class).getGroupByName(name) != null) {
             addFormError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
         }
     }
@@ -54,8 +50,7 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     public Group create() throws HttpBeanException {
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
-        // IUserDataHandler userDataHandler = getUserDataHandler();
+        IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         checkNameNotEmpty();
         checkNameIsUnique();
         checkParameterDescription();
@@ -78,7 +73,7 @@ public class GroupBean extends ResourceBean<Group> {
     @Override
     public Group get() throws HttpBeanException {
         if(!hasIdentifier()) throw new IllegalStateException("get() without identifier");
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
+        IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         Group group = null;
         if(getId() != null) {
             group = groupDataHandler.getGroup(getId());
@@ -103,7 +98,7 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     public void update() throws HttpBeanException {
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
+        IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         checkParameterDescription();
         checkNameNotEmpty();
         Group group = getObject();
@@ -123,7 +118,7 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     public void destroy() throws HttpBeanException {
-        IGroupDataHandler groupDataHandler = getGroupDataHandler();
+        IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         if (!groupDataHandler.deleteGroup(getObject())) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
         }
@@ -163,26 +158,6 @@ public class GroupBean extends ResourceBean<Group> {
      */
     public String getName() {
         return name;
-    }
-
-    private IUserDataHandler getUserDataHandler() throws HttpBeanException {
-        IUserDataHandler userDataHandler = null;
-        try {
-            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INTERNAL_SERVER);
-        }
-        return userDataHandler;
-    }
-
-    private IGroupDataHandler getGroupDataHandler() throws HttpBeanException {
-        IGroupDataHandler groupDataHandler = null;
-        try {
-            groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INTERNAL_SERVER);
-        }
-        return groupDataHandler;
     }
 
 }

@@ -3,10 +3,7 @@ package ch.avocado.share.service.Mock;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.IGroupDataHandler;
-import ch.avocado.share.service.IModuleDataHandler;
-import ch.avocado.share.service.ISecurityHandler;
-import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,6 +136,16 @@ public class SecurityHandlerMock implements ISecurityHandler {
         return moduleDataHandler.getAllModules();
     }
 
+    public Object getAllFiles() {
+        FileDataHandlerMock fileDataHandler;
+        try {
+            fileDataHandler = (FileDataHandlerMock) ServiceLocator.getService(IFileDataHandler.class);
+        } catch (ServiceNotFoundException e) {
+            return null;
+        }
+        return fileDataHandler.getAll(File.class);
+    }
+
     @Override
     public <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum) {
         if(clazz == null) throw new IllegalArgumentException("clazz can't be null");
@@ -154,6 +161,8 @@ public class SecurityHandlerMock implements ISecurityHandler {
             return (I[]) getAllUsers();
         }else if(clazz.equals(Module.class)) {
             return (I[]) getAllModules();
+        }else if(clazz.equals(File.class)) {
+            return (I[]) getAllFiles();
         }
         return null;
     }
@@ -218,4 +227,6 @@ public class SecurityHandlerMock implements ISecurityHandler {
             ServiceLocatorModifier.setService(ISecurityHandler.class, new SecurityHandlerMock());
         }
     }
+
+
 }

@@ -1,9 +1,8 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
@@ -16,14 +15,6 @@ import javax.servlet.http.HttpServletResponse;
  * It is not intended to display relationship.
  */
 public abstract class MemberControlBean<T extends AccessControlObjectBase> extends RequestHandlerBeanBase {
-    private static final String ERROR_SERVICELOCATOR = "Servicelocator error";
-    private static final String ERROR_GROUP_OR_USER_NOT_FOUND = "Gruppe oder Benutzer konnte nichte gefunden werden.";
-    private static final String ERROR_ACCESS_ALREADY_EXISTS = "Es existiert bereits ein Zugriffsrecht.";
-    private static final String ERROR_TARGET_NOT_FOUND = "Access target not found.";
-    private static final String ERROR_LEVEL_MISSING = "Parameter 'level' missing.";
-    private static final String ERROR_MISSING_GROUP_OR_USER_ID = "Parameter 'groupId' oder 'userId' fehlen.";
-    private static final String ERROR_BOTH_USER_AND_GROUP_ID_SET = "Es darf nur einer der Parameter 'groupId' oder 'userId' gesetzt sein.";
-    private static final String ERROR_UNABLE_TO_SET_RIGHTS = "Zugriffsrechte konnten nicht gesetzt werden.";
 
     public static final String ACTION_CREATE_MEMBER = "create_member";
     public static final String ACTION_EDIT_MEMBER = "edit_member";
@@ -46,34 +37,6 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     abstract protected T getTargetById(String id) throws HttpBeanException;
 
     /**
-     * @return An IGroupDataHandler
-     * @throws HttpBeanException
-     */
-    protected IGroupDataHandler getGroupDataHandler() throws HttpBeanException {
-        IGroupDataHandler groupDataHandler;
-        try {
-            groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_SERVICELOCATOR);
-        }
-        return groupDataHandler;
-    }
-
-    /**
-     * @return An IUserDataHandler
-     * @throws HttpBeanException
-     */
-    protected IUserDataHandler getUserDataHandler() throws HttpBeanException {
-        IUserDataHandler userDataHandler;
-        try {
-            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_SERVICELOCATOR);
-        }
-        return userDataHandler;
-    }
-
-    /**
      * @return The identity for which the rights can be changed.
      * @throws HttpBeanException
      */
@@ -83,23 +46,23 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         }
         // only the group id or the user id can be set
         if ((getUserId() == null && getGroupId() == null)) {
-            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ERROR_MISSING_GROUP_OR_USER_ID);
+            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ErrorMessageConstants.ERROR_MISSING_GROUP_OR_USER_ID);
         }
         if((getUserId() != null && getGroupId() != null)) {
-            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ERROR_BOTH_USER_AND_GROUP_ID_SET);
+            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ErrorMessageConstants.ERROR_BOTH_USER_AND_GROUP_ID_SET);
         }
         if (getUserId() != null) {
-            ownerIdentity = getUserDataHandler().getUser(getUserId());
+            ownerIdentity = getService(IUserDataHandler.class).getUser(getUserId());
             if (ownerIdentity != null) {
                 return ownerIdentity;
             }
         } else {
-            ownerIdentity = getGroupDataHandler().getGroup(getGroupId());
+            ownerIdentity = getService(IGroupDataHandler.class).getGroup(getGroupId());
             if (ownerIdentity != null) {
                 return ownerIdentity;
             }
         }
-        throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_GROUP_OR_USER_NOT_FOUND);
+        throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GROUP_OR_USER_NOT_FOUND);
     }
 
 
@@ -112,7 +75,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, "Besitzer der Rechte und Ziel sind gleich.");
         }
         if(!securityHandler.setAccessLevel(identityWhichRightsAreToChange, target, level)) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_UNABLE_TO_SET_RIGHTS);
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_UNABLE_TO_SET_RIGHTS);
         }
     }
 
@@ -210,14 +173,14 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
      */
     private void checkAccessLevel() throws HttpBeanException {
         if (getLevel() == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ERROR_LEVEL_MISSING);
+            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ErrorMessageConstants.ERROR_LEVEL_MISSING);
         }
     }
 
     private void ensureHasNoAccess(AccessIdentity identity) throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
         if(!AccessLevelEnum.NONE.containsLevel(securityHandler.getAccessLevel(identity, getTarget()))) {
-            throw new HttpBeanException(HttpServletResponse.SC_CONFLICT, ERROR_ACCESS_ALREADY_EXISTS);
+            throw new HttpBeanException(HttpServletResponse.SC_CONFLICT, ErrorMessageConstants.ERROR_ACCESS_ALREADY_EXISTS);
         }
     }
 
@@ -279,7 +242,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
             target = getTargetById(targetId);
         }
         if(target == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_TARGET_NOT_FOUND);
+            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_TARGET_NOT_FOUND);
         }
         return target;
     }

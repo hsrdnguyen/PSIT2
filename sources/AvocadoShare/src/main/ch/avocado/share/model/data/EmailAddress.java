@@ -41,4 +41,9 @@ public class EmailAddress {
 
         this.verification = verification;
     }
+
+    @Override
+    public String toString() {
+        return getAddress();
+    }
 }

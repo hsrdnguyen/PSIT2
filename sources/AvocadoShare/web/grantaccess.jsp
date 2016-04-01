@@ -3,7 +3,7 @@
 <jsp:setProperty name="accessBean" property="fileId" />
 <jsp:setProperty name="accessBean" property="ruserId" />
 <jsp:setProperty name="accessBean" property="ouserId" />
-<jsp:include page="includes/header.jsp" />
+<%@include file="includes/header.jsp"%>
 <% if(accessBean.grantAccess()) {
 // TODO @bergmsas check access of user.
 %>
@@ -15,4 +15,4 @@
     Der Benutzer konnte leider nicht berechtigt werden.
 </div>
 <% } %>
-<jsp:include page="includes/footer.jsp" />
+<%@include file="includes/footer.jsp"%>
