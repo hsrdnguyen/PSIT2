@@ -37,21 +37,24 @@ public class UserDataHandlerTest {
     }
 
     @Test
-    public void test_addUser() {
+    public void test_addUser() throws Exception {
         String string_date = "12-December-2030";
 
         SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yyyy");
-        try {
-            Date d = f.parse(string_date);
+        Date d = f.parse(string_date);
+        EmailAddressVerification verification = new EmailAddressVerification(d,"123456789");
+        EmailAddress emailAddress = new EmailAddress(false, "test@test.com", verification);
+        UserPassword pwd = new UserPassword("123456789");
+        User user = new User(null, null, new Date(), 0.0f, "", "", pwd, "Max", "Muster", "123456789.jpg", emailAddress);
 
-            EmailAddressVerification verification = new EmailAddressVerification(d,"123456789");
-            EmailAddress emailAddress = new EmailAddress(false, "test@test.com", verification);
-            UserPassword pwd = new UserPassword("123456789");
-            User user = new User("", null, new Date(), 0.0f, "", "", pwd, "Max", "Muster", "123456789.jpg", emailAddress);
+        String id = service.addUser(user);
+        assertNotNull(id);
 
-            assertNotNull(service.addUser(user));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        User addedUser = service.getUser(id);
+        assertEquals(addedUser.getId(), id);
+        assertEquals(user.getPrename(), addedUser.getPrename());
+        assertEquals(user.getSurname(), addedUser.getSurname());
+        assertEquals(user.getDescription(), addedUser.getDescription());
+        assertEquals(user.getPassword().getDigest(), addedUser.getPassword().getDigest());
     }
 }

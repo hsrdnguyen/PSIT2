@@ -67,11 +67,6 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public User getUserByEmailAddress(String emailAddress, boolean getVerification) {
-        return null;
-    }
-
-    @Override
     public boolean updateUser(User user) {
         return update(user);
     }
