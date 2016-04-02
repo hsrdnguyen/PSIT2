@@ -1,7 +1,6 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.MailingConstants;
 import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
@@ -76,16 +75,16 @@ public class UserDataHandler implements IUserDataHandler {
 
             if (rs.next())
             {
-                return new User(rs.getString(1),
+                return new User(rs.getString(SQLQueryConstants.USER_RESULT_ID_INDEX),
                         null,
                         creationDate,
                         0.0f,
                         "",
-                        rs.getString(5),
-                        new UserPassword(rs.getString(6)),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
+                        rs.getString(SQLQueryConstants.USER_RESULT_DESCRIPTION_INDEX),
+                        new UserPassword(rs.getString(SQLQueryConstants.USER_RESULT_PASSWORD_INDEX)),
+                        rs.getString(SQLQueryConstants.USER_RESULT_PRENAME_INDEX),
+                        rs.getString(SQLQueryConstants.USER_RESULT_SURNAME_INDEX),
+                        rs.getString(SQLQueryConstants.USER_RESULT_AVATAR_INDEX),
                         mail);
             }
 
@@ -149,11 +148,11 @@ public class UserDataHandler implements IUserDataHandler {
                         new Date(),
                         0.0f,
                         "",
-                        rs.getString(5),
-                        new UserPassword(rs.getString(6)),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
+                        rs.getString(SQLQueryConstants.USER_RESULT_DESCRIPTION_INDEX),
+                        new UserPassword(rs.getString(SQLQueryConstants.USER_RESULT_PASSWORD_INDEX)),
+                        rs.getString(SQLQueryConstants.USER_RESULT_PRENAME_INDEX),
+                        rs.getString(SQLQueryConstants.USER_RESULT_SURNAME_INDEX),
+                        rs.getString(SQLQueryConstants.USER_RESULT_AVATAR_INDEX),
                         mail);
 
             }
