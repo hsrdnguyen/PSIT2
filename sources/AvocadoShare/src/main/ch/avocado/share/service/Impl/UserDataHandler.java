@@ -55,11 +55,13 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public boolean deleteUser(User user) {
+        if(user == null) throw new IllegalArgumentException("user is null");
         return false;
     }
 
     @Override
     public User getUser(String userId) {
+        if(userId == null) throw new IllegalArgumentException("userId is null");
         PreparedStatement stmt = null;
         try {
             Date creationDate = getAccessControlObjectDate(userId);
@@ -74,7 +76,7 @@ public class UserDataHandler implements IUserDataHandler {
 
             if (rs.next())
             {
-                User tmp = new User(rs.getString(1),
+                return new User(rs.getString(1),
                         null,
                         creationDate,
                         0.0f,
@@ -85,7 +87,6 @@ public class UserDataHandler implements IUserDataHandler {
                         rs.getString(3),
                         rs.getString(4),
                         mail);
-                return tmp;
             }
 
 
@@ -97,6 +98,7 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     private Date getAccessControlObjectDate(String userId) throws SQLException {
+        if(userId == null) throw new IllegalArgumentException("userId is null");
         PreparedStatement stmt;
         stmt = db.getPreparedStatement(SQLQueryConstants.SELECT_ACCESS_CONTROL_QUERY);
         stmt.setInt(1, Integer.parseInt(userId));
@@ -112,6 +114,7 @@ public class UserDataHandler implements IUserDataHandler {
     }
 
     private EmailAddress getMail(String userId) throws SQLException {
+        if(userId == null) throw new IllegalArgumentException("userId is null");
         PreparedStatement stmt;
         ResultSet rs;
         stmt = db.getPreparedStatement(SQLQueryConstants.SELECT_MAIL_QUERY);
@@ -130,6 +133,7 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public User getUserByEmailAddress(String emailAddress) {
+        if(emailAddress == null) throw new IllegalArgumentException("emailAddress is null");
         try {
             PreparedStatement ps = db.getPreparedStatement(SQLQueryConstants.SELECT_USER_BY_MAIL_QUERY);
             ps.setString(1, emailAddress);
@@ -140,7 +144,7 @@ public class UserDataHandler implements IUserDataHandler {
             {
                 EmailAddress mail = new EmailAddress(rs.getBoolean(8), rs.getString(7), null);
 
-                User tmp = new User(rs.getString(1),
+                return new User(rs.getString(1),
                         null,
                         new Date(),
                         0.0f,
@@ -151,7 +155,7 @@ public class UserDataHandler implements IUserDataHandler {
                         rs.getString(3),
                         rs.getString(4),
                         mail);
-                return tmp;
+
             }
 
         } catch (SQLException e) {
@@ -185,6 +189,7 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public boolean updateUser(User user) {
+        if(user == null) throw new IllegalArgumentException("user is null");
         PreparedStatement stmt = null;
         try {
             stmt = db.getPreparedStatement(SQLQueryConstants.UPDATE_USER_QUERY);
@@ -216,7 +221,8 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public boolean insertPasswordReset(PasswordResetVerification verification, String userId) {
-
+        if(verification == null) throw new IllegalArgumentException("verification is null");
+        if(userId == null) throw new IllegalArgumentException("userId is null");
         try {
             PreparedStatement stmt;
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_PASSWORD_VERIFICATION_QUERY);
@@ -233,7 +239,7 @@ public class UserDataHandler implements IUserDataHandler {
 
     @Override
     public ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) {
-
+        if(userId == null) throw new IllegalArgumentException("userId is null");
         ArrayList<PasswordResetVerification> result = new ArrayList<>();
 
         try {
