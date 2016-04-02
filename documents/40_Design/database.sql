@@ -14,6 +14,7 @@ SET search_path TO avocado_share;
 CREATE TABLE access_control
 (
   id INTEGER NOT NULL,
+  description VARCHAR(512) NOT NULL,
   creation_date timestamp NOT NULL,
   CONSTRAINT pk_access_control PRIMARY KEY (id)
 );
@@ -22,7 +23,6 @@ CREATE TABLE file
 (
   id INTEGER NOT NULL,
   title VARCHAR(50) NOT NULL,
-  description VARCHAR(512) NOT NULL,
   last_changed timestamp NOT NULL,
   path VARCHAR(64) NOT NULL,
   CONSTRAINT pk_file PRIMARY KEY(id),
@@ -33,7 +33,6 @@ CREATE TABLE access_group
 (
   id INTEGER NOT NULL,
   name VARCHAR(32) NOT NULL,
-  description VARCHAR(512) NOT NULL,
   CONSTRAINT pk_access_group PRIMARY KEY(id),
   CONSTRAINT fk_access_group_id FOREIGN KEY(id) REFERENCES access_control(id),
   CONSTRAINT uc_access_group UNIQUE(name)
@@ -43,7 +42,6 @@ CREATE TABLE module
 (
   id INTEGER NOT NULL,
   name VARCHAR(32) NOT NULL,
-  description VARCHAR(512) NOT NULL,
   CONSTRAINT pk_module PRIMARY KEY(id),
   CONSTRAINT fk_module_id FOREIGN KEY(id) REFERENCES access_control(id),
   CONSTRAINT uc_module UNIQUE(name)
@@ -55,7 +53,6 @@ CREATE TABLE identity
   prename VARCHAR(50) NOT NULL,
   surname VARCHAR(50) NOT NULL,
   avatar VARCHAR(65) NOT NULL,
-  description VARCHAR(512) NOT NULL,
   password VARCHAR(65) NOT NULL,
   CONSTRAINT pk_identity PRIMARY KEY(id),
   CONSTRAINT fk_identity_id FOREIGN KEY(id) REFERENCES access_control(id)
