@@ -13,7 +13,7 @@ SET search_path TO avocado_share;
 
 CREATE TABLE access_control
 (
-  id INTEGER NOT NULL,
+  id INTEGER NOT NULL AUTO_INCREMENT,
   description VARCHAR(512) NOT NULL,
   creation_date timestamp NOT NULL,
   CONSTRAINT pk_access_control PRIMARY KEY (id)
