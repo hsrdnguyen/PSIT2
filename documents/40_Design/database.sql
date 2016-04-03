@@ -14,7 +14,7 @@ CREATE TABLE access_control
 (
   id SERIAL,
   description VARCHAR(512) NOT NULL,
-  creation_date TIMESTAMP NOT NULL DEFAULT now(),
+  creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT pk_access_control PRIMARY KEY (id)
 );
 

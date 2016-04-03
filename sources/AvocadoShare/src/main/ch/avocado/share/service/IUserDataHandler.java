@@ -50,16 +50,6 @@ public interface IUserDataHandler {
     boolean addMail(User user) throws SQLException;
 
     /**
-     * Returns the user from the database selected by its
-     * email address.
-     * @param emailAddress email address of the user
-     * @param getVerification sets if verification should be loaded from database
-     * @return user if there is a user with this email address
-     *              or otherwise null.
-     */
-    User getUserByEmailAddress(String emailAddress, boolean getVerification);
-
-    /**
      * updates a user on the database
      * @param user user with updated data
      * @return true if it was successfully updated
