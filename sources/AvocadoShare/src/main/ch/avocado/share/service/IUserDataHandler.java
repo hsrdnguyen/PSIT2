@@ -74,7 +74,7 @@ public interface IUserDataHandler {
      * @param userId user to use id from
      * @return true if adding was successful
      */
-    boolean addPasswordResetVerififcation(PasswordResetVerification verification, String userId) throws DataHandlerException;
+    boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) throws DataHandlerException;
 
     /**
      * gets the password resets for a user

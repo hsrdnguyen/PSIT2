@@ -72,7 +72,7 @@ public class ForgottenPasswordBean implements Serializable {
         PasswordResetVerification passwordResetVerification = new PasswordResetVerification(expiry);
         user.getPassword().setPasswordResetVerification(passwordResetVerification);
         try {
-            userDataHandler.addPasswordResetVerififcation(passwordResetVerification, user.getId());
+            userDataHandler.addPasswordResetVerification(passwordResetVerification, user.getId());
         } catch (DataHandlerException e) {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return false;

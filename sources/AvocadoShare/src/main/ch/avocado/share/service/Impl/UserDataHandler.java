@@ -202,7 +202,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
     @Override
-    public boolean addPasswordResetVerififcation(PasswordResetVerification verification, String userId) throws DataHandlerException {
+    public boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) throws DataHandlerException {
         if (verification == null) throw new IllegalArgumentException("verification is null");
         if (userId == null) throw new IllegalArgumentException("userId is null");
         try {

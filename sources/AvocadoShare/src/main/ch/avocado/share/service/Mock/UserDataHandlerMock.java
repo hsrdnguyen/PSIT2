@@ -77,7 +77,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean addPasswordResetVerififcation(PasswordResetVerification verification, String userId) {
+    public boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) {
         return false;
     }
 
