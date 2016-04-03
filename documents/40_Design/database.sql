@@ -14,7 +14,7 @@ CREATE TABLE access_control
 (
   id SERIAL,
   description VARCHAR(512) NOT NULL,
-  creation_date timestamp NOT NULL,
+  creation_date TIMESTAMP NOT NULL DEFAULT now(),
   CONSTRAINT pk_access_control PRIMARY KEY (id)
 );
 
@@ -22,7 +22,7 @@ CREATE TABLE file
 (
   id INTEGER NOT NULL,
   title VARCHAR(50) NOT NULL,
-  last_changed timestamp NOT NULL,
+  last_changed TIMESTAMP NOT NULL,
   path VARCHAR(64) NOT NULL,
   CONSTRAINT pk_file PRIMARY KEY(id),
   CONSTRAINT fk_file FOREIGN KEY(id) REFERENCES access_control(id) ON DELETE CASCADE
