@@ -18,6 +18,7 @@ import java.util.Date;
  */
 public class UserDataHandler implements IUserDataHandler {
 
+    public static final int DELETE_USER_QUERY_ID_INDEX = 1;
     IDatabaseConnectionHandler db;
 
     public UserDataHandler() throws ServiceNotFoundException {
@@ -31,6 +32,7 @@ public class UserDataHandler implements IUserDataHandler {
         try {
 
             PreparedStatement stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY);
+            stmt.setString(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX, user.getDescription());
             user.setId(db.insertDataSet(stmt));
 
             stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_USER_QUERY);
@@ -38,8 +40,7 @@ public class UserDataHandler implements IUserDataHandler {
             stmt.setString(2, user.getPrename());
             stmt.setString(3, user.getSurname());
             stmt.setString(4, user.getAvatar());
-            stmt.setString(5, user.getDescription());
-            stmt.setString(6, user.getPassword().getDigest());
+            stmt.setString(5, user.getPassword().getDigest());
             db.insertDataSet(stmt);
 
             addMail(user);
@@ -55,12 +56,21 @@ public class UserDataHandler implements IUserDataHandler {
     @Override
     public boolean deleteUser(User user) {
         if (user == null) throw new IllegalArgumentException("user is null");
-        return false;
+        if (user.getId() == null) return false;
+        try {
+            PreparedStatement preparedStatement = db.getPreparedStatement(SQLQueryConstants.DELETE_USER_QUERY);
+            preparedStatement.setInt(DELETE_USER_QUERY_ID_INDEX, Integer.parseInt(user.getId()));
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     private User getUserFromResultSet(ResultSet resultSet) {
         String id, description, prename, surname, avatar;
-        Date creationDate = new Date(0);
+        Date creationDate;
         UserPassword password;
         EmailAddress email;
         try {
@@ -75,6 +85,7 @@ public class UserDataHandler implements IUserDataHandler {
             prename = resultSet.getString(SQLQueryConstants.USER_RESULT_PRENAME_INDEX);
             surname = resultSet.getString(SQLQueryConstants.USER_RESULT_SURNAME_INDEX);
             avatar = resultSet.getString(SQLQueryConstants.USER_RESULT_AVATAR_INDEX);
+            creationDate = resultSet.getDate(SQLQueryConstants.USER_RESULT_CREATION_DATE_INDEX);
             email = new EmailAddress(emailVerified, emailAddress, null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,8 +99,6 @@ public class UserDataHandler implements IUserDataHandler {
         ResultSet resultSet = preparedStatement.executeQuery();
         User user = getUserFromResultSet(resultSet);
         if(user != null && !user.getMail().isVerified()) {
-            Date creationDate = getAccessControlObjectDate(user.getId());
-            user.setCreationDate(creationDate);
             EmailAddressVerification emailAddressVerification = getEmailAddressVerification(user.getId(), user.getMail().getAddress());
             if(emailAddressVerification != null) {
                 user.getMail().setVerification(emailAddressVerification);

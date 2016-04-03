@@ -30,6 +30,7 @@ public class FileDataHandler implements IFileDataHandler {
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY);
+            preparedStatement.setString(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX, file.getDescription());
             fileId = connectionHandler.insertDataSet(preparedStatement);
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_FILE_QUERY);
             preparedStatement.setString(1, fileId);

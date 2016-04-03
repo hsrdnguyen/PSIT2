@@ -28,10 +28,10 @@ public abstract class AccessControlObjectBase {
     public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
         this.id = id;
         this.categories = categories;
-        this.creationDate = creationDate;
+        setCreationDate(creationDate);
         this.rating = rating;
-        this.ownerId = ownerId;
-        this.description = description;
+        setOwnerId(ownerId);
+        setDescription(description);
     }
 
     /**
@@ -76,6 +76,7 @@ public abstract class AccessControlObjectBase {
      * @param creationDate Set the creation date
      */
     public void setCreationDate(Date creationDate) {
+        if(creationDate == null) throw new IllegalArgumentException("creationDate is null");
         this.creationDate = creationDate;
         setDirty(true);
     }
@@ -120,6 +121,7 @@ public abstract class AccessControlObjectBase {
      * @param description The description of the object.
      */
     public void setDescription(String description) {
+        if(description == null) throw new IllegalArgumentException("description is null");
         this.description = description;
         setDirty(true);
     }
