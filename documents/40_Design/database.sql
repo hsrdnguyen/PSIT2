@@ -163,3 +163,13 @@ CREATE TABLE uploaded_into
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA avocado_share TO avocado_tomcat;
 GRANT UPDATE ON avocado_share.access_control_id_seq TO avocado_tomcat;
 GRANT ALL ON SCHEMA avocado_share TO avocado_tomcat;
+
+
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (0, false, false, false);
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (1, true, false, false);
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (2, false, true, false);
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (3, true, true, false);
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (4, false, false, true);
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (5, true, false, true);
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (6, false, true, true);
+INSERT INTO access_level (Level, Readable, Writable, Manageable) VALUES (7, true, true, true);
