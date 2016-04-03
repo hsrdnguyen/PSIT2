@@ -7,7 +7,6 @@ CREATE ROLE avocado_tomcat WITH ENCRYPTED PASSWORD '77eb2c2e52824f26bd47f6d0bc6e
 
 CREATE SCHEMA avocado_share;
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA avocado_share TO avocado_tomcat;
 
 SET search_path TO avocado_share;
 
@@ -160,3 +159,5 @@ CREATE TABLE uploaded_into
   CONSTRAINT pk_uploaded_into PRIMARY KEY(file_id),
   CONSTRAINT uc_uploaded_into UNIQUE(file_id, module_id)
 );
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA avocado_share TO avocado_tomcat;
