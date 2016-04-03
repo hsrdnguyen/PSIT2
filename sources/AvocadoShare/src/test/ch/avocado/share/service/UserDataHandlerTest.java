@@ -5,10 +5,8 @@ import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.model.data.UserPassword;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 import java.text.SimpleDateFormat;
@@ -43,6 +41,7 @@ public class UserDataHandlerTest {
 
     private User getTestUser() throws Exception {
         String string_date = "12-December-2030";
+
         SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yyyy");
         Date d = f.parse(string_date);
         EmailAddressVerification verification = new EmailAddressVerification(d, "123456789");

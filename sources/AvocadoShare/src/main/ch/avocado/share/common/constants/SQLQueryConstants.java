@@ -43,7 +43,6 @@ public class SQLQueryConstants {
 
     public static final String SET_MAIL_TO_VERIFIED = "UPDATE avocado_share.email SET verified=TRUE WHERE identity_id=?";
 
-
     //GROUP
     public static final String INSERT_GROUP_QUERY = "INSERT INTO avocado_share.access_group(name, description) VALUES (?, ?)";
     public static final int INSERT_GROUP_QUERY_NAME_INDEX = 1;
