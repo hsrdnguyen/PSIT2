@@ -26,7 +26,7 @@ CREATE TABLE file
   last_changed timestamp NOT NULL,
   path VARCHAR(64) NOT NULL,
   CONSTRAINT pk_file PRIMARY KEY(id),
-  CONSTRAINT fk_file FOREIGN KEY(id) REFERENCES access_control(id) ON DELETE CASCADE;
+  CONSTRAINT fk_file FOREIGN KEY(id) REFERENCES access_control(id) ON DELETE CASCADE
 );
 
 CREATE TABLE access_group
