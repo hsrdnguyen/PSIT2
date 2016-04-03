@@ -161,4 +161,5 @@ CREATE TABLE uploaded_into
 );
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA avocado_share TO avocado_tomcat;
+GRANT UPDATE ON avocado_share.access_control_id_seq TO avocado_tomcat;
 GRANT ALL ON SCHEMA avocado_share TO avocado_tomcat;
