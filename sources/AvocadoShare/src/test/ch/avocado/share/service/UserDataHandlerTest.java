@@ -7,6 +7,7 @@ import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.model.data.UserPassword;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.text.SimpleDateFormat;
@@ -25,17 +26,17 @@ public class UserDataHandlerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddUserWithNull() {
+    public void testAddUserWithNull() throws Exception {
         service.addUser(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetByEmailWithNull() {
+    public void testGetByEmailWithNull() throws Exception {
         service.getUserByEmailAddress(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetUserWithNull() {
+    public void testGetUserWithNull() throws Exception {
         service.getUser(null);
     }
 
@@ -61,7 +62,7 @@ public class UserDataHandlerTest {
         User addedUser = service.getUser(id);
 
         assertTrue(addedUser != user);
-        assertEquals(addedUser.getId(), id);
+        assertEquals(id, addedUser.getId());
         assertTrue(addedUser.getCreationDate().getTime() > 0);
         assertEquals(user.getPrename(), addedUser.getPrename());
         assertEquals(user.getSurname(), addedUser.getSurname());
@@ -76,7 +77,7 @@ public class UserDataHandlerTest {
     public void testDeleteUser() throws Exception {
         User user = getTestUser();
         assertNull(service.getUserByEmailAddress(user.getMail().getAddress()));
-        String id =  service.addUser(user);
+        String id = service.addUser(user);
         assertNotNull(id);
         assertNotNull(service.getUserByEmailAddress(user.getMail().getAddress()));
         assertNotNull(user = service.getUser(id));

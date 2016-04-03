@@ -19,6 +19,7 @@ import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 /**
  * @author coffeemakr
@@ -41,7 +42,13 @@ public class LoginServlet extends HttpServlet {
 
 
     private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) {
-        User user = userDataHandler.getUserByEmailAddress(email);
+        User user = null;
+        try {
+            user = userDataHandler.getUserByEmailAddress(email);
+        } catch (DataHandlerException e) {
+            // todo: error handling?
+            return null;
+        }
         if (user != null && user.getPassword().matchesPassword(password)) {
             return user;
         }

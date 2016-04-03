@@ -7,6 +7,7 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.io.Serializable;
 
@@ -20,50 +21,57 @@ public class FileAccessBean implements Serializable {
     private String ouserId;
     private String ruserId;
 
-    public boolean requestAccess()
-    {
-        if(fileId == null) throw new IllegalArgumentException("fileId is null");
-        if(requestingUserMail == null) throw new IllegalArgumentException("requestingUserMail is null");
-
+    public boolean requestAccess() {
+        if (fileId == null) throw new IllegalArgumentException("fileId is null");
+        if (requestingUserMail == null) throw new IllegalArgumentException("requestingUserMail is null");
+        IMailingService mailingService;
+        IFileDataHandler fileDataHandler;
+        IUserDataHandler userDataHandler;
         try {
-            IMailingService mailingService = ServiceLocator.getService(IMailingService.class);
-            IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-            IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-
-            User user = userDataHandler.getUserByEmailAddress(requestingUserMail);
-            File file = fileDataHandler.getFileById(fileId);
-            User owningUser = userDataHandler.getUser(file.getOwnerId());
-            mailingService.sendRequestAccessEmail(user, owningUser, file);
-            return true;
-
+            mailingService = ServiceLocator.getService(IMailingService.class);
+            fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            e.printStackTrace();
+            return false;
         }
-        return false;
+
+        File file;
+        User user;
+        User owningUser;
+        try {
+            user = userDataHandler.getUserByEmailAddress(requestingUserMail);
+            file = fileDataHandler.getFileById(fileId);
+            owningUser = userDataHandler.getUser(file.getOwnerId());
+        } catch (DataHandlerException e) {
+            return false;
+        }
+        return mailingService.sendRequestAccessEmail(user, owningUser, file);
     }
 
-    public boolean grantAccess()
-    {
-        if(ruserId == null) throw new IllegalArgumentException("ruserId is null");
-        if(ouserId == null) throw new IllegalArgumentException("ouserId is null");
-        if(fileId == null) throw new IllegalArgumentException("fileId is null");
+    public boolean grantAccess() {
+        if (ruserId == null) throw new IllegalArgumentException("ruserId is null");
+        if (ouserId == null) throw new IllegalArgumentException("ouserId is null");
+        if (fileId == null) throw new IllegalArgumentException("fileId is null");
+
+        IFileDataHandler fileDataHandler;
+        IUserDataHandler userDataHandler;
+        File file;
 
         try {
-            IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-            IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-
-            File file = fileDataHandler.getFileById(fileId);
-
-            if (file.getOwnerId().equals(ouserId)){
+            fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+        } catch(ServiceNotFoundException e) {
+            return false;
+        }
+        try{
+            file = fileDataHandler.getFileById(fileId);
+            if (file.getOwnerId().equals(ouserId)) {
                 fileDataHandler.grantAccess(fileId, ruserId);
             }
-
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DataHandlerException e) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     public String getOuserId() {

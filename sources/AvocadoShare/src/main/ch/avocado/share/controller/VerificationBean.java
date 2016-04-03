@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.io.Serializable;
 
@@ -15,27 +16,35 @@ public class VerificationBean implements Serializable {
     private String code;
     private String email;
 
-    public boolean verifyEmailCode(){
-
+    public boolean verifyEmailCode() {
         IUserDataHandler userDataHandler = null;
         boolean isVerified = false;
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
+            return false;
         }
-        if(userDataHandler != null) {
-            if(email != null && code != null) {
-                User user = userDataHandler.getUserByEmailAddress(email);
-                if(user != null) {
+        if (email != null && code != null) {
+            User user = null;
+            try {
+                user = userDataHandler.getUserByEmailAddress(email);
+            } catch (DataHandlerException e) {
+                return false;
+            }
+            if (user != null) {
+                try {
                     userDataHandler.verifyUser(user);
+                } catch (DataHandlerException e) {
+                    return false;
                 }
+                isVerified = true;
             }
         }
         return isVerified;
     }
 
 
-    public boolean verifyPasswordReset(){
+    public boolean verifyPasswordReset() {
         //todo implement password reset
         return true;
     }

@@ -3,7 +3,9 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +83,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return The new created object or null if there are errors.
      * @throws HttpBeanException
      */
-    public abstract E create() throws HttpBeanException;
+    public abstract E create() throws HttpBeanException, DataHandlerException;
 
     /**
      * Load and returns a single Object by using the given parameters.
@@ -89,7 +91,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return The object (never null)
      * @throws HttpBeanException
      */
-    public abstract E get() throws HttpBeanException;
+    public abstract E get() throws HttpBeanException, DataHandlerException;
 
     /**
      * Returns a list filtered by the given parameters
@@ -97,7 +99,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return A list of objects
      * @throws HttpBeanException
      */
-    public abstract E[] index() throws HttpBeanException;
+    public abstract E[] index() throws HttpBeanException, DataHandlerException;
 
     /**
      * Updates the object which can be accessed through getObject().
@@ -105,19 +107,19 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      *
      * @throws HttpBeanException
      */
-    public abstract void update() throws HttpBeanException;
+    public abstract void update() throws HttpBeanException, DataHandlerException;
 
     /**
      * Destroy the object
      * @throws HttpBeanException
      */
-    public abstract void destroy() throws HttpBeanException;
+    public abstract void destroy() throws HttpBeanException, DataHandlerException;
 
     /**
      * Replace the object
      * @throws HttpBeanException
      */
-    public void replace() throws HttpBeanException {
+    public void replace() throws HttpBeanException, DataHandlerException {
         throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Replacement not allowed");
     }
 
@@ -138,12 +140,22 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     protected TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
         if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
-        object = get();
+        try {
+            object = get();
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
+        }
         if(object == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
         }
         ensureAccessingUserHasAccess(object, AccessLevelEnum.OWNER);
-        destroy();
+        try {
+            destroy();
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
+        }
         if (!hasErrors()) {
             setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.EDIT;
@@ -166,12 +178,20 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         if(request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         System.out.println("PATCH");
-        object = get();
+        try {
+            object = get();
+        } catch (DataHandlerException e) {
+            throw new HttpBeanDatabaseException();
+        }
         if(object == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
         }
         ensureAccessingUserHasAccess(object, AccessLevelEnum.WRITE);
-        update();
+        try {
+            update();
+        } catch (DataHandlerException e) {
+            throw new HttpBeanDatabaseException();
+        }
         if (!hasErrors()) {
             // On success show details
             templateType = TemplateType.DETAIL;
@@ -216,7 +236,11 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     private TemplateType doGetOnObject(HttpServletRequest request) throws HttpBeanException {
         TemplateType templateType;
-        object = get();
+        try {
+            object = get();
+        } catch (DataHandlerException e) {
+            throw new HttpBeanDatabaseException();
+        }
         if(object == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
         }
@@ -249,7 +273,12 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             ensureIsAuthenticated();
             templateType = TemplateType.CREATE;
         } else {
-            E[] objectList = index();
+            E[] objectList;
+            try {
+                objectList = index();
+            } catch (DataHandlerException e) {
+                throw new HttpBeanDatabaseException();
+            }
             if(objectList == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INDEX_FAILED);
             }
@@ -275,7 +304,12 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
         ensureIsAuthenticated();
         TemplateType templateType;
-        E object = create();
+        E object;
+        try {
+            object = create();
+        } catch (DataHandlerException e) {
+            throw new HttpBeanDatabaseException();
+        }
         if(object == null && !hasErrors()) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_CREATE_FAILED);
         }

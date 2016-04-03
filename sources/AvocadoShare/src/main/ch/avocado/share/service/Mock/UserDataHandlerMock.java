@@ -13,10 +13,10 @@ import java.util.Date;
  */
 public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IUserDataHandler {
 
-    public static final String EXISTING_USER0 = "user0";
-    public static final String EXISTING_USER1 = "user1";
-    public static final String EXISTING_USER2 = "user2";
-    public static final String EXISTING_USER3 = "user3";
+    public static final String EXISTING_USER0 = "1000001";
+    public static final String EXISTING_USER1 = "1000002";
+    public static final String EXISTING_USER2 = "1000003";
+    public static final String EXISTING_USER3 = "1000004";
 
     /**
      * Save some precious time while testing :)
@@ -31,7 +31,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     public void reset() {
         objects.clear();
         for (int i = 0; i < 100; i++) {
-            String id = "user" + i;
+            String id = String.format("1%06d", i);
             objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, DEFAULT_PASSWORD, "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
         }
     }
@@ -62,7 +62,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean addMail(User user) throws SQLException {
+    public boolean addMail(User user) {
         return false;
     }
 
@@ -77,7 +77,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean insertPasswordReset(PasswordResetVerification verification, String userId) {
+    public boolean addPasswordResetVerififcation(PasswordResetVerification verification, String userId) {
         return false;
     }
 

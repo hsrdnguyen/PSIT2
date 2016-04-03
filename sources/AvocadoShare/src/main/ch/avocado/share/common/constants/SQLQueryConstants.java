@@ -43,32 +43,44 @@ public class SQLQueryConstants {
 
     public static final String SET_MAIL_TO_VERIFIED = "UPDATE avocado_share.email SET verified=TRUE WHERE identity_id=?";
 
-    //GROUP
-    public static final String INSERT_GROUP_QUERY = "INSERT INTO avocado_share.access_group(name, description) VALUES (?, ?)";
-    public static final int INSERT_GROUP_QUERY_NAME_INDEX = 1;
-    public static final int INSERT_GROUP_QUERY_DESCRIPTION_INDEX = 2;
+    /**
+     * Group related queries
+     */
+    public final static class Group {
 
-    public static final String GET_GROUP_BY_ID = "SELECT id, name, description, creation_date FROM access_group AS g JOIN access_control AS o ON g.id = o.id WHERE g.id = ?";
-    /**
-     * Index of the id in get group by id query
-     */
-    public static final int GET_GROUP_BY_ID_ID_INDEX = 1;
-    /**
-     * Index of the id in a get group result
-     */
-    public static final int GROUP_RESULT_ID_INDEX = 1;
-    /**
-     * Index of the name in a get group result
-     */
-    public static final int GROUP_RESULT_NAME_INDEX = 2;
-    /**
-     * Index of the description in a get group result
-     */
-    public static final int GROUP_RESULT_DESCRIPTION_INDEX = 3;
-    /**
-     * Index of the creation date in a get group result
-     */
-    public static final int GROUP_RESULT_CREATION_DATE = 4;
+        public static final String INSERT_QUERY = "INSERT INTO avocado_share.access_group(name, description) VALUES (?, ?)";
+        public static final int INSERT_QUERY_NAME_INDEX = 1;
+        public static final int INSERT_QUERY_DESCRIPTION_INDEX = 2;
+        /**
+         * Index of the id in get group by id query
+         */
+        public static final int GET_BY_ID_ID_INDEX = 1;
+
+        /**
+         * Index of the id in get group by name query
+         */
+        public static final int GET_BY_NAME_NAME_INDEX = 1;
+        /**
+         * Index of the id in a get group result
+         */
+        public static final int RESULT_ID_INDEX = 1;
+        /**
+         * Index of the name in a get group result
+         */
+        public static final int RESULT_NAME_INDEX = 2;
+        /**
+         * Index of the description in a get group result
+         */
+        public static final int RESULT_DESCRIPTION_INDEX = 3;
+        /**
+         * Index of the creation date in a get group result
+         */
+        public static final int RESULT_CREATION_DATE = 4;
+        private static final String SELECT_COLUMNS = "g.id, name, description, creation_date";
+        private static final String SELECT_WITHOUT_WHERE = "SELECT " + SELECT_COLUMNS + " FROM access_group AS g JOIN access_control AS o ON g.id = o.id";
+        public static final String SELECT_BY_NAME_QUERY = SELECT_WITHOUT_WHERE + "WHERE g.name = ?";
+        public static final String SELECT_BY_ID_QUERY = SELECT_WITHOUT_WHERE +  "WHERE g.id = ?";
+    }
 
     //CATEGORY
     public static final String SQL_SELECT_CATEGORY_BY_NAME = "SELECT object_id, name FROM category WHERE name = '?'";
@@ -79,12 +91,14 @@ public class SQLQueryConstants {
 
     public static final String SQL_DELETE_CATEGORY_FROM_OBJECT = "DELETE FROM category WHERE name = '?' AND object_id = ?";
 
-    //FILE
-    public static final String SELECT_FILE_BY_ID_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE o.id = ?";
-    public static final String SELECT_FILE_BY_TITLE_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE title = ?";
-    public static final String INSERT_FILE_QUERY = "INSERT INTO file (id, title, description, last_changed, path) (?, ?, ?, ?, ?)";
-    public static final String DELETE_FILE_QUERY = "DELETE FROM file WHERE id = ?";
-    public static final String UPDATE_FILE_QUERY = "UPDATE file SET title=?, description=?, last_changed=?, path=? WHERE id = ?";
+
+    public static final class File {
+        public static final String SELECT_BY_ID_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE o.id = ?";
+        public static final String SELECT_BY_TITLE_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE title = ?";
+        public static final String INSERT_QUERY = "INSERT INTO file (id, title, description, last_changed, path) (?, ?, ?, ?, ?)";
+        public static final String DELETE_QUERY = "DELETE FROM file WHERE id = ?";
+        public static final String UPDATE_QUERY = "UPDATE file SET title=?, description=?, last_changed=?, path=? WHERE id = ?";
+    }
 
     //PERMISSION
     public static final String INSERT_RIGHTS_QUERY = "INSERT INTO avocado_share.rights(object_id, owner_id, level) VALUES (?, ?, ?)";

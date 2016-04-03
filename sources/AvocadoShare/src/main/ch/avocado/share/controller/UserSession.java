@@ -12,6 +12,7 @@ import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.util.Date;
 
@@ -62,11 +63,10 @@ public class UserSession {
         IUserDataHandler userDataHandler;
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            return;
+			user = userDataHandler.getUser(userId);
+		} catch (ServiceNotFoundException | DataHandlerException ignored) {
         }
-        user = userDataHandler.getUser(userId);
-    }
+	}
 
 
 	public boolean isAuthenticated() {

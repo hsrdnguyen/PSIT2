@@ -1,6 +1,7 @@
 package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -35,7 +36,7 @@ public interface ISecurityHandler {
 
     Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target);
 
-    User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+    User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 
     <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum);
 }

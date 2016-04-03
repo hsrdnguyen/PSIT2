@@ -9,6 +9,7 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Impl.UserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -42,7 +43,8 @@ public class UserHandlerBean implements Serializable {
         try {
             user.setId(ServiceLocator.getService(IUserDataHandler.class).addUser(user));
             ServiceLocator.getService(IMailingService.class).sendVerificationEmail(user);
-        } catch (ServiceNotFoundException e) {
+        } catch (ServiceNotFoundException | DataHandlerException e) {
+            // todo: error handling
             e.printStackTrace();
         }
     }
@@ -59,7 +61,8 @@ public class UserHandlerBean implements Serializable {
             setEmailAddress(oldUser.getMail().getAddress());
             setPrename(oldUser.getPrename());
             setName(oldUser.getFullName());
-        } catch (ServiceNotFoundException e) {
+        } catch (ServiceNotFoundException | DataHandlerException e) {
+            // todo: error handling
             e.printStackTrace();
         }
     }

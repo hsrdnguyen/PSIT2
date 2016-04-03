@@ -24,7 +24,7 @@ public class User extends AccessIdentity {
     }
 
     public User(UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
-        super("", null, new Date(), 0.0f, "", "");
+        super(null, null, new Date(), 0.0f, "", "");
         setAvatar(avatar);
         setMail(mail);
         setPassword(password);
@@ -37,7 +37,8 @@ public class User extends AccessIdentity {
      */
     public UserPassword getPassword() {
     	return this.password;
-    }
+
+     }
 
     /**
      * @param password The password object (not null)

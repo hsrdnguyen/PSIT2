@@ -2,75 +2,54 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.SQLQueryConstants;
-import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
-import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 
 import java.sql.SQLException;
 
 /**
- * Created by bergm on 22/03/2016.
+ * File Data handler.
  */
-public class FileDataHandler implements IFileDataHandler {
+public class FileDataHandler extends DataHandlerBase implements IFileDataHandler {
 
     @Override
-    public String addFile(File file) {
-        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        String fileId = "";
-        if(connectionHandler == null) return fileId;
+    public String addFile(File file) throws DataHandlerException {
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY);
-            preparedStatement.setString(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX, file.getDescription());
-            fileId = connectionHandler.insertDataSet(preparedStatement);
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_FILE_QUERY);
-            preparedStatement.setString(1, fileId);
+            file.setId(addAccessControlObject(file.getDescription()));
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.INSERT_QUERY);
+            preparedStatement.setLong(1, Long.parseLong(file.getId()));
             preparedStatement.setString(2, file.getTitle());
             preparedStatement.setString(3, file.getDescription());
             preparedStatement.setString(4, file.getLastChanged().toString());
             connectionHandler.insertDataSet(preparedStatement);
         } catch (SQLException e) {
-            return "";
+            throw new DataHandlerException(e);
         }
-
-        return fileId;
+        return file.getId();
     }
 
     @Override
-    public boolean deleteFile(File file) {
-        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return false;
-        PreparedStatement preparedStatement;
-        try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.DELETE_FILE_QUERY);
-            preparedStatement.setString(1, file.getId());
-            if (!connectionHandler.deleteDataSet(preparedStatement)) return false;
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.DELETE_ACCESS_CONTROL_QUERY);
-            preparedStatement.setString(1, file.getId());
-            if (!connectionHandler.deleteDataSet(preparedStatement)) return false;
-        } catch (SQLException e) {
-            return false;
-        }
-        return true;
+    public boolean deleteFile(File file) throws DataHandlerException {
+        return deleteAccessControlObject(file.getId());
     }
 
     @Override
-    public File getFileById(String fileId) {
+    public File getFileById(String fileId) throws DataHandlerException {
         //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
-        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return null;
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_FILE_BY_ID_QUERY);
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_ID_QUERY);
             preparedStatement.setInt(1, Integer.parseInt(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             File file = getFileFromSelectResultSet(resultSet);
@@ -83,7 +62,6 @@ public class FileDataHandler implements IFileDataHandler {
             {
                 file.setOwnerId(resultSet.getString(1));
             }
-
             return file;
 
 
@@ -93,13 +71,13 @@ public class FileDataHandler implements IFileDataHandler {
     }
 
     @Override
-    public File getFileByTitleAndModule(String fileTitle, String moduleId) {
+    public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
         //TODO @kunzlio1: noch implementieren
-        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if(connectionHandler == null) return null;
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_FILE_BY_TITLE_QUERY);
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_TITLE_QUERY);
             preparedStatement.setString(1, fileTitle);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             return getFileFromSelectResultSet(resultSet);
@@ -110,30 +88,26 @@ public class FileDataHandler implements IFileDataHandler {
     }
 
     @Override
-    public boolean updateFile(File file) {
+    public boolean updateFile(File file) throws DataHandlerException {
         //TODO @kunzlio1: Es gibt File Argumente die gar nicht in der DB gespeichert werden können
-        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return false;
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.UPDATE_FILE_QUERY);
+            preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.File.UPDATE_QUERY);
             preparedStatement.setString(1, file.getTitle());
             preparedStatement.setString(2, file.getDescription());
             //TODO @kunzlio1: fragen ob last_changed autom. ges. wird?
             preparedStatement.setString(3, file.getLastChanged().toString());
             preparedStatement.setString(4, file.getPath());
             preparedStatement.setString(5, file.getId());
-            if (!connectionHandler.updateDataSet(preparedStatement)) return false;
+            return getConnectionHandler().updateDataSet(preparedStatement);
         } catch (SQLException e) {
-            return false;
+            throw new DataHandlerException(e);
         }
-        return true;
     }
 
     @Override
-    public boolean grantAccess(String fileId, String userId) {
-        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return false;
+    public boolean grantAccess(String fileId, String userId) throws DataHandlerException {
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
 
         try {
@@ -153,7 +127,7 @@ public class FileDataHandler implements IFileDataHandler {
 
             if (!connectionHandler.updateDataSet(preparedStatement)) return false;
         } catch (SQLException e) {
-            return false;
+            throw new DataHandlerException(e);
         }
         return true;
     }

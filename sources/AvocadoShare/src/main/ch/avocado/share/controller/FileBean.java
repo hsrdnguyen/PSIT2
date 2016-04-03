@@ -4,12 +4,14 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.ISecurityHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -87,7 +89,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
 
-    private File newFileModel(String path) {
+    private File getFileFromParameters(String path) {
         File file = FileFactory.getDefaultFile();
         file.setTitle(getTitle());
         file.setCategories(getCategories());
@@ -97,7 +99,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public File create() throws HttpBeanException {
+    public File create() throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         checkParameterTitle();
         checkParameterDescription();
@@ -105,14 +107,12 @@ public class FileBean extends ResourceBean<File> {
         //checkParameterAuthor();
         if (!hasErrors()) {
             String path = uploadFile(getUploadedFileItem());
-            File file = newFileModel(path);
-            String newFileId = fileDataHandler.addFile(file);
-            if (newFileId == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
-            }
-            file = fileDataHandler.getFileById(newFileId);
+            File file = getFileFromParameters(path);
+            String fileId;
+            fileId = fileDataHandler.addFile(file);
+            file = fileDataHandler.getFileById(fileId);
             if (file == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_DATABASE);
             }
             return file;
         }
@@ -136,7 +136,7 @@ public class FileBean extends ResourceBean<File> {
         }
         Module[] modules = securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Module.class, user, AccessLevelEnum.READ);
         if (modules == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+            throw new HttpBeanDatabaseException();
         }
         return modules;
     }
@@ -155,7 +155,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public File get() throws HttpBeanException {
+    public File get() throws HttpBeanException, DataHandlerException {
         if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         File file = null;
@@ -210,9 +210,15 @@ public class FileBean extends ResourceBean<File> {
             file.setPath(path);
             changed = true;
         }
+
         if (!hasErrors() && changed) {
-            if (!fileDataHandler.updateFile(file)) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+            try{
+                if(!fileDataHandler.updateFile(file)) {
+                    throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
+                }
+            } catch (DataHandlerException e) {
+                e.printStackTrace();
+                throw new HttpBeanDatabaseException();
             }
         }
     }
@@ -220,8 +226,13 @@ public class FileBean extends ResourceBean<File> {
     @Override
     public void destroy() throws HttpBeanException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        if (!fileDataHandler.deleteFile(getObject())) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+        try {
+            if (!fileDataHandler.deleteFile(getObject())) {
+                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
+            }
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
         }
     }
 
@@ -317,10 +328,14 @@ public class FileBean extends ResourceBean<File> {
         } else {
             setTitle(getTitle().trim());
             IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-            if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
-                addFormError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
+
+            try {
+                if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
+                    addFormError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
+                }
+            } catch (DataHandlerException e) {
+                addFormError("title", ErrorMessageConstants.ERROR_DATABASE);
             }
-            //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
         }
     }
 

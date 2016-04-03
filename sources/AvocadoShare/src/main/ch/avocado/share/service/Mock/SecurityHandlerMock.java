@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +74,11 @@ public class SecurityHandlerMock implements ISecurityHandler {
         }
         for (Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue().containsLevel(accessLevelEnum)) {
-                Group group = groupDataHandler.getGroup(entry.getKey());
+                Group group = null;
+                try {
+                    group = groupDataHandler.getGroup(entry.getKey());
+                } catch (DataHandlerException ignored) {
+                }
                 if(group != null && !group.getId().equals(target.getId())) {
                     identityList.add(group);
                 }
@@ -84,7 +89,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     @Override
-    public User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) {
+    public User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) throws DataHandlerException {
         if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum is null");
         if(target == null) throw new IllegalArgumentException("target is null");
         List<User> identityList = new ArrayList<>();
@@ -172,7 +177,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
      * @return A group object which the required access level to all objects.
      * @throws ServiceNotFoundException
      */
-    public Group getGroupWithAccess(AccessLevelEnum level) throws ServiceNotFoundException {
+    public Group getGroupWithAccess(AccessLevelEnum level) throws ServiceNotFoundException, DataHandlerException {
         if(level == null) throw new IllegalArgumentException("level is null");
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         for(Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
@@ -191,7 +196,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
      * @return A user object which the required access level to all objects.
      * @throws ServiceNotFoundException
      */
-    public User getUserWithAccess(AccessLevelEnum level) throws ServiceNotFoundException {
+    public User getUserWithAccess(AccessLevelEnum level) throws ServiceNotFoundException, DataHandlerException {
         if(level == null) throw new IllegalArgumentException("level is null");
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         for(Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {

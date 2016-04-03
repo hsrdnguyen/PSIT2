@@ -6,9 +6,11 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.FileBean;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.File;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileStorageHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MimeType;
@@ -90,7 +92,12 @@ public class DownloadServlet extends HttpServlet{
         boolean attached = attachmentParameter != null && !attachmentParameter.isEmpty();
         fileBean.setAccessingUser(userSession.getUser());
         try {
-            File file = fileBean.get();
+            File file;
+            try {
+                file = fileBean.get();
+            } catch (DataHandlerException e) {
+                throw new HttpBeanDatabaseException();
+            }
             download(fileBean, file, response, attached);
         } catch (HttpBeanException e) {
             response.sendError(e.getStatusCode(), e.getDescription());

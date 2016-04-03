@@ -2,10 +2,12 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,16 +50,24 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         if ((getUserId() == null && getGroupId() == null)) {
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ErrorMessageConstants.ERROR_MISSING_GROUP_OR_USER_ID);
         }
-        if((getUserId() != null && getGroupId() != null)) {
+        if ((getUserId() != null && getGroupId() != null)) {
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ErrorMessageConstants.ERROR_BOTH_USER_AND_GROUP_ID_SET);
         }
         if (getUserId() != null) {
-            ownerIdentity = getService(IUserDataHandler.class).getUser(getUserId());
+            try {
+                ownerIdentity = getService(IUserDataHandler.class).getUser(getUserId());
+            } catch (DataHandlerException e) {
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+            }
             if (ownerIdentity != null) {
                 return ownerIdentity;
             }
         } else {
-            ownerIdentity = getService(IGroupDataHandler.class).getGroup(getGroupId());
+            try {
+                ownerIdentity = getService(IGroupDataHandler.class).getGroup(getGroupId());
+            } catch (DataHandlerException e) {
+                throw new HttpBeanDatabaseException();
+            }
             if (ownerIdentity != null) {
                 return ownerIdentity;
             }
@@ -71,10 +81,10 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         AccessIdentity identityWhichRightsAreToChange = getOwnerIdentity();
         ISecurityHandler securityHandler = getSecurityHandler();
         T target = getTarget();
-        if(target.getId().equals(identityWhichRightsAreToChange.getId())) {
+        if (target.getId().equals(identityWhichRightsAreToChange.getId())) {
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, "Besitzer der Rechte und Ziel sind gleich.");
         }
-        if(!securityHandler.setAccessLevel(identityWhichRightsAreToChange, target, level)) {
+        if (!securityHandler.setAccessLevel(identityWhichRightsAreToChange, target, level)) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_UNABLE_TO_SET_RIGHTS);
         }
     }
@@ -148,9 +158,9 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
 
 
     /**
-     * @todo Should this method check if the accessing user has read rights on the identities?
      * @return a list of members with access level
      * @throws HttpBeanException
+     * @todo Should this method check if the accessing user has read rights on the identities?
      */
     public Group[] getMemberGroups() throws HttpBeanException {
         checkAccessLevel();
@@ -159,19 +169,24 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     }
 
     /**
-     * @todo Should this method check if the accessing user has read rights on the identities?
      * @return a list of members with access level
      * @throws HttpBeanException
+     * @todo Should this method check if the accessing user has read rights on the identities?
      */
     public User[] getMemberUsers() throws HttpBeanException {
         checkAccessLevel();
         ISecurityHandler securityHandler = getSecurityHandler();
-        return securityHandler.getUsersWithAccessIncluding(getLevel(), getTarget());
+        try {
+            return securityHandler.getUsersWithAccessIncluding(getLevel(), getTarget());
+        } catch (DataHandlerException e) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+        }
     }
 
 
     /**
      * Checks the field {@link #getLevel() level}
+     *
      * @throws HttpBeanException
      */
     private void checkAccessLevel() throws HttpBeanException {
@@ -182,7 +197,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
 
     private void ensureHasNoAccess(AccessIdentity identity) throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
-        if(!AccessLevelEnum.NONE.containsLevel(securityHandler.getAccessLevel(identity, getTarget()))) {
+        if (!AccessLevelEnum.NONE.containsLevel(securityHandler.getAccessLevel(identity, getTarget()))) {
             throw new HttpBeanException(HttpServletResponse.SC_CONFLICT, ErrorMessageConstants.ERROR_ACCESS_ALREADY_EXISTS);
         }
     }
@@ -223,14 +238,14 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     }
 
     public String getTargetId() {
-        if(target != null) {
+        if (target != null) {
             return target.getId();
         }
         return targetId;
     }
 
     public void setTargetId(String targetId) {
-        if(this.targetId == null || !this.targetId.equals(targetId)) {
+        if (this.targetId == null || !this.targetId.equals(targetId)) {
             this.targetId = targetId;
             target = null;
         }
@@ -241,10 +256,10 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
      * @throws HttpBeanException
      */
     public T getTarget() throws HttpBeanException {
-        if(target == null && targetId != null) {
+        if (target == null && targetId != null) {
             target = getTargetById(targetId);
         }
-        if(target == null) {
+        if (target == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_TARGET_NOT_FOUND);
         }
         return target;
@@ -269,7 +284,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
      * @param userId the id of the user whose rights will be changed
      */
     public void setUserId(String userId) {
-        if(this.userId == null || !this.userId.equals(userId)) {
+        if (this.userId == null || !this.userId.equals(userId)) {
             ownerIdentity = null;
             this.userId = userId;
             groupId = null;
@@ -287,7 +302,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
      * @param groupId the id of the group whose rights will be changed
      */
     public void setGroupId(String groupId) {
-        if(this.groupId == null || !userId.equals(groupId)) {
+        if (this.groupId == null || !userId.equals(groupId)) {
             ownerIdentity = null;
             this.groupId = groupId;
             userId = null;
