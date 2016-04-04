@@ -62,6 +62,12 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     @Override
+    public boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException {
+        anonymousAccess = level;
+        return true;
+    }
+
+    @Override
     public Group[] getGroupsWithAccess(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) {
         if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum is null");
         if(target == null) throw new IllegalArgumentException("target is null");

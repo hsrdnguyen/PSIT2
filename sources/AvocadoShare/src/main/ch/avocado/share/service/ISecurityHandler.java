@@ -14,7 +14,7 @@ public interface ISecurityHandler {
      * @param target target that should be accessed
      * @return access-level of the user in the target
      */
-    AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target);
+    AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) throws DataHandlerException;
 
 
     /**
@@ -24,7 +24,7 @@ public interface ISecurityHandler {
      * @param accessLevel the new level
      * @return {@code true} if the execution was successful.
      */
-    boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel);
+    boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException;
 
     /**
      * checks and returns what access level an anonymous (unauthenticated) user
@@ -32,9 +32,13 @@ public interface ISecurityHandler {
      * @param target target to check the access to
      * @return access level of an anonymous user
      */
-    AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target);
+    AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException;
 
-    Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+
+    boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException;
+
+
+    Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 
     User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 

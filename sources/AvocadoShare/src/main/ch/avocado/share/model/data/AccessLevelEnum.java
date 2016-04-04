@@ -7,6 +7,7 @@ public enum AccessLevelEnum {
     NONE(0),
     READ(1),
     WRITE(3),
+    MANAGE(4),
     OWNER(7);
 
     /**

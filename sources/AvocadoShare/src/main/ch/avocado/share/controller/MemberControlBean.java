@@ -77,15 +77,20 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
 
 
     private void applyAccess() throws HttpBeanException {
-        ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.OWNER);
+        ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.MANAGE);
         AccessIdentity identityWhichRightsAreToChange = getOwnerIdentity();
         ISecurityHandler securityHandler = getSecurityHandler();
         T target = getTarget();
         if (target.getId().equals(identityWhichRightsAreToChange.getId())) {
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, "Besitzer der Rechte und Ziel sind gleich.");
         }
-        if (!securityHandler.setAccessLevel(identityWhichRightsAreToChange, target, level)) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_UNABLE_TO_SET_RIGHTS);
+        try {
+            if (!securityHandler.setAccessLevel(identityWhichRightsAreToChange, target, level)) {
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_UNABLE_TO_SET_RIGHTS);
+            }
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
         }
     }
 
@@ -133,12 +138,12 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
             switch (getAction()) {
                 case ACTION_CREATE_MEMBER:
                     System.out.println(ACTION_CREATE_MEMBER);
-                    ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.OWNER);
+                    ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.MANAGE);
                     return TemplateType.CREATE;
+
                 case ACTION_EDIT_MEMBER:
                     System.out.println(ACTION_EDIT_MEMBER);
-                    ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.OWNER);
-                    System.out.println("Has access :)");
+                    ensureAccessingUserHasAccess(getTarget(), AccessLevelEnum.MANAGE);
                     AccessIdentity ownerIdentity = getOwnerIdentity();
                     if (ownerIdentity instanceof User) {
                         request.setAttribute("MemberUser", ownerIdentity);
@@ -165,7 +170,11 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     public Group[] getMemberGroups() throws HttpBeanException {
         checkAccessLevel();
         ISecurityHandler securityHandler = getSecurityHandler();
-        return securityHandler.getGroupsWithAccess(getLevel(), getTarget());
+        try {
+            return securityHandler.getGroupsWithAccess(getLevel(), getTarget());
+        } catch (DataHandlerException e) {
+            throw new HttpBeanDatabaseException();
+        }
     }
 
     /**
@@ -197,8 +206,12 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
 
     private void ensureHasNoAccess(AccessIdentity identity) throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
-        if (!AccessLevelEnum.NONE.containsLevel(securityHandler.getAccessLevel(identity, getTarget()))) {
-            throw new HttpBeanException(HttpServletResponse.SC_CONFLICT, ErrorMessageConstants.ERROR_ACCESS_ALREADY_EXISTS);
+        try {
+            if (!AccessLevelEnum.NONE.containsLevel(securityHandler.getAccessLevel(identity, getTarget()))) {
+                throw new HttpBeanException(HttpServletResponse.SC_CONFLICT, ErrorMessageConstants.ERROR_ACCESS_ALREADY_EXISTS);
+            }
+        } catch (DataHandlerException e) {
+            throw new HttpBeanDatabaseException();
         }
     }
 
@@ -221,6 +234,9 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
                 break;
             case "WRITE":
                 setLevel(AccessLevelEnum.WRITE);
+                break;
+            case "MANAGE":
+                setLevel(AccessLevelEnum.MANAGE);
                 break;
             case "OWNER":
                 setLevel(AccessLevelEnum.OWNER);

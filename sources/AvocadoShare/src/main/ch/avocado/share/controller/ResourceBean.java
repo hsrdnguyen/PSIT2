@@ -149,7 +149,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         if(object == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
         }
-        ensureAccessingUserHasAccess(object, AccessLevelEnum.OWNER);
+        ensureAccessingUserHasAccess(object, AccessLevelEnum.MANAGE);
         try {
             destroy();
         } catch (DataHandlerException e) {

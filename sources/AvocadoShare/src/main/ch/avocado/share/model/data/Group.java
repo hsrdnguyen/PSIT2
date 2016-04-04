@@ -1,6 +1,7 @@
 package ch.avocado.share.model.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.IllformedLocaleException;
 import java.util.List;
@@ -31,6 +32,10 @@ public class Group extends AccessIdentity implements Serializable {
                  String name) {
         super(id, categories, creationDate, rating, ownerId, description);
         setName(name);
+    }
+
+    public Group(String ownerId, String description, String name) {
+        this(null, new ArrayList<Category>(), new Date(0), 0.0f, ownerId, description, name);
     }
 
     /**

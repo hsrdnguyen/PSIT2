@@ -5,9 +5,11 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -56,7 +58,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     private TemplateType rendererTemplateType;
 
     private void throwMethodNotAllowed(String method) throws HttpBeanException {
-        if(method == null) throw new IllegalArgumentException("method is null");
+        if (method == null) throw new IllegalArgumentException("method is null");
         throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, String.format(ERROR_METHOD_NOT_ALLOWED_FORMAT, method));
     }
 
@@ -225,7 +227,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     }
 
     protected <E> E getService(Class<E> serviceClass) throws HttpBeanException {
-        try{
+        try {
             return ServiceLocator.getService(serviceClass);
         } catch (ServiceNotFoundException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_SERVICE_NOT_FOUND + e.getService());
@@ -266,10 +268,15 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
         ISecurityHandler securityHandler = getSecurityHandler();
         AccessLevelEnum grantedAccessLevel;
-        if (getAccessingUser() == null) {
-            grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
-        } else {
-            grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
+        try {
+            if (getAccessingUser() == null) {
+                grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
+            } else {
+                grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
+            }
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
         }
         if (!grantedAccessLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_ACCESS_DENIED);

@@ -40,9 +40,8 @@ public class UserDataHandlerTest {
         service.getUser(null);
     }
 
-    private User getTestUser() throws Exception {
+    public static User getTestUser() throws Exception {
         String string_date = "12-December-2030";
-
         SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yyyy");
         Date d = f.parse(string_date);
         EmailAddressVerification verification = new EmailAddressVerification(d, "123456789");

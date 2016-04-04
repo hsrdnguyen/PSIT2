@@ -355,7 +355,7 @@ public class GroupBeanTest extends BeanTestBase {
 
     @Test
     public void testDestroy() throws Exception {
-        authenticateAccess(AccessLevelEnum.OWNER);
+        authenticateAccess(AccessLevelEnum.MANAGE);
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         String groupId = GroupDataHandlerMock.EXISTING_GROUP0;
         assertNotNull(groupDataHandler.getGroup(groupId));

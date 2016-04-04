@@ -24,7 +24,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
         try {
             statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.SELECT_BY_ID_QUERY);
-            statement.setString(SQLQueryConstants.Group.GET_BY_ID_ID_INDEX, id);
+            statement.setInt(SQLQueryConstants.Group.GET_BY_ID_ID_INDEX, Integer.parseInt(id));
         } catch (SQLException e) {
             return null;
         }
@@ -51,6 +51,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         Date creationDate;
         // TODO: @muellcy1 fetch categories and rating .. and ownerId?
         try {
+            if(!resultSet.next()) return null;
             id = resultSet.getString(SQLQueryConstants.Group.RESULT_ID_INDEX);
             name = resultSet.getString(SQLQueryConstants.Group.RESULT_NAME_INDEX);
             description = resultSet.getString(SQLQueryConstants.Group.RESULT_DESCRIPTION_INDEX);
@@ -68,14 +69,14 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         return getGroupFromResultSet(executeGetStatement(statement));
     }
 
-    private PreparedStatement getInsertStatement(String name, String description) throws DataHandlerException {
+    private PreparedStatement getInsertStatement(String id, String name) throws DataHandlerException {
         if (name == null) throw new IllegalArgumentException("name is null");
-        if (description == null) throw new IllegalArgumentException("description is null");
+        if (id == null) throw new IllegalArgumentException("id is null");
         PreparedStatement statement;
         try {
             statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.INSERT_QUERY);
+            statement.setInt(SQLQueryConstants.Group.INSERT_QUERY_ID_INDEX, Integer.parseInt(id));
             statement.setString(SQLQueryConstants.Group.INSERT_QUERY_NAME_INDEX, name);
-            statement.setString(SQLQueryConstants.Group.INSERT_QUERY_DESCRIPTION_INDEX, description);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -97,7 +98,9 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     public String addGroup(Group group) throws DataHandlerException {
         if (group == null) throw new IllegalArgumentException("group is null");
         if (group.getId() != null) throw new IllegalArgumentException("group.getId() is not null");
-        PreparedStatement statement = getInsertStatement(group.getName(), group.getDescription());
+        String id = addAccessControlObject(group.getDescription());
+        group.setId(id);
+        PreparedStatement statement = getInsertStatement(group.getId(), group.getName());
         return executeInsertStatement(statement);
     }
 
