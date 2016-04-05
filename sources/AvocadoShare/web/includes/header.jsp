@@ -117,7 +117,7 @@
                                             <span class="dropdown-item">Anmelden</span>
                                         </a>
                                         -->
-                                    <a href="<%=baseUrl%>/register.jsp">
+                                    <a href="<%=baseUrl%>/user/?action=create">
                                         <span class="dropdown-item">Registrieren</span>
                                     </a>
                                     <% } %>
