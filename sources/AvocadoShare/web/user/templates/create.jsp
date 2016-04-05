@@ -1,32 +1,23 @@
 <%@ page import="ch.avocado.share.common.form.FormBuilder" %>
 <%@ page import="ch.avocado.share.model.data.User" %>
-<%@ page import="java.util.HashMap" %>
+<%@ page import="ch.avocado.share.controller.UserBean" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
-<jsp:useBean id="registrationBean" class="ch.avocado.share.controller.UserHandlerBean"/>
-<%@include file="includes/header.jsp" %>
+<%@include file="../../includes/header.jsp" %>
 <%
-    if(userSession.isAuthenticated()) {
-        response.sendRedirect(baseUrl);
-    }else if (request.getParameter("prename") != null &&
-            request.getParameter("surname") != null &&
-            request.getParameter("email") != null &&
-            request.getParameter("password") != null) {
-        registrationBean.setName(request.getParameter("surname"));
-        registrationBean.setPrename(request.getParameter("prename"));
-        registrationBean.setEmailAddress(request.getParameter("email"));
-        registrationBean.setPassword(request.getParameter("password"));
-
-        registrationBean.addUser();
-        response.sendRedirect(baseUrl);
-    } else {
-        FormBuilder form = new FormBuilder(User.class, new HashMap<String, String>());
-        form.setReadableFieldName("prename", "Vorname *");
-        form.setReadableFieldName("surname", "Nachname *");
-        form.setReadableFieldName("password", "Passwort *");
-        form.setReadableFieldName("password_confirmation", "Passwort wiederholen *");
-        form.setReadableFieldName("mail", "E-Mail *");
+    FormBuilder form = new FormBuilder((User) request.getAttribute("User"), User.class, (Map<String, String>) request.getAttribute(UserBean.ATTRIBUTE_FORM_ERRORS));
+    form.setReadableFieldName("prename", "Vorname");
+    form.setReadableFieldName("surname", "Nachname");
+    form.setReadableFieldName("password", "Passwort");
+    form.setReadableFieldName("passwordConfirmation", "Passwort wiederholen");
+    form.setReadableFieldName("mail", "E-Mail *");
 %>
 <h1>Registrierung</h1>
+<% if(!form.getFormErrors().isEmpty()) { %>
+    <div class="alert alert-danger">
+        <%=form.getFormErrors()%>
+    </div>
+<% } %>
 <div class="text-contact">
     <p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p>
     <div id="xform" class="xform">
@@ -48,13 +39,13 @@
             <%=form.getInputFor("password")%>
         </div>
         <div class="form-group" id="formular-betreff">
-            <%=form.getLabelFor("password_confirmation") %>
-            <%=form.getInputFor("password_confirmation", "password", "") %>
+            <%=form.getLabelFor("passwordConfirmation") %>
+            <%=form.getInputFor("passwordConfirmation", "password", "") %>
         </div>
         <div class="form-group" id="formular-msg">
             <label class="control-label" for="formular-field-8">
                 Profilbild</label>
-            <div class="form-group" id="formular-msg">
+            <div class="form-group">
                 <button class="btn btn-primary" type="submit" name="submit" id="formular-field-8">
                     Datei auswählen...
                 </button>
@@ -69,5 +60,4 @@
         </form>
     </div>
 </div>
-<%@include file="includes/footer.jsp" %>
-<%}%>
+<%@include file="../../includes/footer.jsp" %>

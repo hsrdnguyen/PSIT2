@@ -11,6 +11,9 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This bean can be used to control (and only control) access to a AccessControlObjectBase.
@@ -167,11 +170,13 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
      * @throws HttpBeanException
      * @todo Should this method check if the accessing user has read rights on the identities?
      */
-    public Group[] getMemberGroups() throws HttpBeanException {
+    public List<Group> getMemberGroups() throws HttpBeanException {
         checkAccessLevel();
         ISecurityHandler securityHandler = getSecurityHandler();
+        IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         try {
-            return securityHandler.getGroupsWithAccess(getLevel(), getTarget());
+            Map<String, AccessLevelEnum> idsWithAccess = securityHandler.getGroupsWithAccessIncluding(getLevel(), getTarget());
+            return groupDataHandler.getGroups(idsWithAccess.keySet());
         } catch (DataHandlerException e) {
             throw new HttpBeanDatabaseException();
         }
@@ -182,11 +187,13 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
      * @throws HttpBeanException
      * @todo Should this method check if the accessing user has read rights on the identities?
      */
-    public User[] getMemberUsers() throws HttpBeanException {
+    public List<User> getMemberUsers() throws HttpBeanException {
         checkAccessLevel();
         ISecurityHandler securityHandler = getSecurityHandler();
+        IUserDataHandler userDataHandler = getService(IUserDataHandler.class);
         try {
-            return securityHandler.getUsersWithAccessIncluding(getLevel(), getTarget());
+            Map<String, AccessLevelEnum> idsWithAccess = securityHandler.getUsersWithAccessIncluding(getLevel(), getTarget());
+            return userDataHandler.getUsers(idsWithAccess.keySet());
         } catch (DataHandlerException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
         }

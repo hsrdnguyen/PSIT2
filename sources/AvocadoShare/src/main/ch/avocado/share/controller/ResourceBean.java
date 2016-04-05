@@ -3,6 +3,7 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
+import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -10,6 +11,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -99,7 +101,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return A list of objects
      * @throws HttpBeanException
      */
-    public abstract E[] index() throws HttpBeanException, DataHandlerException;
+    public abstract List<E> index() throws HttpBeanException, DataHandlerException;
 
     /**
      * Updates the object which can be accessed through getObject().
@@ -270,10 +272,10 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         TemplateType templateType;
         if (isCreate()) {
             System.out.println("CREATE");
-            ensureIsAuthenticated();
+            ensureIsAuthenticatedToCreate();
             templateType = TemplateType.CREATE;
         } else {
-            E[] objectList;
+            List<E> objectList;
             try {
                 objectList = index();
             } catch (DataHandlerException e) {
@@ -302,7 +304,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     @Override
     protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
-        ensureIsAuthenticated();
+        ensureIsAuthenticatedToCreate();
         TemplateType templateType;
         E object;
         try {

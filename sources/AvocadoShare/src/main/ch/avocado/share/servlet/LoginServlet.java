@@ -41,14 +41,8 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 5348852043943606854L;
 
 
-    private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) {
-        User user = null;
-        try {
-            user = userDataHandler.getUserByEmailAddress(email);
-        } catch (DataHandlerException e) {
-            // todo: error handling?
-            return null;
-        }
+    private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) throws DataHandlerException {
+        User user = userDataHandler.getUserByEmailAddress(email);
         if (user != null && user.getPassword().matchesPassword(password)) {
             return user;
         }
@@ -125,15 +119,26 @@ public class LoginServlet extends HttpServlet {
                 if (!checkTestCookie(request)) {
                     request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_COOKIES_DISABLED);
                 }
-                User user = getUserWithLogin(userDataHandler, email, password);
+                User user = null;
+                try {
+                    user = getUserWithLogin(userDataHandler, email, password);
+                } catch (DataHandlerException e) {
+                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+                    renderLogin(request, response);
+                    return;
+                }
                 if (user != null) {
-                    UserSession userSession = new UserSession(request);
-                    userSession.authenticate(user);
-                    String redirectUrl= request.getParameter(FIELD_REDIRECT_TO);
-                    if(redirectUrl == null) {
-                        redirectUrl = request.getContextPath();
+                    if(user.getMail().isVerified()) {
+                        UserSession userSession = new UserSession(request);
+                        userSession.authenticate(user);
+                        String redirectUrl= request.getParameter(FIELD_REDIRECT_TO);
+                        if(redirectUrl == null) {
+                            redirectUrl = request.getContextPath();
+                        }
+                        redirectTo(redirectUrl, response);
+                    }else {
+                        request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_EMAIL_NOT_VERIFIED);
                     }
-                    redirectTo(redirectUrl, response);
                 } else {
                     request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_WRONG_PASSWORD);
                     renderLogin(request, response);

@@ -3,6 +3,9 @@ package ch.avocado.share.service;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by bergm on 15/03/2016.
  */
@@ -38,9 +41,9 @@ public interface ISecurityHandler {
     boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException;
 
 
-    Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
+    Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 
-    User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
+    Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 
-    <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum);
+    List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException;
 }

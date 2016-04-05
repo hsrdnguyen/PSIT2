@@ -3,6 +3,8 @@ package ch.avocado.share.service;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import java.util.List;
+
 /**
  * Created by bergm on 15/03/2016.
  */
@@ -26,7 +28,10 @@ public interface IFileDataHandler {
      * @param fileId id of the requested file
      * @return File from server
      */
-    File getFileById(String fileId) throws DataHandlerException;
+    File getFile(String fileId) throws DataHandlerException;
+
+
+    List<File> getFiles(List<String> ids) throws DataHandlerException;
 
     /**
      * @param fileTitle its title

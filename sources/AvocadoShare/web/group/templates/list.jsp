@@ -1,14 +1,15 @@
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% Group[] groups = (Group[]) request.getAttribute("Groups"); %>
+<% List<Group> groups = (List<Group>) request.getAttribute("Groups"); %>
 <section class="document-show">
     <div class="list-group">
         <div class="list-group-item list-group-header">
             <h2>Meine Gruppen</h2>
         </div>
         <%
-            if (groups.length == 0) {
+            if (groups.size() == 0) {
         %>
         <div class="list-group-item list-group-item-info">
             Wir können leider keine Gruppen für Sie finden.

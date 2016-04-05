@@ -1,16 +1,13 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
+import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
-import ch.avocado.share.service.IFileDataHandler;
-import ch.avocado.share.service.IFileStorageHandler;
-import ch.avocado.share.service.ISecurityHandler;
+import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
@@ -20,6 +17,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileBean extends ResourceBean<File> {
@@ -110,7 +108,7 @@ public class FileBean extends ResourceBean<File> {
             File file = getFileFromParameters(path);
             String fileId;
             fileId = fileDataHandler.addFile(file);
-            file = fileDataHandler.getFileById(fileId);
+            file = fileDataHandler.getFile(fileId);
             if (file == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_DATABASE);
             }
@@ -124,18 +122,16 @@ public class FileBean extends ResourceBean<File> {
      * @return A list of all modules a user can upload files into.
      * @throws HttpBeanException
      */
-    static public Module[] getModulesToUpload(User user) throws HttpBeanException {
+    static public List<Module> getModulesToUpload(User user) throws HttpBeanException {
         if (user == null) {
             throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_ACCESS_DENIED);
         }
-        ISecurityHandler securityHandler;
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
+        IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
+        List<Module> modules = null;
         try {
-            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_SECURITY_HANDLER);
-        }
-        Module[] modules = securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Module.class, user, AccessLevelEnum.READ);
-        if (modules == null) {
+            modules = moduleDataHandler.getModules(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ));
+        } catch (DataHandlerException e) {
             throw new HttpBeanDatabaseException();
         }
         return modules;
@@ -146,12 +142,17 @@ public class FileBean extends ResourceBean<File> {
      * @throws HttpBeanException
      */
     @Override
-    public File[] index() throws HttpBeanException {
+    public List<File> index() throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
+        IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         if(getAccessingUser() != null) {
-            return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(File.class, getAccessingUser(), AccessLevelEnum.READ);
+            try {
+                return fileDataHandler.getFiles(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
+            } catch (DataHandlerException e) {
+                throw new HttpBeanDatabaseException();
+            }
         }
-        return new File[0];
+        return new ArrayList<>();
     }
 
     @Override
@@ -160,7 +161,7 @@ public class FileBean extends ResourceBean<File> {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         File file = null;
         if (getId() != null) {
-            file = fileDataHandler.getFileById(getId());
+            file = fileDataHandler.getFile(getId());
         } else if (getTitle() != null && getModuleId() != null) {
             file = fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId());
         }

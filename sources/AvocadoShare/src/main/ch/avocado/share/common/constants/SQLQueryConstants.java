@@ -25,7 +25,14 @@ public class SQLQueryConstants {
             "  JOIN avocado_share.access_control AS O " +
             "    ON O.id=I.id " +
             "  WHERE I.id=?";
-    public static final String SELECT_USER_BY_MAIL_QUERY = "SELECT " + SELECT_USER_SELECTED_COLUMNS + " FROM avocado_share.identity AS I JOIN avocado_share.email AS E ON I.id=E.identity_id JOIN avocado_share.access_control AS O ON O.id=I.id WHERE E.address=?";
+    public static final String SELECT_USER_BY_MAIL_QUERY = "" +
+            "SELECT " + SELECT_USER_SELECTED_COLUMNS + " " +
+            "  FROM avocado_share.identity AS I " +
+            "  JOIN avocado_share.email AS E " +
+            "    ON I.id=E.identity_id " +
+            "  JOIN avocado_share.access_control AS O " +
+            "    ON O.id=I.id " +
+            "  WHERE E.address=?";
 
     public static final String DELETE_USER_QUERY = "DELETE FROM access_control WHERE id = ?";
 
@@ -40,7 +47,7 @@ public class SQLQueryConstants {
     public static final int USER_RESULT_CREATION_DATE_INDEX = 9;
 
     public static final String SELECT_PASSWORD_VERIFICATION_QUERY = "SELECT id, expiry, code FROM avocado_share.password_reset WHERE id=?";
-    public static final String UPDATE_USER_QUERY = "UPDATE avocado_share.identity SET prename=?, surname=?, avatar=?, description=?, password=? WHERE id=?";
+    public static final String UPDATE_USER_QUERY = "UPDATE avocado_share.identity SET prename=?, surname=?, avatar=?, password=? WHERE id=?";
     public static final String INSERT_MAIL_QUERY = "INSERT INTO avocado_share.email(identity_id, address, verified)VALUES (?, ?, FALSE)";
     public static final String SELECT_MAIL_QUERY = "SELECT identity_id, address, verified FROM avocado_share.email WHERE identity_id=?";
     public static final String INSERT_MAIL_VERIFICATION_QUERY = "INSERT INTO avocado_share.email_verification(identity_id, address, expiry, verification_code) VALUES (?, ?, ?, ?)";
@@ -51,6 +58,10 @@ public class SQLQueryConstants {
     public static final int EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX = 1;
 
     public static final String SET_MAIL_TO_VERIFIED = "UPDATE avocado_share.email SET verified=TRUE WHERE identity_id=?";
+    public static final String UPDATE_ACCESS_CONTROL_DESCRIPTION = "UPDATE avocado_share.access_control SET description = ? WHERE id = ?";
+    public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX = 1;
+    public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX = 2;
+
 
     /**
      * Group related queries
@@ -218,4 +229,32 @@ public class SQLQueryConstants {
             "JOIN avocado_share.default_access AS d " +
             "  ON l.level = d.level";
 
+    public static final String SELECT_GROUPS_WITH_ACCESS_ON_OBJECT = "" +
+            "SELECT  id, readable, writable, manageable" +
+            "FROM avocado_share.groups AS g " +
+            "JOIN avocado_share.rights AS r  " +
+            "  ON r.owner_id = g.id " +
+            "NATURAL JOIN avocado_share.acess_level as l" +
+            "WHERE " +
+            "  r.object_id = ? " +
+            "  AND (l.readable <> false OR l.writable <> false OR l.manageable <> false )";
+
+    public static final String SELECT_USER_WITH_ACCESS_ON_OBJECT = "" +
+            "SELECT  id, readable, writable, manageable" +
+            "FROM avocado_share.identity AS g " +
+            "JOIN avocado_share.rights AS r  " +
+            "  ON r.owner_id = g.id " +
+            "NATURAL JOIN avocado_share.acess_level as l" +
+            "WHERE " +
+            "  r.object_id = ? " +
+            "  AND (l.readable <> false OR l.writable <> false OR l.manageable <> false )";
+
+    public static final String SELECT_TARGETS_WITH_ACCESS = "" +
+            "SELECT object_id, level " +
+            "   FROM avocado_share.rights AS r" +
+            "       WHERE r.owner_id = ? " +
+            "       AND r.level >= ?";
+
+    public static final int SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX = 1;
+    public static final int SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX = 2;
 }

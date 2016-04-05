@@ -80,7 +80,7 @@ public class MailingService implements IMailingService {
         props.put("mail.smtps.socketFactory.port", MailingConstants.SMTP_PORT);
         props.put("mail.smtps.socketFactory.class", MailingConstants.SMTP_FACTORY_CLASS);
         props.put("mail.smtp.auth", MailingConstants.AUTHENTIFICATION);
-        props.put("mail.smtps.port", MailingConstants.SMTP_PORT);
+        props.put("mail.smtp.port", MailingConstants.SMTP_PORT);
 
         return Session.getDefaultInstance(props,
                 new Authenticator() {

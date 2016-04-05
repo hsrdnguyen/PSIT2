@@ -34,6 +34,7 @@ public final class ErrorMessageConstants {
     public static final String ERROR_INVALID_CODE_OR_EMAIL = "Bestätigungscode oder E-Mail-Adresse stimmen nicht.";
     public static final String ERROR_PASSWORDS_DO_NOT_MATCH = "Passwörter stimmen nicht überein.";
     public static final String ERROR_SEND_MAIL_FAILED = "Sender des E-Mail fehlgeschlagen.";
+    public static final String ERROR_EMAIL_NOT_VERIFIED = "E-Mail-Adresse wurde noch nicht bestätigt.";
 
     // Preview's
     public static final String ERROR_VIDEO_TYPE_NOT_SUPPORTED_IN_BROWSER = "Ihr Browser scheint das Video-Format leider nicth zu unterstützen.";
@@ -52,4 +53,6 @@ public final class ErrorMessageConstants {
     public static final String ERROR_MISSING_GROUP_OR_USER_ID = "Parameter 'groupId' oder 'userId' fehlen.";
     public static final String ERROR_BOTH_USER_AND_GROUP_ID_SET = "Es darf nur einer der Parameter 'groupId' oder 'userId' gesetzt sein.";
     public static final String ERROR_UNABLE_TO_SET_RIGHTS = "Zugriffsrechte konnten nicht gesetzt werden.";
+
+
 }

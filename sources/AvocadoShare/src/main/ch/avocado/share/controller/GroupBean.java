@@ -10,7 +10,9 @@ import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * GroupBean is used to create, change and delete {@link Group}s.
@@ -87,12 +89,19 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public Group[] index() throws HttpBeanException {
+    public List<Group> index() throws HttpBeanException {
         ISecurityHandler securityHandler = getSecurityHandler();
+        IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
+        List<Group> groupList;
         if (getAccessingUser() != null) {
-            return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Group.class, getAccessingUser(), AccessLevelEnum.READ);
+            try {
+                groupList = groupDataHandler.getGroups(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
+            } catch (DataHandlerException e) {
+                throw new HttpBeanDatabaseException();
+            }
+            return groupList;
         }
-        return new Group[0];
+        return new ArrayList<Group>();
     }
 
     @Override

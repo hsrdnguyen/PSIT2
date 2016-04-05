@@ -40,7 +40,7 @@ public class FileAccessBean implements Serializable {
         User owningUser;
         try {
             user = userDataHandler.getUserByEmailAddress(requestingUserMail);
-            file = fileDataHandler.getFileById(fileId);
+            file = fileDataHandler.getFile(fileId);
             owningUser = userDataHandler.getUser(file.getOwnerId());
         } catch (DataHandlerException e) {
             return false;
@@ -64,7 +64,7 @@ public class FileAccessBean implements Serializable {
             return false;
         }
         try{
-            file = fileDataHandler.getFileById(fileId);
+            file = fileDataHandler.getFile(fileId);
             if (file.getOwnerId().equals(ouserId)) {
                 fileDataHandler.grantAccess(fileId, ruserId);
             }

@@ -1,9 +1,13 @@
 package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bergm on 19/03/2016.
@@ -26,8 +30,20 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     }
 
     @Override
-    public File getFileById(String fileId) {
+    public File getFile(String fileId) {
         return get(fileId);
+    }
+
+    @Override
+    public List<File> getFiles(List<String> ids) throws DataHandlerException {
+        ArrayList<File> files = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            File file = getFile(id);
+            if(file != null) {
+                files.add(file);
+            }
+        }
+        return files;
     }
 
     @Override

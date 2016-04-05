@@ -49,22 +49,23 @@ public class UserSession {
 	 * @param session
 	 */
 	private UserSession(HttpSession session) {
-		if(session == null) {
-			throw new IllegalArgumentException("session can't be null");
-		}
+		if(session == null) throw new IllegalArgumentException("session can't be null");
 		this.session = session;
         String userId = (String) this.session.getAttribute(SESSION_UID);
+		System.out.println("Session got UID: " + userId);
         user = null;
-        findUser(userId);
+        findUser();
     }
 
-    private void findUser(String userId) {
-        if(userId == null) return;
+    private void findUser() {
+        String userId = getUserId();
+		if(userId == null) return;
         IUserDataHandler userDataHandler;
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
 			user = userDataHandler.getUser(userId);
 		} catch (ServiceNotFoundException | DataHandlerException ignored) {
+			ignored.printStackTrace();
         }
 	}
 
@@ -113,4 +114,8 @@ public class UserSession {
 	public User getUser() {
         return user;
     }
+
+	public String getUserId() {
+		return (String) session.getAttribute(SESSION_UID);
+	}
 }

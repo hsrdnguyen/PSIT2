@@ -1,12 +1,13 @@
 <%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% File[] files = (File[]) request.getAttribute("Files"); %>
+<% List<File> files = (List<File>) request.getAttribute("Files"); %>
 <section class="document-show">
     <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
         <%
-            if (files.length == 0) {
+            if (files.size() == 0) {
         %>
             <div class="list-group-item list-group-item-info">
                 Wir konnten leider keine Dokumente für Sie finden.

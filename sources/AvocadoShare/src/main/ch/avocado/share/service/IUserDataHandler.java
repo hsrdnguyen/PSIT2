@@ -7,6 +7,9 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -83,4 +86,5 @@ public interface IUserDataHandler {
      */
     ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) throws DataHandlerException;
 
+    List<User> getUsers(Collection<String> strings) throws DataHandlerException;
 }

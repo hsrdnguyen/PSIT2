@@ -68,10 +68,10 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     @Override
-    public Group[] getGroupsWithAccess(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) {
+    public Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) throws DataHandlerException {
         if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum is null");
         if(target == null) throw new IllegalArgumentException("target is null");
-        List<Group> identityList = new ArrayList<>();
+        Map<String, AccessLevelEnum> identityList = new HashMap<>();
         IGroupDataHandler groupDataHandler;
         try {
             groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
@@ -80,25 +80,19 @@ public class SecurityHandlerMock implements ISecurityHandler {
         }
         for (Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue().containsLevel(accessLevelEnum)) {
-                Group group = null;
-                try {
-                    group = groupDataHandler.getGroup(entry.getKey());
-                } catch (DataHandlerException ignored) {
-                }
-                if(group != null && !group.getId().equals(target.getId())) {
-                    identityList.add(group);
+                AccessIdentity identity = groupDataHandler.getGroup(entry.getKey());
+                if(identity != null && !identity.getId().equals(target.getId())) {
+                    identityList.put(identity.getId(), entry.getValue());
                 }
             }
         }
-        Group[] groups = new Group[identityList.size()];
-        return identityList.toArray(groups);
+        return identityList;
     }
 
-    @Override
-    public User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) throws DataHandlerException {
+    public Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) throws DataHandlerException {
         if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum is null");
         if(target == null) throw new IllegalArgumentException("target is null");
-        List<User> identityList = new ArrayList<>();
+        Map<String, AccessLevelEnum> identityList = new HashMap<>();
         IUserDataHandler userDataHandler;
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
@@ -107,14 +101,33 @@ public class SecurityHandlerMock implements ISecurityHandler {
         }
         for (Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue().containsLevel(accessLevelEnum)) {
-                User user = userDataHandler.getUser(entry.getKey());
-                if(user != null && !user.getId().equals(target.getId())) {
-                    identityList.add(user);
+                AccessIdentity identity = userDataHandler.getUser(entry.getKey());
+                if(identity != null && !identity.getId().equals(target.getId())) {
+                    identityList.put(identity.getId(), entry.getValue());
                 }
             }
         }
-        User[] users = new User[identityList.size()];
-        return identityList.toArray(users);
+        return identityList;
+    }
+
+    @Override
+    public List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException {
+        List<String> ids = new ArrayList<>(500);
+        if(identityWithAccess.containsKey(identity.getId())) {
+            for(Group group: getAllGroups()) {
+                ids.add(group.getId());
+            }
+            for(User user: getAllUsers()) {
+                ids.add(user.getId());
+            }
+            for(Module user: getAllModules()) {
+                ids.add(user.getId());
+            }
+            for(File user: getAllFiles()) {
+                ids.add(user.getId());
+            }
+        }
+        return ids;
     }
 
     private Group[] getAllGroups() {
@@ -147,7 +160,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         return moduleDataHandler.getAllModules();
     }
 
-    public Object getAllFiles() {
+    public File[] getAllFiles() {
         FileDataHandlerMock fileDataHandler;
         try {
             fileDataHandler = (FileDataHandlerMock) ServiceLocator.getService(IFileDataHandler.class);
@@ -155,27 +168,6 @@ public class SecurityHandlerMock implements ISecurityHandler {
             return null;
         }
         return fileDataHandler.getAll(File.class);
-    }
-
-    @Override
-    public <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum) {
-        if(clazz == null) throw new IllegalArgumentException("clazz can't be null");
-        if(identity == null) throw new IllegalArgumentException("identity can't be null");
-        if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum can't be null");
-        AccessLevelEnum grantedLevel = identityWithAccess.get(identity.getId());
-        if(grantedLevel == null || !grantedLevel.containsLevel(accessLevelEnum)) {
-            return (I[]) new AccessControlObjectBase[0];
-        }
-        if(clazz.equals(Group.class)) {
-            return (I[]) getAllGroups();
-        }else if(clazz.equals(User.class)) {
-            return (I[]) getAllUsers();
-        }else if(clazz.equals(Module.class)) {
-            return (I[]) getAllModules();
-        }else if(clazz.equals(File.class)) {
-            return (I[]) getAllFiles();
-        }
-        return null;
     }
 
     /**

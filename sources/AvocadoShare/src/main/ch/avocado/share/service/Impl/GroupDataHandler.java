@@ -6,12 +6,13 @@ import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by coffeemakr on 21.03.16.
@@ -68,6 +69,16 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         PreparedStatement statement = getGetStatement(id);
         return getGroupFromResultSet(executeGetStatement(statement));
     }
+
+    @Override
+    public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
+        List<Group> groups = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            groups.add(getGroup(id));
+        }
+        return groups;
+    }
+
 
     private PreparedStatement getInsertStatement(String id, String name) throws DataHandlerException {
         if (name == null) throw new IllegalArgumentException("name is null");

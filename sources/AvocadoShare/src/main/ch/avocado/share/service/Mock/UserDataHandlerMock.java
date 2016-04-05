@@ -3,10 +3,13 @@ package ch.avocado.share.service.Mock;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Mock handler for user data
@@ -84,6 +87,18 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     @Override
     public ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) {
         return null;
+    }
+
+    @Override
+    public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
+        List<User> users = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            User user = getUser(id);
+            if(user != null) {
+                users.add(user);
+            }
+        }
+        return users;
     }
 
     public static void use() throws Exception {

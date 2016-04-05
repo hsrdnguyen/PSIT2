@@ -14,6 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * File Data handler.
@@ -44,7 +46,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public File getFileById(String fileId) throws DataHandlerException {
+    public File getFile(String fileId) throws DataHandlerException {
         //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
@@ -68,6 +70,15 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             return null;
         }
+    }
+
+    @Override
+    public List<File> getFiles(List<String> ids) throws DataHandlerException {
+        List<File> files = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            files.add(getFile(id));
+        }
+        return files;
     }
 
     @Override

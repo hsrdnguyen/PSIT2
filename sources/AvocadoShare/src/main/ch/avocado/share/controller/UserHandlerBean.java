@@ -36,13 +36,19 @@ public class UserHandlerBean implements Serializable {
         long theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
         Date nextWeek = new Date(theFuture);
 
+
         EmailAddressVerification verification = new EmailAddressVerification(nextWeek);
         EmailAddress mail = new EmailAddress(false, emailAddress, verification);
-        User user = new User(new UserPassword(password), prename, name, avatar, mail);
+        User user = new User(UserPassword.fromPassword(password), prename, name, avatar, mail);
 
         try {
-            user.setId(ServiceLocator.getService(IUserDataHandler.class).addUser(user));
-            ServiceLocator.getService(IMailingService.class).sendVerificationEmail(user);
+            if(ServiceLocator.getService(IUserDataHandler.class).getUserByEmailAddress(emailAddress) != null) {
+                // email already taken
+                System.out.println("E-Mail already taken");
+            } else {
+                user.setId(ServiceLocator.getService(IUserDataHandler.class).addUser(user));
+                ServiceLocator.getService(IMailingService.class).sendVerificationEmail(user);
+            }
         } catch (ServiceNotFoundException | DataHandlerException e) {
             // todo: error handling
             e.printStackTrace();

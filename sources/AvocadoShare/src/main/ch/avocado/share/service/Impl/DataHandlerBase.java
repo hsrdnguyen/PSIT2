@@ -2,6 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -30,6 +31,19 @@ public abstract class DataHandlerBase {
             }
         }
         return connectionHandler;
+    }
+
+    protected boolean updateDescription(String objectId, String description) throws DataHandlerException {
+        if(objectId == null) throw new IllegalArgumentException("objectId is null");
+        if(description == null) throw new IllegalArgumentException("description is null");
+        try {
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION);
+            preparedStatement.setInt(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX, Integer.parseInt(objectId));
+            preparedStatement.setString(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX, description);
+            return getConnectionHandler().updateDataSet(preparedStatement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
     }
 
     /**

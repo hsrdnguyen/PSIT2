@@ -15,6 +15,7 @@ public class VerificationBean implements Serializable {
 
     private String code;
     private String email;
+    private String errorMessage;
 
     public boolean verifyEmailCode() {
         IUserDataHandler userDataHandler = null;
@@ -26,18 +27,23 @@ public class VerificationBean implements Serializable {
         }
         if (email != null && code != null) {
             User user = null;
+            System.out.println("email: " + email);
             try {
                 user = userDataHandler.getUserByEmailAddress(email);
             } catch (DataHandlerException e) {
+                e.printStackTrace();
                 return false;
             }
             if (user != null) {
                 try {
                     userDataHandler.verifyUser(user);
                 } catch (DataHandlerException e) {
+                    e.printStackTrace();
                     return false;
                 }
                 isVerified = true;
+            } else {
+                System.out.println("User not found.");
             }
         }
         return isVerified;

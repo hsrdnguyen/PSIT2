@@ -87,6 +87,11 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         return null;
     }
 
+    protected void ensureIsAuthenticatedToCreate() throws HttpBeanException {
+        ensureIsAuthenticated();
+    }
+
+
     /**
      * Get the dispatcher to render a list of objects.
      *
@@ -226,7 +231,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         return null;
     }
 
-    protected <E> E getService(Class<E> serviceClass) throws HttpBeanException {
+    protected static <E> E getService(Class<E> serviceClass) throws HttpBeanException {
         try {
             return ServiceLocator.getService(serviceClass);
         } catch (ServiceNotFoundException e) {
@@ -268,6 +273,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
         ISecurityHandler securityHandler = getSecurityHandler();
         AccessLevelEnum grantedAccessLevel;
+        System.out.println("Accessing user : " + getAccessingUser());
         try {
             if (getAccessingUser() == null) {
                 grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);

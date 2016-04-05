@@ -7,6 +7,8 @@ import ch.avocado.share.service.IModuleDataHandler;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by muellcy1 on 29.03.16.
@@ -46,6 +48,18 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
     @Override
     public Module getModule(String moduleId) {
         return get(moduleId);
+    }
+
+    @Override
+    public List<Module> getModules(Collection<String> ids) {
+        ArrayList<Module> modules = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            Module module = getModule(id);
+            if(module != null) {
+                modules.add(module);
+            }
+        }
+        return modules;
     }
 
     @Override

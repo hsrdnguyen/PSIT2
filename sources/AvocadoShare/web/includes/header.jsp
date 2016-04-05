@@ -85,7 +85,7 @@
                                 <div id="navbar-login" class="dropdown-menu"
                                      aria-labelledby="navbar-login-toggle-button">
                                     <% if(userSession.isAuthenticated()) { %>
-                                    <a class="dropdown-item" href="<%=baseUrl%>/profil.jsp">Profil</a>
+                                    <a class="dropdown-item" href="<%=baseUrl%>/user/?id=<%=Encoder.forUrlAttribute(userSession.getUserId())%>">Profil</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>

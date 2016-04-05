@@ -9,6 +9,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.*;
 
 public class SecurityHandler extends DataHandlerBase implements ISecurityHandler {
 
@@ -63,6 +64,12 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         boolean read = false, write = false, manage = false, owner = false;
         int ownerId = Integer.parseInt(identity.getId());
         int objectId = Integer.parseInt(target.getId());
+        if(ownerId == objectId) {
+            System.out.println("Same!");
+            return AccessLevelEnum.MANAGE;
+        }else {
+            System.out.println("Different: " + objectId + " - "+ ownerId);
+        }
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_ACCESS_LEVEL_INCLUDING_INHERITED);
             preparedStatement.setInt(1, ownerId);
@@ -157,7 +164,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ANONYMOUS_ACCESS_LEVEL);
             preparedStatement.setInt(1, Integer.parseInt(target.getId()));
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(!resultSet.next()) {
+            if (!resultSet.next()) {
                 return AccessLevelEnum.NONE;
             } else {
                 return getAccessLevelForResultSet(resultSet);
@@ -176,7 +183,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL);
             preparedStatement.setInt(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL_LEVEL_INDEX, level);
             preparedStatement.setInt(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL_OBJECT_ID_INDEX, objectId);
-            if(!getConnectionHandler().updateDataSet(preparedStatement)) {
+            if (!getConnectionHandler().updateDataSet(preparedStatement)) {
                 preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.ADD_ANONYMOUS_ACCESS_LEVEL);
                 preparedStatement.setInt(SQLQueryConstants.ADD_ANONYMOUS_ACCESS_LEVEL_LEVEL_INDEX, level);
                 preparedStatement.setInt(SQLQueryConstants.ADD_ANONYMOUS_ACCESS_LEVEL_OBJECT_ID_INDEX, objectId);
@@ -188,18 +195,61 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         }
     }
 
-    @Override
-    public Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
-        return null;
+
+    private Map<String, AccessLevelEnum> getObjectIdWithAccessFromResultset(ResultSet resultSet, AccessLevelEnum filterLevel) throws SQLException {
+        Map<String, AccessLevelEnum> objectsIdsWithAccess = new HashMap<>();
+        while (resultSet.next()) {
+            String groupId = "" + resultSet.getInt(1);
+            boolean readable = resultSet.getBoolean(2);
+            boolean writable = resultSet.getBoolean(3);
+            boolean manageable = resultSet.getBoolean(4);
+            AccessLevelEnum levelEnum = getAccessLevelForRights(readable, writable, manageable, false);
+            if (filterLevel.containsLevel(levelEnum)) {
+                objectsIdsWithAccess.put(groupId, levelEnum);
+            }
+        }
+        return objectsIdsWithAccess;
     }
 
     @Override
-    public User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
-        return new User[0];
+    public Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
+        try {
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_GROUPS_WITH_ACCESS_ON_OBJECT);
+            preparedStatement.setInt(1, Integer.parseInt(target.getId()));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return getObjectIdWithAccessFromResultset(resultSet, accessLevel);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
     }
 
     @Override
-    public <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum) {
-        return null;
+    public Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
+        try {
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
+            preparedStatement.setInt(1, Integer.parseInt(target.getId()));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return getObjectIdWithAccessFromResultset(resultSet, accessLevel);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+    }
+
+    @Override
+    public List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException {
+        int level = getAccessLevelInt(accessLevelEnum);
+        List<String> ids = new LinkedList<>();
+        try {
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS);
+            preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX, level);
+            preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX, Integer.parseInt(identity.getId()));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ids.add("" + resultSet.getInt(1));
+            }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return ids;
     }
 }

@@ -14,7 +14,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by bergm on 23/03/2016.
@@ -173,15 +175,17 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     public boolean updateUser(User user) throws DataHandlerException {
         // TODO: update email address
         if (user == null) throw new IllegalArgumentException("user is null");
+        if(!updateDescription(user.getId(), user.getDescription())) {
+            return false;
+        }
         PreparedStatement stmt = null;
         try {
             stmt = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_USER_QUERY);
             stmt.setString(1, user.getPrename());
             stmt.setString(2, user.getSurname());
             stmt.setString(3, user.getAvatar());
-            stmt.setString(4, user.getDescription());
-            stmt.setString(5, user.getPassword().getDigest());
-            stmt.setInt(6, Integer.parseInt(user.getId()));
+            stmt.setString(4, user.getPassword().getDigest());
+            stmt.setInt(5, Integer.parseInt(user.getId()));
             return getConnectionHandler().updateDataSet(stmt);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -194,7 +198,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if (user == null) throw new IllegalArgumentException("user is null");
         try {
             PreparedStatement stmt = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SET_MAIL_TO_VERIFIED);
-            stmt.setString(1, user.getId());
+            stmt.setInt(1, Integer.parseInt(user.getId()));
             return getConnectionHandler().updateDataSet(stmt);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -233,5 +237,17 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             throw new DataHandlerException(e);
         }
         return result;
+    }
+
+    @Override
+    public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
+        List<User> users = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            User user = getUser(id);
+            if(user != null) {
+                users.add(user);
+            }
+        }
+        return users;
     }
 }
