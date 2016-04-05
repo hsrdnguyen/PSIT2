@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IMailingService;
@@ -85,6 +86,16 @@ public class UserBean extends ResourceBean<User> {
         // I do nothing because unauthenticated users can create new users :)
     }
 
+    private void addEmailAddress(User user, String emailAddress) throws HttpBeanException, DataHandlerException {
+        long theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
+        Date nextWeek = new Date(theFuture);
+        EmailAddressVerification verification = new EmailAddressVerification(nextWeek);
+        EmailAddress mail = new EmailAddress(false, emailAddress, verification);
+        user.setMail(mail);
+        getService(IUserDataHandler.class).addMail(user);
+        getService(IMailingService.class).sendVerificationEmail(user);
+    }
+
     @Override
     public User create() throws HttpBeanException, DataHandlerException {
         checkPrename();
@@ -96,10 +107,8 @@ public class UserBean extends ResourceBean<User> {
             return null;
         }
 
-        Date nextWeek = EmailAddressVerification.getDateFromExpiryInHours(24 * 7);
-        EmailAddressVerification verification = new EmailAddressVerification(nextWeek);
-        EmailAddress emailAddressObject = new EmailAddress(false, getMail(), verification);
-        User user = new User(UserPassword.fromPassword(password), getPrename(), getSurname(), getAvatar(), emailAddressObject);
+        User user = new User(UserPassword.fromPassword(password), getPrename(), getSurname(), getAvatar(), new EmailAddress(false, "", null));
+        addEmailAddress(user, mail);
         user.setId(getService(IUserDataHandler.class).addUser(user));
         getService(IMailingService.class).sendVerificationEmail(user);
         return user;
@@ -118,23 +127,30 @@ public class UserBean extends ResourceBean<User> {
     @Override
     public void update() throws HttpBeanException, DataHandlerException {
         User user = getObject();
+        boolean userChanged = false;
         if(prename != null) {
             checkPrename();
             user.setPrename(prename);
+            userChanged = true;
         }
         if(surname != null) {
             checkSurname();
             user.setSurname(surname);
+            userChanged = true;
         }
         if(password != null) {
             checkPasswords();
             user.setPassword(password);
+            userChanged = true;
         }
         if(mail != null) {
             checkEmailAddress();
-            // TODO: update email?
+            if (!hasErrors() && !user.getMail().getAddress().equals(mail)) {
+                addEmailAddress(user, mail);
+            }
         }
-        if(!hasErrors()) {
+
+        if(!hasErrors() && userChanged) {
             getService(IUserDataHandler.class).updateUser(user);
         }
     }
