@@ -83,7 +83,8 @@ CREATE TABLE email
   address VARCHAR(128) NOT NULL,
   verified BOOLEAN NOT NULL,
   CONSTRAINT pk_email PRIMARY KEY(identity_id, address),
-  CONSTRAINT fk_email_id FOREIGN KEY(identity_id) REFERENCES identity(id) ON DELETE CASCADE
+  CONSTRAINT fk_email_id FOREIGN KEY(identity_id) REFERENCES identity(id) ON DELETE CASCADE,
+  CONSTRAINT uc_email_address UNIQUE(address)
 );
 
 CREATE TABLE email_verification
