@@ -288,10 +288,16 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
         return target;
     }
 
+    /**
+     * @return
+     */
     public String getAction() {
         return action;
     }
 
+    /**
+     * @param action The actions
+     */
     public void setAction(String action) {
         this.action = action;
     }
