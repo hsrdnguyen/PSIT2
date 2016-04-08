@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
@@ -39,6 +40,7 @@ public class LoginServlet extends HttpServlet {
     static private final String COOKIE_CHECK_VALUE = "yes! :)";
 
     private static final long serialVersionUID = 5348852043943606854L;
+    public static final String ATTRIBUTE_EMAIL = "ch.avocado.share.servlet.email";
 
 
     private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) throws DataHandlerException {
@@ -101,6 +103,10 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, java.io.IOException {
         String email = request.getParameter(FIELD_EMAIL);
         String password = request.getParameter(FIELD_PASSWORD);
+        String redirectUrl = request.getParameter(FIELD_REDIRECT_TO);
+        if(email != null) {
+            request.setAttribute(ATTRIBUTE_EMAIL, email);
+        }
         IUserDataHandler userDataHandler = null;
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
@@ -131,7 +137,6 @@ public class LoginServlet extends HttpServlet {
                     if(user.getMail().isVerified()) {
                         UserSession userSession = new UserSession(request);
                         userSession.authenticate(user);
-                        String redirectUrl= request.getParameter(FIELD_REDIRECT_TO);
                         if(redirectUrl == null) {
                             redirectUrl = request.getContextPath();
                         }

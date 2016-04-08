@@ -1,5 +1,11 @@
 <%@include file="header.jsp" %>
 <% String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
+    String email = (String) request.getAttribute(LoginServlet.ATTRIBUTE_EMAIL);
+    if(email == null) {
+        email = "";
+    } else {
+        email = Encoder.forHtmlAttribute(email);
+    }
     if (loginError != null) {
 %>
         <div class="alert alert-danger">
@@ -13,17 +19,19 @@
             <div class="form-group row">
                 <label for="startpage-login-email" class="col-sm-2 form-control-label">E-Mail</label>
                 <div class="col-sm-10">
-                    <input name="<%=LoginServlet.FIELD_EMAIL %>" type="email" class="form-control"
-                           id="startpage-login-email" placeholder="E-Mail-Adresse">
+                    <input required name="<%=LoginServlet.FIELD_EMAIL %>" type="email" class="form-control"
+                           id="startpage-login-email" placeholder="E-Mail-Adresse" value="<%=email %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="startpage-login-password" class="col-sm-2 form-control-label">Passwort</label>
                 <div class="col-sm-10">
-                    <input name="<%=LoginServlet.FIELD_PASSWORD %>" type="password" class="form-control"
-                           id="startpage-login-password" placeholder="Passwort">
+                    <input required name="<%=LoginServlet.FIELD_PASSWORD %>" type="password" class="form-control"
+                           id="startpage-login-password" placeholder="Passwort" pattern=".{9,}"
+                           title="Das Passwort muss mindestens 9 Zeichen lang sein.">
                 </div>
             </div>
+            <!--
             <div class="form-group row">
                 <div class="col-sm-push-2 col-sm-10">
                     <div class="checkbox">
@@ -33,6 +41,7 @@
                     </div>
                 </div>
             </div>
+            -->
             <div class="form-group row">
                 <div class="col-sm-offset-2 col-sm-10">
                     <button type="submit" class="btn btn-secondary">Anmelden</button>

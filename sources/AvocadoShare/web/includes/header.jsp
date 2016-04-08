@@ -94,16 +94,19 @@
 
                                             <div class="input-group dropdown-item" style="margin-bottom: 0">
                                                 <label for="navbar-login-username" class="input-group-addon">
-                                                    <span class="octicon octicon-person"></span><span class="sr-only">Benutzername</span>
+                                                    <span class="octicon octicon-person"></span>
+                                                    <span class="sr-only">Benutzername</span>
                                                 </label>
-                                                <input id="navbar-login-username" type="text" class="form-control"
+                                                <input id="navbar-login-username" type="email" class="form-control" required
                                                        name="<%=LoginServlet.FIELD_EMAIL %>" placeholder="E-Mail"/>
                                             </div>
                                             <div class="input-group dropdown-item" style="margin-bottom: 0">
                                                 <label for="navbar-login-password" class="input-group-addon">
-                                                    <span class="octicon octicon-lock"></span><span class="sr-only">Passwort</span>
+                                                    <span class="octicon octicon-lock"></span>
+                                                    <span class="sr-only">Passwort</span>
                                                 </label>
                                                 <input id="navbar-login-password" type="password" class="form-control"
+                                                       required pattern=".{9,}" title="Ihr Passwort ist mindestens 9 Zeichen lang."
                                                        name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
                                             </div>
                                         <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>" name="<%=LoginServlet.FIELD_REDIRECT_TO%>" />
