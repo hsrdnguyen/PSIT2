@@ -796,7 +796,10 @@ public class Encoder {
      */
     public static String forHtml(String value) {
         if(value == null) value = "";
-        return htmlEntities(value);
+        value = htmlEntities(value);
+        // TODO: is this a good idea?
+        value = value.replaceAll("\n", "<br/>");
+        return value;
     }
 
     /**

@@ -7,6 +7,7 @@ import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,6 +40,10 @@ public class ForgottenPasswordBean implements Serializable {
         return code;
     }
 
+    /**
+     * @todo: this method needs some refactoring
+     * @return True if a password reset link was send to the user
+     */
     public boolean createNewPassword() {
         IMailingService mailingService;
         IUserDataHandler userDataHandler;
@@ -54,19 +59,34 @@ public class ForgottenPasswordBean implements Serializable {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return false;
         }
-        user = userDataHandler.getUserByEmailAddress(email);
+        try {
+            user = userDataHandler.getUserByEmailAddress(email);
+        } catch (DataHandlerException e) {
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            return false;
+        }
         if (user == null) {
             return true;
         }
         Date expiry = PasswordResetVerification.getDateFromExpiryInHours(24 * 2);
         PasswordResetVerification passwordResetVerification = new PasswordResetVerification(expiry);
         user.getPassword().setPasswordResetVerification(passwordResetVerification);
-        userDataHandler.insertPasswordReset(passwordResetVerification, user.getId());
+        try {
+            userDataHandler.addPasswordResetVerification(passwordResetVerification, user.getId());
+        } catch (DataHandlerException e) {
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            return false;
+        }
         if (!mailingService.sendPasswordResetEmail(user)) {
             errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
             return false;
         }
-        userDataHandler.updateUser(user);
+        try {
+            userDataHandler.updateUser(user);
+        } catch (DataHandlerException e) {
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            return false;
+        }
         return true;
     }
 
@@ -98,11 +118,23 @@ public class ForgottenPasswordBean implements Serializable {
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            this.errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;
         }
-        User user = userDataHandler.getUserByEmailAddress(this.email);
-        ArrayList<PasswordResetVerification> verifications = userDataHandler.getPasswordVerifications(user.getId());
+        User user = null;
+        try {
+            user = userDataHandler.getUserByEmailAddress(this.email);
+        } catch (DataHandlerException e) {
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;;
+            return null;
+        }
+        ArrayList<PasswordResetVerification> verifications = null;
+        try {
+            verifications = userDataHandler.getPasswordVerifications(user.getId());
+        } catch (DataHandlerException e) {
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            return null;
+        }
         Date longest = verifications.get(0).getExpiry();
         user.getPassword().setPasswordResetVerification(verifications.get(0));
 
@@ -139,10 +171,10 @@ public class ForgottenPasswordBean implements Serializable {
             if (user != null && user.resetPassword(password, code)) {
                 try {
                     ServiceLocator.getService(IUserDataHandler.class).updateUser(user);
-                } catch (ServiceNotFoundException e) {
-                    e.printStackTrace();
+                    return true;
+                } catch (ServiceNotFoundException | DataHandlerException e) {
+                    errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
                 }
-                return true;
             }else {
                 errorMessage = ErrorMessageConstants.ERROR_GENERAL_FAILURE;
             }

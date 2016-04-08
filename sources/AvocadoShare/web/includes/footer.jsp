@@ -1,5 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
-<%
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %><%
     String baseUrlFooter = request.getServletContext().getContextPath();
 %>
 </main>
@@ -8,7 +7,7 @@
     <div class="container">
         <ul>
             <li><a href="#about">Über uns</a></li>
-            <li><a href="contact.jsp" href="#contact">Kontakt</a></li>
+            <li><a href="contact.jsp">Kontakt</a></li>
             <li><a href="#something">Fehler melden</a></li>
         </ul>
         <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, C. Müller und D. T. Nguyen.</p>

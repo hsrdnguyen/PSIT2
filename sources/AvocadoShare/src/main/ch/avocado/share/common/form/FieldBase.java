@@ -80,8 +80,6 @@ abstract class FieldBase {
         this.error = error;
     }
 
-    abstract String toHtml();
-
     public String getHtmlClass() {
         return htmlClass;
     }
@@ -105,5 +103,12 @@ abstract class FieldBase {
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    abstract public String toHtml();
+
+    @Override
+    public String toString() {
+        return toHtml();
     }
 }

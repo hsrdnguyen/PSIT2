@@ -19,6 +19,7 @@ import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 /**
  * @author coffeemakr
@@ -40,7 +41,7 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 5348852043943606854L;
 
 
-    private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) {
+    private User getUserWithLogin(IUserDataHandler userDataHandler, String email, String password) throws DataHandlerException {
         User user = userDataHandler.getUserByEmailAddress(email);
         if (user != null && user.getPassword().matchesPassword(password)) {
             return user;
@@ -83,7 +84,10 @@ public class LoginServlet extends HttpServlet {
     private void redirectTo(String url, HttpServletResponse response) {
         if(url == null) throw  new IllegalArgumentException("url is null");
         if(response == null) throw new IllegalArgumentException("response is null");
-        if((url.charAt(0) == '/')) {
+        if(url.isEmpty()) {
+            url = "/";
+        }
+        if(url.charAt(0) == '/') {
             try {
                 response.sendRedirect(url);
             } catch (IOException e) {
@@ -115,15 +119,26 @@ public class LoginServlet extends HttpServlet {
                 if (!checkTestCookie(request)) {
                     request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_COOKIES_DISABLED);
                 }
-                User user = getUserWithLogin(userDataHandler, email, password);
+                User user = null;
+                try {
+                    user = getUserWithLogin(userDataHandler, email, password);
+                } catch (DataHandlerException e) {
+                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+                    renderLogin(request, response);
+                    return;
+                }
                 if (user != null) {
-                    UserSession userSession = new UserSession(request);
-                    userSession.authenticate(user);
-                    String redirectUrl= request.getParameter(FIELD_REDIRECT_TO);
-                    if(redirectUrl == null) {
-                        redirectUrl = request.getContextPath();
+                    if(user.getMail().isVerified()) {
+                        UserSession userSession = new UserSession(request);
+                        userSession.authenticate(user);
+                        String redirectUrl= request.getParameter(FIELD_REDIRECT_TO);
+                        if(redirectUrl == null) {
+                            redirectUrl = request.getContextPath();
+                        }
+                        redirectTo(redirectUrl, response);
+                    }else {
+                        request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_EMAIL_NOT_VERIFIED);
                     }
-                    redirectTo(redirectUrl, response);
                 } else {
                     request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_WRONG_PASSWORD);
                     renderLogin(request, response);

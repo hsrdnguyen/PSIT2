@@ -3,7 +3,7 @@ package ch.avocado.share.model.data;
 import java.util.Date;
 
 /**
- * Created by muellcy1 on 21.03.16.
+ * A verification for forgotten passwords
  */
 public class PasswordResetVerification extends BaseMailVerification {
 

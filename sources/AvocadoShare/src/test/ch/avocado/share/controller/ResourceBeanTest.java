@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 class MockObject extends AccessControlObjectBase {
@@ -48,10 +49,10 @@ class MockObjectBean extends ResourceBean<MockObject> {
     }
 
     @Override
-    public MockObject[] index() throws HttpBeanException {
-        MockObject[] list = new MockObject[2];
-        list[0] = new MockObject("0");
-        list[1] = new MockObject("1");
+    public List<MockObject> index() throws HttpBeanException {
+        List<MockObject> list = new ArrayList<>(2);
+        list.add(new MockObject("0"));
+        list.add(new MockObject("1"));
         return list;
     }
 

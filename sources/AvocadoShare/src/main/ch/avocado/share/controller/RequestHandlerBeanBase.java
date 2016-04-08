@@ -5,9 +5,11 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -56,7 +58,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     private TemplateType rendererTemplateType;
 
     private void throwMethodNotAllowed(String method) throws HttpBeanException {
-        if(method == null) throw new IllegalArgumentException("method is null");
+        if (method == null) throw new IllegalArgumentException("method is null");
         throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, String.format(ERROR_METHOD_NOT_ALLOWED_FORMAT, method));
     }
 
@@ -84,6 +86,11 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         throwMethodNotAllowed("DELETE");
         return null;
     }
+
+    protected void ensureIsAuthenticatedToCreate() throws HttpBeanException {
+        ensureIsAuthenticated();
+    }
+
 
     /**
      * Get the dispatcher to render a list of objects.
@@ -218,9 +225,18 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         try {
             return callHttpMethodMethod(request);
         } catch (HttpBeanException httpException) {
+            System.out.println("Got error in execute request: " + httpException.getDescription());
             sendErrorFromHttpBeanException(httpException, response);
         }
         return null;
+    }
+
+    protected static <E> E getService(Class<E> serviceClass) throws HttpBeanException {
+        try {
+            return ServiceLocator.getService(serviceClass);
+        } catch (ServiceNotFoundException e) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_SERVICE_NOT_FOUND + e.getService());
+        }
     }
 
     /**
@@ -229,11 +245,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      */
     protected ISecurityHandler getSecurityHandler() throws HttpBeanException {
         if (securityHandler == null) {
-            try {
-                securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-            } catch (ServiceNotFoundException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_SECURITY_HANDLER);
-            }
+            securityHandler = getService(ISecurityHandler.class);
         }
         return securityHandler;
     }
@@ -261,10 +273,16 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
         ISecurityHandler securityHandler = getSecurityHandler();
         AccessLevelEnum grantedAccessLevel;
-        if (getAccessingUser() == null) {
-            grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
-        } else {
-            grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
+        System.out.println("Accessing user : " + getAccessingUser());
+        try {
+            if (getAccessingUser() == null) {
+                grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
+            } else {
+                grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
+            }
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
         }
         if (!grantedAccessLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_ACCESS_DENIED);

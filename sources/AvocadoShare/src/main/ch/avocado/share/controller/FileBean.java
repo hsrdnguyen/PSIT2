@@ -1,36 +1,25 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
+import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
-import ch.avocado.share.service.IFileDataHandler;
-import ch.avocado.share.service.IFileStorageHandler;
-import ch.avocado.share.service.ISecurityHandler;
+import ch.avocado.share.service.*;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
-import jdk.internal.util.xml.impl.Input;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.mime.MimeType;
-import org.apache.tika.mime.MimeTypeException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by bergm on 21/03/2016.
- */
 public class FileBean extends ResourceBean<File> {
 
     private String title;
@@ -39,8 +28,6 @@ public class FileBean extends ResourceBean<File> {
     private List<Category> categories;
     private FileItem uploadedFileItem;
     private String moduleId;
-
-    private static int DOWNLOAD_BUFFER_SIZE = 512;
 
     @Override
     protected boolean hasIdentifier() {
@@ -60,7 +47,7 @@ public class FileBean extends ResourceBean<File> {
         }
         for (FileItem item : items) {
             if (item.isFormField()) {
-                switch (item.getFieldName()){
+                switch (item.getFieldName()) {
                     case "description":
                         setDescription(item.getString());
                         break;
@@ -88,7 +75,7 @@ public class FileBean extends ResourceBean<File> {
 
     @Override
     public TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) {
-        if(request.getMethod().equalsIgnoreCase("POST") && request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
+        if (request.getMethod().equalsIgnoreCase("POST") && request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
             try {
                 parseMultipartFormData(request);
             } catch (HttpBeanException e) {
@@ -100,7 +87,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
 
-    private File newFileModel(String path) {
+    private File getFileFromParameters(String path) {
         File file = FileFactory.getDefaultFile();
         file.setTitle(getTitle());
         file.setCategories(getCategories());
@@ -110,54 +97,71 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public File create() throws HttpBeanException {
-        IFileDataHandler fileDataHandler = getFileDataHandler();
+    public File create() throws HttpBeanException, DataHandlerException {
+        IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         checkParameterTitle();
         checkParameterDescription();
         checkParameterModuleId();
         //checkParameterAuthor();
         if (!hasErrors()) {
             String path = uploadFile(getUploadedFileItem());
-            File file = newFileModel(path);
-            String newFileId = fileDataHandler.addFile(file);
-            if (newFileId == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
-            }
-            file = fileDataHandler.getFileById(newFileId);
+            File file = getFileFromParameters(path);
+            String fileId;
+            fileId = fileDataHandler.addFile(file);
+            file = fileDataHandler.getFile(fileId);
             if (file == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_DATABASE);
             }
             return file;
         }
         return null;
     }
 
-    static public Module[] getModuleForAccessingUser(HttpServletRequest request) throws HttpBeanException {
-        ISecurityHandler securityHandler;
-        try {
-            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-        }catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ERROR_SECURITY_HANDLER);
-        }
-        UserSession session = new UserSession(request);
-        User user = session.getUser();
+    /**
+     * @param user the accessing user
+     * @return A list of all modules a user can upload files into.
+     * @throws HttpBeanException
+     */
+    static public List<Module> getModulesToUpload(User user) throws HttpBeanException {
         if (user == null) {
             throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_ACCESS_DENIED);
         }
-        Module[] modules = securityHandler.getObjectsOnWhichIdentityHasAccessLevel(Module.class, user, AccessLevelEnum.READ);
-        if(modules == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
+        IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
+        List<Module> modules = null;
+        try {
+            modules = moduleDataHandler.getModules(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ));
+        } catch (DataHandlerException e) {
+            throw new HttpBeanDatabaseException();
         }
         return modules;
     }
 
+    /**
+     * @return A list of all files the user owns.
+     * @throws HttpBeanException
+     */
     @Override
-    public File get() throws HttpBeanException {
+    public List<File> index() throws HttpBeanException {
+        ISecurityHandler securityHandler = getSecurityHandler();
+        IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
+        if(getAccessingUser() != null) {
+            try {
+                return fileDataHandler.getFiles(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
+            } catch (DataHandlerException e) {
+                throw new HttpBeanDatabaseException();
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public File get() throws HttpBeanException, DataHandlerException {
         if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
-        IFileDataHandler fileDataHandler = getFileDataHandler();
+        IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         File file = null;
         if (getId() != null) {
-            file = fileDataHandler.getFileById(getId());
+            file = fileDataHandler.getFile(getId());
         } else if (getTitle() != null && getModuleId() != null) {
             file = fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId());
         }
@@ -170,64 +174,67 @@ public class FileBean extends ResourceBean<File> {
 
     @Override
     public void update() throws HttpBeanException {
-        IFileDataHandler fileDataHandler = getFileDataHandler();
+        IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         File file = getObject();
-        if(getTitle() != null) {
+        boolean changed = false;
+        if (getTitle() != null && !file.getTitle().equals(getTitle())) {
             checkParameterTitle();
-            if(!hasErrors()) {
+            if (!hasErrors()) {
                 file.setTitle(getTitle());
+                changed = true;
             }
         }
-        if(getDescription() != null) {
+        if (getDescription() != null && !file.getDescription().equals(getDescription())) {
             checkParameterDescription();
-            if(!hasErrors()) {
+            if (!hasErrors()) {
                 file.setDescription(getDescription());
+                changed = true;
             }
         }
 
-        if(getModuleId() != null) {
+        if (getModuleId() != null && !file.getModuleId().equals(getModuleId())) {
             checkParameterModuleId();
-            if(!hasErrors()) {
+            if (!hasErrors()) {
                 file.setModuleId(getModuleId());
+                changed = true;
             }
         }
 
-        if(getCategories() != null) {
-            if(!hasErrors()) {
+        if (getCategories() != null) {
+            if (!hasErrors()) {
                 file.setCategories(getCategories());
+                changed = true;
             }
         }
-        if(getUploadedFileItem() != null && !hasErrors()) {
+        if (getUploadedFileItem() != null && !hasErrors()) {
             String path = uploadFile(getUploadedFileItem());
             file.setPath(path);
+            changed = true;
         }
-        if(!hasErrors()) {
-            if (!fileDataHandler.updateFile(getObject())) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+
+        if (!hasErrors() && changed) {
+            try{
+                if(!fileDataHandler.updateFile(file)) {
+                    throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
+                }
+            } catch (DataHandlerException e) {
+                e.printStackTrace();
+                throw new HttpBeanDatabaseException();
             }
         }
     }
 
     @Override
     public void destroy() throws HttpBeanException {
-        IFileDataHandler fileDataHandler = getFileDataHandler();
-        if (!fileDataHandler.deleteFile(getObject())) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+        IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
+        try {
+            if (!fileDataHandler.deleteFile(getObject())) {
+                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
+            }
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
         }
-    }
-
-    /**
-     * @return A list of all files for the module.
-     * @throws HttpBeanException
-     */
-    @Override
-    public File[] index() throws HttpBeanException {
-        ISecurityHandler securityHandler = getSecurityHandler();
-        // TODO: what files are to list when user is not authenticated?
-        if(getAccessingUser() == null) {
-            return new File[0];
-        }
-        return securityHandler.getObjectsOnWhichIdentityHasAccessLevel(File.class, getAccessingUser(), AccessLevelEnum.READ);
     }
 
     @Override
@@ -236,22 +243,15 @@ public class FileBean extends ResourceBean<File> {
     }
 
 
-    private IFileStorageHandler getStorageHandler() throws HttpBeanException {
-        try {
-            return ServiceLocator.getService(IFileStorageHandler.class);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_STORAGE_HANDLER_NOT_FOUND);
-        }
-    }
-
     /**
      * Uploads the file to the server and stores it using {@link IFileStorageHandler}.
+     *
      * @param fileItem The file
      * @return The reference to the file on the disk
      * @throws HttpBeanException
      */
     public String uploadFile(FileItem fileItem) throws HttpBeanException {
-        if(fileItem == null) throw new IllegalArgumentException("uploadedFileItem is null");
+        if (fileItem == null) throw new IllegalArgumentException("uploadedFileItem is null");
         DiskFileItemFactory factory = new DiskFileItemFactory();
         // maximum size that will be stored in memory
         factory.setSizeThreshold(FileConstants.MAX_MEM_SIZE);
@@ -263,7 +263,7 @@ public class FileBean extends ResourceBean<File> {
         // maximum file size to be uploaded.
         upload.setSizeMax(FileConstants.MAX_FILE_SIZE);
         try {
-            return getStorageHandler().saveFile(fileItem);
+            return getService(IFileStorageHandler.class).saveFile(fileItem);
         } catch (FileStorageException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -318,38 +318,25 @@ public class FileBean extends ResourceBean<File> {
         return categories;
     }
 
-    /**
-     * @param categories  A list of categories
-     */
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-
-    public void addCategory(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            addFormError("category", ErrorMessageConstants.ERROR_NO_CATEGORY_NAME);
-        } else if (!getCategories().contains(new Category(name))) {
-            getCategories().add(new Category(name.trim()));
-        } else {
-            addFormError("category", ErrorMessageConstants.ERROR_CATEGORY_ALREADY_ADDED);
-        }
-    }
 
     private void checkParameterTitle() throws HttpBeanException {
         checkParameterModuleId();
-        if(hasErrors()) {
+        if (hasErrors()) {
             return;
         }
         if (getTitle() == null || getTitle().trim().isEmpty()) {
             addFormError("title", ErrorMessageConstants.ERROR_NO_TITLE);
         } else {
             setTitle(getTitle().trim());
-            IFileDataHandler fileDataHandler = getFileDataHandler();
-            if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
-                addFormError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
+            IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
+
+            try {
+                if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
+                    addFormError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
+                }
+            } catch (DataHandlerException e) {
+                addFormError("title", ErrorMessageConstants.ERROR_DATABASE);
             }
-            //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
         }
     }
 
@@ -377,16 +364,6 @@ public class FileBean extends ResourceBean<File> {
 //        }
 //    }
 
-    private IFileDataHandler getFileDataHandler() throws HttpBeanException {
-        IFileDataHandler fileDataHandler = null;
-        try {
-            fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INTERNAL_SERVER);
-        }
-        return fileDataHandler;
-    }
-
     public String getModuleId() {
         return moduleId;
     }
@@ -395,48 +372,4 @@ public class FileBean extends ResourceBean<File> {
         this.moduleId = moduleId;
     }
 
-    static public String getExtension(String mimeTypeString) {
-        // TODO: store extension in database
-        TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
-        MimeType mimeType;
-        try {
-            mimeType = tikaConfig.getMimeRepository().getRegisteredMimeType(mimeTypeString);
-        } catch (MimeTypeException e) {
-            return ".bin";
-        }
-        return mimeType.getExtension();
-    }
-
-    public void download(File file, HttpServletResponse response, boolean attached) throws HttpBeanException{
-        byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
-        if(!hasIdentifier()) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
-        } else {
-            InputStream stream;
-            IFileStorageHandler storageHandler;
-            storageHandler = getStorageHandler();
-            String mimeType;
-            try {
-                stream = storageHandler.readFile(file.getPath());
-                mimeType = storageHandler.getContentType(file.getPath());
-            } catch (FileStorageException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-            }
-
-            if(attached) {
-                response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getTitle() + getExtension(mimeType) + "\"");
-            }
-            try {
-                OutputStream outputStream = response.getOutputStream();
-                int bytesRead;
-                while((bytesRead = stream.read(buffer, 0, buffer.length)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-                outputStream.close();
-            } catch (IOException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-            }
-
-        }
-    }
 }

@@ -3,20 +3,23 @@ package ch.avocado.share.service.Mock;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Mock handler for user data
  */
 public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IUserDataHandler {
 
-    public static final String EXISTING_USER0 = "user0";
-    public static final String EXISTING_USER1 = "user1";
-    public static final String EXISTING_USER2 = "user2";
-    public static final String EXISTING_USER3 = "user3";
+    public static final String EXISTING_USER0 = "1000001";
+    public static final String EXISTING_USER1 = "1000002";
+    public static final String EXISTING_USER2 = "1000003";
+    public static final String EXISTING_USER3 = "1000004";
 
     /**
      * Save some precious time while testing :)
@@ -31,7 +34,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     public void reset() {
         objects.clear();
         for (int i = 0; i < 100; i++) {
-            String id = "user" + i;
+            String id = String.format("1%06d", i);
             objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, DEFAULT_PASSWORD, "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
         }
     }
@@ -62,13 +65,8 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean addMail(User user) throws SQLException {
+    public boolean addMail(User user) {
         return false;
-    }
-
-    @Override
-    public User getUserByEmailAddress(String emailAddress, boolean getVerification) {
-        return null;
     }
 
     @Override
@@ -82,13 +80,25 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean insertPasswordReset(PasswordResetVerification verification, String userId) {
+    public boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) {
         return false;
     }
 
     @Override
     public ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) {
         return null;
+    }
+
+    @Override
+    public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
+        List<User> users = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            User user = getUser(id);
+            if(user != null) {
+                users.add(user);
+            }
+        }
+        return users;
     }
 
     public static void use() throws Exception {

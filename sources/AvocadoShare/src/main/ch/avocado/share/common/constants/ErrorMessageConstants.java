@@ -34,6 +34,25 @@ public final class ErrorMessageConstants {
     public static final String ERROR_INVALID_CODE_OR_EMAIL = "Bestätigungscode oder E-Mail-Adresse stimmen nicht.";
     public static final String ERROR_PASSWORDS_DO_NOT_MATCH = "Passwörter stimmen nicht überein.";
     public static final String ERROR_SEND_MAIL_FAILED = "Sender des E-Mail fehlgeschlagen.";
+    public static final String ERROR_EMAIL_NOT_VERIFIED = "E-Mail-Adresse wurde noch nicht bestätigt.";
 
+    // Preview's
     public static final String ERROR_VIDEO_TYPE_NOT_SUPPORTED_IN_BROWSER = "Ihr Browser scheint das Video-Format leider nicth zu unterstützen.";
+    public static final String ERROR_READ_FILE_FAILED = "Die Datei konnte nicht gelesen werden.";
+    public static final String ERROR_FILE_TO_BIG_FOR_PREVIEW = "Die Datei ist zu gross, um eine Vorschau zu erzeugen.";
+    public static final String ERROR_URLENCODE_FAILED = "Die URL konnte nicht kodiert werden.";
+
+    public static final String ERROR_SERVICE_NOT_FOUND = "Der Service konnte nicht gefunden werden: ";
+    public static final String ERROR_NO_PREVIEW_FACTORY_FOR_TYPE = "Mime-Type wird nicht unterstützt.";
+
+    // Member Control
+    public static final String ERROR_GROUP_OR_USER_NOT_FOUND = "Gruppe oder Benutzer konnte nichte gefunden werden.";
+    public static final String ERROR_ACCESS_ALREADY_EXISTS = "Es existiert bereits ein Zugriffsrecht.";
+    public static final String ERROR_TARGET_NOT_FOUND = "Access target not found.";
+    public static final String ERROR_LEVEL_MISSING = "Parameter 'level' missing.";
+    public static final String ERROR_MISSING_GROUP_OR_USER_ID = "Parameter 'groupId' oder 'userId' fehlen.";
+    public static final String ERROR_BOTH_USER_AND_GROUP_ID_SET = "Es darf nur einer der Parameter 'groupId' oder 'userId' gesetzt sein.";
+    public static final String ERROR_UNABLE_TO_SET_RIGHTS = "Zugriffsrechte konnten nicht gesetzt werden.";
+
+
 }

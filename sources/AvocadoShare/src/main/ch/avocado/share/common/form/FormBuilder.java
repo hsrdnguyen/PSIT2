@@ -3,7 +3,7 @@ package ch.avocado.share.common.form;
 import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.Module;
+import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.FormBuilderException;
 
@@ -23,16 +23,27 @@ public class FormBuilder {
     private String htmlInputClass = "form-control";
     private String idPrefix = null;
     private Map<String, String> readableFieldNames;
+    private String formErrorsString = null;
 
     public FormBuilder(Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
         this(null, resourceClass, formErrors);
     }
 
+    static private AccessControlObjectBase checkObjectNotNull(AccessControlObjectBase object) {
+        if (object == null) throw new IllegalArgumentException("object is null");
+        return object;
+    }
+
+    public FormBuilder(AccessControlObjectBase object, Map<String, String> formErrors) {
+        this(checkObjectNotNull(object), checkObjectNotNull(object).getClass(), formErrors);
+    }
 
     public FormBuilder(AccessControlObjectBase object, Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
         if (resourceClass == null) throw new IllegalArgumentException("objectClass is null");
         if (formErrors == null) {
             formErrors = new HashMap<>();
+        } else {
+            formErrors = new HashMap<>(formErrors);
         }
         this.object = object;
         this.objectClass = resourceClass;
@@ -46,20 +57,25 @@ public class FormBuilder {
     }
 
     public String getFormErrors() {
-        if (formErrors.isEmpty()) {
-            return "";
-        }
-        String errors = "<ul class=\"form-errors\">\n";
-        for (Map.Entry<String, String> entry : formErrors.entrySet()) {
-            String name;
-            if (readableFieldNames.containsKey(entry.getKey())) {
-                name = readableFieldNames.get(entry.getKey());
+        if (formErrorsString == null) {
+            if (formErrors.isEmpty()) {
+                formErrorsString = "";
             } else {
-                name = entry.getKey();
+                String errors = "<ul class=\"form-errors\">\n";
+                for (Map.Entry<String, String> entry : formErrors.entrySet()) {
+                    String name;
+                    if (readableFieldNames.containsKey(entry.getKey())) {
+                        name = readableFieldNames.get(entry.getKey());
+                    } else {
+                        name = entry.getKey();
+                    }
+                    errors += "\t<li>" + Encoder.forHtml(name) + ": " + Encoder.forHtml(entry.getValue()) + "</li>\n";
+                }
+                formErrorsString = errors + "</ul>";
             }
-            errors += "\t<li>" + Encoder.forHtml(name) + ": " + Encoder.forHtml(entry.getValue()) + "</li>\n";
+
         }
-        return errors + "</ul>";
+        return formErrorsString;
     }
 
     public String getFormBegin(String method) throws FormBuilderException {
@@ -80,17 +96,18 @@ public class FormBuilder {
             case DELETE:
             default:
                 formMethod = HttpMethod.POST.name();
-                formContent = getInputFor("method", "hidden", method);
+                formContent = getInputFor("method", "hidden", method).toString();
         }
 
         if (object != null) {
             formContent += getInputFor("id", "hidden");
         }
-        if(getAction() != null) {
+        if (getAction() != null) {
             form += formatAttribute("action", getAction());
         }
         form += formatAttribute("method", formMethod);
-        if(getEncodingType() != null) {
+        form += formatAttribute("accept-charset", "UTF-8");
+        if (getEncodingType() != null) {
             form += formatAttribute("enctype", getEncodingType());
         }
         form += ">\n" + formContent;
@@ -111,6 +128,8 @@ public class FormBuilder {
             type = InputType.PASSWORD;
         } else if (fieldType == int.class || fieldType == Integer.class) {
             type = InputType.NUMBER;
+        } else if (fieldType == EmailAddress.class) {
+            type = InputType.EMAIL;
         } else {
             throw new FormBuilderException("unknown type " + fieldType);
         }
@@ -127,11 +146,11 @@ public class FormBuilder {
         }
     }
 
-    public String getInputFor(String fieldName) throws FormBuilderException {
+    public InputField getInputFor(String fieldName) throws FormBuilderException {
         return getInputFor(fieldName, null, null);
     }
 
-    public String getInputFor(String fieldName, String type) throws FormBuilderException {
+    public InputField getInputFor(String fieldName, String type) throws FormBuilderException {
         return getInputFor(fieldName, type, null);
     }
 
@@ -162,7 +181,7 @@ public class FormBuilder {
             content = fieldName;
         }
         String label = "<label ";
-        label += formatAttribute("id", getIdForFieldName(fieldName));
+        label += formatAttribute("for", getIdForFieldName(fieldName));
         if (htmlClass != null) {
             label += formatAttribute("class", htmlClass);
         }
@@ -170,11 +189,16 @@ public class FormBuilder {
         return label;
     }
 
+    /**
+     * @param fieldName
+     * @return
+     * @todo: return a label object
+     */
     public String getLabelFor(String fieldName) {
         return getLabelFor(fieldName, null);
     }
 
-    protected static String formatAttribute(String name, String value) {
+    public static String formatAttribute(String name, String value) {
         return name + "=\"" + Encoder.forHtmlAttribute(value) + "\" ";
     }
 
@@ -184,33 +208,38 @@ public class FormBuilder {
 
     public String getSubmit(String value, String htmlClass) {
         // TODO: make configurable
-        return "<input type=\"submit\" class=\"btn btn-primary "+ Encoder.forHtmlAttribute(htmlClass) + "\" " + formatAttribute("value", value) + "/>";
+        return "<input type=\"submit\" class=\"btn btn-primary " + Encoder.forHtmlAttribute(htmlClass) + "\" " + formatAttribute("value", value) + "/>";
     }
 
-
-    public String getSelectFor(String fieldName, AccessControlObjectBase[] objects) throws FormBuilderException {
+    /**
+     * @param fieldName
+     * @param objects
+     * @return A select field
+     * @throws FormBuilderException
+     */
+    public SelectField getSelectFor(String fieldName, AccessControlObjectBase[] objects) throws FormBuilderException {
         if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
         SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
-        if(object != null) {
+        if (object != null) {
             Method getter = getGetterMethod(fieldName);
             String value = getValueFromGetter(getter);
             selectField.setSelectedValue(value);
         }
-        for(AccessControlObjectBase object: objects) {
+        for (AccessControlObjectBase object : objects) {
             selectField.addChoice(object.getReadableName(), object.getId());
         }
         selectField.setHtmlClass(getHtmlInputClass());
-        return selectField.toHtml();
+        return selectField;
     }
 
     /**
      * @param fieldName The name of the field
      * @param type      null or the type of the element.
-     * @param value     null or the value of the element.
-     * @return A html input or textarea element.
+     * @param @Override value     null or the value of the element.
+     * @return The input field.
      * @throws FormBuilderException
      */
-    public String getInputFor(String fieldName, String type, String value) throws FormBuilderException {
+    public InputField getInputFor(String fieldName, String type, String value) throws FormBuilderException {
         if (fieldName == null) throw new IllegalArgumentException("field is null");
         if (type == null || value == null) {
             Method getter = getGetterMethod(fieldName);
@@ -232,12 +261,12 @@ public class FormBuilder {
         if (formErrors.containsKey(fieldName)) {
             inputField.setError(formErrors.get(fieldName));
         }
-        return inputField.toHtml();
+        return inputField;
     }
 
     private String getValueFromGetter(Method getter) throws FormBuilderException {
-        if(getter == null) throw new IllegalArgumentException("getter is null");
-        if(object == null) throw new IllegalStateException("object is null");
+        if (getter == null) throw new IllegalArgumentException("getter is null");
+        if (object == null) throw new IllegalStateException("object is null");
         String value;
         try {
             value = getter.invoke(object).toString();

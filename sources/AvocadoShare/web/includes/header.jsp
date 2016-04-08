@@ -1,11 +1,16 @@
-<%@ page import="ch.avocado.share.servlet.LoginServlet" %>
-<%@ page import="ch.avocado.share.controller.UserSession" %>
-<%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
-<%
+<%@
+        page import="ch.avocado.share.servlet.LoginServlet" %><%@
+        page import="ch.avocado.share.controller.UserSession" %><%@
+        page import="ch.avocado.share.common.Encoder" %><%@
+        page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %><%
+
     String baseUrl = request.getServletContext().getContextPath();
     String currentUrl = request.getRequestURI();
     UserSession userSession = new UserSession(request);
+    String name;
+    if(userSession.isAuthenticated()) {
+        name = Encoder.forHtml(userSession.getUser().getFullName());
+    }
 %>
 <!DOCTYPE html>
 <html lang="de">
@@ -37,34 +42,35 @@
                             <a class="nav-link" href="<%=baseUrl%>/group/">Gruppen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<%=baseUrl%>/module/">Module</a>
+                            <a class="nav-link" href="#">Module</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<%=baseUrl%>/file/">Dateien</a>
+                            <a class="nav-link" href="<%=baseUrl%>/file/">Dokumente</a>
+                        </li>
+                        <% } else { %>
+                        <%-- Links for mobile users --%>
+                        <li class="nav-item hidden-md-up">
+                            <a class="nav-link" href="<%=baseUrl%>/login">Login</a>
+                        </li>
+                        <li class="nav-item hidden-md-up">
+                            <a class="nav-link" href="<%=baseUrl%>/register.jsp">Register</a>
                         </li>
                         <% } %>
-                        <!-- Links for mobile users -->
-                        <li class="nav-item hidden-md-up">
-                            <a class="nav-link" href="#login">Login</a>
-                        </li>
-                        <li class="nav-item hidden-md-up">
-                            <a class="nav-link" href="#register">Register</a>
-                        </li>
                         <!-- Navbar Search -->
                         <li class="nav-item pull-md-right">
                             <form action="document_view.jsp" class="form-inline">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search for...">
-              <span class="input-group-btn">
-                <button class="btn btn-secondary" type="submit">Los!</button>
-              </span>
+                                    <input type="text" class="form-control" placeholder="Suchen nach..." />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="submit">Los!</button>
+                                    </span>
                                 </div>
                             </form>
                         </li>
 
                         <% if(userSession.isAuthenticated()) { %>
                         <li class="nav-item pull-md-right">
-                            <a href="<%=baseUrl%>/file/?action=create" class="btn btn-secondary">Upload</a>
+                            <a href="<%=baseUrl%>/file/?action=create" class="btn btn-secondary"><span class="octicon octicon-plus"></span></a>
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->
@@ -79,12 +85,13 @@
                                 <div id="navbar-login" class="dropdown-menu"
                                      aria-labelledby="navbar-login-toggle-button">
                                     <% if(userSession.isAuthenticated()) { %>
-                                    <a class="dropdown-item" href="#">Profile</a>
+                                    <a class="dropdown-item" href="<%=baseUrl%>/user/?id=<%=Encoder.forUrlAttribute(userSession.getUserId())%>">Profil</a>
+                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>
                                     <!-- login formular -->
-                                    <form action="<%=baseUrl%>/login" method="POST" action="#login">
-                                        <fieldset>
+                                    <form action="<%=baseUrl%>/login" method="POST">
+
                                             <div class="input-group dropdown-item" style="margin-bottom: 0">
                                                 <label for="navbar-login-username" class="input-group-addon">
                                                     <span class="octicon octicon-person"></span><span class="sr-only">Benutzername</span>
@@ -99,7 +106,6 @@
                                                 <input id="navbar-login-password" type="password" class="form-control"
                                                        name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
                                             </div>
-                                        </fieldset>
                                         <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>" name="<%=LoginServlet.FIELD_REDIRECT_TO%>" />
                                         <div class="dropdown-item">
                                             <input type="submit" class="btn btn-secondary" value="Anmelden" />
@@ -111,7 +117,7 @@
                                             <span class="dropdown-item">Anmelden</span>
                                         </a>
                                         -->
-                                    <a href="<%=baseUrl%>/register.jsp">
+                                    <a href="<%=baseUrl%>/user/?action=create">
                                         <span class="dropdown-item">Registrieren</span>
                                     </a>
                                     <% } %>

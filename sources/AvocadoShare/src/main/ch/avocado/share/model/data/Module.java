@@ -15,10 +15,16 @@ public class Module extends AccessControlObjectBase {
         setName(name);
     }
 
+    /**
+     * @return The name of the module
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name The name of the module
+     */
     public void setName(String name) {
         if (name == null) throw new IllegalArgumentException("name is null");
         this.name = name;

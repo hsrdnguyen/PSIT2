@@ -17,6 +17,9 @@
         groupMemberBean.setTarget(group);
         groupMemberBean.setMethod("GET");
         groupMemberBean.renderRequest(request, response);
+%>
+            </div>
+<%
     }
     request.getRequestDispatcher("../includes/footer.jsp").include(request, response);
 %>

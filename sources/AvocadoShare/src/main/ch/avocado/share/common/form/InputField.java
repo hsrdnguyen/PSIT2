@@ -2,10 +2,7 @@ package ch.avocado.share.common.form;
 
 import ch.avocado.share.common.Encoder;
 
-/**
- * Created by coffeemakr on 29.03.16.
- */
-class InputField extends FieldBase {
+public class InputField extends FieldBase {
     private String value = "";
     private String type;
 
@@ -14,11 +11,16 @@ class InputField extends FieldBase {
         setType(type);
     }
 
-
+    /**
+     * @return type input type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * @param type the input type
+     */
     public void setType(String type) {
         if (type == null) throw new IllegalArgumentException("type is null");
         this.type = type;
@@ -36,10 +38,16 @@ class InputField extends FieldBase {
         }
     }
 
+    /**
+     * @return the value
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * @param value the value
+     */
     public void setValue(String value) {
         if (value == null) throw new IllegalArgumentException("value is null");
         this.value = value;

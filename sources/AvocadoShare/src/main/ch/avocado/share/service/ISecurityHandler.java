@@ -1,6 +1,10 @@
 package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.service.exceptions.DataHandlerException;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -13,7 +17,7 @@ public interface ISecurityHandler {
      * @param target target that should be accessed
      * @return access-level of the user in the target
      */
-    AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target);
+    AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) throws DataHandlerException;
 
 
     /**
@@ -23,7 +27,7 @@ public interface ISecurityHandler {
      * @param accessLevel the new level
      * @return {@code true} if the execution was successful.
      */
-    boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel);
+    boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException;
 
     /**
      * checks and returns what access level an anonymous (unauthenticated) user
@@ -31,11 +35,15 @@ public interface ISecurityHandler {
      * @param target target to check the access to
      * @return access level of an anonymous user
      */
-    AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target);
+    AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException;
 
-    Group[] getGroupsWithAccess(AccessLevelEnum accessLevel, AccessControlObjectBase target);
 
-    User[] getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target);
+    boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException;
 
-    <I extends AccessControlObjectBase> I[] getObjectsOnWhichIdentityHasAccessLevel(Class<I> clazz, AccessIdentity identity, AccessLevelEnum accessLevelEnum);
+
+    Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
+
+    Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
+
+    List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException;
 }

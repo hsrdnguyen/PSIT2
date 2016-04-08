@@ -44,7 +44,7 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
     @Test
     public void testCreateAccess() throws Exception {
         Group target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
-        User accessingUser = securityHandlerMock.getUsersWithAccessIncluding(AccessLevelEnum.OWNER, target)[0];
+        User accessingUser = securityHandlerMock.getUserWithAccess(AccessLevelEnum.OWNER);
         bean.setAccessingUser(accessingUser);
         User user = securityHandlerMock.getUserWithAccess(AccessLevelEnum.NONE);
         assertNotNull(target);
@@ -60,10 +60,10 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
     @Test
     public void testCreateAccessWithExistingRights() throws Exception {
         AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
-        User accessingUser = securityHandlerMock.getUsersWithAccessIncluding(AccessLevelEnum.OWNER, target)[0];
+        User accessingUser = securityHandlerMock.getUserWithAccess(AccessLevelEnum.OWNER);
         bean.setAccessingUser(accessingUser);
         assertNotNull(target);
-        for(User user: getSecurityHandler().getUsersWithAccessIncluding(AccessLevelEnum.READ, target)) {
+        for(User user: getUserDataHandler().getUsers(getSecurityHandler().getUsersWithAccessIncluding(AccessLevelEnum.READ, target).keySet())) {
             assertNotNull(user);
             bean.setTargetId(target.getId());
             assertEquals(bean.getTargetId(), target.getId());
@@ -93,7 +93,7 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
     @Test
     public void testCreateAccessForSameGroup() throws Exception {
         Group group = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
-        User accessingUser = securityHandlerMock.getUsersWithAccessIncluding(AccessLevelEnum.OWNER, group)[0];
+        User accessingUser = securityHandlerMock.getUserWithAccess(AccessLevelEnum.OWNER);
         bean.setAccessingUser(accessingUser);
         assertNotNull(group);
         assertNotNull(group.getId());
@@ -220,11 +220,6 @@ public class GroupMemberControlBeanTest extends BeanTestBase {
 
     @Test
     public void testDoPut() throws Exception {
-        request.setMethod("PUT");
-        AccessControlObjectBase target = getGroupDataHandler().getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
-        bean.setTargetId(target.getId());
-        bean.renderRequest(request, response);
-        assertStatusCodeEquals(STATUS_FORBIDDEN, response);
 
     }
 

@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by coffeemakr on 21.03.16.
+ * Base class for all mail-based verifcations.
  */
 public abstract class BaseMailVerification {
     private final static int DEFAULT_EXPIRY_IN_HOURS = 24;
@@ -28,6 +28,11 @@ public abstract class BaseMailVerification {
         setExpiry(expiry);
     }
 
+    /**
+     * Convert a expiry time (delta) into an actual date.
+     * @param expiresInHours The number of hours
+     * @return The date on which the hours will expire
+     */
     public static Date getDateFromExpiryInHours(int expiresInHours) {
         long expiryMillis = System.currentTimeMillis() % 1000;
         expiryMillis += expiresInHours * (60 * 60 * 1000);
@@ -43,25 +48,40 @@ public abstract class BaseMailVerification {
     	return new String(generator.generateToken(TOKEN_LENGTH));
     }
 
+    /**
+     * @return The verification code
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * @param code The verification code
+     */
     public void setCode(String code) {
         if (code == null) throw new IllegalArgumentException("code is null");
 
         this.code = code;
     }
 
+    /**
+     * @return The expiry
+     */
     public Date getExpiry() {
         return expiry;
     }
 
+    /**
+     * @param expiry The expiry
+     */
     public void setExpiry(Date expiry) {
         if (expiry == null) throw new IllegalArgumentException("expiry is null");
         this.expiry = expiry;
     }
 
+    /**
+     * @return {@code true} if this verification is expired.
+     */
     public boolean isExpired() {
         Date now = new Date();
         return expiry.compareTo(now) >= 0;

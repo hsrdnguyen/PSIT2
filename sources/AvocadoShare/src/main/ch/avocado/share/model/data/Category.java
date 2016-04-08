@@ -3,7 +3,7 @@ package ch.avocado.share.model.data;
 import java.util.List;
 
 /**
- * Created by bergm on 15/03/2016.
+ * Representation of a single category.
  */
 public class Category {
     private String name;

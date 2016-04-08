@@ -5,9 +5,12 @@ import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Mock handler for group data.
@@ -39,13 +42,25 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
         objects.clear();
         for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
             String id = "group" + i;
-            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, "groupName" + i));
+            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "Eine Beschreibung der Gruppe " + i + ".\n Vielleicht wiederspiegelt diese Gruppe eine Klasse, dann könnte das hier stehen.", "groupName" + i));
         }
     }
 
     @Override
     public Group getGroup(String id) {
         return get(id);
+    }
+
+    @Override
+    public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
+        ArrayList<Group> groups = new ArrayList<>(ids.size());
+        for(String id: ids) {
+            Group group = getGroup(id);
+            if(group != null) {
+                groups.add(group);
+            }
+        }
+        return groups;
     }
 
     @Override

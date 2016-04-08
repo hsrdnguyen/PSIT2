@@ -8,57 +8,49 @@
     Group[] groupMembers = (Group[]) request.getAttribute("MemberGroups");
     AccessControlObjectBase target = (AccessControlObjectBase) request.getAttribute("Target");
 %>
-<h2>Mitglieder</h2>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3>Benutzer</h3>
+<div class="list-group-item">
+    <div class="list-group-item-heading">
+        <h3>Mitglieder</h3>
     </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th width="20%">Aktion</th>
-            </tr>
-        </thead>
-        <tbody>
-        <% for (User member : userMembers) {
-            String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(target.getId()) + "&userId=" + Encoder.forUrlAttribute(member.getId());
-        %>
-            <tr>
-                <td><%=Encoder.forHtml(member.getFullName()) %></td>
-                <td>
-                    <a href="<%=editUrl %>">Bearbeiten</a>
-                </td>
-            </tr>
-        <% } %>
+</div>
+<div class="list-group-item">
+    <div class="list-group-item-heading">
+        <h4>Benutzer</h4>
+    </div>
+</div>
+<% for (User member : userMembers) {
+    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(target.getId()) + "&userId=" + Encoder.forUrlAttribute(member.getId());
+    String name = Encoder.forHtml(member.getFullName());
+%>
+<div class="list-group-item">
+    <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=editUrl%>'; return false; ">
+        Rechte bearbeiten
+    </button>
+    <span>
+        <%=name %>
+    </span>
+</div>
+<% } %>
 
-        </tbody>
-    </table>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3>Gruppen</h3>
+<div class="list-group-item">
+    <div class="list-group-item-heading">
+        <h4>Gruppen</h4>
     </div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th width="20%">Aktion</th>
-        </tr>
-        </thead>
-        <tbody>
-    <% for (Group member : groupMembers) {
-        String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(target.getId()) + "&groupId=" + Encoder.forUrlAttribute(member.getId());
-    %>
-    <tr>
-        <td><%=Encoder.forHtml(member.getName()) %></td>
-        <td>
-            <a href="<%=editUrl %>">Bearbeiten</a>
-        </td>
-    </tr>
-    <% } %>
-        </tbody>
-    </table>
 </div>
+<% for (Group member : groupMembers) {
+    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(target.getId()) + "&groupId=" + Encoder.forUrlAttribute(member.getId());
+    String detailUrl = "?id=" + Encoder.forUrlAttribute(target.getId());
+    String name = Encoder.forHtml(member.getReadableName());
+%>
+<a href="<%=detailUrl %>" class="list-group-item">
+    <%-- hackyish way to allow nested links --%>
+    <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=editUrl%>'; return false; ">
+        Rechte bearbeiten
+    </button>
+    <span>
+    <%=name %>
+    </span>
+</a>
+<% } %>
 
 

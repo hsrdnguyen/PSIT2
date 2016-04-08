@@ -1,14 +1,19 @@
 package ch.avocado.share.model.data;
 
 /**
- * Created by bergm on 19/03/2016.
+ * All possible access levels.
  */
 public enum AccessLevelEnum {
     NONE(0),
     READ(1),
     WRITE(3),
+    MANAGE(4),
     OWNER(7);
 
+    /**
+     * The numeric level is only used to check if one level contains another.
+     * Each level contains all levels with a lower numeric level.
+     */
     private final int numericLevel;
 
     AccessLevelEnum(int numericLevel){
