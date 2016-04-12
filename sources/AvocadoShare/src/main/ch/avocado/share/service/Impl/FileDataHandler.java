@@ -82,6 +82,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
+    public List<File> search(List<String> searchTerms) throws DataHandlerException {
+        return null;
+    }
+
+    @Override
     public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
         //TODO @kunzlio1: noch implementieren
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -144,10 +149,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     private boolean addCategories(File file){
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if(categoryHandler == null)
-            return false;
-        if (!categoryHandler.addAccessObjectCategories(file))
-            return false;
+        if(categoryHandler == null) return false;
+        if (!categoryHandler.addAccessObjectCategories(file)) return false;
 
         return true;
     }

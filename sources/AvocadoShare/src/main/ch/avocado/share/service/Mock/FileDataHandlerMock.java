@@ -7,6 +7,7 @@ import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,6 +45,11 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
             }
         }
         return files;
+    }
+
+    @Override
+    public List<File> search(List<String> searchTerms) throws DataHandlerException {
+        return getFiles(Arrays.asList(new String[]{"1", "2", "3"}));
     }
 
     @Override
