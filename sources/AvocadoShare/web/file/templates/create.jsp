@@ -6,6 +6,9 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
+<%@ page import="org.bouncycastle.math.raw.Mod" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (Map<String, String>) request.getAttribute(FileBean.ATTRIBUTE_FORM_ERRORS));
@@ -16,7 +19,7 @@
     formBuilder.setReadableFieldName("file", "Datei auswählen");
 
     UserSession userSession = new UserSession(request);
-    Module[] userModules = new Module[0];
+    List<Module> userModules = new ArrayList<Module>();
     try {
         userModules = FileBean.getModulesToUpload(userSession.getUser());
     } catch (HttpBeanException e) {
@@ -24,6 +27,16 @@
     }
 %>
 <h2>Dateien erstellen</h2>
+<%
+    if(userModules.isEmpty()) { %>
+    <div class="alert alert-info">
+        <strong>Sie sind in keinem Modul.</strong>
+        Bevor Sie eine Datei hochladen können, müssen Sie Mitglied eines Modules sein.
+    </div>
+
+<%
+    } else {
+%>
 <%=formBuilder.getFormErrors() %>
 <div>
     <p class="text-block">Es müssen alle Felder ausfüllt werden.</p>
@@ -50,3 +63,7 @@
         <%=formBuilder.getFormEnd() %>
     </div>
 </div>
+
+<%
+    }
+%>
