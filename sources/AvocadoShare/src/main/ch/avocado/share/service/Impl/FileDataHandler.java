@@ -188,12 +188,4 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             return null;
         }
     }
-
-    private IDatabaseConnectionHandler getDatabaseHandler() {
-        try {
-            return ServiceLocator.getService(IDatabaseConnectionHandler.class);
-        } catch (ServiceNotFoundException e) {
-            return null;
-        }
-    }
 }
