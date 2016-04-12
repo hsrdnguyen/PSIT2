@@ -5,7 +5,9 @@
          version="3.1">
 
     <description>Avocado Share web application</description>
-
+    <error-page>
+        <location>/error.jsp</location>
+    </error-page>
     <filter>
         <filter-name>HiddenFilesFilter</filter-name>
         <filter-class>ch.avocado.share.common.HiddenFilesFilter</filter-class>
