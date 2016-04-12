@@ -23,7 +23,6 @@ import java.util.List;
 public class FileBean extends ResourceBean<File> {
 
     private String title;
-    private String description;
     // private String author;   //TODO @kunzlio1: Sascha fragen für was author? eg. ersteller?
     private List<Category> categories;
     private FileItem uploadedFileItem;
@@ -284,20 +283,6 @@ public class FileBean extends ResourceBean<File> {
     }
 
     /**
-     * @return The description of the file
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description The description of the file
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
      * @return The uploaded file
      */
     private FileItem getUploadedFileItem() {
@@ -337,14 +322,6 @@ public class FileBean extends ResourceBean<File> {
             } catch (DataHandlerException e) {
                 addFormError("title", ErrorMessageConstants.ERROR_DATABASE);
             }
-        }
-    }
-
-    private void checkParameterDescription() {
-        if (getDescription() == null || getDescription().trim().isEmpty()) {
-            addFormError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
-        } else {
-            setDescription(getDescription().trim());
         }
     }
 

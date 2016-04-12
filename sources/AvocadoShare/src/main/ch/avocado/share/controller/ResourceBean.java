@@ -66,6 +66,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * The action parameter
      */
     private String action;
+    private String description;
 
     /**
      * This method returns true if the bean is supplied with an identifier
@@ -405,5 +406,27 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
 
     private void setFormErrorsInRequestAttribute(HttpServletRequest request) {
         request.setAttribute(ATTRIBUTE_FORM_ERRORS, getFormErrors());
+    }
+
+    /**
+     * @return The description of the file
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description The description of the file
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    protected void checkParameterDescription() {
+        if (getDescription() == null || getDescription().trim().isEmpty()) {
+            addFormError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
+        } else {
+            setDescription(getDescription().trim());
+        }
     }
 }
