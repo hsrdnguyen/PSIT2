@@ -98,11 +98,18 @@ public class FileBean extends ResourceBean<File> {
     @Override
     public File create() throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
+        IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
         checkParameterTitle();
         checkParameterDescription();
         checkParameterModuleId();
         //checkParameterAuthor();
         if (!hasErrors()) {
+            Module module = moduleDataHandler.getModule(getModuleId());
+            if(module == null) {
+                addFormError("module", "Modul existiert nicht.");
+                return null;
+            }
+            ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
             String path = uploadFile(getUploadedFileItem());
             File file = getFileFromParameters(path);
             String fileId;
