@@ -6,7 +6,6 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
-<%@ page import="org.bouncycastle.math.raw.Mod" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

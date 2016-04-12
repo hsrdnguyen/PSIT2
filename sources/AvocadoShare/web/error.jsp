@@ -23,21 +23,22 @@
 %>
 <html>
 <head>
-    <title>Error <%=statusCode.getCode()%></title>
+    <title>Error <%=statusCode.getCode()%>
+    </title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
 </head>
-<main>
+
     <div class="container">
-    <h2>
-        <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %></a> - Oh nein!
-    </h2>
-    <div>
-        <p>Ihre Anfrage konnte leider nicht bearbeitet werden.</p>
-        <p><%=message%>
-        </p>
-    </div>
-    </div>
-</main>
+        <h2>
+            <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
+            </a> - Oh nein!
+        </h2>
+        <div>
+            <p>
+                <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
+                <%=message%>
+            </p>
+        </div>
 </html>

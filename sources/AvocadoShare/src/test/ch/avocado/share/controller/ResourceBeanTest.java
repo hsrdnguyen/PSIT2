@@ -98,7 +98,7 @@ public class ResourceBeanTest {
     }
 
     @Test
-    public void test_index_when_no_identifier() throws ServletException {
+    public void test_index_when_no_identifier() throws Exception {
         request.setMethod("GET");
         assertFalse(bean.hasIdentifier());
         bean.renderRequest(request, response);
@@ -107,7 +107,7 @@ public class ResourceBeanTest {
     }
 
     @Test
-    public void test_index_when_identifier() throws ServletException {
+    public void test_index_when_identifier() throws Exception {
         request.setMethod("GET");
         bean.setId("1");
         assertTrue(bean.hasIdentifier());

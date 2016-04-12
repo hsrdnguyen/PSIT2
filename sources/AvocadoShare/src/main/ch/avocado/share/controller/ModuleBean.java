@@ -29,7 +29,7 @@ public class ModuleBean extends ResourceBean<Module> {
 
     @Override
     protected String getTemplateFolder() {
-        return "module_templates";
+        return "module_templates/";
     }
 
     @Override
