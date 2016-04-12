@@ -106,7 +106,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.File.UPDATE_QUERY);
             preparedStatement.setString(1, file.getTitle());
             preparedStatement.setString(2, file.getDescription());
-            //TODO @kunzlio1: fragen ob last_changed autom. ges. wird?
             preparedStatement.setString(3, file.getLastChanged().toString());
             preparedStatement.setString(4, file.getPath());
             preparedStatement.setString(5, file.getId());
