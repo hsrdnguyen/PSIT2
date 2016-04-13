@@ -22,14 +22,12 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     protected abstract Class<? extends ResourceBean<E>> getBeanClass();
 
-    private ResourceBean<E> getResourceBean() {
-        if (resourceBean == null) {
-            try {
-                resourceBean = getBeanClass().newInstance();
-            } catch (InstantiationException | IllegalAccessException ignored) {
-            }
+    private ResourceBean<E> getResourceBean() throws HttpBeanException {
+        try {
+            return getBeanClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException ignored) {
         }
-        return resourceBean;
+        throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Could not create bean");
     }
 
     private String getSetterName(String parameter) {
@@ -56,18 +54,16 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         request.getRequestDispatcher("includes/footer.jsp").include(request, response);
     }
 
-    private boolean tryCallSetterOfBean(ResourceBean<E> bean, String value, String setterName) throws InvocationTargetException, IllegalAccessException {
+    private boolean tryInvokeSetterOfBean(ResourceBean<E> bean, String value, String setterName) throws InvocationTargetException, IllegalAccessException {
         if (bean == null) throw new IllegalArgumentException("bean is null");
         if (value == null) throw new IllegalArgumentException("value is null");
         Class<?> classOrSuperclass = bean.getClass();
-        Method setter = null;
+        // Search for method in this class or super-classes
         while (ResourceBean.class.isAssignableFrom(classOrSuperclass)) {
             Method[] methods = classOrSuperclass.getMethods();
             for (Method method : methods) {
                 if (method.getName().equals(setterName)) {
-                    System.out.println("found " + setterName);
                     method.invoke(bean, value);
-                    System.out.println("invoked");
                     return true;
                 }
             }
@@ -81,7 +77,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             String paramName = parameterNames.nextElement();
             try {
                 System.out.println("trying " + getSetterName(paramName));
-                tryCallSetterOfBean(bean, request.getParameter(paramName), getSetterName(paramName));
+                tryInvokeSetterOfBean(bean, request.getParameter(paramName), getSetterName(paramName));
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
                 throw new ServletException(e.getMessage());

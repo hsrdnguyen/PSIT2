@@ -47,6 +47,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public File getFile(String fileId) throws DataHandlerException {
+        if (fileId == null) throw new IllegalArgumentException("fileId is null");
         //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
@@ -57,11 +58,10 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             File file = getFileFromSelectResultSet(resultSet);
 
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_OWNER_OF_FILE_QUERY);
-            preparedStatement.setInt(1, Integer.parseInt(file.getId()));
+            preparedStatement.setInt(1, Integer.parseInt(fileId));
             resultSet = connectionHandler.executeQuery(preparedStatement);
 
-            if (resultSet.next())
-            {
+            if (resultSet.next()) {
                 file.setOwnerId(resultSet.getString(1));
             }
             return file;
@@ -75,8 +75,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     @Override
     public List<File> getFiles(List<String> ids) throws DataHandlerException {
         List<File> files = new ArrayList<>(ids.size());
-        for(String id: ids) {
-            files.add(getFile(id));
+        for (String id : ids) {
+            File file = getFile(id);
+            if(file != null) {
+                files.add(file);
+            }
         }
         return files;
     }
@@ -85,7 +88,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
         //TODO @kunzlio1: noch implementieren
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-        if(connectionHandler == null) return null;
+        if (connectionHandler == null) return null;
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_TITLE_QUERY);
@@ -127,8 +130,10 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
             String accessLevel = null;
 
-            if (rs.next()){
+            if (rs.next()) {
                 accessLevel = rs.getString(1);
+            } else {
+                return false;
             }
 
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_RIGHTS_QUERY);
@@ -143,42 +148,32 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private boolean addCategories(File file){
+    private boolean addCategories(File file) {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if(categoryHandler == null)
-            return false;
-        if (!categoryHandler.addAccessObjectCategories(file))
-            return false;
-
-        return true;
+        return categoryHandler != null && categoryHandler.addAccessObjectCategories(file);
     }
 
-    private boolean updateCategories(File oldFile, File changedFile){
+    private boolean updateCategories(File oldFile, File changedFile) {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if(categoryHandler == null)
-            return false;
-        if (!categoryHandler.updateAccessObjectCategories(oldFile, changedFile))
-            return false;
-
-        return true;
+        return categoryHandler != null && categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
     }
 
-    private File getFileFromSelectResultSet(ResultSet resultSet){
-        File file = FileFactory.getDefaultFile();
+    private File getFileFromSelectResultSet(ResultSet resultSet) {
         try {
-            if (resultSet.next())
-            {
+            if (resultSet.next()) {
+                File file = FileFactory.getDefaultFile();
                 file.setId(resultSet.getString(1));
                 file.setTitle(resultSet.getString(2));
                 file.setDescription(resultSet.getString(3));
                 file.setLastChanged(resultSet.getDate(4));
                 file.setCreationDate(resultSet.getDate(5));
                 file.setPath(resultSet.getString(6));
+                return file;
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             return null;
         }
-        return file;
+        return null;
     }
 
     private ICategoryDataHandler getCategoryDataHandler() {

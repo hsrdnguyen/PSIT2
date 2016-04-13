@@ -18,7 +18,7 @@ public final class ErrorMessageConstants {
     public static final String ERROR_FILE_TITLE_ALREADY_EXISTS = "Ein File mit diesem Titel existiert bereits.";
     public static final String ERROR_CATEGORY_ALREADY_ADDED = "Diese Kategorie wurde schon hinzugefügt.";
     public static final String ERROR_NO_SUCH_FILE = "File existiert nicht.";
-    public static final String ERROR_DATABASE = "Objekt konnte nicht in der Datenbank gespeichert werden.";
+    public static final String ERROR_DATABASE = "Ein Datenbank-Fehler ist aufgetreten";
     public static final String ERROR_CONTENT_TYPE_NOT_ALLOWED = "Ungültiger Content-Type";
     public static final String ERROR_NO_MODULE_ID = "Module nicht ausgewählt.";
     public static final String ERROR_STORAGE_HANDLER_NOT_FOUND = "IFileStorageHandler wurde nicht gefunden.";

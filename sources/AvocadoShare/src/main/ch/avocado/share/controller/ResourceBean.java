@@ -193,6 +193,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         try {
             update();
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
         if (!hasErrors()) {
@@ -242,6 +243,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         try {
             object = get();
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
         if(object == null) {
@@ -280,6 +282,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             try {
                 objectList = index();
             } catch (DataHandlerException e) {
+                e.printStackTrace();
                 throw new HttpBeanDatabaseException();
             }
             if(objectList == null) {
@@ -311,6 +314,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         try {
             object = create();
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
         if(object == null && !hasErrors()) {
@@ -355,6 +359,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * @return True of the request has the action parameter set to {@value ACTION_CREATE}
      */
     private boolean isCreate() {
+        System.out.println("Create?: " + action);
         return ACTION_CREATE.equals(action);
     }
 

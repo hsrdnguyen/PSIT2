@@ -153,7 +153,8 @@ public class FileBean extends ResourceBean<File> {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         if(getAccessingUser() != null) {
             try {
-                return fileDataHandler.getFiles(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
+                List<String> fileIds = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ);
+                return fileDataHandler.getFiles(fileIds);
             } catch (DataHandlerException e) {
                 throw new HttpBeanDatabaseException();
             }

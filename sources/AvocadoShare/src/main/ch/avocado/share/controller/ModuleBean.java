@@ -10,6 +10,7 @@ import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,9 +38,11 @@ public class ModuleBean extends ResourceBean<Module> {
         checkParameterDescription();
         checkParameterName();
         if (!hasErrors()) {
-            Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), getDescription(), getName());
             IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
+            ISecurityHandler securityHandler = getService(ISecurityHandler.class);
+            Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), getDescription(), getName());
             module.setId(moduleDataHandler.addModule(module));
+            securityHandler.setAccessLevel(getAccessingUser(), module, AccessLevelEnum.MANAGE);
             return module;
         }
         return null;
@@ -65,20 +68,24 @@ public class ModuleBean extends ResourceBean<Module> {
         boolean updated = false;
         if (getName() != null && !getName().equals(module.getName())) {
             checkParameterName();
-            if (hasErrors()) {
+            if (!hasErrors()) {
                 module.setName(getName());
                 updated = true;
             }
         }
+
         if (getDescription() != null && !getDescription().equals(module.getDescription())) {
             checkParameterDescription();
-            if (hasErrors()) {
+            if (!hasErrors()) {
                 module.setDescription(getDescription());
                 updated = true;
             }
         }
+
         if(!hasErrors() && updated) {
-            getService(IModuleDataHandler.class).updateModule(module);
+            if(!getService(IModuleDataHandler.class).updateModule(module)) {
+                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, "Modul konnte nicht gefunden werden.");
+            }
         }
     }
 

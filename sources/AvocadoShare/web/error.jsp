@@ -29,16 +29,20 @@
     <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
 </head>
-
-    <div class="container">
-        <h2>
-            <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
-            </a> - Oh nein!
-        </h2>
-        <div>
-            <p>
-                <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
-                <%=message%>
-            </p>
+<body>
+    <main>
+        <div class="container">
+            <h2>
+                <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
+                </a> - Oh nein!
+            </h2>
+            <div>
+                <p>
+                    <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
+                    <%=message%>
+                </p>
+            </div>
         </div>
+    </main>
+</body>
 </html>

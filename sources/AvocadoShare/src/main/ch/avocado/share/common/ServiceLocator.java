@@ -23,6 +23,13 @@ public class ServiceLocator {
         registerServices();
     }
 
+    /**
+     * Returns the implementation of the service.
+     * @param clazz The required Service class
+     * @param <T> The type of the service
+     * @return The implemented service
+     * @throws ServiceNotFoundException If there is no service with this class.
+     */
     public static <T> T getService(Class<T> clazz) throws ServiceNotFoundException {
         if (!services.containsKey(clazz))
             throw new ServiceNotFoundException(clazz.toString(), ServiceLocator.class.toString());
@@ -30,11 +37,11 @@ public class ServiceLocator {
         return (T) services.get(clazz);
     }
 
+    /**
+     * Build the service map.
+     */
     private static void registerServices() {
-        //services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandlerMock());
-        //services.put(IUserDataHandler.class, new UserDataHandlerMock());
         services.put(ISecurityHandler.class, new SecurityHandler());
-        //services.put(IFileDataHandler.class, new FileDataHandlerMock());
         services.put(IFileDataHandler.class, new FileDataHandler());
         services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
         services.put(IUserDataHandler.class, new UserDataHandler());
@@ -42,6 +49,6 @@ public class ServiceLocator {
         services.put(IMailingService.class, new MailingService());
         services.put(IGroupDataHandler.class, new GroupDataHandler());
         services.put(ICategoryDataHandler.class, new CategoryDataHandler());
-        services.put(IModuleDataHandler.class, new ModuleDataHandlerMock());
+        services.put(IModuleDataHandler.class, new ModuleDataHandler());
     }
 }
