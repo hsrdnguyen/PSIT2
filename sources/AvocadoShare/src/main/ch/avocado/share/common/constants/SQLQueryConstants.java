@@ -154,7 +154,7 @@ public class SQLQueryConstants {
         public static final String SELECT_BY_ID_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE o.id = ?";
         public static final String SELECT_BY_TITLE_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE title = ?";
         public static final String INSERT_QUERY = "INSERT INTO avocado_share.file (id, title, last_changed, path) VALUES (?, ?, ?, ?)";
-        public static final String UPDATE_QUERY = "UPDATE file SET title=?, description=?, last_changed=?, path=? WHERE id = ?";
+        public static final String UPDATE_QUERY = "UPDATE file SET title=?, last_changed=?, path=? WHERE id = ?";
     }
 
     //PERMISSION
