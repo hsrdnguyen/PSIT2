@@ -1,5 +1,7 @@
 package ch.avocado.share.model.exceptions;
 
+import ch.avocado.share.common.HttpStatusCode;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
 import java.util.Map;
@@ -19,6 +21,10 @@ public class HttpBeanException extends Exception{
         this.statusCode = statusCode;
         this.description = description;
         //this.headers = null;
+    }
+
+    public HttpBeanException(HttpStatusCode statusCode, String description) {
+        this(statusCode.getCode(), description);
     }
 
     public String getDescription() {

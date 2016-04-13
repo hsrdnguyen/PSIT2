@@ -2,11 +2,10 @@
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %>
+<%@ page import="ch.avocado.share.model.data.Members" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    User[] userMembers = (User[]) request.getAttribute("MemberUsers");
-    Group[] groupMembers = (Group[]) request.getAttribute("MemberGroups");
-    AccessControlObjectBase target = (AccessControlObjectBase) request.getAttribute("Target");
+    Members members = (Members) request.getAttribute("Members");
 %>
 <div class="list-group-item">
     <div class="list-group-item-heading">
@@ -18,8 +17,8 @@
         <h4>Benutzer</h4>
     </div>
 </div>
-<% for (User member : userMembers) {
-    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(target.getId()) + "&userId=" + Encoder.forUrlAttribute(member.getId());
+<% for (User member : members.getUsers()) {
+    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&userId=" + Encoder.forUrlAttribute(member.getId());
     String name = Encoder.forHtml(member.getFullName());
 %>
 <div class="list-group-item">
@@ -37,9 +36,9 @@
         <h4>Gruppen</h4>
     </div>
 </div>
-<% for (Group member : groupMembers) {
-    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(target.getId()) + "&groupId=" + Encoder.forUrlAttribute(member.getId());
-    String detailUrl = "?id=" + Encoder.forUrlAttribute(target.getId());
+<% for (Group member : members.getGroups()) {
+    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&groupId=" + Encoder.forUrlAttribute(member.getId());
+    String detailUrl = "?id=" + Encoder.forUrlAttribute(members.getTarget().getId());
     String name = Encoder.forHtml(member.getReadableName());
 %>
 <a href="<%=detailUrl %>" class="list-group-item">

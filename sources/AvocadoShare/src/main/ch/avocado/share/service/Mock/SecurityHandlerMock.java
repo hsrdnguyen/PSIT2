@@ -49,10 +49,22 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     @Override
+    public AccessLevelEnum getAccessLevel(String identityId, String targetId) throws DataHandlerException {
+        return identityWithAccess.get(identityId);
+    }
+
+    @Override
     public boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) {
         if(identity == null) throw new IllegalArgumentException("identity is null");
         if(accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
         identityWithAccess.put(identity.getId(), accessLevel);
+        return true;
+    }
+
+    @Override
+    public boolean setAccessLevel(String identityId, String targetId, AccessLevelEnum accessLevel) throws DataHandlerException {
+        // TODO: check params
+        identityWithAccess.put(identityId, accessLevel);
         return true;
     }
 

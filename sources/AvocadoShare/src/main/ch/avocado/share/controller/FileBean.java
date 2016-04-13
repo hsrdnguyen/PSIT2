@@ -2,7 +2,6 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
-import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
@@ -116,7 +115,7 @@ public class FileBean extends ResourceBean<File> {
             fileId = fileDataHandler.addFile(file);
             file = fileDataHandler.getFile(fileId);
             if (file == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_DATABASE);
+                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
             }
             return file;
         }
@@ -130,7 +129,7 @@ public class FileBean extends ResourceBean<File> {
      */
     static public List<Module> getModulesToUpload(User user) throws HttpBeanException {
         if (user == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_ACCESS_DENIED);
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
@@ -323,7 +322,7 @@ public class FileBean extends ResourceBean<File> {
                     addFormError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
                 }
             } catch (DataHandlerException e) {
-                addFormError("title", ErrorMessageConstants.ERROR_DATABASE);
+                addFormError("title", ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
             }
         }
     }

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpBeanDatabaseException extends HttpBeanException{
     public HttpBeanDatabaseException() {
-        super(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+        super(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
     }
 
 }

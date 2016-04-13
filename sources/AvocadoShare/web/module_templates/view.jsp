@@ -19,4 +19,5 @@
             <p><%=description%></p>
         </div>
     </div>
+    <%@include file="../member_templates/index.jsp"%>
 </section>

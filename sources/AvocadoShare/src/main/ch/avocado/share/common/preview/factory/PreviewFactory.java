@@ -1,6 +1,5 @@
 package ch.avocado.share.common.preview.factory;
 
-import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.preview.IPreviewGenerator;
@@ -48,7 +47,7 @@ public abstract class PreviewFactory {
         try{
             fileStorageHandler = ServiceLocator.getService(IFileStorageHandler.class);
         } catch (ServiceNotFoundException e) {
-            throw new PreviewException(ErrorMessageConstants.ERROR_SERVICE_NOT_FOUND + e.getService());
+            throw new PreviewException(ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
         }
         return fileStorageHandler;
     }

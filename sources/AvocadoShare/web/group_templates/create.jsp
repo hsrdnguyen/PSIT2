@@ -1,14 +1,7 @@
 <%@ page import="ch.avocado.share.common.form.FormBuilder" %>
 <%@ page import="ch.avocado.share.controller.GroupBean" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="ch.avocado.share.controller.ResourceBean" %>
-<%@ page import="ch.avocado.share.model.data.Group" %><%--
-  Created by IntelliJ IDEA.
-  User: coffeemakr
-  Date: 24.03.16
-  Time: 12:43
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     FormBuilder formBuilder = new FormBuilder(Group.class, (Map<String, String>) request.getAttribute(GroupBean.ATTRIBUTE_FORM_ERRORS));

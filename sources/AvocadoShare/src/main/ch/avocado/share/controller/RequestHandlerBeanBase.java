@@ -240,7 +240,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         try {
             return ServiceLocator.getService(serviceClass);
         } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_SERVICE_NOT_FOUND + e.getService());
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
         }
     }
 
@@ -262,7 +262,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      */
     protected void ensureIsAuthenticated() throws HttpBeanException {
         if (getAccessingUser() == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_NOT_LOGGED_IN);
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.NOT_LOGGED_IN);
         }
     }
 
@@ -290,7 +290,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
             throw new HttpBeanDatabaseException();
         }
         if (!grantedAccessLevel.containsLevel(requiredLevel)) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ERROR_ACCESS_DENIED);
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }
     }
 

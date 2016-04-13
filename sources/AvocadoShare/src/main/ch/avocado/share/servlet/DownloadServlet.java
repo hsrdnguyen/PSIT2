@@ -57,7 +57,7 @@ public class DownloadServlet extends HttpServlet{
         try{
             storageHandler = ServiceLocator.getService(IFileStorageHandler.class);
         } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_SERVICE_NOT_FOUND + e.getService());
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
         }
         String mimeType;
         try {

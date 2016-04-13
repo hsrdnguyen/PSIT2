@@ -1,11 +1,12 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
-import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -258,7 +259,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
-        if(object == null) {
+        if (object == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
         }
         if (isEdit()) {
@@ -270,8 +271,30 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             templateType = TemplateType.DETAIL;
             ensureAccessingUserHasAccess(object, AccessLevelEnum.READ);
         }
+        request.setAttribute("Members", getMembers());
         request.setAttribute(getAttributeName(), object);
         return templateType;
+    }
+
+    private Members getMembers() throws HttpBeanException {
+        Members members;
+        try {
+            members = Members.fromIdsWithRights(getUsersWithAccess(object), getGroupsWithAccess(object), object);
+        } catch (ServiceNotFoundException e) {
+            throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+        }
+        return members;
+    }
+
+    private Map<String, AccessLevelEnum> getUsersWithAccess(E object) throws HttpBeanException, DataHandlerException {
+        return getService(ISecurityHandler.class).getUsersWithAccessIncluding(AccessLevelEnum.READ, object);
+    }
+
+    private Map<String, AccessLevelEnum> getGroupsWithAccess(E object) throws HttpBeanException, DataHandlerException {
+        return getService(ISecurityHandler.class).getGroupsWithAccessIncluding(AccessLevelEnum.READ, object);
     }
 
     /**

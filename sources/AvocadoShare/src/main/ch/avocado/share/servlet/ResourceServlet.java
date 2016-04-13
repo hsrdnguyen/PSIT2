@@ -1,5 +1,7 @@
 package ch.avocado.share.servlet;
 
+import ch.avocado.share.common.HttpStatusCode;
+import ch.avocado.share.controller.MemberControlBean;
 import ch.avocado.share.controller.ResourceBean;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.exceptions.HttpBeanException;
@@ -27,7 +29,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             return getBeanClass().newInstance();
         } catch (InstantiationException | IllegalAccessException ignored) {
         }
-        throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Could not create bean");
+        throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Could not create bean");
     }
 
     private String getSetterName(String parameter) {
@@ -43,7 +45,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                 setBeanAttributes(request, bean);
                 bean.renderRequest(request, response);
             } catch (ServletException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Fehler in header oder footer.");
+                throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Fehler in header oder footer.");
             }
         } catch (HttpBeanException e) {
             // we cannot call sendError() after the response has been committed

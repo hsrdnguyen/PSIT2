@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
@@ -129,7 +128,7 @@ public class LoginServlet extends HttpServlet {
                 try {
                     user = getUserWithLogin(userDataHandler, email, password);
                 } catch (DataHandlerException e) {
-                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
                     renderLogin(request, response);
                     return;
                 }

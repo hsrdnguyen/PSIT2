@@ -6,6 +6,7 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -57,26 +58,40 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         return AccessLevelEnum.NONE;
     }
 
-    @Override
-    public AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) throws DataHandlerException {
-        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+
+    private PreparedStatement getSelectAccessLevelIncludingInheritedStatement(int ownerId, int objectId) throws DataHandlerException {
         PreparedStatement preparedStatement;
-        boolean read = false, write = false, manage = false, owner = false;
-        int ownerId = Integer.parseInt(identity.getId());
-        int objectId = Integer.parseInt(target.getId());
-        if(ownerId == objectId) {
-            System.out.println("Same!");
-            return AccessLevelEnum.MANAGE;
-        }else {
-            System.out.println("Different: " + objectId + " - "+ ownerId);
-        }
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_ACCESS_LEVEL_INCLUDING_INHERITED);
+            preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ACCESS_LEVEL_INCLUDING_INHERITED);
             preparedStatement.setInt(1, ownerId);
             preparedStatement.setInt(2, objectId);
             preparedStatement.setInt(3, ownerId);
             preparedStatement.setInt(4, objectId);
             preparedStatement.setInt(5, objectId);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return preparedStatement;
+    }
+
+    @Override
+    public AccessLevelEnum getAccessLevel(String identityId, String targetId) throws DataHandlerException {
+        if (identityId == null || identityId.isEmpty()) throw new IllegalArgumentException("identityId is null or empty");
+        if (targetId == null || targetId.isEmpty()) throw new IllegalArgumentException("targetId is null or empty");
+
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        boolean read = false, write = false, manage = false, owner = false;
+        int identityIdInt = Integer.parseInt(identityId);
+        int targetIdInt = Integer.parseInt(targetId);
+
+        if (identityIdInt == targetIdInt) {
+            System.out.println("Same!");
+            return AccessLevelEnum.MANAGE;
+        } else {
+            System.out.println("Different: " + targetIdInt + " - " + identityIdInt);
+        }
+        PreparedStatement preparedStatement = getSelectAccessLevelIncludingInheritedStatement(identityIdInt, targetIdInt);
+        try {
             ResultSet rs = connectionHandler.executeQuery(preparedStatement);
             while (rs.next()) {
                 read |= rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_READ_INDEX);
@@ -88,6 +103,13 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             throw new DataHandlerException(e);
         }
         return getAccessLevelForRights(read, write, manage, owner);
+    }
+
+    @Override
+    public AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) throws DataHandlerException {
+        if(identity == null) throw new IllegalArgumentException("identity is null");
+        if(target == null) throw new IllegalArgumentException("target is null");
+        return getAccessLevel(identity.getId(), target.getId());
     }
 
     private PreparedStatement getAddAccessLevelStatement(int ownerId, int objectId, int level) throws DataHandlerException {
@@ -128,14 +150,13 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     }
 
     @Override
-    public boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException {
-        if (identity == null) throw new IllegalArgumentException("identity is null");
-        if (target == null) throw new IllegalArgumentException("target is null");
+    public boolean setAccessLevel(String identityId, String targetId, AccessLevelEnum accessLevel) throws DataHandlerException {
+        if (identityId == null || identityId.isEmpty())
+            throw new IllegalArgumentException("identityId is null or empty");
+        if (targetId == null || targetId.isEmpty()) throw new IllegalArgumentException("targetId is null or empty");
         if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
-
-        int objectId = Integer.parseInt(target.getId());
-        int ownerId = Integer.parseInt(identity.getId());
-
+        int objectId = Integer.parseInt(identityId);
+        int ownerId = Integer.parseInt(targetId);
         if (accessLevel == AccessLevelEnum.NONE) {
             return deleteAccess(ownerId, objectId);
         } else if (accessLevel == AccessLevelEnum.OWNER) {
@@ -144,6 +165,14 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             int level = getAccessLevelInt(accessLevel);
             return insertOrUpdateAccessLevel(ownerId, objectId, level);
         }
+    }
+
+    @Override
+    public boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException {
+        if (identity == null) throw new IllegalArgumentException("identity is null");
+        if (target == null) throw new IllegalArgumentException("target is null");
+        if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
+        return setAccessLevel(identity.getId(), target.getId(), accessLevel);
     }
 
     private boolean deleteAccess(int ownerId, int objectId) throws DataHandlerException {
@@ -196,7 +225,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     }
 
 
-    private Map<String, AccessLevelEnum> getObjectIdWithAccessFromResultset(ResultSet resultSet, AccessLevelEnum filterLevel) throws SQLException {
+    private Map<String, AccessLevelEnum> getObjectIdWithAccessFromResultSet(ResultSet resultSet, AccessLevelEnum filterLevel) throws SQLException {
         Map<String, AccessLevelEnum> objectsIdsWithAccess = new HashMap<>();
         while (resultSet.next()) {
             String groupId = "" + resultSet.getInt(1);
@@ -217,7 +246,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_GROUPS_WITH_ACCESS_ON_OBJECT);
             preparedStatement.setInt(1, Integer.parseInt(target.getId()));
             ResultSet resultSet = preparedStatement.executeQuery();
-            return getObjectIdWithAccessFromResultset(resultSet, accessLevel);
+            return getObjectIdWithAccessFromResultSet(resultSet, accessLevel);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -229,7 +258,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
             preparedStatement.setInt(1, Integer.parseInt(target.getId()));
             ResultSet resultSet = preparedStatement.executeQuery();
-            return getObjectIdWithAccessFromResultset(resultSet, accessLevel);
+            return getObjectIdWithAccessFromResultSet(resultSet, accessLevel);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }

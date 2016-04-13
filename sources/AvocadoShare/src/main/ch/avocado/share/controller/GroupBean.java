@@ -38,7 +38,7 @@ public class GroupBean extends ResourceBean<Group> {
             }
         } catch (DataHandlerException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    ErrorMessageConstants.ERROR_DATABASE);
+                    ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
         }
     }
 

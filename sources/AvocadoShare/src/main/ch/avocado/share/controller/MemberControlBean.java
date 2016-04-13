@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
@@ -11,7 +12,6 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
     }
 
 
-    abstract protected T getTargetById(String id) throws HttpBeanException;
+    abstract protected T getTargetById(String id) throws HttpBeanException, DataHandlerException;
 
     /**
      * @return The identity for which the rights can be changed.
@@ -60,7 +60,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
             try {
                 ownerIdentity = getService(IUserDataHandler.class).getUser(getUserId());
             } catch (DataHandlerException e) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
             }
             if (ownerIdentity != null) {
                 return ownerIdentity;
@@ -195,7 +195,7 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
             Map<String, AccessLevelEnum> idsWithAccess = securityHandler.getUsersWithAccessIncluding(getLevel(), getTarget());
             return userDataHandler.getUsers(idsWithAccess.keySet());
         } catch (DataHandlerException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_DATABASE);
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
         }
     }
 
@@ -280,7 +280,11 @@ public abstract class MemberControlBean<T extends AccessControlObjectBase> exten
      */
     public T getTarget() throws HttpBeanException {
         if (target == null && targetId != null) {
-            target = getTargetById(targetId);
+            try {
+                target = getTargetById(targetId);
+            } catch (DataHandlerException e) {
+                throw new HttpBeanDatabaseException();
+            }
         }
         if (target == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_TARGET_NOT_FOUND);

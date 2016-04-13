@@ -17,7 +17,7 @@ public class GroupMemberControlBean extends MemberControlBean<Group> {
             return groupDataHandler.getGroup(id);
         } catch (DataHandlerException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                                        ErrorMessageConstants.ERROR_DATABASE);
+                                        ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
         }
     }
 }

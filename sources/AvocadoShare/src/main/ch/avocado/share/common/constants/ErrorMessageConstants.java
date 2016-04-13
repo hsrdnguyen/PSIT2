@@ -9,16 +9,16 @@ public final class ErrorMessageConstants {
     public static final String ERROR_INDEX_FAILED = "Index konnte nicht geladen werden.";
     public static final String ERROR_CREATE_FAILED = "Es konnte kein Objekt erstellt werden.";
     public static final String ERROR_GET_FAILED = "Objekt konnte nicht gefunden werden.";
-    public static final String ERROR_INVALID_REQUEST = "Ungültige Anfrage";
-    public static final String ERROR_ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
-    public static final String ERROR_NOT_LOGGED_IN = "Sie müssen angemeldet sein für diese Aktion.";
+    public static final String INVALID_REQUEST = "Ungültige Anfrage";
+    public static final String ACCESS_DENIED = "Sie verfügen über zu wenig Zugriffsrecht für diese Aktion.";
+    public static final String NOT_LOGGED_IN = "Sie müssen angemeldet sein für diese Aktion.";
     public static final String ERROR_NO_TITLE = "Bitte einen Titel eingeben.";
     public static final String ERROR_NO_CATEGORY_NAME = "Bitte einen Kategorien Namen eingeben.";
     // public static final String ERROR_NO_AUTHOR = "Bitte einen Author eingeben.";
     public static final String ERROR_FILE_TITLE_ALREADY_EXISTS = "Ein File mit diesem Titel existiert bereits.";
     public static final String ERROR_CATEGORY_ALREADY_ADDED = "Diese Kategorie wurde schon hinzugefügt.";
     public static final String ERROR_NO_SUCH_FILE = "File existiert nicht.";
-    public static final String ERROR_DATABASE = "Ein Datenbank-Fehler ist aufgetreten";
+    public static final String DATAHANDLER_EXPCEPTION = "Ein Datenbank-Fehler ist aufgetreten";
     public static final String ERROR_CONTENT_TYPE_NOT_ALLOWED = "Ungültiger Content-Type";
     public static final String ERROR_NO_MODULE_ID = "Module nicht ausgewählt.";
     public static final String ERROR_STORAGE_HANDLER_NOT_FOUND = "IFileStorageHandler wurde nicht gefunden.";
@@ -42,7 +42,7 @@ public final class ErrorMessageConstants {
     public static final String ERROR_FILE_TO_BIG_FOR_PREVIEW = "Die Datei ist zu gross, um eine Vorschau zu erzeugen.";
     public static final String ERROR_URLENCODE_FAILED = "Die URL konnte nicht kodiert werden.";
 
-    public static final String ERROR_SERVICE_NOT_FOUND = "Der Service konnte nicht gefunden werden: ";
+    public static final String SERVICE_NOT_FOUND = "Der Service konnte nicht gefunden werden: ";
     public static final String ERROR_NO_PREVIEW_FACTORY_FOR_TYPE = "Mime-Type wird nicht unterstützt.";
 
     // Member Control
@@ -55,4 +55,6 @@ public final class ErrorMessageConstants {
     public static final String ERROR_UNABLE_TO_SET_RIGHTS = "Zugriffsrechte konnten nicht gesetzt werden.";
 
 
+    public static final String MISSING_PARAMETER = "Fehlende Parameter.";
+    public static final String OBJECT_NOT_FOUND = "Objekt konnte nicht gefunden werden";
 }
