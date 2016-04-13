@@ -53,7 +53,7 @@
                             <a class="nav-link" href="<%=baseUrl%>/login">Login</a>
                         </li>
                         <li class="nav-item hidden-md-up">
-                            <a class="nav-link" href="<%=baseUrl%>/register.jsp">Register</a>
+                            <a class="nav-link" href="<%=baseUrl%>/user?action=create">Register</a>
                         </li>
                         <% } %>
                         <!-- Navbar Search -->
