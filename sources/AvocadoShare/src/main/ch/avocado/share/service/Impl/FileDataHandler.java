@@ -10,11 +10,8 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.xml.crypto.Data;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +29,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.INSERT_QUERY);
             preparedStatement.setLong(1, Long.parseLong(file.getId()));
             preparedStatement.setString(2, file.getTitle());
-            preparedStatement.setString(3, file.getDescription());
-            preparedStatement.setString(4, file.getLastChanged().toString());
+            preparedStatement.setTimestamp(3, new Timestamp(file.getLastChanged().getTime()));
+            preparedStatement.setString(4, file.getPath());
             connectionHandler.insertDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
