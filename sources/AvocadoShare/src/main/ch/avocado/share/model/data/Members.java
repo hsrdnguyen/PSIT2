@@ -70,4 +70,18 @@ public class Members {
     public AccessControlObjectBase getTarget() {
         return target;
     }
+
+    public Iterable<Map.Entry<AccessIdentity, AccessLevelEnum>> getIdentitiesWithAccess() {
+        Map<AccessIdentity, AccessLevelEnum> map = new HashMap<>();
+        map.putAll(users);
+        map.putAll(groups);
+        return map.entrySet();
+    }
+
+    public Iterable<AccessIdentity> getIdentities() {
+        List<AccessIdentity> list = new ArrayList<>(groups.size() + users.size());
+        list.addAll(groups.keySet());
+        list.addAll(users.keySet());
+        return list;
+    }
 }

@@ -28,6 +28,11 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
+    protected boolean hasMembers() {
+        return true;
+    }
+
+    @Override
     protected String getTemplateFolder() {
         return "module_templates/";
     }
@@ -38,10 +43,9 @@ public class ModuleBean extends ResourceBean<Module> {
         checkParameterName();
         if (!hasErrors()) {
             IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
-            ISecurityHandler securityHandler = getService(ISecurityHandler.class);
             Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), getDescription(), getName());
-            module.setId(moduleDataHandler.addModule(module));
-            securityHandler.setAccessLevel(getAccessingUser(), module, AccessLevelEnum.MANAGE);
+            module.setOwnerId(getAccessingUser().getId());
+            moduleDataHandler.addModule(module);
             return module;
         }
         return null;

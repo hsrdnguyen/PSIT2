@@ -6,6 +6,7 @@ import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,25 +48,26 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     }
 
     private Group getGroupFromResultSet(ResultSet resultSet) throws DataHandlerException {
-        if(resultSet == null) throw new IllegalArgumentException("resultSet is null");
-        String id, name, description;
+        if (resultSet == null) throw new IllegalArgumentException("resultSet is null");
+        String id, name, description, ownerId;
         Date creationDate;
-        // TODO: @muellcy1 fetch categories and rating .. and ownerId?
+        // TODO: @muellcy1 fetch categories and rating
         try {
-            if(!resultSet.next()) return null;
+            if (!resultSet.next()) return null;
             id = resultSet.getString(SQLQueryConstants.Group.RESULT_ID_INDEX);
             name = resultSet.getString(SQLQueryConstants.Group.RESULT_NAME_INDEX);
             description = resultSet.getString(SQLQueryConstants.Group.RESULT_DESCRIPTION_INDEX);
             creationDate = resultSet.getDate(SQLQueryConstants.Group.RESULT_CREATION_DATE);
+            ownerId = resultSet.getString(SQLQueryConstants.Group.RESULT_OWNER_ID);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, "???", name, description);
+        return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, name, description);
     }
 
     @Override
     public Group getGroup(String id) throws DataHandlerException {
-        if(id == null) throw new IllegalArgumentException("id is null");
+        if (id == null) throw new IllegalArgumentException("id is null");
         PreparedStatement statement = getGetStatement(id);
         return getGroupFromResultSet(executeGetStatement(statement));
     }
@@ -73,8 +75,11 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     @Override
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
         List<Group> groups = new ArrayList<>(ids.size());
-        for(String id: ids) {
-            groups.add(getGroup(id));
+        for (String id : ids) {
+            Group group = getGroup(id);
+            if (group != null) {
+                groups.add(group);
+            }
         }
         return groups;
     }
@@ -109,22 +114,35 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     public String addGroup(Group group) throws DataHandlerException {
         if (group == null) throw new IllegalArgumentException("group is null");
         if (group.getId() != null) throw new IllegalArgumentException("group.getId() is not null");
+
         String id = addAccessControlObject(group.getDescription());
         group.setId(id);
         PreparedStatement statement = getInsertStatement(group.getId(), group.getName());
-        return executeInsertStatement(statement);
+        executeInsertStatement(statement);
+        addOwnership(Integer.parseInt(group.getOwnerId()), Integer.parseInt(group.getId()));
+        return group.getId();
     }
 
     @Override
-    public boolean updateGroup(Group group) {
-        if(group == null) throw new IllegalArgumentException("group is null");
-
-        return false;
+    public boolean updateGroup(Group group) throws DataHandlerException {
+        if (group == null) throw new IllegalArgumentException("group is null");
+        PreparedStatement statement;
+        try {
+            statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.UPDATE);
+            statement.setInt(SQLQueryConstants.Group.UPDATE_INDEX_ID, Integer.parseInt(group.getId()));
+            statement.setString(SQLQueryConstants.Group.UPDATE_INDEX_NAME, group.getName());
+            if(!getConnectionHandler().updateDataSet(statement)) {
+                return false;
+            }
+        }catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return updateDescription(group.getId(), group.getDescription());
     }
 
     @Override
     public boolean deleteGroup(Group group) throws DataHandlerException {
-        if(group == null) throw new IllegalArgumentException("group is null");
+        if (group == null) throw new IllegalArgumentException("group is null");
         return deleteAccessControlObject(group.getId());
     }
 
@@ -141,7 +159,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
     @Override
     public Group getGroupByName(String name) throws DataHandlerException {
-        if(name == null) throw new IllegalArgumentException("name is null");
+        if (name == null) throw new IllegalArgumentException("name is null");
         return getGroupFromResultSet(executeGetStatement(getGetByNameStatement(name)));
     }
 }

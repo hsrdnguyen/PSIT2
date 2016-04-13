@@ -33,20 +33,20 @@ import java.util.Map;
  * <li>If {@link #hasIdentifier()} is {@code true}:</li>
  * <ul>
  * <li>  If the attribute {@link #getAction() action} is set to {@value ACTION_EDIT} {@link #get()}
- *       is called an the template {@link #getEditDispatcher(HttpServletRequest)} is included.
+ * is called an the template {@link #getEditDispatcher(HttpServletRequest)} is included.
  * </li>
  * <li>  Otherwise {@link #get()} is called and  {@link #getDetailDispatcher(HttpServletRequest)} is included</li>
  * </ul>
  * <li>
- *    If {@link #hasIdentifier()} is {@code false}:
+ * If {@link #hasIdentifier()} is {@code false}:
  * </li><ul><li>
- *       If the attribute {@link #getAction() action} is set to {@value ACTION_CREATE}
- *       the template {@link #getCreateDispatcher(HttpServletRequest)} to create a new
- *       object is included.
+ * If the attribute {@link #getAction() action} is set to {@value ACTION_CREATE}
+ * the template {@link #getCreateDispatcher(HttpServletRequest)} to create a new
+ * object is included.
  * </li>
  * <li>
- *       Otherwise {@link #index()} is called and the template
- *        {@link #getIndexDispatcher(HttpServletRequest)} is included
+ * Otherwise {@link #index()} is called and the template
+ * {@link #getIndexDispatcher(HttpServletRequest)} is included
  * </li></ul></ul>
  *
  * @param <E> The subclass of AccessControlObjectBase to handle.
@@ -56,6 +56,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
 
     /**
      * The object which is returned by {@link #get()} is stored in this field.
+     *
      * @see #getObject()
      */
     private E object;
@@ -84,6 +85,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     /**
      * Make sure you set an error with {@link #addFormError(String, String)}
      * if you return null!
+     *
      * @return The new created object or null if there are errors.
      * @throws HttpBeanException
      */
@@ -125,14 +127,18 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         return updated;
     }
 
+    protected abstract boolean hasMembers();
+
     /**
      * Destroy the object
+     *
      * @throws HttpBeanException
      */
     public abstract void destroy() throws HttpBeanException, DataHandlerException;
 
     /**
      * Replace the object
+     *
      * @throws HttpBeanException
      */
     public void replace() throws HttpBeanException, DataHandlerException {
@@ -154,7 +160,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     @Override
     protected TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
-        if(request == null) throw new IllegalArgumentException("request is null");
+        if (request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         try {
             object = get();
@@ -162,7 +168,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
-        if(object == null) {
+        if (object == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
         }
         ensureAccessingUserHasAccess(object, AccessLevelEnum.MANAGE);
@@ -175,6 +181,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         if (!hasErrors()) {
             setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.EDIT;
+            request.setAttribute("Members", getMembers());
             request.setAttribute(getAttributeName(), object);
         } else {
             templateType = TemplateType.INDEX;
@@ -191,7 +198,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     @Override
     protected TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
-        if(request == null) throw new IllegalArgumentException("request is null");
+        if (request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         System.out.println("PATCH");
         try {
@@ -199,7 +206,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         } catch (DataHandlerException e) {
             throw new HttpBeanDatabaseException();
         }
-        if(object == null) {
+        if (object == null) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
         }
         ensureAccessingUserHasAccess(object, AccessLevelEnum.WRITE);
@@ -217,6 +224,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.EDIT;
         }
+        request.setAttribute("Members", getMembers());
         request.setAttribute(getAttributeName(), object);
         return templateType;
     }
@@ -231,7 +239,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     @Override
     protected TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
-        if(request == null) throw new IllegalArgumentException("request is null");
+        if (request == null) throw new IllegalArgumentException("request is null");
         TemplateType templateType;
         if (hasIdentifier()) {
             templateType = doGetOnObject(request);
@@ -247,6 +255,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * This object will be available in the
      * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
      * named {@link #getAttributeName()}} and has the type {@link AccessControlObjectBase}.
+     *
      * @param request
      * @return The template type
      * @throws HttpBeanException
@@ -277,7 +286,11 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     }
 
     private Members getMembers() throws HttpBeanException {
+        if(object == null) throw new IllegalStateException("object is null");
         Members members;
+        if (!hasMembers()) {
+            return null;
+        }
         try {
             members = Members.fromIdsWithRights(getUsersWithAccess(object), getGroupsWithAccess(object), object);
         } catch (ServiceNotFoundException e) {
@@ -302,6 +315,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * This list will be available in the
      * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
      * named {@link #getPluralAttributeName()} and has the type {@link AccessControlObjectBase E[]}.
+     *
      * @param request
      * @return The template type
      * @throws HttpBeanException
@@ -320,7 +334,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
                 e.printStackTrace();
                 throw new HttpBeanDatabaseException();
             }
-            if(objectList == null) {
+            if (objectList == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INDEX_FAILED);
             }
             System.out.println("INDEX");
@@ -345,14 +359,13 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
     protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
         ensureIsAuthenticatedToCreate();
         TemplateType templateType;
-        E object;
         try {
             object = create();
         } catch (DataHandlerException e) {
             e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
-        if(object == null && !hasErrors()) {
+        if (object == null && !hasErrors()) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_CREATE_FAILED);
         }
         request.setAttribute(getAttributeName(), object);
@@ -360,6 +373,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
             setFormErrorsInRequestAttribute(request);
             templateType = TemplateType.CREATE;
         } else {
+            request.setAttribute("Members", getMembers());
             templateType = TemplateType.DETAIL;
         }
         return templateType;
@@ -416,6 +430,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
 
     /**
      * Returns the object or null if get() wasn't called or failed.
+     *
      * @return The object or null.
      */
     protected E getObject() {

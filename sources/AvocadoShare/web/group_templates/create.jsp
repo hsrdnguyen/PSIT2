@@ -8,7 +8,7 @@
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("name", "Name");
 %>
-<h1>Create new Group</h1>
+<h1>Neue Gruppe erstellen</h1>
 <%=formBuilder.getFormErrors()%>
 <%=formBuilder.getFormBegin("POST") %>
 <div class="row">

@@ -7,8 +7,11 @@
     Module module = (Module) request.getAttribute("Module");
     Map<String, String> formErrors = (Map<String, String>) request.getAttribute(ResourceBean.ATTRIBUTE_FORM_ERRORS);
     FormBuilder form = new FormBuilder(module, Module.class, formErrors);
+    form.setReadableFieldName("name", "Name");
+    form.setReadableFieldName("description", "Beschreibung");
 %>
-<h2>Neues Modul erstellen</h2>
+<h2>Modul ändern</h2>
+<%=form.getFormErrors() %>
 <%=form.getFormBegin("PATCH")%>
 <div class="form-group">
     <%=form.getLabelFor("name") %>

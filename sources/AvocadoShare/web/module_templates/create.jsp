@@ -12,6 +12,7 @@
     form.setReadableFieldName("description", "Beschreibung");
 %>
 <h2>Neues Modul erstellen</h2>
+<%=form.getFormErrors() %>
 <%=form.getFormBegin("POST")%>
 <div class="form-group">
     <%=form.getLabelFor("name") %>

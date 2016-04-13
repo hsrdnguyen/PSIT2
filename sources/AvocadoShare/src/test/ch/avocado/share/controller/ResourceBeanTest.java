@@ -27,6 +27,11 @@ class MockObject extends AccessControlObjectBase {
 
 class MockObjectBean extends ResourceBean<MockObject> {
 
+    @Override
+    protected boolean hasMembers() {
+        return false;
+    }
+
     private String id;
 
 
