@@ -90,8 +90,8 @@ public class SQLQueryConstants {
      * Group related queries
      */
     public final static class Group {
-
-        public static final String INSERT_QUERY = "INSERT INTO avocado_share.access_group(id, name) VALUES (?, ?)";
+        public static final String TABLE = "avocado_share.access_group";
+        public static final String INSERT_QUERY = "INSERT INTO "+ TABLE + "(id, name) VALUES (?, ?)";
         public static final int INSERT_QUERY_NAME_INDEX = 2;
         public static final int INSERT_QUERY_ID_INDEX = 1;
         /**
@@ -120,7 +120,7 @@ public class SQLQueryConstants {
          */
         public static final int RESULT_CREATION_DATE = 4;
         private static final String SELECT_COLUMNS = "g.id, name, description, creation_date";
-        private static final String SELECT_WITHOUT_WHERE = "SELECT " + SELECT_COLUMNS + " FROM access_group AS g JOIN access_control AS o ON g.id = o.id ";
+        private static final String SELECT_WITHOUT_WHERE = "SELECT " + SELECT_COLUMNS + " FROM " + TABLE + " AS g JOIN access_control AS o ON g.id = o.id ";
         public static final String SELECT_BY_NAME_QUERY = SELECT_WITHOUT_WHERE + "WHERE g.name = ?";
         public static final String SELECT_BY_ID_QUERY = SELECT_WITHOUT_WHERE +  "WHERE g.id = ?";
     }
@@ -243,40 +243,40 @@ public class SQLQueryConstants {
 
     public static final String DELETE_ACCESS_LEVEL_QUERY = "" +
             "DELETE FROM avocado_share.rights " +
-            "    WHERE object_id = ? AND owner_id = ?";
+            "    WHERE object_id = ? AND owner_id = ? ";
 
     public static final String SELECT_DEFAULT_ACCESS_LEVEL_QUERY = "" +
             "SELECT " +
-            "  readable, writeable, manageable" +
+            "  readable, writable, manageable " +
             "FROM avocado_share.access_level AS l " +
             "JOIN avocado_share.default_access AS d " +
             "  ON l.level = d.level";
 
     public static final String SELECT_GROUPS_WITH_ACCESS_ON_OBJECT = "" +
-            "SELECT  id, readable, writable, manageable" +
-            "FROM avocado_share.groups AS g " +
+            "SELECT  id, readable, writable, manageable " +
+            "FROM " + Group.TABLE + " AS g " +
             "JOIN avocado_share.rights AS r  " +
             "  ON r.owner_id = g.id " +
-            "NATURAL JOIN avocado_share.acess_level as l" +
+            "NATURAL JOIN avocado_share.access_level as l " +
             "WHERE " +
             "  r.object_id = ? " +
-            "  AND (l.readable <> false OR l.writable <> false OR l.manageable <> false )";
+            "  AND (l.readable <> false OR l.writable <> false OR l.manageable <> false ) ";
 
     public static final String SELECT_USER_WITH_ACCESS_ON_OBJECT = "" +
-            "SELECT  id, readable, writable, manageable" +
+            "SELECT  id, readable, writable, manageable " +
             "FROM avocado_share.identity AS g " +
             "JOIN avocado_share.rights AS r  " +
             "  ON r.owner_id = g.id " +
-            "NATURAL JOIN avocado_share.acess_level as l" +
+            "NATURAL JOIN avocado_share.access_level as l " +
             "WHERE " +
             "  r.object_id = ? " +
-            "  AND (l.readable <> false OR l.writable <> false OR l.manageable <> false )";
+            "  AND ( l.readable <> false OR l.writable <> false OR l.manageable <> false ) ";
 
     public static final String SELECT_TARGETS_WITH_ACCESS = "" +
             "SELECT object_id, level " +
-            "   FROM avocado_share.rights AS r" +
+            "   FROM avocado_share.rights AS r " +
             "       WHERE r.owner_id = ? " +
-            "       AND r.level >= ?";
+            "       AND r.level >= ? ";
 
     public static final int SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX = 1;
     public static final int SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX = 2;
