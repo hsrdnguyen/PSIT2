@@ -45,7 +45,7 @@
                             <a class="nav-link" href="<%=baseUrl%>/module">Module</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<%=baseUrl%>/file/">Dokumente</a>
+                            <a class="nav-link" href="<%=baseUrl%>/file">Dokumente</a>
                         </li>
                         <% } else { %>
                         <%-- Links for mobile users --%>
