@@ -108,14 +108,16 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.File.UPDATE_QUERY);
             preparedStatement.setString(1, file.getTitle());
-            preparedStatement.setString(2, file.getDescription());
-            preparedStatement.setString(3, file.getLastChanged().toString());
-            preparedStatement.setString(4, file.getPath());
-            preparedStatement.setString(5, file.getId());
-            return getConnectionHandler().updateDataSet(preparedStatement);
+            preparedStatement.setTimestamp(2, new Timestamp(file.getLastChanged().getTime()));
+            preparedStatement.setString(3, file.getPath());
+            preparedStatement.setLong(4, Long.parseLong(file.getId()));
+            if(!getConnectionHandler().updateDataSet(preparedStatement)) {
+                return false;
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+        return updateDescription(file.getId(), file.getDescription());
     }
 
     @Override

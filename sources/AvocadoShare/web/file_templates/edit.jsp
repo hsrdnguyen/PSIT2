@@ -5,6 +5,7 @@
 <%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.controller.UserSession" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (Map<String, String>) request.getAttribute(FileBean.ATTRIBUTE_FORM_ERRORS));
@@ -15,7 +16,7 @@
     formBuilder.setReadableFieldName("file", "Datei auswählen");
 
     UserSession userSession = new UserSession(request);
-    Module[] userModules = FileBean.getModulesToUpload(userSession.getUser());
+    List<Module> userModules = FileBean.getModulesToUpload(userSession.getUser());
 %>
 <h2>Dateien bearbeiten</h2>
 <%=formBuilder.getFormErrors() %>

@@ -28,6 +28,11 @@ public class FileBean extends ResourceBean<File> {
     private String moduleId;
 
     @Override
+    protected String getTemplateFolder() {
+        return "file_templates/";
+    }
+
+    @Override
     protected boolean hasMembers() {
         return true;
     }
