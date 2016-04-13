@@ -69,6 +69,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     return true;
                 }
             }
+            classOrSuperclass = classOrSuperclass.getSuperclass();
         }
         return false;
     }
