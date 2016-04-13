@@ -30,8 +30,20 @@ public interface IFileDataHandler {
      */
     File getFile(String fileId) throws DataHandlerException;
 
-
+    /**
+     * Returns a list of files
+     * @param ids list of id's of files that should be returned
+     * @return List of requested files
+     * @throws DataHandlerException
+     */
     List<File> getFiles(List<String> ids) throws DataHandlerException;
+
+    /**
+     * Searches for files in the database that matches the given strings
+     * @param searchTerms searchterms the file HAS TO match
+     * @return All files that match the search strings
+     */
+    List<File> search(List<String> searchTerms) throws DataHandlerException;
 
     /**
      * @param fileTitle its title

@@ -82,6 +82,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
+    public List<File> search(List<String> searchTerms) throws DataHandlerException {
+        return null;
+    }
+
+    @Override
     public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
         //TODO @kunzlio1: noch implementieren
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -106,7 +111,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.File.UPDATE_QUERY);
             preparedStatement.setString(1, file.getTitle());
             preparedStatement.setString(2, file.getDescription());
-            //TODO @kunzlio1: fragen ob last_changed autom. ges. wird?
             preparedStatement.setString(3, file.getLastChanged().toString());
             preparedStatement.setString(4, file.getPath());
             preparedStatement.setString(5, file.getId());
@@ -145,10 +149,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     private boolean addCategories(File file){
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if(categoryHandler == null)
-            return false;
-        if (!categoryHandler.addAccessObjectCategories(file))
-            return false;
+        if(categoryHandler == null) return false;
+        if (!categoryHandler.addAccessObjectCategories(file)) return false;
 
         return true;
     }
@@ -184,14 +186,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     private ICategoryDataHandler getCategoryDataHandler() {
         try {
             return ServiceLocator.getService(ICategoryDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            return null;
-        }
-    }
-
-    private IDatabaseConnectionHandler getDatabaseHandler() {
-        try {
-            return ServiceLocator.getService(IDatabaseConnectionHandler.class);
         } catch (ServiceNotFoundException e) {
             return null;
         }
