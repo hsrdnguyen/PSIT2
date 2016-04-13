@@ -42,7 +42,7 @@ public class GroupBean extends ResourceBean<Group> {
         }
     }
 
-    private void checkParameterDescription() {
+    protected void checkParameterDescription() {
         if (description == null || description.trim().isEmpty()) {
             addFormError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
         } else {

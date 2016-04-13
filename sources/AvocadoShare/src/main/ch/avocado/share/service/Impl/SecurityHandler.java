@@ -159,7 +159,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException {
-        PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ANONYMOUS_ACCESS_LEVEL);
             preparedStatement.setInt(1, Integer.parseInt(target.getId()));
@@ -178,7 +178,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     public boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum accessLevelEnum) throws DataHandlerException {
         int level = getAccessLevelInt(accessLevelEnum);
         int objectId = Integer.parseInt(object.getId());
-        PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL);
             preparedStatement.setInt(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL_LEVEL_INDEX, level);
@@ -245,7 +245,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX, Integer.parseInt(identity.getId()));
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                ids.add("" + resultSet.getInt(1));
+                ids.add(Integer.toString(resultSet.getInt(1)));
             }
         } catch (SQLException e) {
             throw new DataHandlerException(e);

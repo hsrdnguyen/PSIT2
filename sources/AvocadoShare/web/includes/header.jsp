@@ -42,7 +42,7 @@
                             <a class="nav-link" href="<%=baseUrl%>/group/">Gruppen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Module</a>
+                            <a class="nav-link" href="<%=baseUrl%>/module">Module</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<%=baseUrl%>/file/">Dokumente</a>

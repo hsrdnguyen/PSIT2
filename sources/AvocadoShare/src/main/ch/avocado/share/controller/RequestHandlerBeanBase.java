@@ -141,7 +141,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     }
 
 
-    private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws ServletException {
+    private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws HttpBeanException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
         if (templateType == null) throw new IllegalArgumentException("templateType is null");
@@ -165,7 +165,12 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         if (dispatcher != null) {
             try {
                 response.flushBuffer();
-                dispatcher.include(request, response);
+                try {
+                    dispatcher.include(request, response);
+                } catch (ServletException e) {
+                    e.printStackTrace();
+                    throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Es besteht ein Fehler in Template.");
+                }
                 response.flushBuffer();
                 // TODO: error handling
             } catch (IOException e) {
@@ -344,7 +349,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      * @param response
      * @throws ServletException
      */
-    public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
         rendererTemplateType = executeRequest(request, response);

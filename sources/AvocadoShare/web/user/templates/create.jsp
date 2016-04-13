@@ -42,6 +42,7 @@
             <%=form.getLabelFor("passwordConfirmation") %>
             <%=form.getInputFor("passwordConfirmation", "password", "") %>
         </div>
+        <%--
         <div class="form-group" id="formular-msg">
             <label class="control-label" for="formular-field-8">
                 Profilbild</label>
@@ -50,12 +51,13 @@
                     Datei auswählen...
                 </button>
                 <input name="send" value="1" type="hidden">
-                <button class="btn btn-primary" type="submit" name="submit" id="formular-field-8">
+                <button class="btn btn-primary" type="submit" name="submit" id="formular-field-9">
                     Hochladen
                 </button>
                 <input name="send" value="1" type="hidden">
             </div>
         </div>
+        --%>
         <%=form.getSubmit("Registrieren") %>
         </form>
     </div>

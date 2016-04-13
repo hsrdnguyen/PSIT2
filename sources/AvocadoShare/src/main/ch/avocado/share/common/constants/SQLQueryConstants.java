@@ -62,6 +62,29 @@ public class SQLQueryConstants {
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX = 1;
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX = 2;
 
+    public final static class Module {
+        private static final String table = "avocado_share.module";
+        public static final String INSERT_QUERY = "INSERT INTO " + table + "(id, name) VALUES (?, ?)";
+        public static final int INSERT_QUERY_ID_INDEX = 1;
+        public static final int INSERT_QUERY_NAME_INDEX = 2;
+
+        private static final String SELECT_COLUMNS = "m.id, description, name, creation_date";
+        public static final int RESULT_INDEX_ID = 1;
+        public static final int RESULT_INDEX_DESCRIPTION = 2;
+        public static final int RESULT_INDEX_NAME = 3;
+        public static final int RESULT_INDEX_CREATION_DATE = 4;
+
+        public static final String SELECT_QUERY = "" +
+                "SELECT " + SELECT_COLUMNS + " FROM " + table + " AS m " +
+                " JOIN avocado_share.access_control as a ON m.id = a.id " +
+                "   WHERE a.id = ?";
+
+        public static final int SELECT_QUERY_INDEX_ID = 1;
+
+        public static final String UPDATE_QUERY = "UPDATE " + table + " SET name=? WHERE id=?";
+        public static final int UPDATE_QUERY_INDEX_ID = 2;
+        public static final int UPDATE_QUERY_INDEX_NAME = 1;
+    }
 
     /**
      * Group related queries

@@ -23,7 +23,6 @@ import java.util.List;
 public class FileBean extends ResourceBean<File> {
 
     private String title;
-    private String description;
     // private String author;   //TODO @kunzlio1: Sascha fragen für was author? eg. ersteller?
     private List<Category> categories;
     private FileItem uploadedFileItem;
@@ -99,11 +98,18 @@ public class FileBean extends ResourceBean<File> {
     @Override
     public File create() throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
+        IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
         checkParameterTitle();
         checkParameterDescription();
         checkParameterModuleId();
         //checkParameterAuthor();
         if (!hasErrors()) {
+            Module module = moduleDataHandler.getModule(getModuleId());
+            if(module == null) {
+                addFormError("module", "Modul existiert nicht.");
+                return null;
+            }
+            ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
             String path = uploadFile(getUploadedFileItem());
             File file = getFileFromParameters(path);
             String fileId;
@@ -147,7 +153,8 @@ public class FileBean extends ResourceBean<File> {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         if(getAccessingUser() != null) {
             try {
-                return fileDataHandler.getFiles(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
+                List<String> fileIds = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ);
+                return fileDataHandler.getFiles(fileIds);
             } catch (DataHandlerException e) {
                 throw new HttpBeanDatabaseException();
             }
@@ -284,20 +291,6 @@ public class FileBean extends ResourceBean<File> {
     }
 
     /**
-     * @return The description of the file
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description The description of the file
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
      * @return The uploaded file
      */
     private FileItem getUploadedFileItem() {
@@ -337,14 +330,6 @@ public class FileBean extends ResourceBean<File> {
             } catch (DataHandlerException e) {
                 addFormError("title", ErrorMessageConstants.ERROR_DATABASE);
             }
-        }
-    }
-
-    private void checkParameterDescription() {
-        if (getDescription() == null || getDescription().trim().isEmpty()) {
-            addFormError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
-        } else {
-            setDescription(getDescription().trim());
         }
     }
 
