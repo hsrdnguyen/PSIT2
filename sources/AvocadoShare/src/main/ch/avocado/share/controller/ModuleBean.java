@@ -5,7 +5,6 @@ import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -74,13 +73,7 @@ public class ModuleBean extends ResourceBean<Module> {
             }
         }
 
-        if (getDescription() != null && !getDescription().equals(module.getDescription())) {
-            checkParameterDescription();
-            if (!hasErrors()) {
-                module.setDescription(getDescription());
-                updated = true;
-            }
-        }
+        updated |= updateDescription(module);
 
         if(!hasErrors() && updated) {
             if(!getService(IModuleDataHandler.class).updateModule(module)) {

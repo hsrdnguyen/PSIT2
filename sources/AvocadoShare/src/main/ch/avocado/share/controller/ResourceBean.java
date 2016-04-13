@@ -112,6 +112,18 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      */
     public abstract void update() throws HttpBeanException, DataHandlerException;
 
+    protected boolean updateDescription(AccessControlObjectBase module) {
+        boolean updated = false;
+        if (getDescription() != null && !getDescription().equals(module.getDescription())) {
+            checkParameterDescription();
+            if (!hasErrors()) {
+                module.setDescription(getDescription());
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
     /**
      * Destroy the object
      * @throws HttpBeanException

@@ -191,13 +191,8 @@ public class FileBean extends ResourceBean<File> {
                 changed = true;
             }
         }
-        if (getDescription() != null && !file.getDescription().equals(getDescription())) {
-            checkParameterDescription();
-            if (!hasErrors()) {
-                file.setDescription(getDescription());
-                changed = true;
-            }
-        }
+
+        changed |= updateDescription(file);
 
         if (getModuleId() != null && !file.getModuleId().equals(getModuleId())) {
             checkParameterModuleId();
