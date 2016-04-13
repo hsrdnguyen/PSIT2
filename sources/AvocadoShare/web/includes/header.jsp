@@ -39,7 +39,7 @@
                     <ul class="nav navbar-nav">
                         <% if(userSession.isAuthenticated()) { %>
                         <li class="nav-item">
-                            <a class="nav-link" href="<%=baseUrl%>/group/">Gruppen</a>
+                            <a class="nav-link" href="<%=baseUrl%>/group">Gruppen</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<%=baseUrl%>/module">Module</a>

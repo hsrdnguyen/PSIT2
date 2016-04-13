@@ -30,6 +30,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+        addOwnership(Integer.parseInt(module.getOwnerId()), Integer.parseInt(module.getId()));
         return module.getId();
     }
 
@@ -42,7 +43,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         String id, name, description;
         Date creationDate;
         try {
-            resultSet.next();
+            if (!resultSet.next()) return null;
             id = Integer.toString(resultSet.getInt(SQLQueryConstants.Module.RESULT_INDEX_ID));
             name = resultSet.getString(SQLQueryConstants.Module.RESULT_INDEX_NAME);
             description = resultSet.getString(SQLQueryConstants.Module.RESULT_INDEX_DESCRIPTION);
@@ -70,9 +71,11 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     @Override
     public List<Module> getModules(Collection<String> ids) throws DataHandlerException {
         List<Module> modules = new ArrayList<>(ids.size());
-        for(String id: ids) {
+        for (String id : ids) {
             Module module = getModule(id);
-            modules.add(module);
+            if (module != null) {
+                modules.add(module);
+            }
         }
         return modules;
     }
@@ -85,7 +88,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             statement.setInt(SQLQueryConstants.Module.UPDATE_QUERY_INDEX_ID, Integer.parseInt(module.getId()));
             statement.setString(SQLQueryConstants.Module.UPDATE_QUERY_INDEX_NAME, module.getName());
             success = getConnectionHandler().updateDataSet(statement);
-            if(success) {
+            if (success) {
                 success = updateDescription(module.getId(), module.getDescription());
             }
             return success;

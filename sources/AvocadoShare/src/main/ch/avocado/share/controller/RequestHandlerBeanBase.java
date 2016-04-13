@@ -278,6 +278,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
         ISecurityHandler securityHandler = getSecurityHandler();
         AccessLevelEnum grantedAccessLevel;
+        // TODO: remove
         System.out.println("Accessing user : " + getAccessingUser());
         try {
             if (getAccessingUser() == null) {
@@ -289,6 +290,8 @@ public abstract class RequestHandlerBeanBase implements Serializable {
             e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
+        // TODO: remove
+        System.out.println("Level: " + grantedAccessLevel);
         if (!grantedAccessLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }

@@ -29,6 +29,11 @@ public class UserBean extends ResourceBean<User> {
     private String passwordConfirmation;
     private String avatar = null;
 
+    @Override
+    protected boolean hasMembers() {
+        return true;
+    }
+
     private void checkPrename() {
         if(getPrename() == null || getPrename().isEmpty()) {
             addFormError("prename", ERROR_EMPTY_PRENAME);
@@ -207,6 +212,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
     public String getAvatar() {
+        // TODO: fix
         if(avatar == null) return "1234.jpg";
         return avatar;
     }

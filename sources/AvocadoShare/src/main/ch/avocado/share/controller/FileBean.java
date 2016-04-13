@@ -28,6 +28,11 @@ public class FileBean extends ResourceBean<File> {
     private String moduleId;
 
     @Override
+    protected boolean hasMembers() {
+        return true;
+    }
+
+    @Override
     protected boolean hasIdentifier() {
         return (getTitle() != null && getModuleId() != null) || getId() != null;
     }
@@ -111,6 +116,7 @@ public class FileBean extends ResourceBean<File> {
             ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
             String path = uploadFile(getUploadedFileItem());
             File file = getFileFromParameters(path);
+            file.setOwnerId(getAccessingUser().getId());
             String fileId;
             fileId = fileDataHandler.addFile(file);
             file = fileDataHandler.getFile(fileId);

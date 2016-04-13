@@ -10,6 +10,7 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -37,6 +38,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+        addOwnership(Integer.parseInt(file.getOwnerId()), Integer.parseInt(file.getId()));
         return file.getId();
     }
 
@@ -56,13 +58,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setInt(1, Integer.parseInt(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             File file = getFileFromSelectResultSet(resultSet);
-
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_OWNER_OF_FILE_QUERY);
-            preparedStatement.setInt(1, Integer.parseInt(fileId));
-            resultSet = connectionHandler.executeQuery(preparedStatement);
-
-            if (resultSet.next()) {
-                file.setOwnerId(resultSet.getString(1));
+            if(file != null) {
+                String ownerId = getOwnerId(fileId);
+                file.setOwnerId(ownerId);
             }
             return file;
 

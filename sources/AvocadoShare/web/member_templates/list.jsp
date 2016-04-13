@@ -7,10 +7,8 @@
 <%
     Members members = (Members) request.getAttribute("Members");
 %>
-<div class="list-group-item">
-    <div class="list-group-item-heading">
-        <h3>Mitglieder</h3>
-    </div>
+<div class="list-group-item list-group-header">
+    <h3>Mitglieder</h3>
 </div>
 <div class="list-group-item">
     <div class="list-group-item-heading">
@@ -18,7 +16,7 @@
     </div>
 </div>
 <% for (User member : members.getUsers()) {
-    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&userId=" + Encoder.forUrlAttribute(member.getId());
+    String editUrl = "?action=" + action_edit + "&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&" + owner_parameter + "=" + Encoder.forUrlAttribute(member.getId());
     String name = Encoder.forHtml(member.getFullName());
 %>
 <div class="list-group-item">

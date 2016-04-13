@@ -1,17 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% switch (request.getParameter("edit")) {%>
 <%
-    case "edit_members":
+    final String owner_parameter = "o";
+    final String action_edit = "edit_members";
+    final String action_create = "create_member";
 %>
-<jsp:include page="edit.jsp" />
-<%
-    break;
-    case "create_member":
-%>
-<jsp:include page="create.jsp" />
-<%
-    break;
-    default:
-%>
-<jsp:include page="list.jsp" />
-<% } %>
+<div class="col-xl-4">
+    <div class="list-group">
+    <%
+        String edit = request.getParameter("action");
+        if (edit != null) edit = edit.toLowerCase();
+        if (action_edit.equals(edit)) {
+    %>
+    <%@include file="edit.jsp"%>
+    <%
+        } else if (action_create.equals(edit)) {
+    %>
+    <%@include file="create.jsp"%>
+    <%
+        } else {
+    %>
+    <%@include file="list.jsp"%>
+    <%
+        }
+    %>
+    </div>
+</div>

@@ -67,7 +67,7 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
         return update(module);
     }
 
-    static void use() throws Exception {
+    public static void use() throws Exception {
         if(!ServiceLocator.getService(IModuleDataHandler.class).getClass().equals(ModuleDataHandlerMock.class)) {
             ServiceLocatorModifier.setService(IModuleDataHandler.class, new ModuleDataHandlerMock());
         }

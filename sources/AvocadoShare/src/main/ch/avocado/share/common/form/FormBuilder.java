@@ -9,10 +9,7 @@ import ch.avocado.share.model.exceptions.FormBuilderException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 public class FormBuilder {
@@ -218,7 +215,7 @@ public class FormBuilder {
      * @return A select field
      * @throws FormBuilderException
      */
-    public SelectField getSelectFor(String fieldName, Collection<? extends AccessControlObjectBase> objects) throws FormBuilderException {
+    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects) throws FormBuilderException {
         if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
         SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
         if (object != null) {

@@ -7,7 +7,9 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -31,6 +33,18 @@ public abstract class DataHandlerBase {
             }
         }
         return connectionHandler;
+    }
+
+    protected void addOwnership(int ownerId, int objectId) throws DataHandlerException {
+        if(ownerId == objectId) throw new IllegalArgumentException("ownerId can't be euqal to the objectId");
+        try {
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.INSERT_OWNERSHIP);
+            preparedStatement.setInt(SQLQueryConstants.INSERT_OWNERSHIP_INDEX_OWNER, ownerId);
+            preparedStatement.setInt(SQLQueryConstants.INSERT_OWNERSHIP_INDEX_OBJECT, objectId);
+            getConnectionHandler().insertDataSet(preparedStatement);
+        }catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
     }
 
     protected boolean updateDescription(String objectId, String description) throws DataHandlerException {
@@ -81,5 +95,22 @@ public abstract class DataHandlerBase {
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+    }
+
+    protected String getOwnerId(String fileId) throws DataHandlerException {
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
+        try {
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_OWNER_OF_OBJECT);
+            preparedStatement.setInt(1, Integer.parseInt(fileId));
+            resultSet = connectionHandler.executeQuery(preparedStatement);
+            if (resultSet.next()) {
+                return Integer.toString(resultSet.getInt(1));
+            }
+        }catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return null;
     }
 }

@@ -22,6 +22,15 @@ public class GroupBean extends ResourceBean<Group> {
     private String name;
     private String description;
 
+    @Override
+    protected boolean hasMembers() {
+        return true;
+    }
+
+    @Override
+    protected String getTemplateFolder() {
+        return "group_templates/";
+    }
 
     private void checkNameNotEmpty() {
         if (name == null || name.trim().isEmpty()) {
@@ -65,6 +74,7 @@ public class GroupBean extends ResourceBean<Group> {
         checkParameterDescription();
         if (!hasErrors()) {
             Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name);
+            group.setOwnerId(getAccessingUser().getId());
             groupDataHandler.addGroup(group);
             return group;
         }
@@ -97,11 +107,12 @@ public class GroupBean extends ResourceBean<Group> {
             try {
                 groupList = groupDataHandler.getGroups(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
             } catch (DataHandlerException e) {
+                e.printStackTrace();
                 throw new HttpBeanDatabaseException();
             }
             return groupList;
         }
-        return new ArrayList<Group>();
+        return new ArrayList<>();
     }
 
     @Override

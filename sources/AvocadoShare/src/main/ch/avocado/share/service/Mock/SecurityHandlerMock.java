@@ -39,7 +39,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         if(identity == null) throw new IllegalArgumentException("identity is null");
         if(target == null) throw new IllegalArgumentException("target is null");
         if(identity.getId().equals(target.getId())) {
-            return AccessLevelEnum.NONE;
+            return AccessLevelEnum.MANAGE;
         }
         String identityId = identity.getId();
         if(identityWithAccess.containsKey(identityId)) {

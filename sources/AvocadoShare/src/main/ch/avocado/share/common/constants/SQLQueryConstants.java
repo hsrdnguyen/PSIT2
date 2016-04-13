@@ -62,6 +62,7 @@ public class SQLQueryConstants {
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX = 1;
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX = 2;
 
+
     public final static class Module {
         private static final String table = "avocado_share.module";
         public static final String INSERT_QUERY = "INSERT INTO " + table + "(id, name) VALUES (?, ?)";
@@ -119,10 +120,24 @@ public class SQLQueryConstants {
          * Index of the creation date in a get group result
          */
         public static final int RESULT_CREATION_DATE = 4;
-        private static final String SELECT_COLUMNS = "g.id, name, description, creation_date";
-        private static final String SELECT_WITHOUT_WHERE = "SELECT " + SELECT_COLUMNS + " FROM " + TABLE + " AS g JOIN access_control AS o ON g.id = o.id ";
+        /**
+         * Index of the ownerId in the result
+         */
+        public static final int RESULT_OWNER_ID = 5;
+        private static final String SELECT_COLUMNS = "g.id, name, description, creation_date, W.owner_id";
+        private static final String SELECT_WITHOUT_WHERE = "" +
+                "SELECT " + SELECT_COLUMNS +
+                " FROM " + TABLE + " AS g " +
+                "JOIN access_control AS o " +
+                " ON g.id = o.id " +
+                "JOIN avocado_share.ownership as W " +
+                " ON o.id = W.object_id ";
         public static final String SELECT_BY_NAME_QUERY = SELECT_WITHOUT_WHERE + "WHERE g.name = ?";
         public static final String SELECT_BY_ID_QUERY = SELECT_WITHOUT_WHERE +  "WHERE g.id = ?";
+
+        public static final String UPDATE = "UPDATE " + TABLE + " SET name = ? WHERE id = ?";
+        public static final int UPDATE_INDEX_ID = 2;
+        public static final int UPDATE_INDEX_NAME = 1;
     }
 
     //CATEGORY
@@ -138,14 +153,18 @@ public class SQLQueryConstants {
     public static final class File {
         public static final String SELECT_BY_ID_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE o.id = ?";
         public static final String SELECT_BY_TITLE_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE title = ?";
-        public static final String INSERT_QUERY = "INSERT INTO file (id, title, description, last_changed, path) (?, ?, ?, ?, ?)";
+        public static final String INSERT_QUERY = "INSERT INTO file (id, title, description, last_changed, path) VALUES (?, ?, ?, ?, ?)";
         public static final String DELETE_QUERY = "DELETE FROM file WHERE id = ?";
         public static final String UPDATE_QUERY = "UPDATE file SET title=?, description=?, last_changed=?, path=? WHERE id = ?";
     }
 
     //PERMISSION
+    public static final String INSERT_OWNERSHIP = "INSERT INTO avocado_share.ownership(owner_id, object_id) VALUES (?, ?)";
+    public static final int INSERT_OWNERSHIP_INDEX_OWNER = 1;
+    public static final int INSERT_OWNERSHIP_INDEX_OBJECT = 2;
+
     public static final String INSERT_RIGHTS_QUERY = "INSERT INTO avocado_share.rights(object_id, owner_id, level) VALUES (?, ?, ?)";
-    public static final String SELECT_OWNER_OF_FILE_QUERY = "SELECT owner_id, object_id FROM avocado_share.ownership WHERE object_id=?";
+    public static final String SELECT_OWNER_OF_OBJECT = "SELECT owner_id, object_id FROM avocado_share.ownership WHERE object_id=?";
     public static final String SELECT_READING_ACCESS_LEVEL = "SELECT level FROM avocado_share.access_level WHERE readable=TRUE AND writable=FALSE AND manageable=FALSE";
 
     public static final String SELECT_ACCESS_LEVEL = "" +
@@ -273,11 +292,14 @@ public class SQLQueryConstants {
             "  AND ( l.readable <> false OR l.writable <> false OR l.manageable <> false ) ";
 
     public static final String SELECT_TARGETS_WITH_ACCESS = "" +
-            "SELECT object_id, level " +
+            "SELECT object_id " +
             "   FROM avocado_share.rights AS r " +
             "       WHERE r.owner_id = ? " +
-            "       AND r.level >= ? ";
+            "       AND r.level >= ? " +
+            "UNION SELECT object_id  FROM avocado_share.ownership AS o" +
+            "   WHERE o.owner_id = ?";
 
     public static final int SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX = 1;
+    public static final int SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_2 = 3;
     public static final int SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX = 2;
 }
