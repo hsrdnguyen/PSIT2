@@ -93,7 +93,7 @@ public class LoginServlet extends HttpServlet {
         return null;
     }
 
-    private void redirectTo(String url, HttpServletResponse response) {
+    private void redirectIfUrlIsValid(String url, HttpServletResponse response) {
         if(url == null) throw  new IllegalArgumentException("url is null");
         if(response == null) throw new IllegalArgumentException("response is null");
         url = getValidRedirectUrl(url);
@@ -146,7 +146,7 @@ public class LoginServlet extends HttpServlet {
                         if(redirectUrl == null) {
                             redirectUrl = request.getContextPath();
                         }
-                        redirectTo(redirectUrl, response);
+                        redirectIfUrlIsValid(redirectUrl, response);
                     }else {
                         request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_EMAIL_NOT_VERIFIED);
                     }
