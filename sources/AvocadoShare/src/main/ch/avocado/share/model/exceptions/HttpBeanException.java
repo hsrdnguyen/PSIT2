@@ -1,6 +1,8 @@
 package ch.avocado.share.model.exceptions;
 
 import ch.avocado.share.common.HttpStatusCode;
+import ch.avocado.share.common.constants.ErrorMessageConstants;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
@@ -15,6 +17,9 @@ public class HttpBeanException extends Exception{
     private final int statusCode;
     //private final Map<String, String> headers;
 
+    public HttpBeanException(DataHandlerException e) {
+        this(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+    }
 
     public HttpBeanException(int statusCode, String description) {
         super(description);

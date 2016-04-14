@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by bergm on 15/03/2016.
  */
-public abstract class AccessControlObjectBase {
+public abstract class AccessControlObjectBase extends Model{
 
     private String id;
     private List<Category> categories;

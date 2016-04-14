@@ -74,6 +74,11 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     @Override
+    public AccessLevelEnum getAnonymousAccessLevel(String targetId) throws DataHandlerException {
+        return getAnonymousAccess();
+    }
+
+    @Override
     public boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException {
         anonymousAccess = level;
         return true;

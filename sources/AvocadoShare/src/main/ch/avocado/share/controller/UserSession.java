@@ -54,11 +54,11 @@ public class UserSession {
         String userId = (String) this.session.getAttribute(SESSION_UID);
 		System.out.println("Session got UID: " + userId);
         user = null;
-        findUser();
+        loadUser(userId);
+		System.out.println("User: " + user);
     }
 
-    private void findUser() {
-        String userId = getUserId();
+    private void loadUser(String userId) {
 		if(userId == null) return;
         IUserDataHandler userDataHandler;
         try {
@@ -69,39 +69,22 @@ public class UserSession {
         }
 	}
 
-
+	/**
+	 * @return {@code True} is the user is authenticated
+     */
 	public boolean isAuthenticated() {
 		return getUser() != null;
 	}
-	
+
+	/**
+	 * Authenticate the session to the user.
+	 * @param user The user.
+     */
 	public void authenticate(User user) {
         if(user == null) throw new IllegalArgumentException("user is null");
         this.user = user;
 		session.setAttribute(SESSION_UID, user.getId());
 	}
-
-    /*
-     * Check if the session user has access to the target.
-     * @param requiredLevel The required access level
-     * @param target The accessed object
-     * @return True if the user has the required permissions
-     *
-    public boolean hasAccess(AccessLevelEnum requiredLevel, AccessControlObjectBase target) {
-        User user = getUser();
-        AccessLevelEnum grantedLevel;
-        ISecurityHandler securityHandler;
-        try {
-            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-        } catch (ServiceNotFoundException e) {
-            return false;
-        }
-        if(user != null) {
-            grantedLevel = securityHandler.getAccessLevel(user, target);
-        } else {
-            grantedLevel = securityHandler.getAnonymousAccessLevel(target);
-        }
-        return grantedLevel.containsLevel(requiredLevel);
-    }*/
 
 	public void clearAuthentication() {
         user = null;
@@ -116,6 +99,9 @@ public class UserSession {
     }
 
 	public String getUserId() {
-		return (String) session.getAttribute(SESSION_UID);
+		if(user == null) {
+			return null;
+		}
+		return user.getId();
 	}
 }

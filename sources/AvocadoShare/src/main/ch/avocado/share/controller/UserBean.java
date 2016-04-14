@@ -1,6 +1,5 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IMailingService;
@@ -34,54 +33,54 @@ public class UserBean extends ResourceBean<User> {
         return true;
     }
 
-    private void checkPrename() {
+    private void checkPrename(User user) {
         if(getPrename() == null || getPrename().isEmpty()) {
-            addFormError("prename", ERROR_EMPTY_PRENAME);
+            user.addFieldError("prename", ERROR_EMPTY_PRENAME);
         }
     }
 
-    private void checkSurname() {
+    private void checkSurname(User user) {
         if(getSurname() == null || getSurname().isEmpty()) {
-            addFormError("surname", ERROR_EMPTY_SURNAME);
+            user.addFieldError("surname", ERROR_EMPTY_SURNAME);
         }
     }
 
-    private void checkEmailAddress() {
+    private void checkEmailAddress(User user) {
         if (getMail() == null) {
-            addFormError("mail", ERROR_EMPTY_EMAIL);
+            user.addFieldError("mail", ERROR_EMPTY_EMAIL);
         } else if (!getMail().toLowerCase().matches("[a-z0-9]+[_a-z0-9\\.-]*[a-z0-9]+@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})")) {
-            addFormError("mail", ERROR_INVALID_EMAIL);
+            user.addFieldError("mail", ERROR_INVALID_EMAIL);
         }
     }
 
 
-    private void checkEmailAdressIsUnique() throws HttpBeanException, DataHandlerException {
+    private void checkEmailAdressIsUnique(User user) throws HttpBeanException, DataHandlerException {
         if(getMail() == null) {
             return;
         }
         if(getService(IUserDataHandler.class).getUserByEmailAddress(getMail()) != null) {
             // email already taken
-            addFormError("mail", "E-Mail already taken");
+            user.addFieldError("mail", "E-Mail already taken");
         }
     }
 
-    private void checkPasswords() {
+    private void checkPasswords(User user) {
         boolean invalid = false;
         if(password == null || password.isEmpty()) {
-            addFormError("password", ERROR_EMPTY_PASSWORD);
+            user.addFieldError("password", ERROR_EMPTY_PASSWORD);
             invalid = true;
         }
         if(passwordConfirmation == null ||  passwordConfirmation.isEmpty()) {
-            addFormError("passwordConfirmation", ERROR_EMPTY_PASSWORD_CONFIRMATION);
+            user.addFieldError("passwordConfirmation", ERROR_EMPTY_PASSWORD_CONFIRMATION);
             invalid = true;
         }
         if(!invalid) {
             if(!passwordConfirmation.equals(password)) {
-                addFormError("password", ERROR_PASSWORD_CONFIRMATION_INCORRECT);
+                user.addFieldError("password", ERROR_PASSWORD_CONFIRMATION_INCORRECT);
                 invalid = true;
             }
             if(password.length() < 9 ) {
-                addFormError("password",  ERROR_PASSWORD_TOO_SHORT);
+                user.addFieldError("password",  ERROR_PASSWORD_TOO_SHORT);
             }
         }
     }
@@ -103,16 +102,19 @@ public class UserBean extends ResourceBean<User> {
 
     @Override
     public User create() throws HttpBeanException, DataHandlerException {
-        checkPrename();
-        checkSurname();
-        checkPasswords();
-        checkEmailAddress();
-        checkEmailAdressIsUnique();
-        if(hasErrors()) {
-            return null;
-        }
+        User user = new User(UserPassword.EMPTY_PASSWORD, "", "", "", new EmailAddress(false, "", null));
 
-        User user = new User(UserPassword.fromPassword(password), getPrename(), getSurname(), getAvatar(), new EmailAddress(false, "", null));
+        checkPrename(user);
+        checkSurname(user);
+        checkPasswords(user);
+        checkEmailAddress(user);
+        checkEmailAdressIsUnique(user);
+        if(user.hasErrors()) {
+            return user;
+        }
+        user.setPrename(getPrename());
+        user.setSurname(getSurname());
+        user.setPassword(password);
         addEmailAddress(user, mail);
         user.setId(getService(IUserDataHandler.class).addUser(user));
         getService(IMailingService.class).sendVerificationEmail(user);
@@ -130,39 +132,42 @@ public class UserBean extends ResourceBean<User> {
     }
 
     @Override
-    public void update() throws HttpBeanException, DataHandlerException {
-        User user = getObject();
+    public void update(User user) throws HttpBeanException, DataHandlerException {
         boolean userChanged = false;
         if(prename != null) {
-            checkPrename();
+            checkPrename(user);
             user.setPrename(prename);
             userChanged = true;
         }
         if(surname != null) {
-            checkSurname();
-            user.setSurname(surname);
-            userChanged = true;
+            checkSurname(user);
+            if(user.isValid()) {
+                user.setSurname(surname);
+                userChanged = true;
+            }
         }
         if(password != null) {
-            checkPasswords();
-            user.setPassword(password);
-            userChanged = true;
+            checkPasswords(user);
+            if(user.isValid()) {
+                user.setPassword(password);
+                userChanged = true;
+            }
         }
         if(mail != null) {
-            checkEmailAddress();
-            if (!hasErrors() && !user.getMail().getAddress().equals(mail)) {
+            checkEmailAddress(user);
+            if (!user.hasErrors() && !user.getMail().getAddress().equals(mail)) {
                 addEmailAddress(user, mail);
             }
         }
 
-        if(!hasErrors() && userChanged) {
+        if(!user.hasErrors() && userChanged) {
             getService(IUserDataHandler.class).updateUser(user);
         }
     }
 
     @Override
-    public void destroy() throws HttpBeanException, DataHandlerException {
-        getService(IUserDataHandler.class).deleteUser(getObject());
+    public void destroy(User user) throws HttpBeanException, DataHandlerException {
+        getService(IUserDataHandler.class).deleteUser(user);
     }
 
     @Override
@@ -190,8 +195,6 @@ public class UserBean extends ResourceBean<User> {
             surname = surname.trim();
         }
         this.surname = surname;
-
-        checkSurname();
     }
 
     public String getMail() {
@@ -200,7 +203,6 @@ public class UserBean extends ResourceBean<User> {
 
     public void setMail(String mail) {
         this.mail = mail;
-        checkEmailAddress();
     }
 
     public void setPassword(String password) {

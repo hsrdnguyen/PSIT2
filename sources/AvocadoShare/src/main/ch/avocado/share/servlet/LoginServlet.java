@@ -113,47 +113,46 @@ public class LoginServlet extends HttpServlet {
         if(email != null) {
             request.setAttribute(ATTRIBUTE_EMAIL, email);
         }
-        IUserDataHandler userDataHandler = null;
+        IUserDataHandler userDataHandler;
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
             request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_SECURITY_HANDLER);
             renderLogin(request, response);
+            return;
         }
-        if (userDataHandler != null) {
-            if (email == null) {
-                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_EMAIL);
+        if (email == null) {
+            request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_EMAIL);
+            renderLogin(request, response);
+        } else if (password == null) {
+            request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_PASSWORD);
+            renderLogin(request, response);
+        } else {
+            if (!checkTestCookie(request)) {
+                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_COOKIES_DISABLED);
+            }
+            User user = null;
+            try {
+                user = getUserWithLogin(userDataHandler, email, password);
+            } catch (DataHandlerException e) {
+                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
                 renderLogin(request, response);
-            } else if (password == null) {
-                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_PASSWORD);
-                renderLogin(request, response);
-            } else {
-                if (!checkTestCookie(request)) {
-                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_COOKIES_DISABLED);
-                }
-                User user = null;
-                try {
-                    user = getUserWithLogin(userDataHandler, email, password);
-                } catch (DataHandlerException e) {
-                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
-                    renderLogin(request, response);
-                    return;
-                }
-                if (user != null) {
-                    if(user.getMail().isVerified()) {
-                        UserSession userSession = new UserSession(request);
-                        userSession.authenticate(user);
-                        if(redirectUrl == null) {
-                            redirectUrl = request.getContextPath();
-                        }
-                        redirectIfUrlIsValid(redirectUrl, response);
-                    }else {
-                        request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_EMAIL_NOT_VERIFIED);
+                return;
+            }
+            if (user != null) {
+                if(user.getMail().isVerified()) {
+                    UserSession userSession = new UserSession(request);
+                    userSession.authenticate(user);
+                    if(redirectUrl == null) {
+                        redirectUrl = request.getContextPath();
                     }
-                } else {
-                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_WRONG_PASSWORD);
-                    renderLogin(request, response);
+                    redirectIfUrlIsValid(redirectUrl, response);
+                }else {
+                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_EMAIL_NOT_VERIFIED);
                 }
+            } else {
+                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_WRONG_PASSWORD);
+                renderLogin(request, response);
             }
         }
     }

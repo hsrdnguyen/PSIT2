@@ -19,6 +19,9 @@ import org.bouncycastle.crypto.generators.*;
  * @author muellcy1
  */
 public class UserPassword implements Serializable{
+
+	public static  final UserPassword EMPTY_PASSWORD = UserPassword.fromPassword("");
+
 	private static final long serialVersionUID = 3245810310373510720L;
 
 	private static final int SALT_LENGTH = 6;

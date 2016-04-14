@@ -1,16 +1,24 @@
-package ch.avocado.share.servlet;
+package ch.avocado.share.servlet.resources;
 
 import ch.avocado.share.controller.GroupBean;
 import ch.avocado.share.controller.ResourceBean;
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.servlet.resources.base.HtmlRenderer;
+import ch.avocado.share.servlet.resources.base.ResourceServlet;
+import ch.avocado.share.servlet.resources.base.ViewRenderer;
 
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/group")
 public class GroupServlet extends ResourceServlet<Group> {
-
     @Override
     protected Class<? extends ResourceBean<Group>> getBeanClass() {
         return GroupBean.class;
     }
+
+    @Override
+    protected ViewRenderer getHtmlRenderer() {
+        return new HtmlRenderer("group_templates/");
+    }
+
 }

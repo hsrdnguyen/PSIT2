@@ -20,8 +20,6 @@ import java.io.Serializable;
 
 
 public abstract class RequestHandlerBeanBase implements Serializable {
-
-    public static final String ERROR_SECURITY_HANDLER = "Security handler not found";
     /**
      * When the parameter action is set to this value
      * and a single element is requested by GET request
@@ -54,12 +52,11 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     protected User accessingUser;
     private String method;
     private ISecurityHandler securityHandler = null;
-    protected final String ERROR_METHOD_NOT_ALLOWED_FORMAT = "Methode nicht erlaubt: %s";
-    private TemplateType rendererTemplateType;
+
 
     private void throwMethodNotAllowed(String method) throws HttpBeanException {
         if (method == null) throw new IllegalArgumentException("method is null");
-        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, String.format(ERROR_METHOD_NOT_ALLOWED_FORMAT, method));
+        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, ErrorMessageConstants.METHOD_NOT_ALLOWED + method);
     }
 
     protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
@@ -72,7 +69,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         return null;
     }
 
-    protected TemplateType doPut(HttpServletRequest request) throws HttpBeanException {
+    public TemplateType doPut(HttpServletRequest request) throws HttpBeanException {
         throwMethodNotAllowed("PUT");
         return null;
     }
@@ -141,7 +138,7 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     }
 
 
-    private void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws HttpBeanException {
+    public void dispatchEvent(HttpServletRequest request, HttpServletResponse response, TemplateType templateType) throws HttpBeanException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
         if (templateType == null) throw new IllegalArgumentException("templateType is null");
@@ -180,42 +177,12 @@ public abstract class RequestHandlerBeanBase implements Serializable {
     }
 
 
-    void setAccessingUserFromRequest(HttpServletRequest request) {
+    public void setAccessingUserFromRequest(HttpServletRequest request) {
         UserSession userSession = new UserSession(request);
         User accessingUser = userSession.getUser();
         setAccessingUser(accessingUser);
     }
 
-
-    private TemplateType callHttpMethodMethod(HttpServletRequest request) throws HttpBeanException {
-        if (request.getMethod().equals("GET")) {
-            // Another request can't be simulated with GET.
-            setMethod("GET");
-        } else if (getMethod() == null) {
-            setMethod(request.getMethod());
-        }
-        TemplateType templateType = null;
-        switch (getMethod()) {
-            case "PATCH":
-                templateType = doPatch(request);
-                break;
-            case "POST":
-                templateType = doPost(request);
-                break;
-            case "GET":
-                templateType = doGet(request);
-                break;
-            case "DELETE":
-                templateType = doDelete(request);
-                break;
-            case "PUT":
-                templateType = doPut(request);
-                break;
-            default:
-                throwMethodNotAllowed(getMethod());
-        }
-        return templateType;
-    }
 
     protected void sendErrorFromHttpBeanException(HttpBeanException httpException, HttpServletResponse response) {
         try {
@@ -225,17 +192,14 @@ public abstract class RequestHandlerBeanBase implements Serializable {
         }
     }
 
-    public TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) {
-        setAccessingUserFromRequest(request);
-        try {
-            return callHttpMethodMethod(request);
-        } catch (HttpBeanException httpException) {
-            System.out.println("Got error in execute request: " + httpException.getDescription());
-            sendErrorFromHttpBeanException(httpException, response);
-        }
-        return null;
-    }
 
+    /**
+     * Mapper for {@link ServiceLocator#getService(Class)} which raises a  HttpBeanException instead.
+     * @param serviceClass
+     * @param <E>
+     * @return The service
+     * @throws HttpBeanException
+     */
     protected static <E> E getService(Class<E> serviceClass) throws HttpBeanException {
         try {
             return ServiceLocator.getService(serviceClass);
@@ -314,54 +278,5 @@ public abstract class RequestHandlerBeanBase implements Serializable {
      */
     public User getAccessingUser() {
         return accessingUser;
-    }
-
-    /**
-     * Returns the HTTP method which will be used to process the request
-     *
-     * @return
-     */
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * Sets the HTTP method. This can be used to simulate another request with a "POST" request.
-     *
-     * @param method The http method to simulate.
-     * @see #renderRequest(HttpServletRequest, HttpServletResponse)
-     */
-    public void setMethod(String method) {
-        this.method = method.toUpperCase();
-    }
-
-    /**
-     * Execute a request and include a rendered template.
-     * <p>
-     * This method will check the {@link HttpServletRequest#getMethod() method} and execute the appropriate
-     * method ({@link #doGet}, {@link #doPost}, {@link #doDelete}, {@link #doPatch}, , {@link #doPut}).
-     * </p>
-     * <p>If this method returns a non-null value the request is redirected to the dispatcher method.</p>
-     * <p>
-     * If the {@link HttpServletRequest#getMethod() request method} is "POST" another method can be simulated
-     * by setting the {@link #setMethod(String) method attribute}. This is usefull for HTML forms which only allow
-     * GET and POST methods.
-     * </p>
-     *
-     * @param request
-     * @param response
-     * @throws ServletException
-     */
-    public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        if (response == null) throw new IllegalArgumentException("response is null");
-        rendererTemplateType = executeRequest(request, response);
-        if (rendererTemplateType != null) {
-            dispatchEvent(request, response, rendererTemplateType);
-        }
-    }
-
-    public TemplateType getRendererTemplateType() {
-        return rendererTemplateType;
     }
 }

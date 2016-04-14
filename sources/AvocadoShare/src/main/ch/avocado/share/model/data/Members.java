@@ -14,6 +14,10 @@ public class Members {
     private final Map<Group, AccessLevelEnum> groups;
     private final AccessControlObjectBase target;
 
+    public Members(AccessControlObjectBase target) {
+        this(new HashMap<User, AccessLevelEnum>(), new HashMap<Group, AccessLevelEnum>(), target);
+    }
+
     public Members(Map<User, AccessLevelEnum> users, Map<Group, AccessLevelEnum> groups, AccessControlObjectBase target) {
         if(users == null) throw new IllegalArgumentException("users is null");
         if(groups == null) throw new IllegalArgumentException("groups is null");

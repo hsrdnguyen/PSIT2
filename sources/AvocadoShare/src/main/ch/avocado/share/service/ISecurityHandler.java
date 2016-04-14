@@ -53,6 +53,8 @@ public interface ISecurityHandler {
      */
     AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException;
 
+    AccessLevelEnum getAnonymousAccessLevel(String targetId) throws DataHandlerException;
+
 
     boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException;
 

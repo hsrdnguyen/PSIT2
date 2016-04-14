@@ -189,11 +189,12 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     }
 
     @Override
-    public AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException {
+    public AccessLevelEnum getAnonymousAccessLevel(String targetId) throws DataHandlerException {
+        if(targetId == null) throw new IllegalArgumentException("targetId is null");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ANONYMOUS_ACCESS_LEVEL);
-            preparedStatement.setInt(1, Integer.parseInt(target.getId()));
+            preparedStatement.setInt(1, Integer.parseInt(targetId));
             ResultSet resultSet = preparedStatement.executeQuery();
             if (!resultSet.next()) {
                 return AccessLevelEnum.NONE;
@@ -204,6 +205,15 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             throw new DataHandlerException(e);
         }
     }
+
+    @Override
+    public AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException {
+        if(target == null) throw new IllegalArgumentException("target is null");
+        return getAnonymousAccessLevel(target.getId());
+    }
+
+
+
 
     @Override
     public boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum accessLevelEnum) throws DataHandlerException {
