@@ -68,9 +68,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public List<File> getFiles(List<String> ids) throws DataHandlerException {
-        List<File> files = new ArrayList<>(ids.size());
-        for (String id : ids) {
+    public List<File> getFiles(List<String> idList) throws DataHandlerException {
+        List<File> files = new ArrayList<>(idList.size());
+        for (String id : idList) {
             File file = getFile(id);
             if(file != null) {
                 files.add(file);
