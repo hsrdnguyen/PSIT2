@@ -1,5 +1,6 @@
 package ch.avocado.share.servlet.resources.base;
 
+import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
@@ -40,6 +41,11 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
      */
     public final String PARAMETER_METHOD = "method";
 
+    public ResourceServlet() {
+        ViewRenderer renderer = getHtmlRenderer();
+        registerRenderer("text/html", renderer);
+        registerRenderer("application/xhtml+xml", renderer);
+    }
 
     protected abstract Class<? extends ResourceBean<E>> getBeanClass();
 
@@ -187,20 +193,40 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
 
-    private void renderViewConfig(HttpServletRequest request, HttpServletResponse response, ViewConfig config) throws HttpBeanException, ServletException, IOException {
-        String contentType = request.getContentType();
-        if (contentType.contains(";")) {
-            contentType = contentType.split(";")[0];
+    private List<String> getAcceptedEncodings(HttpServletRequest request) {
+        String accepted = request.getHeader("Accept");
+        List<String> encodings = new ArrayList<>(1);
+        for (String type : accepted.split(",")) {
+            System.out.println("Type: " + type);
+            if (type.contains(";")) {
+                type = type.split(";")[0];
+            }
+            type = type.trim();
+            encodings.add(type);
         }
-        contentType = contentType.trim();
-        ViewRenderer renderer = contentRenderer.get(contentType);
+        return encodings;
+    }
+
+    private void renderViewConfig(HttpServletRequest request, HttpServletResponse response, ViewConfig config) throws HttpBeanException, ServletException, IOException {
+        ViewRenderer renderer = null;
+        for(String contentType: getAcceptedEncodings(request)) {
+            if (contentType != null) {
+                if (contentType.contains(";")) {
+                    contentType = contentType.split(";")[0];
+                }
+                contentType = contentType.trim();
+                renderer = contentRenderer.get(contentType);
+                break;
+            }
+        }
         if (renderer == null) {
             throw new HttpBeanException(HttpStatusCode.NOT_ACCEPTABLE, "Kein Renderer gefunden für den Typ.");
         }
         renderer.renderView(config);
+
     }
 
-    private void executeBeanAndRenderResult(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException {
+    private void executeBeanAndRenderResult(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException, ServletException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
         HttpMethod method = getMethodFromRequest(request);
@@ -254,7 +280,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             response.sendRedirect(getUrlForView(request, redirectTo, object));
         } else {
             assert viewConfig != null;
-
+            renderViewConfig(request, response, viewConfig);
         }
     }
 
