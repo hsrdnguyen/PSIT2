@@ -52,18 +52,18 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     abstract protected ViewRenderer getHtmlRenderer();
 
     protected String getUrlForView(HttpServletRequest request, View view, E object) {
-        if(view == null) throw new IllegalArgumentException("view is null");
+        if (view == null) throw new IllegalArgumentException("view is null");
         String url = request.getServletPath();
         switch (view) {
             case EDIT:
-                if(object == null) throw new IllegalArgumentException("object is null for edit");
+                if (object == null) throw new IllegalArgumentException("object is null for edit");
                 url += "?" + PARAMETER_ACTION + "=" + ACTION_EDIT;
                 break;
             case CREATE:
                 url += "?" + PARAMETER_ACTION + "=" + ACTION_CREATE;
                 break;
             case DETAIL:
-                if(object == null) throw new IllegalArgumentException("object is null for detail");
+                if (object == null) throw new IllegalArgumentException("object is null for detail");
                 url += "?id=" + object.getId();
                 break;
             case LIST:
@@ -170,7 +170,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     private Action getActionFromMethod(HttpMethod method) {
-        if(method == null) throw new IllegalArgumentException("method is null");
+        if (method == null) throw new IllegalArgumentException("method is null");
         switch (method) {
             case POST:
                 return Action.CREATE;
@@ -189,12 +189,12 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     private void renderViewConfig(HttpServletRequest request, HttpServletResponse response, ViewConfig config) throws HttpBeanException, ServletException, IOException {
         String contentType = request.getContentType();
-        if(contentType.contains(";")) {
+        if (contentType.contains(";")) {
             contentType = contentType.split(";")[0];
         }
         contentType = contentType.trim();
         ViewRenderer renderer = contentRenderer.get(contentType);
-        if(renderer == null) {
+        if (renderer == null) {
             throw new HttpBeanException(HttpStatusCode.NOT_ACCEPTABLE, "Kein Renderer gefunden für den Typ.");
         }
         renderer.renderView(config);
@@ -214,6 +214,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             switch (action) {
                 case VIEW:
                     renderView(request, response);
+                    break;
                 case REPLACE:
                     throw new HttpBeanException(HttpStatusCode.NOT_IMPLEMENTED, "Replace not implemented");
                 case UPDATE: {
@@ -235,17 +236,20 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                 }
                 case CREATE: {
                     object = bean.create();
-                    if(object.hasErrors()) {
+                    if (object.hasErrors()) {
                         viewConfig = new DetailViewConfig(View.CREATE, request, response, object, new Members(object));
                     } else {
                         redirectTo = View.DETAIL;
                     }
+                    break;
                 }
+                default:
+                    throw new RuntimeException("Action not implemented");
             }
         } catch (DataHandlerException e) {
             throw new HttpBeanException(e);
         }
-        if(redirectTo != null) {
+        if (redirectTo != null) {
             assert viewConfig == null;
             response.sendRedirect(getUrlForView(request, redirectTo, object));
         } else {
@@ -338,8 +342,8 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     private void setBeanAttributes(HttpServletRequest request, ResourceBean<E> bean) throws HttpBeanException {
-        if(request == null) throw new IllegalArgumentException("request is null");
-        if(bean == null) throw new IllegalArgumentException("bean is null");
+        if (request == null) throw new IllegalArgumentException("request is null");
+        if (bean == null) throw new IllegalArgumentException("bean is null");
         setAccessingUserAttribute(bean, request);
         if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
             setBeanAttributesFromMultipart(request, bean);
