@@ -7,8 +7,8 @@ import java.sql.PreparedStatement;
  */
 public class SQLQueryConstants {
     //ACCESS CONTROL DATA OBJECT
-    public static final String INSERT_ACCESS_CONTROL_QUERY = "INSERT INTO avocado_share.access_control(id, creation_date, description) VALUES (DEFAULT, DEFAULT, ?) ";
     public static final int INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX = 1;
+    public static final String INSERT_ACCESS_CONTROL_QUERY = "INSERT INTO avocado_share.access_control(id, creation_date, description) VALUES (DEFAULT, DEFAULT, ?) ";
     public static final String DELETE_ACCESS_CONTROL_QUERY = "DELETE FROM access_control WHERE id = ?";
     public static final String SELECT_ACCESS_CONTROL_QUERY = "SELECT id, creation_date FROM avocado_share.access_control WHERE id=?";
 
@@ -90,7 +90,7 @@ public class SQLQueryConstants {
     /**
      * Group related queries
      */
-    public final static class Group {
+        public final static class Group {
         public static final String TABLE = "avocado_share.access_group";
         public static final String INSERT_QUERY = "INSERT INTO "+ TABLE + "(id, name) VALUES (?, ?)";
         public static final int INSERT_QUERY_NAME_INDEX = 2;
@@ -155,6 +155,9 @@ public class SQLQueryConstants {
         public static final String SELECT_BY_TITLE_QUERY = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE title = ?";
         public static final String INSERT_QUERY = "INSERT INTO avocado_share.file (id, title, last_changed, path) VALUES (?, ?, ?, ?)";
         public static final String UPDATE_QUERY = "UPDATE file SET title=?, last_changed=?, path=? WHERE id = ?";
+        public static final String SEARCH_QUERY_START = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE ";
+        public static final String SEARCH_QUERY_LIKE= " title LIKE (?) OR description LIKE (?)";
+        public static final String SEARCH_QUERY_LINK = " OR";
     }
 
     //PERMISSION

@@ -10,6 +10,7 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import java.lang.reflect.GenericArrayType;
 import java.sql.*;
 
 import java.util.ArrayList;
@@ -81,6 +82,31 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public List<File> search(List<String> searchTerms) throws DataHandlerException {
+        try {
+            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+
+            String query = SQLQueryConstants.File.SEARCH_QUERY_START;
+            query += query + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
+
+            for (String tmp : searchTerms) {
+                if (tmp != searchTerms.get(0))
+                {
+                    query += SQLQueryConstants.File.SEARCH_QUERY_LINK + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
+                }
+            }
+            PreparedStatement ps = connectionHandler.getPreparedStatement(query);
+            int i = 1;
+            for (String tmp : searchTerms) {
+                ps.setString(i, tmp);
+                i++;
+                ps.setString(i, tmp);
+                i++;
+            }
+            ResultSet rs = connectionHandler.executeQuery(ps);
+            return getMultipleFilesFromResultSet(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -165,19 +191,35 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     private File getFileFromSelectResultSet(ResultSet resultSet) {
         try {
             if (resultSet.next()) {
-                File file = FileFactory.getDefaultFile();
-                file.setId(resultSet.getString(1));
-                file.setTitle(resultSet.getString(2));
-                file.setDescription(resultSet.getString(3));
-                file.setLastChanged(resultSet.getDate(4));
-                file.setCreationDate(resultSet.getDate(5));
-                file.setPath(resultSet.getString(6));
-                return file;
+                return createFileFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             return null;
         }
         return null;
+    }
+
+    private List<File> getMultipleFilesFromResultSet(ResultSet resultSet) {
+        try {
+            List<File> files = new ArrayList<>();
+            while (resultSet.next()) {
+                files.add(createFileFromResultSet(resultSet));
+            }
+            return files;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    private File createFileFromResultSet(ResultSet resultSet) throws SQLException {
+        File file = FileFactory.getDefaultFile();
+        file.setId(resultSet.getString(1));
+        file.setTitle(resultSet.getString(2));
+        file.setDescription(resultSet.getString(3));
+        file.setLastChanged(resultSet.getDate(4));
+        file.setCreationDate(resultSet.getDate(5));
+        file.setPath(resultSet.getString(6));
+        return file;
     }
 
     private ICategoryDataHandler getCategoryDataHandler() {
