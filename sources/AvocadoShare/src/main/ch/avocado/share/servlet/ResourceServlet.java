@@ -1,7 +1,6 @@
 package ch.avocado.share.servlet;
 
 import ch.avocado.share.common.HttpStatusCode;
-import ch.avocado.share.controller.MemberControlBean;
 import ch.avocado.share.controller.ResourceBean;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.exceptions.HttpBeanException;
