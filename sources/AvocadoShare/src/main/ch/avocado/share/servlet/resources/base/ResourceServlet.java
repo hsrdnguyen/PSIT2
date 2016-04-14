@@ -338,8 +338,10 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     private void setBeanAttributes(HttpServletRequest request, ResourceBean<E> bean) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
+        if(bean == null) throw new IllegalArgumentException("bean is null");
         setAccessingUserAttribute(bean, request);
-        if (request.getContentType().contains("multipart/form-data")) {
+        if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
             setBeanAttributesFromMultipart(request, bean);
         } else {
             Enumeration<String> parameterNames = request.getParameterNames();
