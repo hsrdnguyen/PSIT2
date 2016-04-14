@@ -82,18 +82,25 @@ public class LoginServlet extends HttpServlet {
         renderLogin(request, response);
     }
 
-    private void redirectTo(String url, HttpServletResponse response) {
-        if(url == null) throw  new IllegalArgumentException("url is null");
-        if(response == null) throw new IllegalArgumentException("response is null");
+
+    private String getValidRedirectUrl(String url) {
         if(url.isEmpty()) {
             url = "/";
         }
         if(url.charAt(0) == '/') {
-            try {
-                response.sendRedirect(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            return url;
+        }
+        return null;
+    }
+
+    private void redirectTo(String url, HttpServletResponse response) {
+        if(url == null) throw  new IllegalArgumentException("url is null");
+        if(response == null) throw new IllegalArgumentException("response is null");
+        url = getValidRedirectUrl(url);
+        try {
+            response.sendRedirect(url);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
