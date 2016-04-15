@@ -10,24 +10,24 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
-    FormBuilder formBuilder = new FormBuilder(viewConfig, File.class);
-    formBuilder.setEncodingType("multipart/form-data");
-    formBuilder.setReadableFieldName("title", "Titel");
-    formBuilder.setReadableFieldName("description", "Beschreibung");
-    formBuilder.setReadableFieldName("moduleId", "Modul auswählen");
-    formBuilder.setReadableFieldName("fileItem", "Datei auswählen");
+    FormBuilder form = new FormBuilder(viewConfig, File.class);
+    form.setEncodingType("multipart/form-data");
+    form.setReadableFieldName("title", "Titel");
+    form.setReadableFieldName("description", "Beschreibung");
+    form.setReadableFieldName("moduleId", "Modul auswählen");
+    form.setReadableFieldName("fileItem", "Datei auswählen");
 
     UserSession userSession = new UserSession(request);
     List<Module> userModules = FileBean.getModulesToUpload(userSession.getUser());
 %>
 <h2>Dateien bearbeiten</h2>
-<%=formBuilder.getFormErrors() %>
+<%=form.getFormErrors() %>
 <h3>Neue Datei hochladen</h3>
 <div>
-    <%= formBuilder.getFormBegin("patch") %>
+    <%= form.getFormBegin("patch") %>
         <div class="form-group row">
             <div class="col-sm-2">
-                <%=formBuilder.getLabelFor("fileItem")%>
+                <%=form.getLabelFor("fileItem")%>
             </div>
             <div class="col-sm-10">
                 <input class="form-control" type="file" name="fileItem" size="50"/>
@@ -36,42 +36,52 @@
     <p>
         Bitte beachten Sie, dass Sie die vorhandene Datei unwiderruflich gelöscht wird.
     </p>
-    <%=formBuilder.getSubmit("Hochladen", "btn-danger")%>
-    <%=formBuilder.getFormEnd() %>
+    <%=form.getSubmit("Hochladen", "btn-danger")%>
+    <%=form.getFormEnd() %>
 </div>
 <h3>Eigenschaften bearbeiten</h3>
 <div>
-    <%= formBuilder.getFormBegin("patch") %>
+    <%= form.getFormBegin("patch") %>
     <div class="form-group row">
         <div class="col-sm-2">
-            <%=formBuilder.getLabelFor("moduleId") %>
+            <%=form.getLabelFor("moduleId") %>
         </div>
         <div class="col-sm-10">
-        <%=formBuilder.getSelectFor("moduleId", userModules) %>
+        <%=form.getSelectFor("moduleId", userModules) %>
         </div>
     </div>
     <div class="form-group row">
         <div class="col-sm-2">
-        <%=formBuilder.getLabelFor("title") %>
+        <%=form.getLabelFor("title") %>
         </div>
         <div class="col-sm-10">
-        <%=formBuilder.getInputFor("title") %>
+        <%=form.getInputFor("title") %>
         </div>
     </div>
 
     <div class="form-group row">
         <div class="col-sm-2">
-        <%=formBuilder.getLabelFor("description") %>
+        <%=form.getLabelFor("description") %>
         </div>
         <div class="col-sm-10">
-        <%=formBuilder.getInputFor("description", "textarea") %>
+        <%=form.getInputFor("description", "textarea") %>
         </div>
     </div>
 
     <div class="form-group row">
         <div class="col-sm-offset-2 col-sm-10">
-            <%=formBuilder.getSubmit("Speichern")%>
+            <%=form.getSubmit("Speichern")%>
         </div>
     </div>
-    <%=formBuilder.getFormEnd() %>
+    <%=form.getFormEnd() %>
+</div>
+
+<h4>Datei löschen</h4>
+<div class="alert alert-danger">
+    Wenn Sie die Datei löschen, können weder Sie noch andere Benutzer die Datei
+    anzeigen, herunterladen oder widerherstellen.
+</div>
+<%=form.getFormBegin("delete") %>
+    <%=form.getSubmit("Datei löschen", "btn-danger")%>
+<%=form.getFormEnd()%>
 </div>

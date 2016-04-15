@@ -51,4 +51,16 @@
     <%=form.getSubmit("Ändern")%>
     <%=form.getFormEnd() %>
 
+<h3>Anderes</h3>
+<h4>Benutzer löschen</h4>
+<p>
+    Sie können Ihrer Benutzer mit der folgenden Schaltfläche löschen.
+</p>
+<div class="alert alert-danger">
+    Wenn Sie Ihren Benutzer löschen werden alle Gruppen, Module und Dateien, die Sie erstellt haben unwiderruflich
+    gelöscht!
+</div>
+<%=form.getFormBegin("delete") %>
+    <%=form.getSubmit("Benutzer löschen")%>
+<%=form.getFormEnd()%>
 <%@include file="../../includes/footer.jsp" %>

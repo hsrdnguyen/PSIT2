@@ -11,15 +11,15 @@
     </div>
 </div>
 <% for (User member : members.getUsers()) {
-    String editUrl = "?action=" + action_edit + "&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&" + owner_parameter + "=" + Encoder.forUrlAttribute(member.getId());
-    String name = Encoder.forHtml(member.getFullName());
+    String memberEditUrl = "?action=" + action_edit + "&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&" + owner_parameter + "=" + Encoder.forUrlAttribute(member.getId());
+    String memberName = Encoder.forHtml(member.getFullName());
 %>
 <div class="list-group-item">
-    <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=editUrl%>'; return false; ">
+    <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=memberEditUrl%>'; return false; ">
         Rechte bearbeiten
     </button>
     <span>
-        <%=name %>
+        <%=memberName %>
     </span>
 </div>
 <% } %>
@@ -30,17 +30,17 @@
     </div>
 </div>
 <% for (Group member : members.getGroups()) {
-    String editUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&groupId=" + Encoder.forUrlAttribute(member.getId());
-    String detailUrl = "?id=" + Encoder.forUrlAttribute(members.getTarget().getId());
-    String name = Encoder.forHtml(member.getReadableName());
+    String memberEditUrl = "?action=edit_member&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&groupId=" + Encoder.forUrlAttribute(member.getId());
+    String memberDetailUrl = "?id=" + Encoder.forUrlAttribute(members.getTarget().getId());
+    String memberName = Encoder.forHtml(member.getReadableName());
 %>
-<a href="<%=detailUrl %>" class="list-group-item">
+<a href="<%=memberDetailUrl %>" class="list-group-item">
     <%-- hackyish way to allow nested links --%>
-    <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=editUrl%>'; return false; ">
+    <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=memberEditUrl%>'; return false; ">
         Rechte bearbeiten
     </button>
     <span>
-    <%=name %>
+    <%=memberName %>
     </span>
 </a>
 <% } %>

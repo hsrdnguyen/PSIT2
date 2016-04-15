@@ -27,3 +27,12 @@
 <%=formBuilder.getSubmit("Gruppe speichern")%>
 </div>
 <%=formBuilder.getFormEnd() %>
+
+<h3>Gruppe löschen</h3>
+<div class="alert alert-danger">
+    Eine gelöschte Gruppe kann nicht wiederhergestellt werden.<br/>
+    Sowohl Sie als auch alle Mitglieder verlieren die Rechte die Sie durch diese Gruppe erworben haben.
+</div>
+<%=formBuilder.getFormBegin("delete")%>
+<%=formBuilder.getSubmit("Gruppe löschen", "btn-danger")%>
+<%=formBuilder.getFormEnd()%>

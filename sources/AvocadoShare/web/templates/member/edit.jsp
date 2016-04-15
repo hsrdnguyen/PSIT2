@@ -1,9 +1,7 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page import="ch.avocado.share.model.data.*" %>
-<%@ page import="ch.avocado.share.common.form.FormBuilder" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.servlet.MemberServlet" %>
-<%@ page import="ch.avocado.share.servlet.resources.base.FormError" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String owner = request.getParameter(owner_parameter);
@@ -17,8 +15,6 @@
             }
         }
     }
-
-    FormBuilder form = new FormBuilder(AccessControlObjectBase.class, new FormError());
 %>
 <div class="list-group-item list-group-header">
     <h2>Rechte bearbeiten</h2>
