@@ -1,11 +1,10 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.UserDataHandlerTest;
 import org.junit.After;
 import org.junit.Before;
@@ -13,9 +12,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Created by coffeemakr on 04.04.16.
+ * Test security data handler
  */
 public class SecurityHandlerTest {
 
@@ -23,16 +23,28 @@ public class SecurityHandlerTest {
     private Group groupOne;
     private Group groupTwo;
     private User user;
+    private User owningUser;
+
+    private User getUser(String prename, String surname, String email) {
+        return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, new EmailAddressVerification(EmailAddressVerification.getDateFromExpiryInHours(24))));
+    }
 
     @Before
     public void setUp() throws Exception {
+
+        MailingServiceMock.use();
+
         securityHandler = new SecurityHandler();
 
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
-        user = UserDataHandlerTest.getTestUser();
-        groupOne = new Group("unexistingOwner", "Group description", "Unique Group One");
-        groupTwo = new Group("unexistingOwner", "Group description", "Unique Group Two");
+        user = getUser("Prename", "Surname", "user2@zhaw.ch");
+        owningUser = getUser("Prename", "Surname", "user1@zhaw.ch");
+
+
+        groupOne = new Group(owningUser.getId(), "Group description", "Unique Group One");
+        groupTwo = new Group(owningUser.getId(), "Group description", "Unique Group Two");
+
         groupDataHandler.addGroup(groupOne);
         assertNotNull(groupOne.getId());
         assertNotNull(groupDataHandler.getGroup(groupOne.getId()));
@@ -44,6 +56,10 @@ public class SecurityHandlerTest {
         assertNotNull(userDataHandler.addUser(user));
         assertNotNull(user.getId());
         assertNotNull(userDataHandler.getUser(user.getId()));
+
+        assertNotNull(userDataHandler.addUser(owningUser));
+        assertNotNull(owningUser.getId());
+        assertNotNull(userDataHandler.getUser(owningUser.getId()));
 
     }
 
@@ -203,7 +219,9 @@ public class SecurityHandlerTest {
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         userDataHandler.deleteUser(user);
+        userDataHandler.deleteUser(owningUser);
         groupDataHandler.deleteGroup(groupOne);
         groupDataHandler.deleteGroup(groupTwo);
+
     }
 }

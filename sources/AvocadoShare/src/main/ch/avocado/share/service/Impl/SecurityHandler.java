@@ -1,12 +1,12 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.common.constants.sql.UserConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -272,7 +272,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         if(target == null) throw new IllegalArgumentException("target is null");
         if(accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
             preparedStatement.setInt(1, Integer.parseInt(target.getId()));
             ResultSet resultSet = preparedStatement.executeQuery();
             return getObjectIdWithAccessFromResultSet(resultSet, accessLevel);

@@ -1,15 +1,11 @@
 package ch.avocado.share.service.Impl;
 
-import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.common.constants.sql.UserConstants;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.Mock.DataHandlerMockBase;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.activation.DataHandler;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +28,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if(db == null) return null;
         try {
             user.setId(addAccessControlObject(user.getDescription()));
-            PreparedStatement stmt = db.getPreparedStatement(SQLQueryConstants.INSERT_USER_QUERY);
+            PreparedStatement stmt = db.getPreparedStatement(UserConstants.INSERT_USER_QUERY);
             stmt.setInt(1, Integer.parseInt(user.getId()));
             stmt.setString(2, user.getPrename());
             stmt.setString(3, user.getSurname());
@@ -53,7 +49,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if (user == null) throw new IllegalArgumentException("user is null");
         if (user.getId() == null) return false;
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.DELETE_USER_QUERY);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.DELETE_USER_QUERY);
             preparedStatement.setInt(DELETE_USER_QUERY_ID_INDEX, Integer.parseInt(user.getId()));
             return getConnectionHandler().deleteDataSet(preparedStatement);
         } catch (SQLException e) {
@@ -71,20 +67,20 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             if (!resultSet.next()) {
                 return null;
             }
-            id = "" + resultSet.getInt(SQLQueryConstants.USER_RESULT_ID_INDEX);
-            description = resultSet.getString(SQLQueryConstants.USER_RESULT_DESCRIPTION_INDEX);
-            boolean emailVerified = resultSet.getBoolean(SQLQueryConstants.USER_RESULT_VERIFIED_INDEX);
-            String emailAddress = resultSet.getString(SQLQueryConstants.USER_RESULT_ADDRESS_INDEX);
-            password = new UserPassword(resultSet.getString(SQLQueryConstants.USER_RESULT_PASSWORD_INDEX));
-            prename = resultSet.getString(SQLQueryConstants.USER_RESULT_PRENAME_INDEX);
-            surname = resultSet.getString(SQLQueryConstants.USER_RESULT_SURNAME_INDEX);
-            avatar = resultSet.getString(SQLQueryConstants.USER_RESULT_AVATAR_INDEX);
-            creationDate = resultSet.getDate(SQLQueryConstants.USER_RESULT_CREATION_DATE_INDEX);
+            id = "" + resultSet.getInt(UserConstants.USER_RESULT_ID_INDEX);
+            description = resultSet.getString(UserConstants.USER_RESULT_DESCRIPTION_INDEX);
+            boolean emailVerified = resultSet.getBoolean(UserConstants.USER_RESULT_VERIFIED_INDEX);
+            String emailAddress = resultSet.getString(UserConstants.USER_RESULT_ADDRESS_INDEX);
+            password = new UserPassword(resultSet.getString(UserConstants.USER_RESULT_PASSWORD_INDEX));
+            prename = resultSet.getString(UserConstants.USER_RESULT_PRENAME_INDEX);
+            surname = resultSet.getString(UserConstants.USER_RESULT_SURNAME_INDEX);
+            avatar = resultSet.getString(UserConstants.USER_RESULT_AVATAR_INDEX);
+            creationDate = resultSet.getDate(UserConstants.USER_RESULT_CREATION_DATE_INDEX);
             email = new EmailAddress(emailVerified, emailAddress, null);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new User(id, null, creationDate, 0.0f, "", description, password, prename, surname, avatar, email);
+        return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);
     }
 
     private User getUserFromPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataHandlerException {
@@ -104,7 +100,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     public User getUser(String userId) throws DataHandlerException {
         if (userId == null) throw new IllegalArgumentException("userId is null");
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_USER_QUERY);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_USER_QUERY);
             preparedStatement.setInt(1, Integer.parseInt(userId));
             return getUserFromPreparedStatement(preparedStatement);
         } catch (Exception e) {
@@ -119,7 +115,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if(connectionHandler == null) return null;
         try {
-            PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_USER_BY_MAIL_QUERY);
+            PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(UserConstants.SELECT_USER_BY_MAIL_QUERY);
             preparedStatement.setString(1, emailAddress);
             return getUserFromPreparedStatement(preparedStatement);
         } catch (SQLException e) {
@@ -133,15 +129,15 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         Date expiry;
         String code;
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_EMAIL_VERIFICATION);
-            preparedStatement.setInt(SQLQueryConstants.SELECT_EMAIL_VERIFICATION_USER_ID_INDEX, Integer.parseInt(userId));
-            preparedStatement.setString(SQLQueryConstants.SELECT_EMAIL_VERIFICATION_ADDRESS_INDEX, address);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_EMAIL_VERIFICATION);
+            preparedStatement.setInt(UserConstants.SELECT_EMAIL_VERIFICATION_USER_ID_INDEX, Integer.parseInt(userId));
+            preparedStatement.setString(UserConstants.SELECT_EMAIL_VERIFICATION_ADDRESS_INDEX, address);
             ResultSet resultSet = getConnectionHandler().executeQuery(preparedStatement);
             if(!resultSet.next()) {
                 return null;
             }
-            code = resultSet.getString(SQLQueryConstants.EMAIL_VERIFICATION_RESULT_CODE_INDEX);
-            expiry = resultSet.getDate(SQLQueryConstants.EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX);
+            code = resultSet.getString(UserConstants.EMAIL_VERIFICATION_RESULT_CODE_INDEX);
+            expiry = resultSet.getDate(UserConstants.EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -154,15 +150,17 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         IDatabaseConnectionHandler connectionHandler;
         connectionHandler = getConnectionHandler();
         try {
-            stmt = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_QUERY);
+            stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_MAIL_QUERY);
             stmt.setString(1, user.getId());
             stmt.setString(2, user.getMail().getAddress());
             connectionHandler.insertDataSet(stmt);
 
-            stmt = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_MAIL_VERIFICATION_QUERY);
+            stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_MAIL_VERIFICATION_QUERY);
             stmt.setString(1, user.getId());
-            stmt.setString(2, user.getMail().getAddress());
-            stmt.setDate(3, new java.sql.Date(user.getMail().getVerification().getExpiry().getTime()));
+            EmailAddress mail = user.getMail();
+            stmt.setString(2, mail.getAddress());
+            EmailAddressVerification verification = mail.getVerification();
+            stmt.setDate(3, new java.sql.Date(verification.getExpiry().getTime()));
             stmt.setString(4, user.getMail().getVerification().getCode());
             connectionHandler.insertDataSet(stmt);
         } catch (SQLException e) {
@@ -180,7 +178,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         }
         PreparedStatement stmt = null;
         try {
-            stmt = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_USER_QUERY);
+            stmt = getConnectionHandler().getPreparedStatement(UserConstants.UPDATE_USER_QUERY);
             stmt.setString(1, user.getPrename());
             stmt.setString(2, user.getSurname());
             stmt.setString(3, user.getAvatar());
@@ -197,7 +195,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     public boolean verifyUser(User user) throws DataHandlerException {
         if (user == null) throw new IllegalArgumentException("user is null");
         try {
-            PreparedStatement stmt = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SET_MAIL_TO_VERIFIED);
+            PreparedStatement stmt = getConnectionHandler().getPreparedStatement(UserConstants.SET_MAIL_TO_VERIFIED);
             stmt.setInt(1, Integer.parseInt(user.getId()));
             return getConnectionHandler().updateDataSet(stmt);
         } catch (SQLException e) {
@@ -211,7 +209,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if (userId == null) throw new IllegalArgumentException("userId is null");
         try {
             PreparedStatement stmt;
-            stmt = getConnectionHandler().getPreparedStatement(SQLQueryConstants.INSERT_PASSWORD_VERIFICATION_QUERY);
+            stmt = getConnectionHandler().getPreparedStatement(UserConstants.INSERT_PASSWORD_VERIFICATION_QUERY);
             stmt.setInt(1, Integer.parseInt(userId));
             stmt.setDate(2, new java.sql.Date(verification.getExpiry().getTime()));
             stmt.setString(3, verification.getCode());
@@ -227,7 +225,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         ArrayList<PasswordResetVerification> result = new ArrayList<>();
         try {
             PreparedStatement stmt;
-            stmt = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_PASSWORD_VERIFICATION_QUERY);
+            stmt = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_PASSWORD_VERIFICATION_QUERY);
             stmt.setInt(1, Integer.parseInt(userId));
             ResultSet rs = getConnectionHandler().executeQuery(stmt);
             while (rs.next()) {

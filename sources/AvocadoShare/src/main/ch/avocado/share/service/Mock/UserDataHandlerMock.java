@@ -35,7 +35,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
         objects.clear();
         for (int i = 0; i < 100; i++) {
             String id = String.format("1%06d", i);
-            objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "description" + i, DEFAULT_PASSWORD, "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
+            objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), 0, "description" + i, DEFAULT_PASSWORD, "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
         }
     }
 
