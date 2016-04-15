@@ -18,7 +18,7 @@ public class GroupServlet extends ResourceServlet<Group> {
 
     @Override
     protected ViewRenderer getHtmlRenderer() {
-        return new HtmlRenderer("group_templates/");
+        return new HtmlRenderer("templates/group/");
     }
 
 }

@@ -55,9 +55,7 @@ public interface ISecurityHandler {
 
     AccessLevelEnum getAnonymousAccessLevel(String targetId) throws DataHandlerException;
 
-
     boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException;
-
 
     Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 

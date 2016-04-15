@@ -19,6 +19,6 @@ public class UserServlet extends ResourceServlet<User> {
 
     @Override
     protected ViewRenderer getHtmlRenderer() {
-        return new HtmlRenderer("user_templates/");
+        return new HtmlRenderer("templates/user/");
     }
 }

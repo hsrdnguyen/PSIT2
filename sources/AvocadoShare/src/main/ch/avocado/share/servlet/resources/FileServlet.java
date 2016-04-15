@@ -18,6 +18,6 @@ public class FileServlet extends ResourceServlet<File> {
 
     @Override
     protected ViewRenderer getHtmlRenderer() {
-        return new HtmlRenderer("file_templates/");
+        return new HtmlRenderer("templates/file/");
     }
 }

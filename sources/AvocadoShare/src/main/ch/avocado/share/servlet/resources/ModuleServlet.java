@@ -19,6 +19,6 @@ public class ModuleServlet extends ResourceServlet<Module> {
 
     @Override
     protected ViewRenderer getHtmlRenderer() {
-        return new HtmlRenderer("module_templates/");
+        return new HtmlRenderer("templates/module/");
     }
 }
