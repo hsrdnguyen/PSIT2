@@ -15,7 +15,7 @@ public class User extends AccessIdentity {
     private EmailAddress mail;
 
     public User(String id, List<Category> categories, Date creationDate, float rating, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
-        super(id, categories, creationDate, rating, id, description);
+        super(id, categories, creationDate, rating, id == null? "" : id, description);
         setAvatar(avatar);
         setMail(mail);
         setPassword(password);
