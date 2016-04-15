@@ -1,4 +1,4 @@
-package ch.avocado.share.service;
+package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.Impl.MailingService;

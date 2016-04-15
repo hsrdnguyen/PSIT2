@@ -1,4 +1,4 @@
-package ch.avocado.share.service;
+package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.EmailAddressVerification;
