@@ -153,7 +153,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     private void setBeanAttributes(ResourceBean<E> bean, Map<String, Object> parameter) throws HttpBeanException {
         if (parameter == null) throw new IllegalArgumentException("parameter is null");
         if (bean == null) throw new IllegalArgumentException("bean is null");
-        for(Map.Entry<String, Object> parameterEntry: parameter.entrySet()) {
+        for (Map.Entry<String, Object> parameterEntry : parameter.entrySet()) {
             String setterName = getSetterName(parameterEntry.getKey());
             System.out.println("Trying to invoke " + setterName);
             tryInvokeSetterOfBean(bean, setterName, parameterEntry.getValue());
@@ -174,7 +174,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     private HttpMethod getMethodFromRequest(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
         HttpMethod method = HttpMethod.fromString(request.getMethod());
         if (method == HttpMethod.POST) {
-            if(parameter.containsKey(PARAMETER_METHOD)) {
+            if (parameter.containsKey(PARAMETER_METHOD)) {
                 HttpMethod simulatedMethod = HttpMethod.fromString((String) parameter.get(PARAMETER_METHOD));
                 if (simulatedMethod != null) {
                     method = simulatedMethod;
@@ -220,11 +220,11 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     private void renderViewConfig(HttpServletRequest request, HttpServletResponse response, ViewConfig config) throws HttpBeanException, ServletException, IOException {
-        if(request == null) throw new IllegalArgumentException("request is null");
-        if(response == null) throw new IllegalArgumentException("response is null");
-        if(config == null) throw new IllegalArgumentException("config is null");
+        if (request == null) throw new IllegalArgumentException("request is null");
+        if (response == null) throw new IllegalArgumentException("response is null");
+        if (config == null) throw new IllegalArgumentException("config is null");
         ViewRenderer renderer = null;
-        for(String contentType: getAcceptedEncodings(request)) {
+        for (String contentType : getAcceptedEncodings(request)) {
             if (contentType != null) {
                 if (contentType.contains(";")) {
                     contentType = contentType.split(";")[0];
@@ -294,7 +294,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
         if (redirectTo != null) {
             response.sendRedirect(getUrlForView(request, redirectTo, object));
-        } else if(viewConfig != null){
+        } else if (viewConfig != null) {
             renderViewConfig(request, response, viewConfig);
         }
     }
@@ -371,7 +371,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (request == null) throw new IllegalArgumentException("request is null");
         if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
             return getMultipartParameter(request);
-        }else{
+        } else {
             Map<String, Object> parameter = new HashMap<>();
             Enumeration<String> parameterNames = request.getParameterNames();
             while (parameterNames.hasMoreElements()) {
@@ -382,7 +382,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
-    private Map<String,Object> getMultipartParameter(HttpServletRequest request) throws HttpBeanException {
+    private Map<String, Object> getMultipartParameter(HttpServletRequest request) throws HttpBeanException {
         HashMap<String, Object> parameter = new HashMap<>();
         List<FileItem> items;
         try {
@@ -391,7 +391,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
         for (FileItem item : items) {
-            if(item.isFormField()) {
+            if (item.isFormField()) {
                 try {
                     parameter.put(item.getFieldName(), item.getString("UTF-8"));
                 } catch (UnsupportedEncodingException e) {
@@ -407,6 +407,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Renders the action {@link Action#VIEW}.
+     *
      * @param bean
      * @param request
      * @param response
@@ -435,7 +436,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         } else {
             E object = null;
             Members members = null;
-            if(bean.hasIdentifier()) {
+            if (bean.hasIdentifier()) {
                 ensureAccess(session.getUserId(), bean.getId(), Action.VIEW);
                 object = bean.get();
                 if (object == null) {
