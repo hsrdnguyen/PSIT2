@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * Created by coffeemakr on 14.04.16.
+ * Configuration to render a single resource.
  */
 public class DetailViewConfig extends ViewConfig {
 

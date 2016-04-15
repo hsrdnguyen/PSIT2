@@ -27,6 +27,10 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 
+/**
+ * The resource servlet is used to handle request to modify or view a resource..
+ * @param <E> The class of the resource.
+ */
 public abstract class ResourceServlet<E extends AccessControlObjectBase> extends GenericServlet {
 
     private static final String PARAMETER_ACTION = "action";
@@ -34,27 +38,59 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     public static final String ERROR_SET_CONTROLLER_ATTRIBUTES_FAILED = "Controller konnte nicht inititialisiert werden.";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_CREATE = "create";
-    /**
-     * Simulated request parameter.
-     */
-    public final String PARAMETER_METHOD = "method";
 
+    /**
+     * Simulated request parameter. See {@link ResourceServlet#executeBeanAndRenderResult(HttpServletRequest, HttpServletResponse)}
+     */
+    public static final String PARAMETER_METHOD = "method";
+
+    /**
+     * Create a new ResourceServlet.
+     * The constructor will call {@link ResourceServlet#getHtmlRenderer()} and register it to the default HTML types.
+     */
     public ResourceServlet() {
         ViewRenderer renderer = getHtmlRenderer();
         registerRenderer("text/html", renderer);
         registerRenderer("application/xhtml+xml", renderer);
     }
 
+    /**
+     * @return The controller class which can be created with an empty constructor.
+     */
     protected abstract Class<? extends ResourceBean<E>> getBeanClass();
 
+    /**
+     * A map with the content type as the key and the renderer as the value.
+     * This is mainly used in
+     * {@link ResourceServlet#renderViewConfig(HttpServletRequest, HttpServletResponse, ViewConfig) renderViewConfig}.
+     */
     private HashMap<String, ViewRenderer> contentRenderer = new HashMap<>();
 
+    /**
+     * Add a new renderer for a content type.
+     *
+     * @param contentType The content type (not null)
+     * @param renderer    The renderer (not null)
+     */
     private void registerRenderer(String contentType, ViewRenderer renderer) {
+        if (contentType == null) throw new IllegalArgumentException("contentType is null");
+        if (renderer == null) throw new IllegalArgumentException("renderer is null");
         contentRenderer.put(contentType, renderer);
     }
 
+    /**
+     * @return An renderer which can be used to render the object the views in html.
+     */
     abstract protected ViewRenderer getHtmlRenderer();
 
+    /**
+     * Get the url for a view. The request is required to determinate the context path of the application.
+     *
+     * @param request The request to any servlet in this application.
+     * @param view    The view for which the url should be returned.
+     * @param object  If the view is for a single object the object has to be provided. (EDIT and DETAIL)
+     * @return The url to the object.
+     */
     protected String getUrlForView(HttpServletRequest request, View view, E object) {
         if (view == null) throw new IllegalArgumentException("view is null");
         String url = request.getServletPath();
@@ -76,6 +112,13 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         return url;
     }
 
+    /**
+     * Returns the required levels of access for an action.
+     *
+     * @param action The action
+     * @return The required access level. If the access level is {@code null} an unauthenticated user can execute this
+     * action.
+     */
     protected AccessLevelEnum getRequiredAccessForAction(Action action) {
         switch (action) {
             case VIEW:
@@ -93,6 +136,15 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
+    /**
+     * Returns the granted access on the object.
+     *
+     * @param userId   The identifier of the user to check.
+     * @param objectId The identifier of the object.
+     * @return The granted access level.
+     * @throws HttpBeanException If there is an error while querying the granted access
+     *                           level this exception is thrown.
+     */
     private AccessLevelEnum getAccessOnObject(String userId, String objectId) throws HttpBeanException {
         ISecurityHandler securityHandler;
         try {
@@ -112,6 +164,12 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
+    /**
+     * @param userId   The user which can execute this actions.
+     * @param objectId The object on which the actions can be executed.
+     * @return A list of all actions allowed for the user.
+     * @throws HttpBeanException
+     */
     private List<Action> getAllowedActionsForUser(String userId, String objectId) throws HttpBeanException {
         List<Action> actions = new LinkedList<>();
         AccessLevelEnum allowedLevel = getAccessOnObject(userId, objectId);
@@ -124,6 +182,14 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         return actions;
     }
 
+    /**
+     * Check if the user has the required access level for the action.
+     *
+     * @param userId   The user which will execute the action
+     * @param objectId The object on which the action will is executed.
+     * @param action   The action to be executed.
+     * @throws HttpBeanException If the user has not enough access rights.
+     */
     private void ensureAccess(String userId, String objectId, Action action) throws HttpBeanException {
         if (objectId == null) throw new IllegalArgumentException("objectId is null");
         if (action == null) throw new IllegalArgumentException("action is null");
@@ -137,7 +203,17 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
+    /**
+     * Construct a new controller and set its attributes accordingly.
+     *
+     * @param request   The request is used to extract the accessing user and set it to controller. (not null)
+     * @param parameter Parsed parameters. They will be used to set the attributes of the controller. (not null)
+     * @return The controller object. (not null)
+     * @throws HttpBeanException If something wen't wrong this execption is thrown.
+     */
     private ResourceBean<E> getResourceBean(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
+        if (request == null) throw new IllegalArgumentException("request is null");
+        if (parameter == null) throw new IllegalArgumentException("parameter is null");
         ResourceBean<E> bean;
         try {
             bean = getBeanClass().newInstance();
@@ -150,18 +226,30 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         return bean;
     }
 
-    private void setBeanAttributes(ResourceBean<E> bean, Map<String, Object> parameter) throws HttpBeanException {
+    /**
+     * Sets the attributes of the controller using the parameters.
+     *
+     * @param controller The controller object (not null)
+     * @param parameter  The parameters (not null)
+     * @throws HttpBeanException
+     */
+    private void setBeanAttributes(ResourceBean<E> controller, Map<String, Object> parameter) throws HttpBeanException {
         if (parameter == null) throw new IllegalArgumentException("parameter is null");
-        if (bean == null) throw new IllegalArgumentException("bean is null");
+        if (controller == null) throw new IllegalArgumentException("controller is null");
         for (Map.Entry<String, Object> parameterEntry : parameter.entrySet()) {
             String setterName = getSetterName(parameterEntry.getKey());
             System.out.println("Trying to invoke " + setterName);
-            tryInvokeSetterOfBean(bean, setterName, parameterEntry.getValue());
+            tryInvokeSetterOfBean(controller, setterName, parameterEntry.getValue());
         }
     }
 
-    private String getSetterName(String parameter) {
-        return "set" + parameter.substring(0, 1).toUpperCase() + parameter.substring(1);
+    /**
+     * Return the name of the setter. This method prefixes the field name with "set" and capitalizes the name.
+     * @param fieldName The name of the field
+     * @return The name of the setter.
+     */
+    private String getSetterName(String fieldName) {
+        return "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
 
@@ -170,8 +258,17 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, ErrorMessageConstants.METHOD_NOT_ALLOWED + method);
     }
 
-
+    /**
+     * We need this method because HTML forms can only send POST and GET requests and we want to be able to "simulate"
+     * another method. This can be done by setting the parameter {@value PARAMETER_METHOD} to the required method.
+     * @param request The http request (not null)
+     * @param parameter The parsed parameters (not null)
+     * @return The http method to be executed.
+     * @throws HttpBeanException
+     */
     private HttpMethod getMethodFromRequest(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
+        if(request == null) throw new IllegalArgumentException("request is null");
+        if(parameter == null) throw new IllegalArgumentException("parameter is null");
         HttpMethod method = HttpMethod.fromString(request.getMethod());
         if (method == HttpMethod.POST) {
             if (parameter.containsKey(PARAMETER_METHOD)) {
@@ -187,6 +284,11 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         return method;
     }
 
+    /**
+     * Returns the action associated with the http method
+     * @param method The method
+     * @return The action
+     */
     private Action getActionFromMethod(HttpMethod method) {
         if (method == null) throw new IllegalArgumentException("method is null");
         switch (method) {
@@ -204,7 +306,10 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         throw new RuntimeException("Method not checked: " + method);
     }
 
-
+    /**
+     * @param request The request
+     * @return A list of accepted encodings
+     */
     private List<String> getAcceptedEncodings(HttpServletRequest request) {
         String accepted = request.getHeader("Accept");
         List<String> encodings = new ArrayList<>(1);
@@ -219,6 +324,15 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         return encodings;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @param config
+     * @throws HttpBeanException
+     * @throws ServletException
+     * @throws IOException
+     */
     private void renderViewConfig(HttpServletRequest request, HttpServletResponse response, ViewConfig config) throws HttpBeanException, ServletException, IOException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
@@ -299,6 +413,15 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
+    /**
+     * Wrapper method for {@link #service(HttpServletRequest, HttpServletResponse)} which casts the request and response
+     * into HTTP request and HTTP responses. An ServletException is thrown if they are not of this type.
+     * @param req the request
+     * @param res the response
+     * @throws ServletException
+     * @throws IOException
+     * @see GenericServlet#service(ServletRequest, ServletResponse)
+     */
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         if (!(req instanceof HttpServletRequest) || !(res instanceof HttpServletResponse)) {
@@ -309,18 +432,37 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         service(httpRequest, httpResponse);
     }
 
+
+    /**
+     * Handle the request and response. In the most cases if an error occurs there will be no ServletException thrown.
+     * Instead this method sets call {@link HttpServletResponse#sendError(int,String)} with an appropriate mesasge and
+     * status code.
+     * @param request the request
+     * @param response the response
+     * @throws IOException
+     * @throws ServletException
+     */
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        response.setHeader("Content-Type", "text/html; charset=UTF-8");
-        //request.getRequestDispatcher("includes/header.jsp").include(request, response);
         try {
             executeBeanAndRenderResult(request, response);
         } catch (HttpBeanException e) {
             e.printStackTrace();
-            response.sendError(e.getStatusCode(), e.getMessage());
+            if(!response.isCommitted()) {
+                response.sendError(e.getStatusCode(), e.getMessage());
+            } else {
+                throw new ServletException(e.getMessage());
+            }
         }
-        //request.getRequestDispatcher("includes/footer.jsp").include(request, response);
     }
 
+    /**
+     *
+     * @param bean the bean on which the setter should be invoked (not null)
+     * @param setterName the name of the setter method (not null)
+     * @param value the value to set (not null)
+     * @return {@code true} if the method was found. Otherwise {@code false}  is returned.
+     * @throws HttpBeanException if something went wrong while calling the setter.
+     */
     private boolean tryInvokeSetterOfBean(ResourceBean<E> bean, String setterName, Object value) throws HttpBeanException {
         if (bean == null) throw new IllegalArgumentException("bean is null");
         if (value == null) throw new IllegalArgumentException("value is null");
@@ -344,7 +486,15 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         return false;
     }
 
+    /**
+     * Returns the {@link View} to be renderer for the {@link Action#VIEW}.
+     * @param bean The controller (not null). This is mainly used to check if the controller has an identifier.
+     * @param request The request (not null)
+     * @return The view
+     */
     private View getViewForActionView(ResourceBean<E> bean, HttpServletRequest request) {
+        if(bean == null) throw new IllegalArgumentException("bean is null");
+        if(request == null) throw new IllegalArgumentException("request is null");
         String actionParameter = request.getParameter(PARAMETER_ACTION);
         if (bean.hasIdentifier()) {
             if (actionParameter != null && actionParameter.equals(ACTION_EDIT)) {
@@ -359,6 +509,11 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
+    /**
+     * Sets the accessing user in the (by calling {@link ResourceBean#setAccessingUser(User)}).
+     * @param bean The controller
+     * @param request The request
+     */
     private void setAccessingUserAttribute(ResourceBean<E> bean, HttpServletRequest request) {
         UserSession session = new UserSession(request);
         if (session.getUser() != null) {
@@ -366,7 +521,12 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
-
+    /**
+     * Parses the parameter of the request.
+     * @param request The request.
+     * @return A map of parameter - values.
+     * @throws HttpBeanException
+     */
     private Map<String, Object> getParameter(HttpServletRequest request) throws HttpBeanException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
@@ -382,6 +542,12 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         }
     }
 
+    /**
+     * Parses mulipart parameters.
+     * @param request The request
+     * @return A map of Parameter name mapped to the value.
+     * @throws HttpBeanException
+     */
     private Map<String, Object> getMultipartParameter(HttpServletRequest request) throws HttpBeanException {
         HashMap<String, Object> parameter = new HashMap<>();
         List<FileItem> items;
@@ -406,22 +572,21 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     /**
-     * Renders the action {@link Action#VIEW}.
-     *
-     * @param bean
-     * @param request
-     * @param response
-     * @return
+     * Prepare the configuration for the {@link Action#VIEW}.
+     * @param controller The controller
+     * @param request The request
+     * @param response The response
+     * @return The view config.
      * @throws HttpBeanException
      * @throws DataHandlerException
      */
-    protected ViewConfig getConfigForActionView(ResourceBean<E> bean, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
+    protected ViewConfig getConfigForActionView(ResourceBean<E> controller, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
         if (request == null) throw new IllegalArgumentException("request is null");
         UserSession session = new UserSession(request);
         ViewConfig viewConfig;
-        View view = getViewForActionView(bean, request);
+        View view = getViewForActionView(controller, request);
         if (view == View.LIST) {
-            List<E> objects = bean.index();
+            List<E> objects = controller.index();
             if (objects == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         ErrorMessageConstants.ERROR_INDEX_FAILED);
@@ -436,14 +601,14 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         } else {
             E object = null;
             Members members = null;
-            if (bean.hasIdentifier()) {
-                ensureAccess(session.getUserId(), bean.getId(), Action.VIEW);
-                object = bean.get();
+            if (controller.hasIdentifier()) {
+                ensureAccess(session.getUserId(), controller.getId(), Action.VIEW);
+                object = controller.get();
                 if (object == null) {
                     throw new HttpBeanException(HttpStatusCode.NOT_FOUND,
                             ErrorMessageConstants.OBJECT_NOT_FOUND);
                 }
-                members = bean.getMembers(object);
+                members = controller.getMembers(object);
             }
             viewConfig = new DetailViewConfig(view, request, response, object, members);
         }
