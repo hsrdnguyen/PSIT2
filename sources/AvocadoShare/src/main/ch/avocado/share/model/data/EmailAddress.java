@@ -5,12 +5,12 @@ package ch.avocado.share.model.data;
  */
 public class EmailAddress {
 
-    private boolean verified;
+    private boolean isVerified;
     private String address;
     private EmailAddressVerification verification;
 
-    public EmailAddress(boolean verified, String address, EmailAddressVerification verification) {
-        setVerified(verified);
+    public EmailAddress(boolean isVerified, String address, EmailAddressVerification verification) {
+        setIsVerified(isVerified);
         setAddress(address);
         // verification can be null when created but not set.
         this.verification = verification;
@@ -20,14 +20,14 @@ public class EmailAddress {
      * @return {@code true} if the email is valid and has been verified.
      */
     public boolean isVerified() {
-        return verified;
+        return isVerified;
     }
 
     /**
-     * @param verified
+     * @param isVerified
      */
-    public void setVerified(boolean verified) {
-        this.verified = verified;
+    public void setIsVerified(boolean isVerified) {
+        this.isVerified = isVerified;
     }
 
     /**
