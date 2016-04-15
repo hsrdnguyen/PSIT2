@@ -1,12 +1,7 @@
 <%@ page import="ch.avocado.share.model.data.User" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %>
-<%@ page import="ch.avocado.share.model.data.Members" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    Members members = (Members) request.getAttribute("Members");
-%>
 <div class="list-group-item list-group-header">
     <h3>Mitglieder</h3>
 </div>

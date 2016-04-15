@@ -3,6 +3,8 @@
     final String owner_parameter = "o";
     final String action_edit = "edit_members";
     final String action_create = "create_member";
+    DetailViewConfig viewConfigInMembers = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
+    Members members = viewConfigInMembers.getMembers();
 %>
 <div class="col-xl-4">
     <div class="list-group">

@@ -2,9 +2,12 @@
 <%@ page import="ch.avocado.share.model.data.User" %>
 <%@ page import="ch.avocado.share.controller.UserBean" %>
 <%@ page import="java.util.Map" %>
-<%@include file="../../includes/header.jsp" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%
-    FormBuilder form = new FormBuilder((User) request.getAttribute("User"), User.class, (Map<String, String>) request.getAttribute(UserBean.ATTRIBUTE_FORM_ERRORS));
+    DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
+    User user = viewConfig.getObject(User.class);
+    FormBuilder form = new FormBuilder(viewConfig, User.class);
     form.setReadableFieldName("prename", "Vorname");
     form.setReadableFieldName("surname", "Nachname");
     form.setReadableFieldName("password", "Passwort");

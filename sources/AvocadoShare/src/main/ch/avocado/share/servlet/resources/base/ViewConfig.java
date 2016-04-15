@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by coffeemakr on 14.04.16.
  */
-class ViewConfig {
+public class ViewConfig {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
     private final View view;

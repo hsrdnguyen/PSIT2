@@ -6,11 +6,12 @@ import ch.avocado.share.model.data.Model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * Created by coffeemakr on 14.04.16.
  */
-class DetailViewConfig extends ViewConfig {
+public class DetailViewConfig extends ViewConfig {
 
     private Model object;
     private FormError formErrors;
@@ -20,7 +21,12 @@ class DetailViewConfig extends ViewConfig {
                             Members members) {
         super(view, request, response);
         this.object = object;
-        this.formErrors = new FormError(object.getFieldErrors());
+
+        if(object != null) {
+            this.formErrors = new FormError(object.getFieldErrors());
+        } else {
+            this.formErrors = new FormError(new HashMap<String, String>());
+        }
         this.members = members;
     }
 

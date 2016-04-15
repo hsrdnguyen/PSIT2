@@ -3,10 +3,10 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by coffeemakr on 21.03.16.
+ * Implementation of the group data handler which accesses
+ * the database by using {@link IDatabaseConnectionHandler}
  */
 public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandler {
 
@@ -62,7 +63,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, name, description);
+        return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name);
     }
 
     @Override

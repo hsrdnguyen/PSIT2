@@ -67,7 +67,9 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             preparedStatement.setInt(2, objectId);
             preparedStatement.setInt(3, ownerId);
             preparedStatement.setInt(4, objectId);
-            preparedStatement.setInt(5, objectId);
+            preparedStatement.setInt(5, ownerId);
+            preparedStatement.setInt(6, objectId);
+            preparedStatement.setInt(7, objectId);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -85,9 +87,10 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         int targetIdInt = Integer.parseInt(targetId);
 
         if (identityIdInt == targetIdInt) {
-            return AccessLevelEnum.MANAGE;
+            return AccessLevelEnum.OWNER;
         }
         PreparedStatement preparedStatement = getSelectAccessLevelIncludingInheritedStatement(identityIdInt, targetIdInt);
+        System.out.println(preparedStatement);
         try {
             ResultSet rs = connectionHandler.executeQuery(preparedStatement);
             while (rs.next()) {

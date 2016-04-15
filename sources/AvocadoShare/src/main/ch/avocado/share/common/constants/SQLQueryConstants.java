@@ -184,8 +184,23 @@ public class SQLQueryConstants {
             "WHERE o.owner_id = ? AND o.object_id = ?";
 
 
-    public static final String SELECT_INHERITED_GROUP_RIGHTS = "" +
-            "  SELECT" +
+    public static final String SELECT_ANONYMOUS_ACCESS_LEVEL = "" +
+            "SELECT alevel.readable, alevel.writable, alevel.manageable, false" +
+            "  FROM avocado_share.access_level AS alevel" +
+            "  NATURAL JOIN avocado_share.default_access AS arights " +
+            "  WHERE arights.object_id = ?";
+
+
+    public static final String SELECT_ACCESS_LEVEL_INCLUDING_INHERITED = "" +
+            "SELECT " +
+            "  readable, writable, manageable, false " +
+            "FROM avocado_share.access_level AS l " +
+            "JOIN avocado_share.rights AS r " +
+            "  ON r.level = l.level " +
+            " WHERE r.owner_id = ? AND r.object_id = ? " +
+            " UNION SELECT true, true, true, true FROM avocado_share.ownership AS o" +
+            "  WHERE o.owner_id = ? AND o.object_id = ? " +
+            " UNION SELECT " +
             "    glevel.readable, glevel.writable, glevel.manageable, false" +
             "  FROM avocado_share.access_level AS glevel " +
             "  JOIN avocado_share.rights AS grights " +
@@ -199,33 +214,8 @@ public class SQLQueryConstants {
             "          NATURAL JOIN avocado_share.access_level y " +
             "          WHERE x.owner_id = ? AND x.object_id = gro.id AND y.readable = TRUE" +
             "       )" +
-            "       AND grights.object_id = ?";
-
-    public static final String SELECT_ANONYMOUS_ACCESS_LEVEL = "" +
-            "SELECT alevel.readable, alevel.writable, alevel.manageable, false" +
-            "  FROM avocado_share.access_level AS alevel" +
-            "  NATURAL JOIN avocado_share.default_access AS arights " +
-            "  WHERE arights.object_id = ?";
-
-
-    public static final String SELECT_ACCESS_LEVEL_INCLUDING_INHERITED = "" +
-            "SELECT " +
-            "  readable, writable, manageable, " +
-            "  CASE " +
-            "    WHEN o.owner_id IS NULL THEN false " +
-            "    ELSE true " +
-            "  END AS owner " +
-            "FROM avocado_share.access_level AS l " +
-            "JOIN avocado_share.rights AS r " +
-            "  ON r.level = l.level " +
-            "LEFT OUTER JOIN avocado_share.ownership AS o " +
-            "  ON " +
-            "      o.owner_id = r.owner_id " +
-            "    AND " +
-            "      o.object_id = r.object_id " +
-            " WHERE r.owner_id = ? AND r.object_id = ?" +
-            "UNION " + SELECT_INHERITED_GROUP_RIGHTS +
-            "UNION " + SELECT_ANONYMOUS_ACCESS_LEVEL;
+            "       AND grights.object_id = ?" +
+            " UNION " + SELECT_ANONYMOUS_ACCESS_LEVEL;
 
     public static final String ADD_ANONYMOUS_ACCESS_LEVEL = "" +
             "INSERT INTO avocado_share.default_access (object_id, level) " +

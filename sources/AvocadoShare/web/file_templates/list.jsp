@@ -1,8 +1,15 @@
 <%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.ListViewConfig" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="java.util.Collection" %>
+<%@ page import="ch.avocado.share.common.constants.SQLQueryConstants" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% List<File> files = (List<File>) request.getAttribute("Files"); %>
+<%
+    ListViewConfig viewConfig = (ListViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_LIST_VIEW_CONFIG);
+    Collection<File> files = viewConfig.getObjects(File.class);
+%>
 <section class="document-show">
     <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>

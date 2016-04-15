@@ -3,8 +3,12 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page import="ch.avocado.share.common.preview.factory.DefaultPreviewFactory" %>
 <%@ page import="ch.avocado.share.common.preview.IPreviewGenerator" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.common.constants.SQLQueryConstants" %>
 <%
-    File file = (File) request.getAttribute("File");
+    DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
+    File file = viewConfig.getObject(File.class);
     String id = Encoder.forUrlAttribute(file.getId());
     String title = Encoder.forHtml(file.getTitle());
     String description = Encoder.forHtml(file.getDescription());

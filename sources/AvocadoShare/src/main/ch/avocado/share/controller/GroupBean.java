@@ -119,6 +119,7 @@ public class GroupBean extends ResourceBean<Group> {
         if (group.isValid()) {
             group.setName(name);
             group.setDescription(description);
+            System.out.println("Updating: name: " + name + " description: " + description);
             if (!groupDataHandler.updateGroup(group)) {
                 throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
             }
@@ -153,6 +154,7 @@ public class GroupBean extends ResourceBean<Group> {
      * @param description The description of the group
      */
     public void setDescription(String description) {
+        System.out.println("Got description : " + description);
         this.description = description;
     }
 
@@ -162,6 +164,7 @@ public class GroupBean extends ResourceBean<Group> {
      * @param name
      */
     public void setName(String name) {
+        System.out.println("Got name : " + name);
         this.name = name;
     }
 

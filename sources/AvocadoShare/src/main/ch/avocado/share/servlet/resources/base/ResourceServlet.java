@@ -1,6 +1,5 @@
 package ch.avocado.share.servlet.resources.base;
 
-import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
@@ -131,12 +130,15 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (action == null) throw new IllegalArgumentException("action is null");
         AccessLevelEnum requiredLevel = getRequiredAccessForAction(action);
         AccessLevelEnum allowedLevel = getAccessOnObject(userId, objectId);
+        System.out.println("Allowd level: " + allowedLevel);
+        System.out.println("User id: " + userId);
+        System.out.println("ObjectId: " + objectId);
         if (!allowedLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ERROR_ACTION_NOT_ALLOWED + action.name());
         }
     }
 
-    private ResourceBean<E> getResourceBean(HttpServletRequest request) throws HttpBeanException {
+    private ResourceBean<E> getResourceBean(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
         ResourceBean<E> bean;
         try {
             bean = getBeanClass().newInstance();
@@ -144,7 +146,8 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             e.printStackTrace();
             throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Could not create bean");
         }
-        setBeanAttributes(request, bean);
+        setAccessingUserAttribute(bean, request);
+        setBeanAttributes(bean, parameter);
         return bean;
     }
 
@@ -159,11 +162,11 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
 
-    private HttpMethod getMethodFromRequest(HttpServletRequest request) throws HttpBeanException {
+    private HttpMethod getMethodFromRequest(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
         HttpMethod method = HttpMethod.fromString(request.getMethod());
         if (method == HttpMethod.POST) {
-            if (request.getParameter(PARAMETER_METHOD) != null) {
-                HttpMethod simulatedMethod = HttpMethod.fromString(request.getParameter(PARAMETER_METHOD));
+            if(parameter.containsKey(PARAMETER_METHOD)) {
+                HttpMethod simulatedMethod = HttpMethod.fromString((String) parameter.get(PARAMETER_METHOD));
                 if (simulatedMethod != null) {
                     method = simulatedMethod;
                 }
@@ -208,6 +211,9 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     private void renderViewConfig(HttpServletRequest request, HttpServletResponse response, ViewConfig config) throws HttpBeanException, ServletException, IOException {
+        if(request == null) throw new IllegalArgumentException("request is null");
+        if(response == null) throw new IllegalArgumentException("response is null");
+        if(config == null) throw new IllegalArgumentException("config is null");
         ViewRenderer renderer = null;
         for(String contentType: getAcceptedEncodings(request)) {
             if (contentType != null) {
@@ -229,18 +235,20 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     private void executeBeanAndRenderResult(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException, ServletException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
-        HttpMethod method = getMethodFromRequest(request);
+        Map<String, Object> parameter = getParameter(request);
+        HttpMethod method = getMethodFromRequest(request, parameter);
         Action action = getActionFromMethod(method);
-        ResourceBean<E> bean = getResourceBean(request);
+        ResourceBean<E> bean = getResourceBean(request, parameter);
         ViewConfig viewConfig = null;
         View redirectTo = null;
         E object = null;
         Members members;
         try {
             switch (action) {
-                case VIEW:
-                    renderView(request, response);
+                case VIEW: {
+                    viewConfig = renderView(bean, request, response);
                     break;
+                }
                 case REPLACE:
                     throw new HttpBeanException(HttpStatusCode.NOT_IMPLEMENTED, "Replace not implemented");
                 case UPDATE: {
@@ -276,12 +284,20 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             throw new HttpBeanException(e);
         }
         if (redirectTo != null) {
-            assert viewConfig == null;
             response.sendRedirect(getUrlForView(request, redirectTo, object));
-        } else {
-            assert viewConfig != null;
+        } else if(viewConfig != null){
             renderViewConfig(request, response, viewConfig);
         }
+    }
+
+    @Override
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+        if (!(req instanceof HttpServletRequest) || !(res instanceof HttpServletResponse)) {
+            throw new ServletException("Not a HTTP request or response");
+        }
+        HttpServletRequest httpRequest = (HttpServletRequest) req;
+        HttpServletResponse httpResponse = (HttpServletResponse) res;
+        service(httpRequest, httpResponse);
     }
 
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -290,15 +306,13 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         try {
             executeBeanAndRenderResult(request, response);
         } catch (HttpBeanException e) {
-            // we cannot call sendError() after the response has been committed
-            request.setAttribute("ErrorStatus", e.getStatusCode());
-            request.setAttribute("ErrorMessage", e.getDescription());
-            request.getRequestDispatcher("includes/error.jsp").include(request, response);
+            e.printStackTrace();
+            response.sendError(e.getStatusCode(), e.getMessage());
         }
         //request.getRequestDispatcher("includes/footer.jsp").include(request, response);
     }
 
-    private boolean tryInvokeSetterOfBean(ResourceBean<E> bean, Object value, String setterName) throws HttpBeanException {
+    private boolean tryInvokeSetterOfBean(ResourceBean<E> bean, String setterName, Object value) throws HttpBeanException {
         if (bean == null) throw new IllegalArgumentException("bean is null");
         if (value == null) throw new IllegalArgumentException("value is null");
         Class<?> classOrSuperclass = bean.getClass();
@@ -344,7 +358,23 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
 
-    private void setBeanAttributesFromMultipart(HttpServletRequest request, ResourceBean<E> bean) throws HttpBeanException {
+    private Map<String, Object> getParameter(HttpServletRequest request) throws HttpBeanException {
+        if (request == null) throw new IllegalArgumentException("request is null");
+        if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
+            return getMultipartParameter(request);
+        }else{
+            Map<String, Object> parameter = new HashMap<>();
+            Enumeration<String> parameterNames = request.getParameterNames();
+            while (parameterNames.hasMoreElements()) {
+                String paramName = parameterNames.nextElement();
+                parameter.put(paramName, request.getParameter(paramName));
+            }
+            return parameter;
+        }
+    }
+
+    private Map<String,Object> getMultipartParameter(HttpServletRequest request) throws HttpBeanException {
+        HashMap<String, Object> parameter = new HashMap<>();
         List<FileItem> items;
         try {
             items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
@@ -352,55 +382,32 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
         for (FileItem item : items) {
-            String setterName = getSetterName(item.getFieldName());
-            if (item.isFormField()) {
-                String value;
+            if(item.isFormField()) {
                 try {
-                    value = item.getString("UTF-8");
+                    parameter.put(item.getFieldName(), item.getString("UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
                 }
-                tryInvokeSetterOfBean(bean, value, setterName);
             } else {
-                tryInvokeSetterOfBean(bean, item, setterName);
+                parameter.put(item.getFieldName(), item);
             }
         }
+        return parameter;
     }
 
-    private void setBeanAttributes(HttpServletRequest request, ResourceBean<E> bean) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
+    private void setBeanAttributes(ResourceBean<E> bean, Map<String, Object> parameter) throws HttpBeanException {
+        if (parameter == null) throw new IllegalArgumentException("parameter is null");
         if (bean == null) throw new IllegalArgumentException("bean is null");
-        setAccessingUserAttribute(bean, request);
-        if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
-            setBeanAttributesFromMultipart(request, bean);
-        } else {
-            Enumeration<String> parameterNames = request.getParameterNames();
-            while (parameterNames.hasMoreElements()) {
-                String paramName = parameterNames.nextElement();
-                // Do not try to set simulated method
-                if (paramName.equals(PARAMETER_METHOD)) {
-                    continue;
-                }
-                System.out.println("trying " + getSetterName(paramName));
-                tryInvokeSetterOfBean(bean, request.getParameter(paramName), getSetterName(paramName));
-            }
+        for(Map.Entry<String, Object> parameterEntry: parameter.entrySet()) {
+            String setterName = getSetterName(parameterEntry.getKey());
+            tryInvokeSetterOfBean(bean, setterName, parameterEntry.getValue());
         }
     }
 
-    @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        if (!(req instanceof HttpServletRequest) || !(res instanceof HttpServletResponse)) {
-            throw new ServletException("Not a HTTP request or response");
-        }
-        HttpServletRequest httpRequest = (HttpServletRequest) req;
-        HttpServletResponse httpResponse = (HttpServletResponse) res;
-        service(httpRequest, httpResponse);
-    }
-
-    protected View renderView(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
+    protected ViewConfig renderView(ResourceBean<E> bean, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
         if (request == null) throw new IllegalArgumentException("request is null");
-        ResourceBean<E> bean = getResourceBean(request);
         UserSession session = new UserSession(request);
+        ViewConfig viewConfig;
         View view = getViewForActionView(bean, request);
         if (view == View.LIST) {
             List<E> objects = bean.index();
@@ -408,20 +415,27 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                 throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         ErrorMessageConstants.ERROR_INDEX_FAILED);
             }
+            List<Model> models = new ArrayList<>(objects.size());
             for (E object : objects) {
+                models.add(object);
+                System.out.println("Checking access for: " + object);
                 ensureAccess(session.getUserId(), object.getId(), Action.VIEW);
             }
-            request.setAttribute(bean.getPluralAttributeName(), objects);
+            viewConfig = new ListViewConfig(view, request, response, models);
         } else {
-            ensureAccess(session.getUserId(), bean.getId(), Action.VIEW);
-            E object = bean.get();
-            if (object == null) {
-                throw new HttpBeanException(HttpStatusCode.NOT_FOUND,
-                        ErrorMessageConstants.OBJECT_NOT_FOUND);
+            E object = null;
+            Members members = null;
+            if(bean.hasIdentifier()) {
+                ensureAccess(session.getUserId(), bean.getId(), Action.VIEW);
+                object = bean.get();
+                if (object == null) {
+                    throw new HttpBeanException(HttpStatusCode.NOT_FOUND,
+                            ErrorMessageConstants.OBJECT_NOT_FOUND);
+                }
+                members = bean.getMembers(object);
             }
-            request.setAttribute(bean.getAttributeName(), object);
-            request.setAttribute("Members", bean.getMembers(object));
+            viewConfig = new DetailViewConfig(view, request, response, object, members);
         }
-        return view;
+        return viewConfig;
     }
 }

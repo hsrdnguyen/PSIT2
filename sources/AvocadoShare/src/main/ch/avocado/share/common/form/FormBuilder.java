@@ -6,14 +6,19 @@ import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.FormBuilderException;
+import ch.avocado.share.servlet.resources.base.DetailViewConfig;
+import ch.avocado.share.servlet.resources.base.FormError;
+import ch.avocado.share.servlet.resources.base.ListViewConfig;
+import ch.avocado.share.servlet.resources.base.ViewConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.Normalizer;
 import java.util.*;
 
 
 public class FormBuilder {
-    private Map<String, String> formErrors;
+    private FormError formErrors;
     private String action;
     private String encodingType = null;
     private AccessControlObjectBase object;
@@ -23,7 +28,7 @@ public class FormBuilder {
     private Map<String, String> readableFieldNames;
     private String formErrorsString = null;
 
-    public FormBuilder(Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
+    public FormBuilder(Class<? extends AccessControlObjectBase> resourceClass, FormError formErrors) {
         this(null, resourceClass, formErrors);
     }
 
@@ -32,20 +37,23 @@ public class FormBuilder {
         return object;
     }
 
-    public FormBuilder(AccessControlObjectBase object, Map<String, String> formErrors) {
+    public FormBuilder(AccessControlObjectBase object, FormError formErrors) {
         this(checkObjectNotNull(object), checkObjectNotNull(object).getClass(), formErrors);
     }
 
-    public FormBuilder(AccessControlObjectBase object, Class<? extends AccessControlObjectBase> resourceClass, Map<String, String> formErrors) {
+    public FormBuilder(DetailViewConfig viewConfig, Class<? extends AccessControlObjectBase> resourceClass) {
+        this(viewConfig.getObject(resourceClass), resourceClass, viewConfig.getFormErrors());
+    }
+
+    public FormBuilder(AccessControlObjectBase object, Class<? extends AccessControlObjectBase> resourceClass, FormError formErrors) {
         if (resourceClass == null) throw new IllegalArgumentException("objectClass is null");
         if (formErrors == null) {
-            formErrors = new HashMap<>();
+            this.formErrors = new FormError();
         } else {
-            formErrors = new HashMap<>(formErrors);
+            this.formErrors = formErrors;
         }
         this.object = object;
         this.objectClass = resourceClass;
-        this.formErrors = formErrors;
         readableFieldNames = new HashMap<>();
         action = null;
     }
@@ -60,14 +68,14 @@ public class FormBuilder {
                 formErrorsString = "";
             } else {
                 String errors = "<ul class=\"form-errors\">\n";
-                for (Map.Entry<String, String> entry : formErrors.entrySet()) {
+                for (Map.Entry<String, List<String>> entry : formErrors.entrySet()) {
                     String name;
                     if (readableFieldNames.containsKey(entry.getKey())) {
                         name = readableFieldNames.get(entry.getKey());
                     } else {
                         name = entry.getKey();
                     }
-                    errors += "\t<li>" + Encoder.forHtml(name) + ": " + Encoder.forHtml(entry.getValue()) + "</li>\n";
+                    errors += "\t<li>" + Encoder.forHtml(name) + ": " + Encoder.forHtml(entry.getValue().get(0)) + "</li>\n";
                 }
                 formErrorsString = errors + "</ul>";
             }
@@ -257,7 +265,7 @@ public class FormBuilder {
             inputField.setValue(value);
         }
         if (formErrors.containsKey(fieldName)) {
-            inputField.setError(formErrors.get(fieldName));
+            inputField.setError(formErrors.get(fieldName).get(0));
         }
         return inputField;
     }
@@ -267,7 +275,7 @@ public class FormBuilder {
         if (object == null) throw new IllegalStateException("object is null");
         String value;
         try {
-            value = getter.invoke(object).toString();
+            value = "" + getter.invoke(object);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new FormBuilderException(e.getMessage());
         }

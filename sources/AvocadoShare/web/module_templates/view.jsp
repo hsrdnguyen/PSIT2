@@ -1,8 +1,11 @@
 <%@ page import="ch.avocado.share.model.data.Module" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    Module module = (Module) request.getAttribute("Module");
+    DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
+    Module module = viewConfig.getObject(Module.class);
     String id = Encoder.forUrlAttribute(module.getId());
     String title = Encoder.forHtml(module.getName());
     String description = Encoder.forHtml(module.getDescription());

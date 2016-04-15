@@ -60,7 +60,7 @@ public class UserBean extends ResourceBean<User> {
         }
         if(getService(IUserDataHandler.class).getUserByEmailAddress(getMail()) != null) {
             // email already taken
-            user.addFieldError("mail", "E-Mail already taken");
+            user.addFieldError("mail", "E-Mail-Adresse existiert bereits");
         }
     }
 

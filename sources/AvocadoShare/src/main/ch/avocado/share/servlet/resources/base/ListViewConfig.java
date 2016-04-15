@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by coffeemakr on 14.04.16.
  */
-class ListViewConfig extends ViewConfig {
+public class ListViewConfig extends ViewConfig {
 
     private final List<Model> objects;
 

@@ -8,9 +8,13 @@
 <%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.common.constants.SQLQueryConstants" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (Map<String, String>) request.getAttribute(FileBean.ATTRIBUTE_FORM_ERRORS));
+    DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
+    FormBuilder formBuilder = new FormBuilder(viewConfig, File.class);
     formBuilder.setEncodingType("multipart/form-data");
     formBuilder.setReadableFieldName("title", "Titel");
     formBuilder.setReadableFieldName("description", "Beschreibung");

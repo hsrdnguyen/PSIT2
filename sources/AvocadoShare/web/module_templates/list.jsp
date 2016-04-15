@@ -1,9 +1,13 @@
 <%@ page import="ch.avocado.share.model.data.Module" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.ListViewConfig" %>
+<%@ page import="java.util.Collection" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    List<Module> modules = (List<Module>) request.getAttribute("Modules");
+    ListViewConfig viewConfig = (ListViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_LIST_VIEW_CONFIG);
+    Collection<Module> modules = viewConfig.getObjects(Module.class);
     boolean hasModules = modules != null && !modules.isEmpty();
 %>
 <section class="document-show">

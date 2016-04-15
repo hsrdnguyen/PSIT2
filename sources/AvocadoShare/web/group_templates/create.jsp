@@ -2,9 +2,12 @@
 <%@ page import="ch.avocado.share.controller.GroupBean" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    FormBuilder formBuilder = new FormBuilder(Group.class, (Map<String, String>) request.getAttribute(GroupBean.ATTRIBUTE_FORM_ERRORS));
+    DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
+    FormBuilder formBuilder = new FormBuilder(viewConfig, Group.class);
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("name", "Name");
 %>

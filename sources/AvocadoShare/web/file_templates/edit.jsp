@@ -3,12 +3,14 @@
 <%@ page import="ch.avocado.share.model.data.Module" %>
 <%@ page import="ch.avocado.share.controller.FileBean" %>
 <%@ page import="ch.avocado.share.model.data.File" %>
-<%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    FormBuilder formBuilder = new FormBuilder((File) request.getAttribute("File"), File.class, (Map<String, String>) request.getAttribute(FileBean.ATTRIBUTE_FORM_ERRORS));
+    DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
+    FormBuilder formBuilder = new FormBuilder(viewConfig, File.class);
     formBuilder.setEncodingType("multipart/form-data");
     formBuilder.setReadableFieldName("title", "Titel");
     formBuilder.setReadableFieldName("description", "Beschreibung");
