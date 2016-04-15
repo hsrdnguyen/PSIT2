@@ -38,9 +38,20 @@ public class SecurityHandlerTest {
 
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+
+        // Add users
         user = getUser("Prename", "Surname", "user2@zhaw.ch");
         owningUser = getUser("Prename", "Surname", "user1@zhaw.ch");
 
+        assertNotNull(userDataHandler.addUser(user));
+        assertNotNull(user.getId());
+        assertNotNull(userDataHandler.getUser(user.getId()));
+
+        assertNotNull(userDataHandler.addUser(owningUser));
+        assertNotNull(owningUser.getId());
+        assertNotNull(userDataHandler.getUser(owningUser.getId()));
+
+        // Add groups
 
         groupOne = new Group(owningUser.getId(), "Group description", "Unique Group One");
         groupTwo = new Group(owningUser.getId(), "Group description", "Unique Group Two");
@@ -52,14 +63,6 @@ public class SecurityHandlerTest {
         groupDataHandler.addGroup(groupTwo);
         assertNotNull(groupTwo.getId());
         assertNotNull(groupDataHandler.getGroup(groupTwo.getId()));
-
-        assertNotNull(userDataHandler.addUser(user));
-        assertNotNull(user.getId());
-        assertNotNull(userDataHandler.getUser(user.getId()));
-
-        assertNotNull(userDataHandler.addUser(owningUser));
-        assertNotNull(owningUser.getId());
-        assertNotNull(userDataHandler.getUser(owningUser.getId()));
 
     }
 

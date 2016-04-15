@@ -78,7 +78,8 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAccessLevel(String identityId, String targetId) throws DataHandlerException {
-        if (identityId == null || identityId.isEmpty()) throw new IllegalArgumentException("identityId is null or empty");
+        if (identityId == null || identityId.isEmpty())
+            throw new IllegalArgumentException("identityId is null or empty");
         if (targetId == null || targetId.isEmpty()) throw new IllegalArgumentException("targetId is null or empty");
 
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -107,44 +108,45 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) throws DataHandlerException {
-        if(identity == null) throw new IllegalArgumentException("identity is null");
-        if(target == null) throw new IllegalArgumentException("target is null");
-        if(target.getOwnerId() != null && identity.getId() != null) {
-            if(target.getOwnerId().equals(identity.getId())) {
+        if (identity == null) throw new IllegalArgumentException("identity is null");
+        if (target == null) throw new IllegalArgumentException("target is null");
+        if (target.getOwnerId() != null && identity.getId() != null) {
+            if (target.getOwnerId().equals(identity.getId())) {
                 return AccessLevelEnum.OWNER;
             }
         }
         return getAccessLevel(identity.getId(), target.getId());
     }
 
-    private PreparedStatement getAddAccessLevelStatement(int ownerId, int objectId, int level) throws DataHandlerException {
+    private PreparedStatement getAddAccessLevelStatement(long ownerId, long objectId, int level) throws DataHandlerException {
         try {
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY);
-            statement.setInt(1, objectId);
-            statement.setInt(2, ownerId);
-            statement.setInt(3, level);
+            statement.setLong(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_OBJECT, objectId);
+            statement.setLong(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_OWNER, ownerId);
+            statement.setInt(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_LEVEL, level);
             return statement;
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
 
-    private PreparedStatement getSetAccessLevelStatement(int ownerId, int objectId, int level) throws DataHandlerException {
+    private PreparedStatement getSetAccessLevelStatement(long ownerId, long objectId, int level) throws DataHandlerException {
         try {
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SET_ACCESS_LEVEL_QUERY);
-            statement.setInt(1, level);
-            statement.setInt(2, objectId);
-            statement.setInt(3, ownerId);
+            statement.setLong(1, level);
+            statement.setLong(2, objectId);
+            statement.setLong(3, ownerId);
             return statement;
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
 
-    private boolean insertOrUpdateAccessLevel(int ownerId, int objectId, int level) throws DataHandlerException {
+    private boolean insertOrUpdateAccessLevel(long ownerId, long objectId, int level) throws DataHandlerException {
         PreparedStatement preparedStatement = getSetAccessLevelStatement(ownerId, objectId, level);
         try {
             if (!getConnectionHandler().updateDataSet(preparedStatement)) {
+                // There was no rights entry yet
                 preparedStatement = getAddAccessLevelStatement(ownerId, objectId, level);
                 return null != getConnectionHandler().insertDataSet(preparedStatement);
             }
@@ -160,8 +162,10 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             throw new IllegalArgumentException("identityId is null or empty");
         if (targetId == null || targetId.isEmpty()) throw new IllegalArgumentException("targetId is null or empty");
         if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
-        int objectId = Integer.parseInt(identityId);
-        int ownerId = Integer.parseInt(targetId);
+
+        long objectId = Long.parseLong(targetId);
+        long ownerId = Long.parseLong(identityId);
+
         if (accessLevel == AccessLevelEnum.NONE) {
             return deleteAccess(ownerId, objectId);
         } else if (accessLevel == AccessLevelEnum.OWNER) {
@@ -180,11 +184,11 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         return setAccessLevel(identity.getId(), target.getId(), accessLevel);
     }
 
-    private boolean deleteAccess(int ownerId, int objectId) throws DataHandlerException {
+    private boolean deleteAccess(long ownerId, long objectId) throws DataHandlerException {
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.DELETE_ACCESS_LEVEL_QUERY);
-            preparedStatement.setInt(2, ownerId);
-            preparedStatement.setInt(1, objectId);
+            preparedStatement.setLong(SQLQueryConstants.DELETE_ACCESS_LEVEL_QUERY_INDEX_OWNER_ID, ownerId);
+            preparedStatement.setLong(SQLQueryConstants.DELETE_ACCESS_LEVEL_QUERY_INDEX_OBJECT_ID, objectId);
             return getConnectionHandler().deleteDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -193,7 +197,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAnonymousAccessLevel(String targetId) throws DataHandlerException {
-        if(targetId == null) throw new IllegalArgumentException("targetId is null");
+        if (targetId == null) throw new IllegalArgumentException("targetId is null");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ANONYMOUS_ACCESS_LEVEL);
@@ -211,11 +215,9 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException {
-        if(target == null) throw new IllegalArgumentException("target is null");
+        if (target == null) throw new IllegalArgumentException("target is null");
         return getAnonymousAccessLevel(target.getId());
     }
-
-
 
 
     @Override
@@ -269,8 +271,8 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
-        if(target == null) throw new IllegalArgumentException("target is null");
-        if(accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
+        if (target == null) throw new IllegalArgumentException("target is null");
+        if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
             preparedStatement.setInt(1, Integer.parseInt(target.getId()));

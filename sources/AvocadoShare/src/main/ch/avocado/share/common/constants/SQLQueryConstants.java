@@ -205,10 +205,17 @@ public class SQLQueryConstants {
     public static final String ADD_ACCESS_LEVEL_QUERY = "" +
             "INSERT INTO avocado_share.rights (object_id, owner_id, level) " +
             "    VALUES (?, ?, ?)";
+    public static final int ADD_ACCESS_LEVEL_QUERY_INDEX_OBJECT = 1;
+    public static final int ADD_ACCESS_LEVEL_QUERY_INDEX_OWNER = 2;
+    public static final int ADD_ACCESS_LEVEL_QUERY_INDEX_LEVEL = 3;
+
 
     public static final String DELETE_ACCESS_LEVEL_QUERY = "" +
             "DELETE FROM avocado_share.rights " +
             "    WHERE object_id = ? AND owner_id = ? ";
+    public static final int DELETE_ACCESS_LEVEL_QUERY_INDEX_OBJECT_ID = 1;
+    public static final int DELETE_ACCESS_LEVEL_QUERY_INDEX_OWNER_ID = 2;
+
 
     public static final String SELECT_DEFAULT_ACCESS_LEVEL_QUERY = "" +
             "SELECT " +
