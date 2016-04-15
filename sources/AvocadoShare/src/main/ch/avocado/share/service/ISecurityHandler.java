@@ -61,5 +61,12 @@ public interface ISecurityHandler {
 
     Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 
+    /**
+     * @param identity The identity which has access (not null)
+     * @param accessLevelEnum The level of access the identity has (not null)
+     * @return A list of identifiers of objects on which the user has the access level. If there are no object and
+     * empty list is returned (not null).
+     * @throws DataHandlerException If some error occurs while handling the data.
+     */
     List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException;
 }
