@@ -1,7 +1,6 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.constants.SQLQueryConstants;
-import ch.avocado.share.common.constants.sql.UserConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.ISecurityHandler;
@@ -249,7 +248,8 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             boolean readable = resultSet.getBoolean(2);
             boolean writable = resultSet.getBoolean(3);
             boolean manageable = resultSet.getBoolean(4);
-            AccessLevelEnum levelEnum = getAccessLevelForRights(readable, writable, manageable, false);
+            boolean owner = resultSet.getBoolean(5);
+            AccessLevelEnum levelEnum = getAccessLevelForRights(readable, writable, manageable, owner);
             if (levelEnum.containsLevel(filterLevel)) {
                 objectsIdsWithAccess.put(groupId, levelEnum);
             }
@@ -261,7 +261,10 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     public Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_GROUPS_WITH_ACCESS_ON_OBJECT);
-            preparedStatement.setInt(1, Integer.parseInt(target.getId()));
+            long groupId = Long.parseLong(target.getId());
+            preparedStatement.setLong(1, groupId);
+            preparedStatement.setLong(2, groupId);
+
             ResultSet resultSet = preparedStatement.executeQuery();
             return getObjectIdWithAccessFromResultSet(resultSet, accessLevel);
         } catch (SQLException e) {
@@ -273,9 +276,11 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     public Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
         if (target == null) throw new IllegalArgumentException("target is null");
         if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
+        long objectId = Long.parseLong(target.getId());
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
-            preparedStatement.setInt(1, Integer.parseInt(target.getId()));
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
+            preparedStatement.setLong(1, objectId);
+            preparedStatement.setLong(2, objectId);
             ResultSet resultSet = preparedStatement.executeQuery();
             return getObjectIdWithAccessFromResultSet(resultSet, accessLevel);
         } catch (SQLException e) {

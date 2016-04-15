@@ -28,15 +28,7 @@ public class UserConstants {
     public static final int EMAIL_VERIFICATION_RESULT_CODE_INDEX = 2;
     public static final int EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX = 1;
     public static final String SET_MAIL_TO_VERIFIED = "UPDATE avocado_share.email SET verified=TRUE WHERE identity_id=?";
-    public static final String SELECT_USER_WITH_ACCESS_ON_OBJECT = "" +
-            "SELECT  id, readable, writable, manageable " +
-            "FROM avocado_share.identity AS g " +
-            "JOIN avocado_share.rights AS r  " +
-            "  ON r.owner_id = g.id " +
-            "NATURAL JOIN avocado_share.access_level as l " +
-            "WHERE " +
-            "  r.object_id = ? " +
-            "  AND ( l.readable <> false OR l.writable <> false OR l.manageable <> false ) ";
+
     private static final String SELECT_USER_SELECTED_COLUMNS = "I.id, prename, surname, avatar, description, password, address, verified, creation_date";
     public static final String SELECT_USER_BY_MAIL_QUERY = "" +
             "SELECT " + SELECT_USER_SELECTED_COLUMNS + " " +

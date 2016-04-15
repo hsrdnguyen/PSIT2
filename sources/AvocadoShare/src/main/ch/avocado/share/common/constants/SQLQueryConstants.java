@@ -225,14 +225,36 @@ public class SQLQueryConstants {
             "  ON l.level = d.level";
 
     public static final String SELECT_GROUPS_WITH_ACCESS_ON_OBJECT = "" +
-            "SELECT  id, readable, writable, manageable " +
+            "SELECT  id, readable, writable, manageable, false " +
             "FROM " + Group.TABLE + " AS g " +
+            "JOIN avocado_share.rights AS r  " +
+            "  ON r.owner_id = g.id " +
+            "NATURAL JOIN avocado_share.access_level as l  " +
+            "WHERE " +
+            "  r.object_id = ? " +
+            "  AND (l.readable <> false OR l.writable <> false OR l.manageable <> false ) " +
+            "UNION " +
+            "   SELECT o.owner_id, true, true, true, true FROM avocado_share.ownership AS o " +
+            "   JOIN " + Group.TABLE + " AS og " +
+            "   ON o.owner_id = og.id " +
+            "       WHERE o.object_id = ? " +
+            "";
+
+    public static final String SELECT_USER_WITH_ACCESS_ON_OBJECT = "" +
+            "SELECT  id, readable, writable, manageable, false " +
+            "FROM avocado_share.identity AS g " +
             "JOIN avocado_share.rights AS r  " +
             "  ON r.owner_id = g.id " +
             "NATURAL JOIN avocado_share.access_level as l " +
             "WHERE " +
             "  r.object_id = ? " +
-            "  AND (l.readable <> false OR l.writable <> false OR l.manageable <> false ) ";
+            "  AND ( l.readable <> false OR l.writable <> false OR l.manageable <> false ) "+
+            "UNION " +
+            "   SELECT o.owner_id, true, true, true, true FROM avocado_share.ownership AS o " +
+            "   JOIN avocado_share.identity AS og " +
+            "   ON o.owner_id = og.id " +
+            "       WHERE o.object_id = ? " +
+            "";
 
     public static final String SELECT_TARGETS_WITH_ACCESS = "" +
             "SELECT object_id " +
