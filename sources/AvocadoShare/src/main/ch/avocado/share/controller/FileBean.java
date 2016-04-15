@@ -10,11 +10,9 @@ import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,7 @@ public class FileBean extends ResourceBean<File> {
     private String title;
     // private String author;   //TODO @kunzlio1: Sascha fragen für was author? eg. ersteller?
     private List<Category> categories;
-    private FileItem uploadedFileItem;
+    private FileItem fileItem;
     private String moduleId;
 
     @Override
@@ -51,6 +49,7 @@ public class FileBean extends ResourceBean<File> {
         checkParameterTitle(file);
         checkParameterDescription(file);
         checkParameterModuleId(file);
+        checkUploadedFile(file);
         //checkParameterAuthor();
         if (!file.hasErrors()) {
             Module module = moduleDataHandler.getModule(getModuleId());
@@ -59,7 +58,7 @@ public class FileBean extends ResourceBean<File> {
                 return null;
             }
             ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
-            String path = uploadFile(getUploadedFileItem());
+            String path = uploadFile(getFileItem());
             file.setTitle(getTitle());
             file.setCategories(getCategories());
             file.setDescription(getDescription());
@@ -73,6 +72,12 @@ public class FileBean extends ResourceBean<File> {
             }
         }
         return file;
+    }
+
+    private void checkUploadedFile(File file) {
+        if(getFileItem() == null) {
+            file.addFieldError("fileItem", "Keine Datei ausgewählt.");
+        }
     }
 
     /**
@@ -160,8 +165,8 @@ public class FileBean extends ResourceBean<File> {
                 changed = true;
             }
         }
-        if (getUploadedFileItem() != null && !file.hasErrors()) {
-            String path = uploadFile(getUploadedFileItem());
+        if (getFileItem() != null && !file.hasErrors()) {
+            String path = uploadFile(getFileItem());
             file.setPath(path);
             changed = true;
         }
@@ -205,7 +210,7 @@ public class FileBean extends ResourceBean<File> {
      * @throws HttpBeanException
      */
     public String uploadFile(FileItem fileItem) throws HttpBeanException {
-        if (fileItem == null) throw new IllegalArgumentException("uploadedFileItem is null");
+        if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
         DiskFileItemFactory factory = new DiskFileItemFactory();
         // maximum size that will be stored in memory
         factory.setSizeThreshold(FileConstants.MAX_MEM_SIZE);
@@ -240,15 +245,15 @@ public class FileBean extends ResourceBean<File> {
     /**
      * @return The uploaded file
      */
-    private FileItem getUploadedFileItem() {
-        return uploadedFileItem;
+    private FileItem getFileItem() {
+        return fileItem;
     }
 
     /**
-     * @param uploadedFileItem The uploaded file
+     * @param fileItem The uploaded file
      */
-    private void setUploadedFileItem(FileItem uploadedFileItem) {
-        this.uploadedFileItem = uploadedFileItem;
+    public void setFileItem(FileItem fileItem) {
+        this.fileItem = fileItem;
     }
 
     /**

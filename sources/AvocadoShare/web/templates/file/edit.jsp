@@ -15,7 +15,7 @@
     formBuilder.setReadableFieldName("title", "Titel");
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("moduleId", "Modul auswählen");
-    formBuilder.setReadableFieldName("file", "Datei auswählen");
+    formBuilder.setReadableFieldName("fileItem", "Datei auswählen");
 
     UserSession userSession = new UserSession(request);
     List<Module> userModules = FileBean.getModulesToUpload(userSession.getUser());
@@ -27,10 +27,10 @@
     <%= formBuilder.getFormBegin("patch") %>
         <div class="form-group row">
             <div class="col-sm-2">
-                <%=formBuilder.getLabelFor("file")%>
+                <%=formBuilder.getLabelFor("fileItem")%>
             </div>
             <div class="col-sm-10">
-                <input class="form-control" type="file" name="file" size="50"/>
+                <input class="form-control" type="file" name="fileItem" size="50"/>
             </div>
         </div>
     <p>

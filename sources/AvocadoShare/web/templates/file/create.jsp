@@ -19,7 +19,7 @@
     formBuilder.setReadableFieldName("title", "Titel");
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("moduleId", "Modul auswählen");
-    formBuilder.setReadableFieldName("file", "Datei auswählen");
+    formBuilder.setReadableFieldName("fileItem", "Datei auswählen");
 
     UserSession userSession = new UserSession(request);
     List<Module> userModules = new ArrayList<Module>();
@@ -50,8 +50,8 @@
             <%=formBuilder.getSelectFor("moduleId", userModules) %>
         </div>
         <div class="form-group">
-            <%=formBuilder.getLabelFor("file")%>
-            <input class="form-control" type="file" name="file" size="50"/>
+            <%=formBuilder.getLabelFor("fileItem")%>
+            <input class="form-control" type="file" name="fileItem" size="50"/>
         </div>
         <div class="form-group">
             <%=formBuilder.getLabelFor("title") %>

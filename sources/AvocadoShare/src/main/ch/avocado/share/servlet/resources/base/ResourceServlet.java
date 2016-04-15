@@ -30,7 +30,6 @@ import java.util.*;
 public abstract class ResourceServlet<E extends AccessControlObjectBase> extends GenericServlet {
 
     private static final String PARAMETER_ACTION = "action";
-    public static final String ATTRIBUTE_FORM_ERROR = "FormError";
     public static final String ERROR_ACTION_NOT_ALLOWED = "Aktion nicht erlaubt: ";
     public static final String ERROR_SET_CONTROLLER_ATTRIBUTES_FAILED = "Controller konnte nicht inititialisiert werden.";
     public static final String ACTION_EDIT = "edit";
@@ -151,6 +150,16 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         return bean;
     }
 
+    private void setBeanAttributes(ResourceBean<E> bean, Map<String, Object> parameter) throws HttpBeanException {
+        if (parameter == null) throw new IllegalArgumentException("parameter is null");
+        if (bean == null) throw new IllegalArgumentException("bean is null");
+        for(Map.Entry<String, Object> parameterEntry: parameter.entrySet()) {
+            String setterName = getSetterName(parameterEntry.getKey());
+            System.out.println("Trying to invoke " + setterName);
+            tryInvokeSetterOfBean(bean, setterName, parameterEntry.getValue());
+        }
+    }
+
     private String getSetterName(String parameter) {
         return "set" + parameter.substring(0, 1).toUpperCase() + parameter.substring(1);
     }
@@ -246,7 +255,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         try {
             switch (action) {
                 case VIEW: {
-                    viewConfig = renderView(bean, request, response);
+                    viewConfig = getConfigForActionView(bean, request, response);
                     break;
                 }
                 case REPLACE:
@@ -389,22 +398,23 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     throw new RuntimeException(e);
                 }
             } else {
+                System.out.println("Found file: " + item.getFieldName());
                 parameter.put(item.getFieldName(), item);
             }
         }
         return parameter;
     }
 
-    private void setBeanAttributes(ResourceBean<E> bean, Map<String, Object> parameter) throws HttpBeanException {
-        if (parameter == null) throw new IllegalArgumentException("parameter is null");
-        if (bean == null) throw new IllegalArgumentException("bean is null");
-        for(Map.Entry<String, Object> parameterEntry: parameter.entrySet()) {
-            String setterName = getSetterName(parameterEntry.getKey());
-            tryInvokeSetterOfBean(bean, setterName, parameterEntry.getValue());
-        }
-    }
-
-    protected ViewConfig renderView(ResourceBean<E> bean, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
+    /**
+     * Renders the action {@link Action#VIEW}.
+     * @param bean
+     * @param request
+     * @param response
+     * @return
+     * @throws HttpBeanException
+     * @throws DataHandlerException
+     */
+    protected ViewConfig getConfigForActionView(ResourceBean<E> bean, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
         if (request == null) throw new IllegalArgumentException("request is null");
         UserSession session = new UserSession(request);
         ViewConfig viewConfig;
