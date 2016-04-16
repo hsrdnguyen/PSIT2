@@ -19,7 +19,7 @@ public class FileAccessBean implements Serializable {
     private String fileId;
     private String requestingUserMail;
     private String ownerUserId;
-    private String ruserId;
+    private String requesterUserId;
 
     public boolean requestAccess() {
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
@@ -49,7 +49,7 @@ public class FileAccessBean implements Serializable {
     }
 
     public boolean grantAccess() {
-        if (ruserId == null) throw new IllegalArgumentException("ruserId is null");
+        if (requesterUserId == null) throw new IllegalArgumentException("ruserId is null");
         if (ownerUserId == null) throw new IllegalArgumentException("ouserId is null");
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
 
@@ -66,7 +66,7 @@ public class FileAccessBean implements Serializable {
         try{
             file = fileDataHandler.getFile(fileId);
             if (file.getOwnerId().equals(ownerUserId)) {
-                fileDataHandler.grantAccess(fileId, ruserId);
+                fileDataHandler.grantAccess(fileId, requesterUserId);
             }
         } catch (DataHandlerException e) {
             return false;
@@ -82,12 +82,12 @@ public class FileAccessBean implements Serializable {
         this.ownerUserId = ownerUserId;
     }
 
-    public String getRuserId() {
-        return ruserId;
+    public String getRequesterUserId() {
+        return requesterUserId;
     }
 
-    public void setRuserId(String ruserId) {
-        this.ruserId = ruserId;
+    public void setRequesterUserId(String requesterUserId) {
+        this.requesterUserId = requesterUserId;
     }
 
     public String getRequestingUserMail() {
