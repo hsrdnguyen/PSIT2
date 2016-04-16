@@ -252,6 +252,29 @@ public class FileBean extends ResourceBean<File> {
         return categories;
     }
 
+    /**
+     * Adds a category to the file, by handing over the name of the category
+     * @param categoryName The name of the category which you want to add to the file
+     */
+    public void addCategory(String categoryName){
+        if (categoryName == null || categoryName.trim().isEmpty())
+            throw new IllegalArgumentException("categoryName is null or emty");
+        Category category = new Category(categoryName.trim());
+        if (categories.contains(category))
+            throw new IllegalArgumentException("Category was allready added to File");
+        //TODO @kunzlio1: fragen wie das mit ErrorMessages ausgeben genau gehandelt wird.
+        categories.add(category);
+    }
+
+    /**
+     * Remove a category from the file
+     * @param category The category which you want to remove from the file
+     */
+    public void removeCategory(Category category){
+        if (category == null) throw new IllegalArgumentException("category is null");
+        categories.remove(category); //TODO @kunzlio1: fragen was wir aus dem jsp heraus bekommen? (Category Obj oder name)
+    }
+
 
     private void checkParameterTitle(File file) throws HttpBeanException {
         checkParameterModuleId(file);

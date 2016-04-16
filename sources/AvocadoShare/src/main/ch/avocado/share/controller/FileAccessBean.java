@@ -17,13 +17,13 @@ import java.io.Serializable;
 public class FileAccessBean implements Serializable {
 
     private String fileId;
-    private String requestingUserMail;
+    private String requesterUserMail;
     private String ownerUserId;
     private String requesterUserId;
 
     public boolean requestAccess() {
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
-        if (requestingUserMail == null) throw new IllegalArgumentException("requestingUserMail is null");
+        if (requesterUserMail == null) throw new IllegalArgumentException("requestingUserMail is null");
         IMailingService mailingService;
         IFileDataHandler fileDataHandler;
         IUserDataHandler userDataHandler;
@@ -39,7 +39,7 @@ public class FileAccessBean implements Serializable {
         User user;
         User owningUser;
         try {
-            user = userDataHandler.getUserByEmailAddress(requestingUserMail);
+            user = userDataHandler.getUserByEmailAddress(requesterUserMail);
             file = fileDataHandler.getFile(fileId);
             owningUser = userDataHandler.getUser(file.getOwnerId());
         } catch (DataHandlerException e) {
@@ -90,12 +90,12 @@ public class FileAccessBean implements Serializable {
         this.requesterUserId = requesterUserId;
     }
 
-    public String getRequestingUserMail() {
-        return requestingUserMail;
+    public String getRequesterUserMail() {
+        return requesterUserMail;
     }
 
-    public void setRequestingUserMail(String requestingUserMail) {
-        this.requestingUserMail = requestingUserMail;
+    public void setRequesterUserMail(String requesterUserMail) {
+        this.requesterUserMail = requesterUserMail;
     }
 
     public String getFileId() {

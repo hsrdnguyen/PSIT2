@@ -3,7 +3,7 @@
 <jsp:setProperty name="accessBean" property="fileId" />
 <%@include file="includes/header.jsp"%>
 <%
-    accessBean.setRequestingUserMail("sascha.berg.sb@gmail.com");
+    accessBean.setRequesterUserMail("sascha.berg.sb@gmail.com");
     if(accessBean.requestAccess()) {
 %>
 <div class="alert alert-success">
