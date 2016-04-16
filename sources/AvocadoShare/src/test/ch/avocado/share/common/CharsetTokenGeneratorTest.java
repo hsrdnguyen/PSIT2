@@ -1,11 +1,8 @@
-package ch.avocado.share.helper;
+package ch.avocado.share.common;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
-import ch.avocado.share.common.CharsetTokenGenerator;
-import ch.avocado.share.common.TokenGenerator;
 
 public class CharsetTokenGeneratorTest {
 	

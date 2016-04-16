@@ -256,7 +256,7 @@ public class FileDataHandlerTest {
         File fetchedFile = fileDataHandler.getFile(file.getId());
         assertNotNull(fetchedFile);
         assertEquals("Id", file.getId(), fetchedFile.getId());
-        assertEquals("OwnerID", file.getOwnerId(), fetchedFile.getOwnerId());
+        assertEquals("OwnerID", userTwo.getId(), fetchedFile.getOwnerId());
         assertEquals("ModuleID", moduleTwo.getId(), fetchedFile.getModuleId());
         assertEquals("Title", title, fetchedFile.getTitle());
         assertEquals("Description", description, fetchedFile.getDescription());

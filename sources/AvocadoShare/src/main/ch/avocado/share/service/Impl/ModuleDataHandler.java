@@ -17,6 +17,8 @@ import java.util.List;
 public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHandler {
     @Override
     public String addModule(Module module) throws DataHandlerException {
+        if(module == null) throw new IllegalArgumentException("module is null");
+        if(module.getOwnerId() == null) throw new IllegalArgumentException("module.ownerId is null");
         String id = addAccessControlObject(module);
         module.setId(id);
         try {

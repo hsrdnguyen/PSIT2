@@ -1,4 +1,4 @@
-package ch.avocado.share.helper;
+package ch.avocado.share.common;
 
 import static org.junit.Assert.*;
 

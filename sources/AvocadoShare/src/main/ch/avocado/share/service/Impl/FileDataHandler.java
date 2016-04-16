@@ -86,7 +86,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_ID_QUERY);
-            preparedStatement.setInt(1, Integer.parseInt(fileId));
+            preparedStatement.setLong(1, Long.parseLong(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             File file = getFileFromSelectResultSet(resultSet);
             if (file != null) {

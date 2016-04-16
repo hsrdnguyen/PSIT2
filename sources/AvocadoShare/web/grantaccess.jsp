@@ -1,11 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
 <jsp:useBean id="accessBean" class="ch.avocado.share.controller.FileAccessBean" />
 <jsp:setProperty name="accessBean" property="fileId" />
-<jsp:setProperty name="accessBean" property="ruserId" />
-<jsp:setProperty name="accessBean" property="ouserId" />
+<jsp:setProperty name="accessBean" property="requesterUserId" />
 <%@include file="includes/header.jsp"%>
-<% if(accessBean.grantAccess()) {
-// TODO @bergmsas check access of user.
+<%
+    accessBean.setOwnerUserId(userSession.getUserId());
+    if(accessBean.grantAccess()) {
 %>
 <div class="alert alert-success">
     Der Benutzer wurde berechtigt.

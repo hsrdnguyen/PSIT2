@@ -1,13 +1,17 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IMailingService;
+import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import org.apache.taglibs.standard.lang.jstl.test.beans.Factory;
+import org.omg.PortableServer.SERVANT_RETENTION_POLICY_ID;
 
 import java.io.Serializable;
 
@@ -27,10 +31,12 @@ public class FileAccessBean implements Serializable {
         IMailingService mailingService;
         IFileDataHandler fileDataHandler;
         IUserDataHandler userDataHandler;
+        ISecurityHandler securityHandler;
         try {
             mailingService = ServiceLocator.getService(IMailingService.class);
             fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
         } catch (ServiceNotFoundException e) {
             return false;
         }
@@ -38,40 +44,68 @@ public class FileAccessBean implements Serializable {
         File file;
         User user;
         User owningUser;
+        AccessLevelEnum currentLevel;
         try {
             user = userDataHandler.getUserByEmailAddress(requesterUserMail);
+            if (user == null) {
+                return false;
+            }
             file = fileDataHandler.getFile(fileId);
+            if (file == null) {
+                return false;
+            }
+            if (file.getOwnerId() == null) {
+                System.out.println("File has no owner");
+                return false;
+            }
+            currentLevel = securityHandler.getAccessLevel(user, file);
             owningUser = userDataHandler.getUser(file.getOwnerId());
         } catch (DataHandlerException e) {
+            return false;
+        }
+        if (currentLevel.containsLevel(AccessLevelEnum.READ)) {
             return false;
         }
         return mailingService.sendRequestAccessEmail(user, owningUser, file);
     }
 
     public boolean grantAccess() {
-        if (requesterUserId == null) throw new IllegalArgumentException("ruserId is null");
-        if (ownerUserId == null) throw new IllegalArgumentException("ouserId is null");
+        if (requesterUserId == null) throw new IllegalArgumentException("requesterUserId is null");
+        if (ownerUserId == null) throw new IllegalArgumentException("ownerUserId is null");
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
 
         IFileDataHandler fileDataHandler;
-        IUserDataHandler userDataHandler;
+        ISecurityHandler securityHandler;
+
         File file;
 
         try {
             fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        } catch(ServiceNotFoundException e) {
+            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
+        } catch (ServiceNotFoundException e) {
+            e.printStackTrace();
             return false;
         }
-        try{
+        try {
             file = fileDataHandler.getFile(fileId);
-            if (file.getOwnerId().equals(ownerUserId)) {
-                fileDataHandler.grantAccess(fileId, requesterUserId);
+            if (file == null) return false;
+            AccessLevelEnum requestingUserCurrentLevel = securityHandler.getAccessLevel(requesterUserId, fileId);
+            AccessLevelEnum ownerUserLevel = securityHandler.getAccessLevel(ownerUserId, fileId);
+            // check if the owner has manage rights.
+            if (ownerUserLevel.containsLevel(AccessLevelEnum.MANAGE)) {
+                // check if the requester doesn't have rights already
+                if (!requestingUserCurrentLevel.containsLevel(AccessLevelEnum.READ)) {
+                    // set rights
+                    return securityHandler.setAccessLevel(requesterUserId, fileId, AccessLevelEnum.READ);
+                } else {
+                    return true;
+                }
             }
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             return false;
         }
-        return true;
+        return false;
     }
 
     public String getOwnerUserId() {
