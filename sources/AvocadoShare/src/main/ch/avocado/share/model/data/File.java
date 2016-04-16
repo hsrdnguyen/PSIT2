@@ -1,5 +1,6 @@
 package ch.avocado.share.model.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,18 +12,22 @@ public class File extends AccessControlObjectBase {
     private String title;
     private String path;
     private Date lastChanged;
-    private String type;
+    private String extension;
     //private String version;
     private String moduleId;
 
-    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String path, Date lastChanged, String type, String moduleId) {
+    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId) {
         super(id, categories, creationDate, rating, ownerId, description);
         setLastChanged(lastChanged);
         setPath(path);
         setTitle(title);
-        setType(type);
+        setExtension(extension);
         //setVersion(version);
         setModuleId(moduleId);
+    }
+
+    public File(String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId) {
+        this(null, new ArrayList<Category>(), new Date(), 0.0f, ownerId, description, title, path, lastChanged, extension, moduleId);
     }
 
     public String getTitle() {
@@ -57,13 +62,13 @@ public class File extends AccessControlObjectBase {
         this.lastChanged = lastChanged;
     }
 
-    public String getType() {
-        return type;
+    public String getExtension() {
+        return extension;
     }
 
-    public void setType(String type) {
-        if (type == null) throw new IllegalArgumentException("type is null");
-        this.type = type;
+    public void setExtension(String extension) {
+        if (extension == null) throw new IllegalArgumentException("extension is null");
+        this.extension = extension;
     }
     /*
     public String getVersion() {

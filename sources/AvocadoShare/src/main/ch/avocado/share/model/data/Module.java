@@ -1,5 +1,6 @@
 package ch.avocado.share.model.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,10 @@ public class Module extends AccessControlObjectBase {
     public Module(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String name) {
         super(id, categories, creationDate, rating, ownerId, description);
         setName(name);
+    }
+
+    public Module(String ownerId, String description, String name) {
+        this(null, new ArrayList<Category>(), new Date(), 0.0f, ownerId, description, name);
     }
 
     /**

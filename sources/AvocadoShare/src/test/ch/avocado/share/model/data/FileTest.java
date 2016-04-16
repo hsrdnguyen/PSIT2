@@ -37,7 +37,7 @@ public class FileTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetTypeNull() throws Exception {
-        file.setType(null);
+        file.setExtension(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -69,8 +69,8 @@ public class FileTest {
     @Test
     public void testSetType() throws Exception {
         String type="Type";
-        file.setType(type);
-        assertEquals(type, file.getType());
+        file.setExtension(type);
+        assertEquals(type, file.getExtension());
     }
 
     @Test
