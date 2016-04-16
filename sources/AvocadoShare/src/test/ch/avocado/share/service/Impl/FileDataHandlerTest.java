@@ -11,16 +11,14 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import org.bouncycastle.math.raw.Mod;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
 /**
- * Created by coffeemakr on 16.04.16.
+ * Tests for {@link FileDataHandler}
  */
 public class FileDataHandlerTest {
 
