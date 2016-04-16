@@ -8,6 +8,7 @@ import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.FileDataHandlerMock;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import org.bouncycastle.math.raw.Mod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,7 +28,9 @@ public class FileDataHandlerTest {
     private IUserDataHandler userDataHandler;
     private IModuleDataHandler moduleDataHandler;
     private Module module;
+    private Module moduleTwo;
     private User user;
+    private User userTwo;
 
     private Stack<String> notDeletedIds;
 
@@ -35,21 +38,59 @@ public class FileDataHandlerTest {
     @Before
     public void setUp() throws Exception {
         fileDataHandler = new FileDataHandler();
-        user = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "Description", new EmailAddress(false, "unexisting_email@zhaw.ch", new EmailAddressVerification(new Date())));
+
+
         userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+        String emailOne = "unexisting_email@zhaw.ch";
+        String emailTwo = "unexsiting_email2@zhaw.ch";
+        user = userDataHandler.getUserByEmailAddress(emailOne);
+        userTwo = userDataHandler.getUserByEmailAddress(emailTwo);
+        if(user != null) {
+            userDataHandler.deleteUser(user);
+        }
+        if(userTwo != null) {
+            userDataHandler.deleteUser(userTwo);
+        }
+
+        user = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "Description", new EmailAddress(false, emailOne, new EmailAddressVerification(new Date())));
+        userTwo = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "Description", new EmailAddress(false, emailTwo, new EmailAddressVerification(new Date())));
+
         assertNotNull(userDataHandler.addUser(user));
+        assertNotNull(userDataHandler.addUser(userTwo));
+
 
         String module_name = "Unexisting Module!!!";
         module = new Module(user.getId(), "Description", module_name);
+        moduleTwo = new Module(user.getId(), "Description", module_name + "TWO!");
         moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
+
+        deleteModules();
+
         assertNotNull(moduleDataHandler.addModule(module));
+        assertNotNull(moduleDataHandler.addModule(moduleTwo));
         notDeletedIds = new Stack<>();
+    }
+
+    private void deleteModules() throws DataHandlerException {
+        if(module != null && module.getId() != null) {
+            if(module.getId() != null) {
+                moduleDataHandler.deleteModule(module);
+            }
+        }
+        if(moduleTwo != null) {
+            if(moduleTwo.getId() != null) {
+                moduleDataHandler.deleteModule(moduleTwo);
+            }
+        }
     }
 
     @After
     public void tearDown() throws Exception {
-        moduleDataHandler.deleteModule(module);
+
+        deleteModules();
+
         userDataHandler.deleteUser(user);
+        userDataHandler.deleteUser(userTwo);
         while(!notDeletedIds.isEmpty()) {
             try {
                 File file = fileDataHandler.getFile(notDeletedIds.pop());
@@ -85,13 +126,14 @@ public class FileDataHandlerTest {
         assertNotNull("Fetch by title and module failed", fetchedFile);
         assertEquals("Id (", id, fetchedFile.getId());
         assertEquals("ModuleID", module.getId(), fetchedFile.getModuleId());
+        assertEquals("OwnerId", user.getId(), fetchedFile.getOwnerId());
         assertEquals("Title", title, fetchedFile.getTitle());
         assertEquals("Description", description, fetchedFile.getDescription());
         assertEquals("Path", path, fetchedFile.getPath());
         assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
         // TODO: store extension and uncomment test below
         // assertEquals("Extension", extension, file.getExtension());
-
+        // TODO: implement categories
     }
 
     @Test
@@ -172,6 +214,7 @@ public class FileDataHandlerTest {
         File fetchedFile = fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId());
         assertNotNull("Fetch by title and module failed", fetchedFile);
         assertEquals("Id (", id, fetchedFile.getId());
+        assertEquals("OwnerId", user.getId(), fetchedFile.getOwnerId());
         assertEquals("ModuleID", module.getId(), fetchedFile.getModuleId());
         assertEquals("Title", title, fetchedFile.getTitle());
         assertEquals("Description", description, fetchedFile.getDescription());
@@ -179,12 +222,52 @@ public class FileDataHandlerTest {
         assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
         // TODO: store extension and uncomment test below
         // assertEquals("Extension", extension, file.getExtension());
-
+        // TODO: implement categories
     }
 
     @Test
     public void testUpdateFile() throws Exception {
-        
+        String description = "Description";
+        String title = "Title";
+        String path = "123456";
+        Date lastChanged = new Date();
+        String extension = ".jpg";
+
+        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+
+        assertNotNull(fileDataHandler.addFile(file));
+        notDeletedIds.push(file.getId());
+        assertNotNull(fileDataHandler.getFile(file.getId()));
+
+
+        description = description + " new";
+        title = title + " new";
+        path = path + " new";
+        lastChanged = new Date();
+        extension = ".png";
+        file.setOwnerId(userTwo.getId());
+        file.setPath(path);
+        file.setTitle(title);
+        file.setDescription(description);
+        file.setLastChanged(lastChanged);
+        file.setPath(path);
+        file.setExtension(extension);
+        file.setModuleId(moduleTwo.getId());
+        assertTrue(fileDataHandler.updateFile(file));
+
+        File fetchedFile = fileDataHandler.getFile(file.getId());
+        assertNotNull(fetchedFile);
+        assertEquals("Id", file.getId(), fetchedFile.getId());
+        assertEquals("OwnerID", file.getOwnerId(), fetchedFile.getOwnerId());
+        assertEquals("ModuleID", moduleTwo.getId(), fetchedFile.getModuleId());
+        assertEquals("Title", title, fetchedFile.getTitle());
+        assertEquals("Description", description, fetchedFile.getDescription());
+        assertEquals("Path", path, fetchedFile.getPath());
+        assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
+        // TODO: store extension and uncomment test below
+        // assertEquals("Extension", extension, file.getExtension());
+        // TODO: implement categories
+
     }
 
     @Test

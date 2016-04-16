@@ -34,6 +34,20 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         }
     }
 
+    public boolean changeModule(File file) throws DataHandlerException {
+        long fileId = Long.parseLong(file.getId());
+        long moduleId = Long.parseLong(file.getModuleId());
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.UPDATE_UPLOADED);
+            statement.setLong(SQLQueryConstants.File.UPDATE_UPLOADED_INDEX_FILE, fileId);
+            statement.setLong(SQLQueryConstants.File.UPDATE_UPLOADED_INDEX_MODULE, moduleId);
+            return connectionHandler.updateDataSet(statement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+    }
+
     @Override
     public String addFile(File file) throws DataHandlerException {
         file.setId(addAccessControlObject(file));
@@ -60,6 +74,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public boolean deleteFile(File file) throws DataHandlerException {
+        if(file == null) throw new IllegalArgumentException("file is null");
         return deleteAccessControlObject(file.getId());
     }
 
@@ -86,6 +101,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public List<File> getFiles(List<String> idList) throws DataHandlerException {
+        if(idList == null) throw new IllegalArgumentException("idList is null");
         List<File> files = new ArrayList<>(idList.size());
         for (String id : idList) {
             File file = getFile(id);
@@ -148,6 +164,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public boolean updateFile(File file) throws DataHandlerException {
+        if(file == null)throw new IllegalArgumentException("file is null");
+        if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
         //TODO @kunzlio1: Es gibt File Argumente die gar nicht in der DB gespeichert werden können
         PreparedStatement preparedStatement;
         try {
@@ -161,6 +179,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
+        }
+        if(!changeModule(file)) {
+            return false;
         }
         return updateObject(file);
     }

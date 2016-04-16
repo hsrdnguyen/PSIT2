@@ -134,6 +134,10 @@ public class SQLQueryConstants {
         public static final String INSERT_UPLOADED_QUERY = "INSERT INTO avocado_share.uploaded_into (file_id, module_id) VALUES (?, ?)";
         public static final int INSERT_UPLOADED_QUERY_INDEX_FILE = 1;
         public static final int INSERT_UPLOADED_QUERY_INDEX_MODULE = 2;
+        public static String UPDATE_UPLOADED = "UPDATE avocado_share.uploaded_into SET module_id = ? WHERE file_id = ?";
+        public static final int UPDATE_UPLOADED_INDEX_MODULE = 1;
+        public static final int UPDATE_UPLOADED_INDEX_FILE = 2;
+
     }
 
     //PERMISSION
