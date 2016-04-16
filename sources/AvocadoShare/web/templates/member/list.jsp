@@ -1,7 +1,7 @@
 <%@ page import="ch.avocado.share.model.data.User" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <div class="list-group-item list-group-header">
     <h3>Mitglieder</h3>
 </div>

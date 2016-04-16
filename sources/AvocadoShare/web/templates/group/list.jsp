@@ -3,7 +3,7 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.ListViewConfig" %>
 <%@ page import="java.util.Collection" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     ListViewConfig listViewConfig = (ListViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_LIST_VIEW_CONFIG);
     Collection<Group> groups = listViewConfig.getObjects(Group.class);
