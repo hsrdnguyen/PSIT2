@@ -28,11 +28,6 @@ public class GroupBean extends ResourceBean<Group> {
         return true;
     }
 
-    @Override
-    protected String getTemplateFolder() {
-        return "group_templates/";
-    }
-
     private void checkNameNotEmpty(Group group) {
         if (name == null || name.trim().isEmpty()) {
             group.addFieldError("name", ErrorMessageConstants.ERROR_NO_NAME);
@@ -91,7 +86,7 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     public List<Group> index() throws HttpBeanException {
-        ISecurityHandler securityHandler = getSecurityHandler();
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         List<Group> groupList;
         if (getAccessingUser() != null) {
@@ -132,11 +127,6 @@ public class GroupBean extends ResourceBean<Group> {
         if (!groupDataHandler.deleteGroup(group)) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
         }
-    }
-
-    @Override
-    public String getAttributeName() {
-        return "Group";
     }
 
     /**

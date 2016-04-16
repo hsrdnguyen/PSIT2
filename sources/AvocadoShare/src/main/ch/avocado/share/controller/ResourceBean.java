@@ -1,8 +1,10 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.HttpStatusCode;
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
@@ -10,56 +12,21 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * This class should be used for all resources and does the following things:
- * * Check access
- * * Execute appropriate method (get, create, index, etc.)
- * * Include the template accordingly.
- * <p>
- * Once renderRequest is called, this class checks the method of the request.<br/>
- * * GET: Display a form to edit or create an object, display a single element or display a list of elements.<br/>
- * * POST: create a new object (if there is no method parameter in the request)<br/>
- * * PATCH: update the object<br/>
- * * PUT: Replace an element (not implemented yet)
- * <p>
- * The GET request is somewhat special. There are four different cases for a GET-request. Checking is performed
- * in this order:
- * <ul>
- * <li>If {@link #hasIdentifier()} is {@code true}:</li>
- * <ul>
- * <li>  If the attribute {@link #getAction() action} is set to {@value ACTION_EDIT} {@link #get()}
- * is called an the template {@link #getEditDispatcher(HttpServletRequest)} is included.
- * </li>
- * <li>  Otherwise {@link #get()} is called and  {@link #getDetailDispatcher(HttpServletRequest)} is included</li>
- * </ul>
- * <li>
- * If {@link #hasIdentifier()} is {@code false}:
- * </li><ul><li>
- * If the attribute {@link #getAction() action} is set to {@value ACTION_CREATE}
- * the template {@link #getCreateDispatcher(HttpServletRequest)} to create a new
- * object is included.
- * </li>
- * <li>
- * Otherwise {@link #index()} is called and the template
- * {@link #getIndexDispatcher(HttpServletRequest)} is included
- * </li></ul></ul>
+ * Bean to modify, view or list resources.
+ * No access check is done in this methods.
  *
  * @param <E> The subclass of AccessControlObjectBase to handle.
  */
-public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
-    public static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
+public abstract class ResourceBean<E extends AccessControlObjectBase> implements Serializable {
 
     private String id;
-    private Map<String, String> formErrors = new HashMap<>();
 
-    /**
-     * The action parameter
-     */
-    private String action;
     private String description;
 
     /**
@@ -100,23 +67,31 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * Updates the object which can be accessed through getObject().
      * Use addFormError if there are invalid or missing parameters.
      *
-     * @throws HttpBeanException
      * @param object
+     * @throws HttpBeanException
      */
     public abstract void update(E object) throws HttpBeanException, DataHandlerException;
 
-    protected boolean updateDescription(AccessControlObjectBase model) {
+    /**
+     * Update the descriptipon of the object
+     * @param object the object on which the description is updated if there is no error.
+     * @return true if the description has been changed.
+     */
+    protected boolean updateDescription(AccessControlObjectBase object) {
         boolean updated = false;
-        if (getDescription() != null && !getDescription().equals(model.getDescription())) {
-            checkParameterDescription(model);
-            if (!model.hasErrors()) {
-                model.setDescription(getDescription());
+        if (getDescription() != null && !getDescription().equals(object.getDescription())) {
+            checkParameterDescription(object);
+            if (!object.hasErrors()) {
+                object.setDescription(getDescription());
                 updated = true;
             }
         }
         return updated;
     }
 
+    /**
+     * @return {@code true} if the resource has members and these should be loaded.
+     */
     protected abstract boolean hasMembers();
 
     /**
@@ -135,14 +110,9 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Replacement not allowed");
     }
 
-    public abstract String getAttributeName();
-
-    public String getPluralAttributeName() {
-        return getAttributeName() + "s";
-    }
 
     public Members getMembers(E object) throws HttpBeanException {
-        if(object == null) throw new IllegalStateException("object is null");
+        if (object == null) throw new IllegalStateException("object is null");
         Members members;
         if (!hasMembers()) {
             return null;
@@ -185,13 +155,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         this.id = id;
     }
 
-    public Map<String, String> getFormErrors() {
-        return new HashMap<>(this.formErrors);
-    }
-
-    public void setFormErrorsInRequestAttribute(HttpServletRequest request) {
-        request.setAttribute(ATTRIBUTE_FORM_ERRORS, getFormErrors());
-    }
 
     /**
      * @return The description of the file
@@ -213,5 +176,74 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         } else {
             setDescription(getDescription().trim());
         }
+    }
+
+
+    private User accessingUser;
+
+    /**
+     * Mapper for {@link ServiceLocator#getService(Class)} which raises a  HttpBeanException instead.
+     *
+     * @param serviceClass
+     * @param <E>
+     * @return The service
+     * @throws HttpBeanException
+     */
+    protected static <E> E getService(Class<E> serviceClass) throws HttpBeanException {
+        try {
+            return ServiceLocator.getService(serviceClass);
+        } catch (ServiceNotFoundException e) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
+        }
+    }
+
+    /**
+     * Checks if the {@link #getAccessingUser() accessing user} has the required level of access.
+     *
+     * @param target        The access target
+     * @param requiredLevel The required level of access on the target.
+     * @throws HttpBeanException If the required access is not met.
+     */
+    protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws HttpBeanException {
+        if (target == null) throw new IllegalArgumentException("target is null");
+        if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
+        AccessLevelEnum grantedAccessLevel;
+        // TODO: remove
+        System.out.println("Accessing user : " + getAccessingUser());
+        try {
+            if (getAccessingUser() == null) {
+                grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
+            } else {
+                grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
+            }
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
+        }
+        // TODO: remove
+        System.out.println("Level: " + grantedAccessLevel);
+        if (!grantedAccessLevel.containsLevel(requiredLevel)) {
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
+        }
+    }
+
+    /**
+     * Sets the the user which accesses the object.
+     *
+     * @param accessingUser the user or null if the user is not authenticated.
+     */
+    public void setAccessingUser(User accessingUser) {
+        this.accessingUser = accessingUser;
+    }
+
+    /**
+     * Get the accessing user.
+     *
+     * @return Returns the accessing user object if the user is authenticated.
+     * Otherwise null is returned.
+     */
+    public User getAccessingUser() {
+        return accessingUser;
     }
 }

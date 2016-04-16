@@ -33,10 +33,6 @@ public class ModuleBean extends ResourceBean<Module> {
         return true;
     }
 
-    @Override
-    protected String getTemplateFolder() {
-        return "module_templates/";
-    }
 
     @Override
     public Module create() throws HttpBeanException, DataHandlerException {
@@ -89,11 +85,6 @@ public class ModuleBean extends ResourceBean<Module> {
     @Override
     public void destroy(Module module) throws HttpBeanException, DataHandlerException {
         getService(IModuleDataHandler.class).deleteModule(module);
-    }
-
-    @Override
-    public String getAttributeName() {
-        return "Module";
     }
 
     public String getName() {

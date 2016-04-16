@@ -85,11 +85,6 @@ public class UserBean extends ResourceBean<User> {
         }
     }
 
-    @Override
-    protected void ensureIsAuthenticatedToCreate() throws HttpBeanException {
-        // I do nothing because unauthenticated users can create new users :)
-    }
-
     private void addEmailAddress(User user, String emailAddress) throws HttpBeanException, DataHandlerException {
         long theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
         Date nextWeek = new Date(theFuture);
@@ -170,10 +165,6 @@ public class UserBean extends ResourceBean<User> {
         getService(IUserDataHandler.class).deleteUser(user);
     }
 
-    @Override
-    public String getAttributeName() {
-        return "User";
-    }
 
     public String getPrename() {
         return prename;

@@ -26,11 +26,6 @@ public class FileBean extends ResourceBean<File> {
     private String moduleId;
 
     @Override
-    protected String getTemplateFolder() {
-        return "file_templates/";
-    }
-
-    @Override
     protected boolean hasMembers() {
         return true;
     }
@@ -106,7 +101,7 @@ public class FileBean extends ResourceBean<File> {
      */
     @Override
     public List<File> index() throws HttpBeanException {
-        ISecurityHandler securityHandler = getSecurityHandler();
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         if(getAccessingUser() != null) {
             try {
@@ -195,12 +190,6 @@ public class FileBean extends ResourceBean<File> {
             throw new HttpBeanDatabaseException();
         }
     }
-
-    @Override
-    public String getAttributeName() {
-        return "File";
-    }
-
 
     /**
      * Uploads the file to the server and stores it using {@link IFileStorageHandler}.
