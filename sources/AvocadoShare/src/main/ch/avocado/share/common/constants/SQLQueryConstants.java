@@ -15,6 +15,11 @@ public class SQLQueryConstants {
     public static final String UPDATE_ACCESS_CONTROL_DESCRIPTION = "UPDATE avocado_share.access_control SET description = ? WHERE id = ?";
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX = 1;
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX = 2;
+    public static final String UPDATE_OWNERSHIP = "UPDATE avocado_share.ownership SET owner_id = ? WHERE object_id = ?";
+    public static final int UPDATE_OWNERSHIP_INDEX_OWNER = 1;
+    public static final int UPDATE_OWNERSHIP_INDEX_OBJECT = 2;
+    public static final String DELETE_OWNERSHIP = "DELETE FROM avocado_share.ownership WHERE object_id = ?";
+    public static final int DELETE_OWNERSHIP_INDEX_OBJECT = 1;
 
 
     public final static class Module {
@@ -82,9 +87,9 @@ public class SQLQueryConstants {
         private static final String SELECT_WITHOUT_WHERE = "" +
                 "SELECT " + SELECT_COLUMNS +
                 " FROM " + TABLE + " AS g " +
-                "JOIN access_control AS o " +
+                "JOIN avocado_share.access_control AS o " +
                 " ON g.id = o.id " +
-                "JOIN avocado_share.ownership as W " +
+                "LEFT JOIN avocado_share.ownership as W " +
                 " ON o.id = W.object_id ";
         public static final String SELECT_BY_NAME_QUERY = SELECT_WITHOUT_WHERE + "WHERE g.name = ?";
         public static final String SELECT_BY_ID_QUERY = SELECT_WITHOUT_WHERE +  "WHERE g.id = ?";

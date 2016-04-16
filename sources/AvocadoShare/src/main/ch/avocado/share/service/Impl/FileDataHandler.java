@@ -10,7 +10,6 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.lang.reflect.GenericArrayType;
 import java.sql.*;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         try {
-            file.setId(addAccessControlObject(file.getDescription()));
+            file.setId(addAccessControlObject(file));
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.INSERT_QUERY);
             preparedStatement.setLong(1, Long.parseLong(file.getId()));
             preparedStatement.setString(2, file.getTitle());
@@ -36,7 +35,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        addOwnership(Integer.parseInt(file.getOwnerId()), Integer.parseInt(file.getId()));
         return file.getId();
     }
 
@@ -61,8 +59,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
                 file.setOwnerId(ownerId);
             }
             return file;
-
-
         } catch (SQLException e) {
             return null;
         }
@@ -143,7 +139,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return updateDescription(file.getId(), file.getDescription());
+        return updateObject(file);
     }
 
     @Override

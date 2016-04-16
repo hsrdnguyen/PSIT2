@@ -106,7 +106,7 @@ public abstract class AccessControlObjectBase extends Model{
      * @param ownerId Identifier of the owner object.
      */
     public void setOwnerId(String ownerId) {
-        if(ownerId == null) throw new IllegalArgumentException("ownerId is null");
+        // if(ownerId == null) throw new IllegalArgumentException("ownerId is null");
         this.ownerId = ownerId;
         setDirty(true);
     }

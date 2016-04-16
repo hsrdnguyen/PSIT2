@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.MailingServiceMock;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,6 +73,16 @@ public class SecurityHandlerTest {
         assertNotNull(groupThree.getId());
         assertNotNull(groupDataHandler.getGroup(groupThree.getId()));
 
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetAccessLevelWithUserNull() throws Exception {
+        securityHandler.getAccessLevel(null, groupOne);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetAccessLevelWithObjectNull() throws Exception {
+        securityHandler.getAccessLevel(user, null);
     }
 
     @Test
@@ -173,6 +184,16 @@ public class SecurityHandlerTest {
         assertTrue(securityHandler.setAccessLevel(groupOne, groupTwo, AccessLevelEnum.NONE));
         assertEquals(AccessLevelEnum.READ, securityHandler.getAccessLevel(user, groupTwo));
         assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(groupOne, groupTwo));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetAnonymousAccessLevelWithNullForString() throws DataHandlerException {
+        securityHandler.getAnonymousAccessLevel((String) null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetAnonymousAccessLevelWithNullForIdentity() throws DataHandlerException {
+        securityHandler.getAnonymousAccessLevel((AccessIdentity) null);
     }
 
     @Test
