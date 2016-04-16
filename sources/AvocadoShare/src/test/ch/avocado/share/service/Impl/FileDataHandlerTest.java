@@ -82,13 +82,15 @@ public class FileDataHandlerTest {
         File fetchedFile = fileDataHandler.getFile(id);
         assertNotNull("Could not fetch the added file", fetchedFile);
 
-        assertEquals(id, fetchedFile.getId());
-        assertEquals(title, fetchedFile.getTitle());
-        assertEquals(description, fetchedFile.getDescription());
-        assertEquals(path, fetchedFile.getPath());
-        assertEquals(lastChanged, fetchedFile.getLastChanged());
+        assertNotNull("Fetch by title and module failed", fetchedFile);
+        assertEquals("Id (", id, fetchedFile.getId());
+        assertEquals("ModuleID", module.getId(), fetchedFile.getModuleId());
+        assertEquals("Title", title, fetchedFile.getTitle());
+        assertEquals("Description", description, fetchedFile.getDescription());
+        assertEquals("Path", path, fetchedFile.getPath());
+        assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
         // TODO: store extension and uncomment test below
-        // assertEquals(extension, file.getExtension());
+        // assertEquals("Extension", extension, file.getExtension());
 
     }
 
@@ -170,6 +172,7 @@ public class FileDataHandlerTest {
         File fetchedFile = fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId());
         assertNotNull("Fetch by title and module failed", fetchedFile);
         assertEquals("Id (", id, fetchedFile.getId());
+        assertEquals("ModuleID", module.getId(), fetchedFile.getModuleId());
         assertEquals("Title", title, fetchedFile.getTitle());
         assertEquals("Description", description, fetchedFile.getDescription());
         assertEquals("Path", path, fetchedFile.getPath());
@@ -181,7 +184,7 @@ public class FileDataHandlerTest {
 
     @Test
     public void testUpdateFile() throws Exception {
-
+        
     }
 
     @Test

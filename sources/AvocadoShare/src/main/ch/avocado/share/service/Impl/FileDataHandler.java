@@ -20,14 +20,35 @@ import java.util.Date;
  */
 public class FileDataHandler extends DataHandlerBase implements IFileDataHandler {
 
+    public void addFileToModule(File file) throws DataHandlerException {
+        long fileId = Long.parseLong(file.getId());
+        long moduleId = Long.parseLong(file.getModuleId());
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.INSERT_UPLOADED_QUERY);
+            statement.setLong(SQLQueryConstants.File.INSERT_UPLOADED_QUERY_INDEX_FILE, fileId);
+            statement.setLong(SQLQueryConstants.File.INSERT_UPLOADED_QUERY_INDEX_MODULE, moduleId);
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+    }
+
     @Override
     public String addFile(File file) throws DataHandlerException {
+        file.setId(addAccessControlObject(file));
+        insertFileData(file);
+        addFileToModule(file);
+        return file.getId();
+    }
+
+    private void insertFileData(File file) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
+        long fileId = Long.parseLong(file.getId());
         try {
-            file.setId(addAccessControlObject(file));
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.INSERT_QUERY);
-            preparedStatement.setLong(1, Long.parseLong(file.getId()));
+            preparedStatement.setLong(1, fileId);
             preparedStatement.setString(2, file.getTitle());
             preparedStatement.setTimestamp(3, new Timestamp(file.getLastChanged().getTime()));
             preparedStatement.setString(4, file.getPath());
@@ -35,7 +56,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return file.getId();
     }
 
     @Override
@@ -54,7 +74,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setInt(1, Integer.parseInt(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             File file = getFileFromSelectResultSet(resultSet);
-            if(file != null) {
+            if (file != null) {
                 String ownerId = getOwnerId(fileId);
                 file.setOwnerId(ownerId);
             }
@@ -69,7 +89,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         List<File> files = new ArrayList<>(idList.size());
         for (String id : idList) {
             File file = getFile(id);
-            if(file != null) {
+            if (file != null) {
                 files.add(file);
             }
         }
@@ -86,8 +106,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
             for (String tmp : searchTerms) {
                 // TODO @bergmsas: equals verwenden?
-                if (tmp != searchTerms.get(0))
-                {
+                if (tmp != searchTerms.get(0)) {
                     query += SQLQueryConstants.File.SEARCH_QUERY_LINK + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
                 }
             }
@@ -109,12 +128,16 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
+        if (fileTitle == null) throw new IllegalArgumentException("fileTitle is null");
+        if (moduleId == null) throw new IllegalArgumentException("moduleId is null");
+        long parsedModuleId = Long.parseLong(moduleId);
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler == null) return null;
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_TITLE_QUERY_AND_MODULE);
             preparedStatement.setString(1, fileTitle);
+            preparedStatement.setLong(2, parsedModuleId);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             return getFileFromSelectResultSet(resultSet);
 
@@ -133,7 +156,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setTimestamp(2, new Timestamp(file.getLastChanged().getTime()));
             preparedStatement.setString(3, file.getPath());
             preparedStatement.setLong(4, Long.parseLong(file.getId()));
-            if(!getConnectionHandler().updateDataSet(preparedStatement)) {
+            if (!getConnectionHandler().updateDataSet(preparedStatement)) {
                 return false;
             }
         } catch (SQLException e) {
@@ -173,7 +196,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     private boolean addCategories(File file) {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if(categoryHandler == null) return false;
+        if (categoryHandler == null) return false;
         if (!categoryHandler.addAccessObjectCategories(file)) return false;
 
         return true;
@@ -215,6 +238,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setLastChanged(new Date(resultSet.getTimestamp(4).getTime()));
         file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
         file.setPath(resultSet.getString(6));
+        file.setModuleId(resultSet.getString(7));
         return file;
     }
 
