@@ -1,4 +1,5 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+
 <jsp:useBean id="verification" class="ch.avocado.share.controller.VerificationBean" />
 <jsp:setProperty name="verification" property="code" />
 <jsp:setProperty name="verification" property="email" />

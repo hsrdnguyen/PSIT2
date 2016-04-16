@@ -7,7 +7,6 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,21 +34,23 @@ public abstract class DataHandlerBase {
         return connectionHandler;
     }
 
-    protected void addOwnership(int ownerId, int objectId) throws DataHandlerException {
-        if(ownerId == objectId) throw new IllegalArgumentException("ownerId can't be euqal to the objectId");
-        try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.INSERT_OWNERSHIP);
-            preparedStatement.setInt(SQLQueryConstants.INSERT_OWNERSHIP_INDEX_OWNER, ownerId);
-            preparedStatement.setInt(SQLQueryConstants.INSERT_OWNERSHIP_INDEX_OBJECT, objectId);
-            getConnectionHandler().insertDataSet(preparedStatement);
-        }catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
+    private boolean addOwnership(long ownerId, long objectId) throws DataHandlerException, SQLException {
+        PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.INSERT_OWNERSHIP);
+        preparedStatement.setLong(SQLQueryConstants.INSERT_OWNERSHIP_INDEX_OWNER, ownerId);
+        preparedStatement.setLong(SQLQueryConstants.INSERT_OWNERSHIP_INDEX_OBJECT, objectId);
+        getConnectionHandler().insertDataSet(preparedStatement); // TODO: check result?
+        return true;
     }
 
-    protected boolean updateDescription(String objectId, String description) throws DataHandlerException {
-        if(objectId == null) throw new IllegalArgumentException("objectId is null");
-        if(description == null) throw new IllegalArgumentException("description is null");
+    protected boolean updateObject(AccessControlObjectBase object) throws DataHandlerException {
+        if (object == null) throw new IllegalArgumentException("object is null");
+        if (!updateDescription(object.getId(), object.getDescription())) return false;
+        return setOwnership(Long.parseLong(object.getId()), Long.parseLong(object.getOwnerId()));
+    }
+
+    private boolean updateDescription(String objectId, String description) throws DataHandlerException {
+        if (objectId == null) throw new IllegalArgumentException("objectId is null");
+        if (description == null) throw new IllegalArgumentException("description is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION);
             preparedStatement.setInt(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX, Integer.parseInt(objectId));
@@ -58,6 +59,45 @@ public abstract class DataHandlerBase {
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+    }
+
+    /**
+     * @param objectId
+     * @param ownerId  Id of the owner or null if there is no owner
+     * @return
+     * @throws DataHandlerException
+     */
+    private boolean setOwnership(long objectId, Long ownerId) throws DataHandlerException {
+        try {
+            if (ownerId == null) {
+                deleteOwnership(objectId);
+                // We don't return the result of deleteOwnership because
+                // it's not a failure if there was no existing ownership
+                return true;
+            } else {
+                Long currentOwner = getOwnerIdInternal(objectId);
+                if (currentOwner == null) {
+                    return addOwnership(objectId, ownerId);
+                } else {
+                    return updateOwnership(objectId, ownerId);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+    }
+
+    private boolean updateOwnership(long objectId, Long ownerId) throws DataHandlerException, SQLException {
+        PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_OWNERSHIP);
+        statement.setLong(SQLQueryConstants.UPDATE_OWNERSHIP_INDEX_OBJECT, objectId);
+        statement.setLong(SQLQueryConstants.UPDATE_OWNERSHIP_INDEX_OWNER, ownerId);
+        return getConnectionHandler().updateDataSet(statement);
+    }
+
+    private boolean deleteOwnership(long objectId) throws SQLException, DataHandlerException {
+        PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.DELETE_OWNERSHIP);
+        statement.setLong(SQLQueryConstants.DELETE_OWNERSHIP_INDEX_OBJECT, objectId);
+        return getConnectionHandler().deleteDataSet(statement);
     }
 
     /**
@@ -82,35 +122,58 @@ public abstract class DataHandlerBase {
 
     /**
      * Create a new access control object
-     * @param description The description of the object.
+     *
+     * @param object the object to add
      * @return The identifier of the object (not null)
      * @throws DataHandlerException If something went wrong
      */
-    protected String addAccessControlObject(String description) throws DataHandlerException {
-        if (description == null) throw new IllegalArgumentException("description is null");
+    protected String addAccessControlObject(AccessControlObjectBase object) throws DataHandlerException {
+        if (object == null) throw new IllegalArgumentException("object is null");
+        if (object.getDescription() == null) throw new IllegalArgumentException("object.description is null");
+        String id;
+        Long ownerId = null;
+        if(object.getOwnerId() != null) {
+            ownerId = Long.parseLong(object.getOwnerId());
+        }
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY);
-            preparedStatement.setString(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX, description);
-            return getConnectionHandler().insertDataSet(preparedStatement);
+            preparedStatement.setString(SQLQueryConstants.INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX, object.getDescription());
+            id = getConnectionHandler().insertDataSet(preparedStatement);
+            if (id != null && ownerId != null) {
+                addOwnership(ownerId, Long.parseLong(id));
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+        return id;
     }
 
-    protected String getOwnerId(String fileId) throws DataHandlerException {
+    private Long getOwnerIdInternal(long objectId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_OWNER_OF_OBJECT);
-            preparedStatement.setInt(1, Integer.parseInt(fileId));
+            preparedStatement.setLong(1, objectId);
             resultSet = connectionHandler.executeQuery(preparedStatement);
             if (resultSet.next()) {
-                return Integer.toString(resultSet.getInt(1));
+                return resultSet.getLong(1);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
         return null;
+    }
+
+    /**
+     * @param objectId The identifier of the object
+     * @return The id of the owner or null if there is no owner.
+     * @throws DataHandlerException
+     * @deprecated It's better to use a joined statement to query all values at once.
+     */
+    protected String getOwnerId(String objectId) throws DataHandlerException {
+        Long ownerId = getOwnerIdInternal(Long.parseLong(objectId));
+        if (ownerId == null) return null;
+        return Long.toString(ownerId);
     }
 }

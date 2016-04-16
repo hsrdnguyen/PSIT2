@@ -2,7 +2,7 @@
 <%@ page import="ch.avocado.share.model.data.*" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.servlet.MemberServlet" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     String owner = request.getParameter(owner_parameter);
     AccessIdentity identityFromParameter = null;

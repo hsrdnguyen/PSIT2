@@ -1,5 +1,5 @@
 <%@ page import="ch.avocado.share.model.data.User" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@include file="includes/header.jsp" %>
 <%
     User user = userSession.getUser();
@@ -14,7 +14,7 @@
 <div class="text-contact">
     <p>Bei Fragen kontaktieren Sie uns</p>
     <h2>Senden Sie uns eine Nachricht</h2>
-    <div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
+    <div id="message-form">
         <p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p>
         <div id="xform" class="xform">
             <form action="" method="post" id="form_formular" class="contact_action">
@@ -34,12 +34,6 @@
                     <label class="control-label" for="contact-nachname">Nachname *</label>
                     <input required class="form-control" name="nachname" id="contact-nachname" value="<%=surname %>" type="text">
                 </div>
-                <!--
-                <div class="form-group" id="formular-class">
-                    <label class="control-label" for="contact-klasse">Klasse</label>
-                    <input class="form-control" name="class" id="contact-klasse" value="" type="text">
-                </div>
-                -->
                 <div class="form-group form-email" id="formular-email">
                     <label class="control-label" for="formular-field-5">E-mail *</label>
                     <input required class="form-control" name="email" id="formular-field-5" value="<%=email %>" type="email">

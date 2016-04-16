@@ -27,7 +27,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         IDatabaseConnectionHandler db = getConnectionHandler();
         if(db == null) return null;
         try {
-            user.setId(addAccessControlObject(user.getDescription()));
+            user.setId(addAccessControlObject(user));
             PreparedStatement stmt = db.getPreparedStatement(UserConstants.INSERT_USER_QUERY);
             stmt.setInt(1, Integer.parseInt(user.getId()));
             stmt.setString(2, user.getPrename());
@@ -36,7 +36,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             stmt.setString(5, user.getPassword().getDigest());
             db.insertDataSet(stmt);
             addMail(user);
-
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DataHandlerException(e);
@@ -173,7 +172,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     public boolean updateUser(User user) throws DataHandlerException {
         // TODO: update email address
         if (user == null) throw new IllegalArgumentException("user is null");
-        if(!updateDescription(user.getId(), user.getDescription())) {
+        if(!updateObject(user)) {
             return false;
         }
         PreparedStatement stmt = null;

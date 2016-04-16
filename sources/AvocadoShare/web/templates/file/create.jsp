@@ -3,15 +3,13 @@
 <%@ page import="ch.avocado.share.model.data.Module" %>
 <%@ page import="ch.avocado.share.controller.FileBean" %>
 <%@ page import="ch.avocado.share.model.data.File" %>
-<%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
-<%@ page import="ch.avocado.share.common.constants.SQLQueryConstants" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     FormBuilder formBuilder = new FormBuilder(viewConfig, File.class);

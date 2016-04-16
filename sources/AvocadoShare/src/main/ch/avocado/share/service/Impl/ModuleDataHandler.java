@@ -3,12 +3,9 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
-import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import org.bouncycastle.math.raw.Mod;
 
-import javax.xml.crypto.Data;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +17,7 @@ import java.util.List;
 public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHandler {
     @Override
     public String addModule(Module module) throws DataHandlerException {
-        String id = addAccessControlObject(module.getDescription());
+        String id = addAccessControlObject(module);
         module.setId(id);
         try {
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Module.INSERT_QUERY);
@@ -30,7 +27,6 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        addOwnership(Integer.parseInt(module.getOwnerId()), Integer.parseInt(module.getId()));
         return module.getId();
     }
 
@@ -89,7 +85,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             statement.setString(SQLQueryConstants.Module.UPDATE_QUERY_INDEX_NAME, module.getName());
             success = getConnectionHandler().updateDataSet(statement);
             if (success) {
-                success = updateDescription(module.getId(), module.getDescription());
+                success = updateObject(module);
             }
             return success;
         } catch (SQLException e) {

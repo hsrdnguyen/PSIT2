@@ -135,6 +135,7 @@ public class LoginServlet extends HttpServlet {
             try {
                 user = getUserWithLogin(userDataHandler, email, password);
             } catch (DataHandlerException e) {
+                e.printStackTrace();
                 request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
                 renderLogin(request, response);
                 return;
