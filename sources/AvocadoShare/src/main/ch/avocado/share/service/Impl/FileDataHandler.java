@@ -12,8 +12,8 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Date;
 
 /**
  * File Data handler.
@@ -85,6 +85,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             query += query + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
 
             for (String tmp : searchTerms) {
+                // TODO @bergmsas: equals verwenden?
                 if (tmp != searchTerms.get(0))
                 {
                     query += SQLQueryConstants.File.SEARCH_QUERY_LINK + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
@@ -108,12 +109,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
-        //TODO @kunzlio1: noch implementieren
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler == null) return null;
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_TITLE_QUERY);
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_TITLE_QUERY_AND_MODULE);
             preparedStatement.setString(1, fileTitle);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             return getFileFromSelectResultSet(resultSet);
@@ -212,8 +212,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setId(resultSet.getString(1));
         file.setTitle(resultSet.getString(2));
         file.setDescription(resultSet.getString(3));
-        file.setLastChanged(resultSet.getDate(4));
-        file.setCreationDate(resultSet.getDate(5));
+        file.setLastChanged(new Date(resultSet.getTimestamp(4).getTime()));
+        file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
         file.setPath(resultSet.getString(6));
         return file;
     }
