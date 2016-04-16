@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +97,7 @@ public class GroupDataHandlerTest {
         String name = UNEXISTING_GROUP_NAME_1;
         String description = "A description with \n new line";
         Group group = new Group(user.getId(), description, name);
+        Date created = new Date(System.currentTimeMillis());
         String id = groupDataHandler.addGroup(group);
         assertNotNull(id);
         assertNotNull(group.getId());
@@ -106,6 +107,7 @@ public class GroupDataHandlerTest {
         assertEquals(id, queryGroup.getId());
         assertEquals(name, queryGroup.getName());
         assertEquals(description, queryGroup.getDescription());
+        assertTrue(created.getTime() - queryGroup.getCreationDate().getTime() < 100);
         assertTrue(groupDataHandler.deleteGroup(group));
     }
 

@@ -75,7 +75,7 @@ public class FileAccessBeanTest {
     private File file;
     private Module module;
     private FileAccessBean bean;
-
+    private ISecurityHandler securityHandler;
     private String email0 = "unexisting_user0@zhaw.ch";
     private String email1 = "unexisting_user1@zhaw.ch";
     private String email2 = "unexisting_user2@zhaw.ch";
@@ -89,7 +89,7 @@ public class FileAccessBeanTest {
         IModuleDataHandler moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-        ISecurityHandler securityHandler = ServiceLocator.getService(ISecurityHandler.class);
+        securityHandler = ServiceLocator.getService(ISecurityHandler.class);
 
         bean = new FileAccessBean();
         userWithReadRights = userFromEmail(email0);
@@ -108,7 +108,8 @@ public class FileAccessBeanTest {
         fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFile(file.getId()).getOwnerId());
 
-        assertTrue(securityHandler.setAccessLevel(userWithoutReadRights, file, AccessLevelEnum.READ));
+        assertTrue(securityHandler.setAccessLevel(userWithReadRights, file, AccessLevelEnum.READ));
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(userWithoutReadRights, file));
     }
 
     private void deleteTestUsers() throws DataHandlerException, ServiceNotFoundException {
@@ -202,6 +203,45 @@ public class FileAccessBeanTest {
 
     @Test
     public void testGrantAccess() throws Exception {
-        // TODO
+
+        bean.setFileId(file.getId());
+        bean.setOwnerUserId(owner.getId());
+        bean.setRequesterUserId(userWithoutReadRights.getId());
+        assertTrue(bean.grantAccess());
+        assertEquals(AccessLevelEnum.READ, securityHandler.getAccessLevel(userWithoutReadRights, file));
     }
+
+    @Test
+    public void testGrantAccessWithInvalidOwner() throws Exception {
+        bean.setFileId(file.getId());
+        bean.setOwnerUserId(userWithReadRights.getId());
+        bean.setRequesterUserId(userWithoutReadRights.getId());
+        assertFalse(bean.grantAccess());
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(userWithoutReadRights, file));
+    }
+
+    @Test
+    public void testGrantAccessWithInvalidFile() throws Exception {
+        bean.setFileId(owner.getId());
+        bean.setOwnerUserId(owner.getId());
+        bean.setRequesterUserId(userWithoutReadRights.getId());
+        assertFalse(bean.grantAccess());
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(userWithoutReadRights, file));
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(userWithoutReadRights, owner));
+    }
+
+    @Test
+    public void testGrantAccessForUserWithRights() throws Exception {
+        bean.setFileId(file.getId());
+        bean.setOwnerUserId(owner.getId());
+        bean.setRequesterUserId(userWithReadRights.getId());
+        assertTrue(bean.grantAccess());
+        assertEquals(AccessLevelEnum.READ, securityHandler.getAccessLevel(userWithReadRights, file));
+
+        securityHandler.setAccessLevel(userWithReadRights, file, AccessLevelEnum.WRITE);
+        assertTrue(bean.grantAccess());
+        assertEquals(AccessLevelEnum.WRITE, securityHandler.getAccessLevel(userWithReadRights, file));
+    }
+
+
 }

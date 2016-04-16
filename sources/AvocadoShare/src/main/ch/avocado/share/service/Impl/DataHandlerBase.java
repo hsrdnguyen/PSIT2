@@ -15,7 +15,7 @@ import java.sql.SQLException;
 /**
  * DataHandler for all AccessControlObject subclasses.
  */
-public abstract class DataHandlerBase {
+abstract class DataHandlerBase {
 
     private IDatabaseConnectionHandler connectionHandler = null;
 
@@ -62,7 +62,7 @@ public abstract class DataHandlerBase {
     }
 
     /**
-     * @param objectId
+     * @param objectId The identifier of the object
      * @param ownerId  Id of the owner or null if there is no owner
      * @return
      * @throws DataHandlerException

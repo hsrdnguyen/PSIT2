@@ -58,7 +58,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
             id = resultSet.getString(SQLQueryConstants.Group.RESULT_ID_INDEX);
             name = resultSet.getString(SQLQueryConstants.Group.RESULT_NAME_INDEX);
             description = resultSet.getString(SQLQueryConstants.Group.RESULT_DESCRIPTION_INDEX);
-            creationDate = resultSet.getDate(SQLQueryConstants.Group.RESULT_CREATION_DATE);
+            creationDate = resultSet.getTimestamp(SQLQueryConstants.Group.RESULT_CREATION_DATE);
             ownerId = resultSet.getString(SQLQueryConstants.Group.RESULT_OWNER_ID);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
