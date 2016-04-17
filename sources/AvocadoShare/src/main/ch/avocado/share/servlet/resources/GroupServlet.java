@@ -12,8 +12,8 @@ import javax.servlet.annotation.WebServlet;
 @WebServlet("/group")
 public class GroupServlet extends ResourceServlet<Group> {
     @Override
-    protected Class<? extends ResourceBean<Group>> getBeanClass() {
-        return GroupBean.class;
+    protected ResourceBean<Group> getBean() {
+        return new GroupBean();
     }
 
     @Override

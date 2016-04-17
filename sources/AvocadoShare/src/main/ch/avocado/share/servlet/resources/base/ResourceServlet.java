@@ -29,6 +29,7 @@ import java.util.*;
 
 /**
  * The resource servlet is used to handle request to modify or view a resource..
+ *
  * @param <E> The class of the resource.
  */
 public abstract class ResourceServlet<E extends AccessControlObjectBase> extends GenericServlet {
@@ -49,22 +50,14 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
      * The constructor will call {@link ResourceServlet#getHtmlRenderer()} and register it to the default HTML types.
      */
     public ResourceServlet() {
-        ViewRenderer renderer = getHtmlRenderer();
-        registerRenderer("text/html", renderer);
-        registerRenderer("application/xhtml+xml", renderer);
     }
 
     /**
      * @return The controller class which can be created with an empty constructor.
      */
-    protected abstract Class<? extends ResourceBean<E>> getBeanClass();
+    protected abstract ResourceBean<E> getBean();
 
-    /**
-     * A map with the content type as the key and the renderer as the value.
-     * This is mainly used in
-     * {@link ResourceServlet#renderViewConfig(HttpServletRequest, HttpServletResponse, ViewConfig) renderViewConfig}.
-     */
-    private HashMap<String, ViewRenderer> contentRenderer = new HashMap<>();
+    private HashMap<String, ViewRenderer> contentRenderer = null;
 
     /**
      * Add a new renderer for a content type.
@@ -198,6 +191,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         System.out.println("Allowd level: " + allowedLevel);
         System.out.println("User id: " + userId);
         System.out.println("ObjectId: " + objectId);
+        System.out.println("Required: " + requiredLevel);
         if (!allowedLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ERROR_ACTION_NOT_ALLOWED + action.name());
         }
@@ -215,12 +209,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (request == null) throw new IllegalArgumentException("request is null");
         if (parameter == null) throw new IllegalArgumentException("parameter is null");
         ResourceBean<E> bean;
-        try {
-            bean = getBeanClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Could not create bean");
-        }
+        bean = getBean();
         setAccessingUserAttribute(bean, request);
         setBeanAttributes(bean, parameter);
         return bean;
@@ -245,6 +234,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Return the name of the setter. This method prefixes the field name with "set" and capitalizes the name.
+     *
      * @param fieldName The name of the field
      * @return The name of the setter.
      */
@@ -261,14 +251,15 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     /**
      * We need this method because HTML forms can only send POST and GET requests and we want to be able to "simulate"
      * another method. This can be done by setting the parameter {@value PARAMETER_METHOD} to the required method.
-     * @param request The http request (not null)
+     *
+     * @param request   The http request (not null)
      * @param parameter The parsed parameters (not null)
      * @return The http method to be executed.
      * @throws HttpBeanException
      */
     private HttpMethod getMethodFromRequest(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
-        if(request == null) throw new IllegalArgumentException("request is null");
-        if(parameter == null) throw new IllegalArgumentException("parameter is null");
+        if (request == null) throw new IllegalArgumentException("request is null");
+        if (parameter == null) throw new IllegalArgumentException("parameter is null");
         HttpMethod method = HttpMethod.fromString(request.getMethod());
         if (method == HttpMethod.POST) {
             if (parameter.containsKey(PARAMETER_METHOD)) {
@@ -286,6 +277,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Returns the action associated with the http method
+     *
      * @param method The method
      * @return The action
      */
@@ -325,7 +317,6 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     /**
-     *
      * @param request
      * @param response
      * @param config
@@ -344,13 +335,14 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     contentType = contentType.split(";")[0];
                 }
                 contentType = contentType.trim();
-                renderer = contentRenderer.get(contentType);
+                renderer = getContentRenderer().get(contentType);
                 break;
             }
         }
         if (renderer == null) {
             throw new HttpBeanException(HttpStatusCode.NOT_ACCEPTABLE, "Kein Renderer gefunden für den Typ.");
         }
+        System.out.println("callling renderer: " + renderer);
         renderer.renderView(config);
 
     }
@@ -366,16 +358,18 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         View redirectTo = null;
         E object = null;
         Members members;
+        UserSession session = new UserSession(request);
         try {
             switch (action) {
                 case VIEW: {
-                    viewConfig = getConfigForActionView(bean, request, response);
+                    viewConfig = getConfigForActionView(bean, session, request, response);
                     break;
                 }
                 case REPLACE:
                     throw new HttpBeanException(HttpStatusCode.NOT_IMPLEMENTED, "Replace not implemented");
                 case UPDATE: {
                     object = bean.get();
+                    ensureAccess(session.getUserId(), object.getId(), Action.UPDATE);
                     bean.update(object);
                     if (object.hasErrors()) {
                         members = bean.getMembers(object);
@@ -387,11 +381,17 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                 }
                 case DELETE: {
                     object = bean.get();
+                    ensureAccess(session.getUserId(), object.getId(), Action.DELETE);
                     bean.destroy(object);
                     redirectTo = View.LIST;
                     break;
                 }
                 case CREATE: {
+                    if (getRequiredAccessForAction(Action.CREATE) != null) {
+                        if(!session.isAuthenticated()) {
+                            throw new HttpBeanException(HttpStatusCode.UNAUTHORIZED, ErrorMessageConstants.NOT_LOGGED_IN);
+                        }
+                    }
                     object = bean.create();
                     if (object.hasErrors()) {
                         viewConfig = new DetailViewConfig(View.CREATE, request, response, object, new Members(object));
@@ -416,6 +416,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     /**
      * Wrapper method for {@link #service(HttpServletRequest, HttpServletResponse)} which casts the request and response
      * into HTTP request and HTTP responses. An ServletException is thrown if they are not of this type.
+     *
      * @param req the request
      * @param res the response
      * @throws ServletException
@@ -435,19 +436,22 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Handle the request and response. In the most cases if an error occurs there will be no ServletException thrown.
-     * Instead this method sets call {@link HttpServletResponse#sendError(int,String)} with an appropriate mesasge and
+     * Instead this method sets call {@link HttpServletResponse#sendError(int, String)} with an appropriate mesasge and
      * status code.
-     * @param request the request
+     *
+     * @param request  the request
      * @param response the response
      * @throws IOException
      * @throws ServletException
      */
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (request == null) throw new IllegalArgumentException("request is null");
+        if (response == null) throw new IllegalArgumentException("response is null");
         try {
             executeBeanAndRenderResult(request, response);
         } catch (HttpBeanException e) {
             e.printStackTrace();
-            if(!response.isCommitted()) {
+            if (!response.isCommitted()) {
                 response.sendError(e.getStatusCode(), e.getMessage());
             } else {
                 throw new ServletException(e.getMessage());
@@ -456,10 +460,9 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     /**
-     *
-     * @param bean the bean on which the setter should be invoked (not null)
+     * @param bean       the bean on which the setter should be invoked (not null)
      * @param setterName the name of the setter method (not null)
-     * @param value the value to set (not null)
+     * @param value      the value to set (not null)
      * @return {@code true} if the method was found. Otherwise {@code false}  is returned.
      * @throws HttpBeanException if something went wrong while calling the setter.
      */
@@ -488,13 +491,14 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Returns the {@link View} to be renderer for the {@link Action#VIEW}.
-     * @param bean The controller (not null). This is mainly used to check if the controller has an identifier.
+     *
+     * @param bean    The controller (not null). This is mainly used to check if the controller has an identifier.
      * @param request The request (not null)
      * @return The view
      */
     private View getViewForActionView(ResourceBean<E> bean, HttpServletRequest request) {
-        if(bean == null) throw new IllegalArgumentException("bean is null");
-        if(request == null) throw new IllegalArgumentException("request is null");
+        if (bean == null) throw new IllegalArgumentException("bean is null");
+        if (request == null) throw new IllegalArgumentException("request is null");
         String actionParameter = request.getParameter(PARAMETER_ACTION);
         if (bean.hasIdentifier()) {
             if (actionParameter != null && actionParameter.equals(ACTION_EDIT)) {
@@ -511,7 +515,8 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Sets the accessing user in the (by calling {@link ResourceBean#setAccessingUser(User)}).
-     * @param bean The controller
+     *
+     * @param bean    The controller
      * @param request The request
      */
     private void setAccessingUserAttribute(ResourceBean<E> bean, HttpServletRequest request) {
@@ -523,6 +528,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Parses the parameter of the request.
+     *
      * @param request The request.
      * @return A map of parameter - values.
      * @throws HttpBeanException
@@ -544,6 +550,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Parses mulipart parameters.
+     *
      * @param request The request
      * @return A map of Parameter name mapped to the value.
      * @throws HttpBeanException
@@ -573,16 +580,16 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     /**
      * Prepare the configuration for the {@link Action#VIEW}.
+     *
      * @param controller The controller
-     * @param request The request
-     * @param response The response
+     * @param request    The request
+     * @param response   The response
      * @return The view config.
      * @throws HttpBeanException
      * @throws DataHandlerException
      */
-    protected ViewConfig getConfigForActionView(ResourceBean<E> controller, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
+    protected ViewConfig getConfigForActionView(ResourceBean<E> controller, UserSession session, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
         if (request == null) throw new IllegalArgumentException("request is null");
-        UserSession session = new UserSession(request);
         ViewConfig viewConfig;
         View view = getViewForActionView(controller, request);
         if (view == View.LIST) {
@@ -613,5 +620,20 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             viewConfig = new DetailViewConfig(view, request, response, object, members);
         }
         return viewConfig;
+    }
+
+    /**
+     * A map with the content type as the key and the renderer as the value.
+     * This is mainly used in
+     * {@link ResourceServlet#renderViewConfig(HttpServletRequest, HttpServletResponse, ViewConfig) renderViewConfig}.
+     */
+    private HashMap<String, ViewRenderer> getContentRenderer() {
+        if(contentRenderer == null) {
+            contentRenderer = new HashMap<>();
+            ViewRenderer renderer = getHtmlRenderer();
+            registerRenderer("text/html", renderer);
+            registerRenderer("application/xhtml+xml", renderer);
+        }
+        return contentRenderer;
     }
 }

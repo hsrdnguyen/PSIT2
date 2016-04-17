@@ -53,6 +53,7 @@ public class HtmlRenderer extends ResourceRenderer {
      * @param templateFolder The folder in which the templates can be found.
      */
     public HtmlRenderer(String templateFolder) {
+        super();
         this.templateFolder = templateFolder;
     }
 
