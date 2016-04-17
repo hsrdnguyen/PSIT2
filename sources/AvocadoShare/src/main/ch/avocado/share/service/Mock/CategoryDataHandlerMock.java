@@ -5,6 +5,8 @@ import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.ICategoryDataHandler;
 
+import java.util.List;
+
 /**
  * Created by kunzlio1 on 23.03.2016.
  */
@@ -27,6 +29,11 @@ public class CategoryDataHandlerMock implements ICategoryDataHandler{
 
     @Override
     public Category getCategoryByName(String name) {
+        return null;
+    }
+
+    @Override
+    public List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) {
         return null;
     }
 }

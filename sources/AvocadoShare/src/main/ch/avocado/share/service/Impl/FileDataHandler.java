@@ -2,6 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
@@ -34,7 +35,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         }
     }
 
-    public boolean changeModule(File file) throws DataHandlerException {
+    public boolean changeFileAssociatedModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -53,6 +54,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setId(addAccessControlObject(file));
         insertFileData(file);
         addFileToModule(file);
+        addFileCategoriesToDb(file);
         return file.getId();
     }
 
@@ -166,6 +168,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     public boolean updateFile(File file) throws DataHandlerException {
         if(file == null)throw new IllegalArgumentException("file is null");
         if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
+        File oldFileOnDb = getFile(file.getId());
+        if (oldFileOnDb == null) throw new IllegalArgumentException("there's no such file on db");
         //TODO @kunzlio1: Es gibt File Argumente die gar nicht in der DB gespeichert werden können
         PreparedStatement preparedStatement;
         try {
@@ -180,7 +184,10 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        if(!changeModule(file)) {
+        if(!changeFileAssociatedModule(file)) {
+            return false;
+        }
+        if (!updateFileCategoriesFromDb(oldFileOnDb, file)){
             return false;
         }
         return updateObject(file);
@@ -215,7 +222,13 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private boolean addCategories(File file) {
+    private List<Category> getFileCategoriesFromDb(String fileId){
+        ICategoryDataHandler categoryHandler = getCategoryDataHandler();
+        if (fileId == null || fileId.trim().isEmpty() || categoryHandler == null) return null;
+        return categoryHandler.getAccessObjectAssignedCategories(fileId);
+    }
+
+    private boolean addFileCategoriesToDb(File file) {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
         if (categoryHandler == null) return false;
         if (!categoryHandler.addAccessObjectCategories(file)) return false;
@@ -223,7 +236,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private boolean updateCategories(File oldFile, File changedFile) {
+    private boolean updateFileCategoriesFromDb(File oldFile, File changedFile) {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
         return categoryHandler != null && categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
     }
@@ -260,6 +273,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
         file.setPath(resultSet.getString(6));
         file.setModuleId(resultSet.getString(7));
+        file.setCategories(getFileCategoriesFromDb(file.getId()));
         return file;
     }
 
