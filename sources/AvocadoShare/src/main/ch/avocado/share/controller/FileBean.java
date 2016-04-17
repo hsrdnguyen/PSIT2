@@ -20,7 +20,6 @@ import java.util.List;
 public class FileBean extends ResourceBean<File> {
 
     private String title;
-    // private String author;   //TODO @kunzlio1: Sascha fragen für was author? eg. ersteller?
     private List<Category> categories;
     private FileItem fileItem;
     private String moduleId;
@@ -45,7 +44,6 @@ public class FileBean extends ResourceBean<File> {
         checkParameterDescription(file);
         checkParameterModuleId(file);
         checkUploadedFile(file);
-        //checkParameterAuthor();
         if (!file.hasErrors()) {
             Module module = moduleDataHandler.getModule(getModuleId());
             if(module == null) {
@@ -304,14 +302,6 @@ public class FileBean extends ResourceBean<File> {
             setModuleId(getModuleId().trim());
         }
     }
-
-//    private void checkParameterAuthor() {
-//        if (author == null || author.trim().isEmpty()) {
-//            addFormError("description", ERROR_NO_AUTHOR);
-//        } else {
-//            author = author.trim();
-//        }
-//    }
 
     public String getModuleId() {
         return moduleId;
