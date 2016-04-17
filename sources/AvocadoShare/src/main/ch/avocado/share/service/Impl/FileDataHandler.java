@@ -34,7 +34,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         }
     }
 
-    public boolean changeModule(File file) throws DataHandlerException {
+    public boolean changeFileAssociatedModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -180,7 +180,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        if(!changeModule(file)) {
+        if(!changeFileAssociatedModule(file)) {
             return false;
         }
         return updateObject(file);
