@@ -116,6 +116,14 @@ public class SQLQueryConstants {
         public static final String SQL_DELETE_CATEGORY_FROM_OBJECT = "DELETE FROM category WHERE name = ? AND object_id = ?";
     }
 
+    public static final class Rating{
+        public static final String SQL_ADD_RATING = "INSERT INTO rating (object_id, identity_id, rating) VALUES (?, ?)";
+
+        public static final String SQL_DELETE_RATING = "DELETE FROM rating WHERE object_id = ? AND identity_id = ?";
+
+        public static final String SQL_UPDATE_RATING = "UPDATE rating SET rating = ? WHERE object_id = ? AND identity_id = ?";
+    }
+
     public static final class File {
         public static final String SELECT_BY_ID_QUERY = "" +
                 "SELECT o.id, title, description, last_changed, creation_date, path, module_id, owner.owner_id " +
