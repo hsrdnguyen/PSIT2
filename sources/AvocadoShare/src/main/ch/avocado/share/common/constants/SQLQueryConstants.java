@@ -20,6 +20,8 @@ public class SQLQueryConstants {
     public static final int UPDATE_OWNERSHIP_INDEX_OBJECT = 2;
     public static final String DELETE_OWNERSHIP = "DELETE FROM avocado_share.ownership WHERE object_id = ?";
     public static final int DELETE_OWNERSHIP_INDEX_OBJECT = 1;
+    public static final String SELECT_OWNED_IDS = "SELECT object_id FROM avocado_share.ownership WHERE owner_id = ?";
+    public static final int SELECT_OWNED_IDS_OWNER_INDEX = 1;
 
 
     public final static class Module {
@@ -124,20 +126,24 @@ public class SQLQueryConstants {
 
     public static final class File {
         public static final String SELECT_BY_ID_QUERY = "" +
-                "SELECT o.id, title, description, last_changed, creation_date, path, module_id " +
+                "SELECT o.id, title, description, last_changed, creation_date, path, module_id, owner.owner_id " +
                 "   FROM file AS f " +
                 "JOIN access_control AS o " +
                 "   ON f.id = o.id " +
                 "JOIN avocado_share.uploaded_into AS u " +
                 "   ON u.file_id = f.id " +
+                "LEFT JOIN avocado_share.ownership AS owner " +
+                "   ON owner.object_id = f.id " +
                 "WHERE o.id = ?";
         public static final String SELECT_BY_TITLE_QUERY_AND_MODULE = "" +
-                "SELECT o.id, title, description, last_changed, creation_date, path, module_id " +
+                "SELECT o.id, title, description, last_changed, creation_date, path, module_id, owner.owner_id " +
                 "   FROM file AS f " +
                 "JOIN access_control AS o " +
                 "   ON f.id = o.id " +
                 "JOIN avocado_share.uploaded_into AS u " +
                 "   ON u.file_id = f.id " +
+                "LEFT JOIN avocado_share.ownership AS owner " +
+                "   ON owner.object_id = f.id " +
                 "WHERE title = ? AND module_id = ?";
         public static final String INSERT_QUERY = "INSERT INTO avocado_share.file (id, title, last_changed, path) VALUES (?, ?, ?, ?)";
         public static final String UPDATE_QUERY = "UPDATE file SET title=?, last_changed=?, path=? WHERE id = ?";

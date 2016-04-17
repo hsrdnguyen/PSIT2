@@ -1,6 +1,7 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
@@ -99,6 +100,7 @@ public class FileAccessBeanTest {
     public void testRequestAccessForUserWithoutAccess() throws Exception {
         MailingServiceMock.use();
         IMailingService mailingService = mock(IMailingService.class);
+        when(mailingService.sendRequestAccessEmail(any(User.class), any(User.class), any(File.class))).thenReturn(true);
         ServiceLocatorModifier.setService(IMailingService.class, mailingService);
 
         UserArgumentMatcher isOwner = new UserArgumentMatcher(owner);
@@ -107,10 +109,29 @@ public class FileAccessBeanTest {
 
         bean.setFileId(file.getId());
         bean.setRequesterUserMail(userWithoutReadRights.getMail().getAddress());
-        assertTrue(bean.requestAccess());
+        assertTrue("Request access failed", bean.requestAccess());
 
         verify(mailingService, times(1)).sendRequestAccessEmail(argThat(isRequester), argThat(isOwner), argThat(isFile));
     }
+
+    @Test
+    public void testRequestAccessFailesWhenMailingServiceFails() throws Exception {
+        MailingServiceMock.use();
+        IMailingService mailingService = mock(IMailingService.class);
+        when(mailingService.sendRequestAccessEmail(any(User.class), any(User.class), any(File.class))).thenReturn(false);
+        ServiceLocatorModifier.setService(IMailingService.class, mailingService);
+
+        UserArgumentMatcher isOwner = new UserArgumentMatcher(owner);
+        UserArgumentMatcher isRequester = new UserArgumentMatcher(userWithoutReadRights);
+        FileArgumentMatcher isFile = new FileArgumentMatcher(file);
+
+        bean.setFileId(file.getId());
+        bean.setRequesterUserMail(userWithoutReadRights.getMail().getAddress());
+        assertFalse("Request succeeded but mailing service failed ", bean.requestAccess());
+
+        verify(mailingService, times(1)).sendRequestAccessEmail(argThat(isRequester), argThat(isOwner), argThat(isFile));
+    }
+
 
     @Test
     public void testRequestAccessForUserWithAccess() throws Exception {
@@ -119,8 +140,8 @@ public class FileAccessBeanTest {
         ServiceLocatorModifier.setService(IMailingService.class, mailingService);
 
         bean.setFileId(file.getId());
-        bean.setRequesterUserMail(userWithoutReadRights.getMail().getAddress());
-        assertFalse(bean.requestAccess());
+        bean.setRequesterUserMail(userWithReadRights.getMail().getAddress());
+        assertFalse("Request access succeeded but should fail", bean.requestAccess());
 
         verify(mailingService, never()).sendRequestAccessEmail(any(User.class), any(User.class), any(File.class));
     }

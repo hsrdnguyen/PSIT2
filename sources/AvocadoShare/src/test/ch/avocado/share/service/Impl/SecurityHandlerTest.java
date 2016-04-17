@@ -289,6 +289,8 @@ public class SecurityHandlerTest {
 
         assertTrue(securityHandler.setAccessLevel(user, groupTwo, AccessLevelEnum.WRITE));
         assertTrue(securityHandler.setAccessLevel(user, groupThree, AccessLevelEnum.MANAGE));
+        assertEquals(AccessLevelEnum.MANAGE, securityHandler.getAccessLevel(user, groupThree));
+        assertEquals(AccessLevelEnum.WRITE, securityHandler.getAccessLevel(user, groupTwo));
 
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
         assertEquals(3, ids.size());

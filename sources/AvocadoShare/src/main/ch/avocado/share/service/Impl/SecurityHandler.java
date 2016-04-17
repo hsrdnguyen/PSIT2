@@ -1,6 +1,7 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.controller.ResourceBean;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.ISecurityHandler;
@@ -90,7 +91,6 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             return AccessLevelEnum.OWNER;
         }
         PreparedStatement preparedStatement = getSelectAccessLevelIncludingInheritedStatement(identityIdInt, targetIdInt);
-        System.out.println(preparedStatement);
         try {
             ResultSet rs = connectionHandler.executeQuery(preparedStatement);
             while (rs.next()) {
@@ -288,8 +288,27 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         }
     }
 
+    private List<String> getIdsOfObjectWhichAreOwned(AccessIdentity owner) throws DataHandlerException {
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        List<String> ids = new LinkedList<>();
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_OWNED_IDS);
+            statement.setLong(SQLQueryConstants.SELECT_OWNED_IDS_OWNER_INDEX, Long.parseLong(owner.getId()));
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()) {
+                ids.add(resultSet.getString(1));
+            }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return ids;
+    }
+
     @Override
     public List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException {
+        if(accessLevelEnum == AccessLevelEnum.OWNER) {
+            return getIdsOfObjectWhichAreOwned(identity);
+        }
         int level = getAccessLevelInt(accessLevelEnum);
         List<String> ids = new LinkedList<>();
         int ownerId = Integer.parseInt(identity.getId());

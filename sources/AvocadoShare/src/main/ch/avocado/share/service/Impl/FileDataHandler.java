@@ -89,12 +89,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_ID_QUERY);
             preparedStatement.setLong(1, Long.parseLong(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
-            File file = getFileFromSelectResultSet(resultSet);
-            if (file != null) {
-                String ownerId = getOwnerId(fileId);
-                file.setOwnerId(ownerId);
-            }
-            return file;
+            return getFileFromSelectResultSet(resultSet);
         } catch (SQLException e) {
             return null;
         }
@@ -157,9 +152,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setLong(2, parsedModuleId);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             return getFileFromSelectResultSet(resultSet);
-
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
@@ -271,6 +265,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
         file.setPath(resultSet.getString(6));
         file.setModuleId(resultSet.getString(7));
+        file.setOwnerId(resultSet.getString(8));
         file.setCategories(getFileCategoriesFromDb(file.getId()));
         return file;
     }
