@@ -178,7 +178,9 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        List<Category> categories = getTestCategories();
         File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
         assertNotNull(id);
@@ -200,9 +202,9 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
-
+        List<Category> categories = getTestCategories();
         File fileOne = new File(user.getId(), description, title + "1", path, lastChanged, extension, module.getId());
-
+        fileOne.setCategories(categories);
         // Add first file
         id = fileDataHandler.addFile(fileOne);
         assertNotNull(id);
@@ -217,6 +219,7 @@ public class FileDataHandlerTest {
         assertNotNull(fileOne.getId());
         notDeletedIds.push(id);
         ids.add(id);
+
 
         // Add a non-file id
         ids.add(user.getId());
@@ -238,8 +241,10 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        List<Category> categories = getTestCategories();
 
         File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        file.setCategories(categories);
 
         id = fileDataHandler.addFile(file);
         assertNotNull(id);
@@ -257,7 +262,7 @@ public class FileDataHandlerTest {
         assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
         // TODO: store extension and uncomment test below
         // assertEquals("Extension", extension, file.getExtension());
-        // TODO: implement categories
+        assertCategoriesEquals(categories, fetchedFile.getCategories());
     }
 
     @Test
@@ -267,8 +272,9 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
-
+        List<Category> categories = getTestCategories();
         File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        file.setCategories(categories);
 
         assertNotNull(fileDataHandler.addFile(file));
         notDeletedIds.push(file.getId());
@@ -280,6 +286,8 @@ public class FileDataHandlerTest {
         path = path + " new";
         lastChanged = new Date();
         extension = ".png";
+        categories = getTestCategories();
+        categories.add(new Category("Something new"));
         file.setOwnerId(userTwo.getId());
         file.setPath(path);
         file.setTitle(title);
@@ -288,6 +296,7 @@ public class FileDataHandlerTest {
         file.setPath(path);
         file.setExtension(extension);
         file.setModuleId(moduleTwo.getId());
+        file.setCategories(categories);
         assertTrue(fileDataHandler.updateFile(file));
 
         File fetchedFile = fileDataHandler.getFile(file.getId());
@@ -301,7 +310,7 @@ public class FileDataHandlerTest {
         assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
         // TODO: store extension and uncomment test below
         // assertEquals("Extension", extension, file.getExtension());
-        // TODO: implement categories
+        assertCategoriesEquals(categories, fetchedFile.getCategories());
 
     }
 
