@@ -11,6 +11,7 @@ import ch.avocado.share.service.Mock.GroupDataHandlerMock;
 import ch.avocado.share.service.Mock.SecurityHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.Mock.UserDataHandlerMock;
+import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -39,6 +40,11 @@ public class BeanTestBase {
         request.setMethod("GET");
         session = new UserSession(request);
         response = new MockHttpServletResponse();
+    }
+
+    @After
+    public void restoreServices() throws Exception {
+        ServiceLocatorModifier.restore();
     }
 
     protected MockHttpServletRequest request;

@@ -11,6 +11,7 @@ import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.Mock.UserDataHandlerMock;
 import ch.avocado.share.servlet.resources.UserServlet;
 import ch.avocado.share.test.UserArgumentMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,6 +47,11 @@ public class UserServletTest {
 
     }
 
+
+    @After
+    public void restoreServices() throws Exception {
+        ServiceLocatorModifier.restore();
+    }
 
     private void resetServlet() throws Exception {
         servlet = spy(new UserServlet());

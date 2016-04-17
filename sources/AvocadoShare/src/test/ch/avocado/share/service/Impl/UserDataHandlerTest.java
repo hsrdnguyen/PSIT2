@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.model.data.UserPassword;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -84,5 +85,4 @@ public class UserDataHandlerTest {
         assertNull(service.getUser(user.getId()));
         assertNull(service.getUserByEmailAddress(user.getMail().getAddress()));
     }
-
 }

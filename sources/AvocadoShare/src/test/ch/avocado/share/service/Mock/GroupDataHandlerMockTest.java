@@ -3,6 +3,7 @@ package ch.avocado.share.service.Mock;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IGroupDataHandler;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -126,5 +127,10 @@ public class GroupDataHandlerMockTest {
         for(Group group: groups) {
             assertNotNull(group);
         }
+    }
+
+    @After
+    public void restoreServices() throws Exception {
+        ServiceLocatorModifier.restore();
     }
 }

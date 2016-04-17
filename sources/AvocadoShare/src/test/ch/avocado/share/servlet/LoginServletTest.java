@@ -13,8 +13,10 @@ import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.SecurityHandlerMock;
+import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.Mock.UserDataHandlerMock;
 import org.apache.commons.logging.Log;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -98,5 +100,10 @@ public class LoginServletTest {
         //assertNull(loginError);
         UserSession userSession = new UserSession(request);
         assertTrue(userSession.isAuthenticated());
+	}
+
+	@After
+	public void restoreServices() throws Exception {
+		ServiceLocatorModifier.restore();
 	}
 }

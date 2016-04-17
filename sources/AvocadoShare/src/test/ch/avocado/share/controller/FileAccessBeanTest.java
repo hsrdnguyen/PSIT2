@@ -199,4 +199,9 @@ public class FileAccessBeanTest {
     }
 
 
+    @After
+    public void restoreServices() throws Exception {
+        ServiceLocatorModifier.restore();
+    }
+
 }
