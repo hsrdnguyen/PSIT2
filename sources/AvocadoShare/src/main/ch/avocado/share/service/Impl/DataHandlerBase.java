@@ -111,7 +111,7 @@ abstract class DataHandlerBase {
         if (objectId == null) throw new IllegalArgumentException("objectId is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.DELETE_ACCESS_CONTROL_QUERY);
-            preparedStatement.setLong(1, Integer.parseInt(objectId));
+            preparedStatement.setLong(1, Long.parseLong(objectId));
             return getConnectionHandler().deleteDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
