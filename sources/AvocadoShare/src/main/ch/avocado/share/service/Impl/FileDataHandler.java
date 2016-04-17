@@ -83,7 +83,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     @Override
     public File getFile(String fileId) throws DataHandlerException {
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
-        //TODO @kunzlio1: noch implementieren dass auch auf Modul geschaut wird, weil titel nur in modul eindeutig
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         try {
@@ -170,7 +169,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
         File oldFileOnDb = getFile(file.getId());
         if (oldFileOnDb == null) throw new IllegalArgumentException("there's no such file on db");
-        //TODO @kunzlio1: Es gibt File Argumente die gar nicht in der DB gespeichert werden können
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.File.UPDATE_QUERY);

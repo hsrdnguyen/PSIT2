@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Category {
     private String name;
-    private List<String> objectIds; //TODO @kunzlio1: Fragen wie wir auf die id der Objekte kommen, bevor wir sie in die db speichern? => hier id noch anpassen
+    private List<String> objectIds;
 
     public Category(String name, List<String> objectIds) {
         if(name == null ) throw new IllegalArgumentException("name in category");

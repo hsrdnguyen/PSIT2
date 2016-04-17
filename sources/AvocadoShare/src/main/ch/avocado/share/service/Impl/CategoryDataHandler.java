@@ -92,7 +92,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             e.printStackTrace();
             return null;
         }
-        //TODO: @kunzlio1: return result set, sobald an db angebunden...
     }
 
     /**
