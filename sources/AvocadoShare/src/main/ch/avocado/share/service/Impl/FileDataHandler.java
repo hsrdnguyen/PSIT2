@@ -215,7 +215,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private boolean addCategories(File file) {
+    private boolean addCategoriesToDb(File file) {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
         if (categoryHandler == null) return false;
         if (!categoryHandler.addAccessObjectCategories(file)) return false;
@@ -223,7 +223,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private boolean updateCategories(File oldFile, File changedFile) {
+    private boolean updateCategoriesFromDb(File oldFile, File changedFile) {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
         return categoryHandler != null && categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
     }
