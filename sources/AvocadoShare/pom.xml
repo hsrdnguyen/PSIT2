@@ -8,18 +8,9 @@
     <packaging>war</packaging>
     <name>Avocado Share</name>
     <description>Knowledge Transfer Platform for Students</description>
+
     <build>
-        <sourceDirectory>src/main</sourceDirectory>
-        <testSourceDirectory>src/test</testSourceDirectory>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <webXml>web/WEB-INF/web.xml</webXml>
-                    <warSourceDirectory>web/</warSourceDirectory>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
@@ -29,8 +20,8 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
