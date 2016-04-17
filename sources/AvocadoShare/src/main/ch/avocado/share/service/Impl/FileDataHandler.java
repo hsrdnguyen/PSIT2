@@ -2,6 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.FileFactory;
@@ -167,6 +168,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     public boolean updateFile(File file) throws DataHandlerException {
         if(file == null)throw new IllegalArgumentException("file is null");
         if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
+        File oldFileOnDb = getFile(file.getId());
+        if (oldFileOnDb == null) throw new IllegalArgumentException("there's no such file on db");
         //TODO @kunzlio1: Es gibt File Argumente die gar nicht in der DB gespeichert werden können
         PreparedStatement preparedStatement;
         try {
@@ -182,6 +185,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             throw new DataHandlerException(e);
         }
         if(!changeFileAssociatedModule(file)) {
+            return false;
+        }
+        if (!updateFileCategoriesFromDb(oldFileOnDb, file)){
             return false;
         }
         return updateObject(file);
@@ -214,6 +220,12 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             throw new DataHandlerException(e);
         }
         return true;
+    }
+
+    private List<Category> getFileCategoriesFromDb(String fileId){
+        ICategoryDataHandler categoryHandler = getCategoryDataHandler();
+        if (fileId == null || fileId.trim().isEmpty() || categoryHandler == null) return null;
+        return categoryHandler.getAccessObjectAssignedCategories(fileId);
     }
 
     private boolean addFileCategoriesToDb(File file) {
@@ -261,6 +273,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
         file.setPath(resultSet.getString(6));
         file.setModuleId(resultSet.getString(7));
+        file.setCategories(getFileCategoriesFromDb(file.getId()));
         return file;
     }
 
