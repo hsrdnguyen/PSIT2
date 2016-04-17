@@ -54,7 +54,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setId(addAccessControlObject(file));
         insertFileData(file);
         addFileToModule(file);
-        addFileCategoriesToDb(file);
+        if(!addFileCategoriesToDb(file)) throw new DataHandlerException("Unable to add categories.");
         return file.getId();
     }
 

@@ -1,5 +1,6 @@
 package ch.avocado.share.model.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public abstract class AccessControlObjectBase extends Model{
     /**
      * Constructor
      * @param id
-     * @param categories
+     * @param categories A list of categories or null if there are no categories.
      * @param creationDate
      * @param rating
      * @param ownerId
@@ -27,7 +28,7 @@ public abstract class AccessControlObjectBase extends Model{
      */
     public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
         this.id = id;
-        this.categories = categories;
+        setCategories(categories);
         setCreationDate(creationDate);
         this.rating = rating;
         setOwnerId(ownerId);
@@ -61,6 +62,9 @@ public abstract class AccessControlObjectBase extends Model{
      * @param categories The categories assigned to this object
      */
     public void setCategories(List<Category> categories) {
+        if(categories == null) {
+            categories = new ArrayList<>();
+        }
         this.categories = categories;
         setDirty(true);
     }

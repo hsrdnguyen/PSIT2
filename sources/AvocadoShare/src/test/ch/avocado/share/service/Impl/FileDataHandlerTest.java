@@ -32,6 +32,31 @@ public class FileDataHandlerTest {
 
     private Stack<String> notDeletedIds;
 
+    static List<String> getCategoryNames(List<Category> categories) {
+        if(categories == null) throw new IllegalArgumentException("categories is null");
+        ArrayList<String> names = new ArrayList<>(categories.size());
+        for(Category category: categories) {
+            names.add(category.getName());
+        }
+        return names;
+    }
+
+    static void assertCategoriesEquals(List<Category> expected, List<Category> actual) {
+        List<String> expectedNames = getCategoryNames(expected);
+        List<String> actualNames = getCategoryNames(actual);
+        for (Iterator<String> iterator = expectedNames.iterator(); iterator.hasNext(); ) {
+            String expectedName = iterator.next();
+            assertTrue("Category \"" + expectedName + "\" not in actual categories", actualNames.contains(expectedName));
+            iterator.remove();
+        }
+        if(!expectedNames.isEmpty()) {
+            String missingNames = "";
+            for(String name: expectedNames) {
+                missingNames += "\"" + name + "\" ";
+            }
+            fail("Missing categories: " + missingNames);
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -102,6 +127,14 @@ public class FileDataHandlerTest {
         }
     }
 
+    private List<Category> getTestCategories() {
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category("File"));
+        categories.add(new Category("Something"));
+        categories.add(new Category("Another"));
+        return categories;
+    }
+
     @Test
     public void testAddAndGetFile() throws Exception {
         // String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId
@@ -110,8 +143,11 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        List<Category> categories = getTestCategories();
+
         // add file
         File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull("File could not be added", id);
         notDeletedIds.push(id);
@@ -131,7 +167,8 @@ public class FileDataHandlerTest {
         assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
         // TODO: store extension and uncomment test below
         // assertEquals("Extension", extension, file.getExtension());
-        // TODO: implement categories
+        assertCategoriesEquals(categories, fetchedFile.getCategories());
+
     }
 
     @Test

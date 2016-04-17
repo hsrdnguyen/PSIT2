@@ -1,5 +1,6 @@
 package ch.avocado.share.model.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,8 +20,8 @@ public class Category {
 
     public Category(String name) {
         if(name == null ) throw new IllegalArgumentException("name in category");
-
         this.name = name;
+        this.objectIds = new ArrayList<>();
     }
 
     public String getName() {

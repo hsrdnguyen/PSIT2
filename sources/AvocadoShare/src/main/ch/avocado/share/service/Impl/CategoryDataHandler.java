@@ -89,6 +89,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             resultSet = preparedStatement.executeQuery();
             return createCategoryFromResultSet(resultSet);
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
         //TODO: @kunzlio1: return result set, sobald an db angebunden...
@@ -130,10 +131,11 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         ResultSet resultSet;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_SELECT_CATEGORIES_BY_OBJECT_ID);
-            preparedStatement.setString(1, accessControlObjectId);
+            preparedStatement.setLong(1, Long.parseLong(accessControlObjectId));
             resultSet = preparedStatement.executeQuery();
             return createAccessObjectAssignedCategories(resultSet);
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -141,11 +143,14 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     private Category createCategoryFromResultSet(ResultSet resultSet){
         Category category = CategoryFactory.getDefaultCategory();
         try {
-            category.setName(resultSet.getString(2));
-            do {
-                category.addObjectId(resultSet.getString(1));
-            }while (resultSet.next());
+            if(resultSet.next()) {
+                category.setName(resultSet.getString(2));
+                do {
+                    category.addObjectId(resultSet.getString(1));
+                }while (resultSet.next());
+            }
         }catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
         return category;
@@ -154,10 +159,15 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     private List<Category> createAccessObjectAssignedCategories(ResultSet resultSet){
         List<Category> categories = new ArrayList<>();
         try {
-            do {
-                categories.add(getCategoryByName(resultSet.getString(1)));
-            }while (resultSet.next());
+            while(resultSet.next()) {
+                Category category = getCategoryByName(resultSet.getString(1));
+                if(category == null) {
+                    return null;
+                }
+                categories.add(category);
+            }
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
         return categories;
@@ -169,13 +179,12 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_ADD_CATEGORY);
-            preparedStatement.setString(1, accessObjectReferenceId);
+            preparedStatement.setLong(1, Long.parseLong(accessObjectReferenceId));
             preparedStatement.setString(2, name);
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
         } catch (SQLException e) {
             return false;
         }
-
         return true;
     }
 
