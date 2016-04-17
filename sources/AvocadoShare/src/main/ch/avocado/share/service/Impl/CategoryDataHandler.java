@@ -91,7 +91,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         } catch (SQLException e) {
             return null;
         }
-        //TODO: @kunzlio1: return result set, sobald an db angebunden...
     }
 
     /**
