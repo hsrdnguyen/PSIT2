@@ -12,8 +12,8 @@ import javax.servlet.annotation.WebServlet;
 @WebServlet("/file")
 public class FileServlet extends ResourceServlet<File> {
     @Override
-    protected Class<? extends ResourceBean<File>> getBeanClass() {
-        return FileBean.class;
+    protected ResourceBean<File> getBean() {
+        return new FileBean();
     }
 
     @Override

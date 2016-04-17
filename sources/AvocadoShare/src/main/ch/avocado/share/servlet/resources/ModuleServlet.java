@@ -13,8 +13,8 @@ import javax.servlet.annotation.WebServlet;
 public class ModuleServlet extends ResourceServlet<Module> {
 
     @Override
-    protected Class<? extends ResourceBean<Module>> getBeanClass() {
-        return ModuleBean.class;
+    protected ResourceBean<Module> getBean() {
+        return new ModuleBean();
     }
 
     @Override

@@ -1,67 +1,22 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
-import ch.avocado.share.service.Impl.MailingService;
-import ch.avocado.share.service.Impl.SecurityHandler;
 import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.test.FileArgumentMatcher;
+import ch.avocado.share.test.UserArgumentMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import sun.awt.X11.XModifierKeymap;
 
-import java.security.Provider;
 import java.util.Date;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
-class UserArgumentMatcher implements ArgumentMatcher<User> {
-
-    private User user;
-
-    public UserArgumentMatcher(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public boolean matches(Object o) {
-        if(!(o instanceof User)) {
-            return false;
-        }
-        User otherUser = (User) o;
-        return otherUser.getId().equals(user.getId());
-    }
-}
-
-
-
-class FileArgumentMatcher implements ArgumentMatcher<File> {
-
-    private File file;
-
-    public FileArgumentMatcher(File file) {
-        this.file = file;
-    }
-
-    @Override
-    public boolean matches(Object o) {
-        if(!(o instanceof File)) {
-            return false;
-        }
-        File otherFile = (File) o;
-        return otherFile.getId().equals(file.getId());
-    }
-}
-
 
 
 /**
