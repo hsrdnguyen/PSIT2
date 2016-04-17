@@ -14,5 +14,5 @@ public interface TokenGenerator {
 	 *            The length of the token.
 	 * @return The generated token.
 	 */
-	public byte[] generateToken(int length);
+	byte[] generateToken(int length);
 }

@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by bergm on 15/03/2016.
+ * The service locator is the entry-point to find a service implementation.
+ * Every service should be registered here and can be queried by calling {@link #getService(Class)}
  */
 public class ServiceLocator {
 

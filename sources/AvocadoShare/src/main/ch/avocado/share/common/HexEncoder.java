@@ -1,15 +1,15 @@
 package ch.avocado.share.common;
 
 /**
- * Created by coffeemakr on 22.03.16.
+ * Encode a value as hexadecimal.
  */
 public class HexEncoder {
     final protected static char[] hexArray = "0123456789abcdef".toCharArray();
 
     /**
      * Converts a byte array to a hexadecimal string.
-     * @param bytes
-     * @return
+     * @param bytes The byte array to convert
+     * @return The string representing the values encoded in hexadecimal
      */
     public static String bytesToHex(byte[] bytes) {
 
