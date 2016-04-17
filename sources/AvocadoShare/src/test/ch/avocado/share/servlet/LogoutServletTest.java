@@ -1,18 +1,16 @@
 package ch.avocado.share.servlet;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-
 import ch.avocado.share.controller.UserSession;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 public class LogoutServletTest {
 

@@ -1,13 +1,5 @@
 package ch.avocado.share.servlet;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-
-import javax.servlet.GenericServlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.User;
@@ -15,15 +7,16 @@ import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.SecurityHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.Mock.UserDataHandlerMock;
-import org.apache.commons.logging.Log;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import ch.avocado.share.servlet.LoginServlet;
-import org.springframework.mock.web.MockServletContext;
+import javax.servlet.ServletException;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 public class LoginServletTest {
 

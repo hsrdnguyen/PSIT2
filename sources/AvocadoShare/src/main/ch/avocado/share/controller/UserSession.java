@@ -1,20 +1,13 @@
 package ch.avocado.share.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class UserSession {
 	

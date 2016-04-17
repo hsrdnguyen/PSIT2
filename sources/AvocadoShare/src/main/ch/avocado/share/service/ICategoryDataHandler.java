@@ -2,7 +2,6 @@ package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.data.File;
 
 import java.util.List;
 

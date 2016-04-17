@@ -1,11 +1,7 @@
 package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.service.IGroupDataHandler;
-import ch.avocado.share.service.ISecurityHandler;
-import ch.avocado.share.service.IUserDataHandler;
 
-import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

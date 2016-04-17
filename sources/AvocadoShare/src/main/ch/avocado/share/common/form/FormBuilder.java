@@ -8,13 +8,13 @@ import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.FormBuilderException;
 import ch.avocado.share.servlet.resources.base.DetailViewConfig;
 import ch.avocado.share.servlet.resources.base.FormError;
-import ch.avocado.share.servlet.resources.base.ListViewConfig;
-import ch.avocado.share.servlet.resources.base.ViewConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.Normalizer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 
 public class FormBuilder {

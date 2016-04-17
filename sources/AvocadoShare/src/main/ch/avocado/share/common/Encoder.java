@@ -2,7 +2,6 @@ package ch.avocado.share.common;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 
 /**
  * Encoder for servlets.

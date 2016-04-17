@@ -1,13 +1,11 @@
 package ch.avocado.share.common;
 
-import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Impl.*;
-import ch.avocado.share.service.Mock.*;
+import ch.avocado.share.service.Mock.FileStorageHandlerMock;
 
 import java.lang.reflect.Type;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 

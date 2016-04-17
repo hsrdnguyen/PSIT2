@@ -3,16 +3,14 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.model.data.UserPassword;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static org.junit.Assert.*;
 
 
 /**

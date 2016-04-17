@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class FileStorageHandlerMockTest {
     private FileStorageHandlerMock handler;

@@ -4,10 +4,6 @@ import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.http.HTTPException;
-import java.util.Map;
-
 /**
  * Created by coffeemakr on 22.03.16.
  */

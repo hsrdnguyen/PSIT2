@@ -1,8 +1,9 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.constants.SQLQueryConstants;
-import ch.avocado.share.controller.ResourceBean;
-import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.AccessIdentity;
+import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -10,7 +11,10 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class SecurityHandler extends DataHandlerBase implements ISecurityHandler {
 

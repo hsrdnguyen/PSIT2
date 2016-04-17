@@ -1,15 +1,12 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.service.Impl.MailingService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**

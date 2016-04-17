@@ -1,7 +1,5 @@
 package ch.avocado.share.common.constants;
 
-import java.sql.PreparedStatement;
-
 /**
  * Created by bergm on 22/03/2016.
  */

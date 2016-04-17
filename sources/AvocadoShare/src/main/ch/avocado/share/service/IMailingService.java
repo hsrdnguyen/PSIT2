@@ -1,7 +1,5 @@
 package ch.avocado.share.service;
 
-import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
 

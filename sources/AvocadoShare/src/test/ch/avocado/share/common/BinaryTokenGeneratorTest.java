@@ -1,11 +1,9 @@
 package ch.avocado.share.common;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-import ch.avocado.share.common.BinaryTokenGenerator;
-import ch.avocado.share.common.TokenGenerator;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BinaryTokenGeneratorTest {
 		

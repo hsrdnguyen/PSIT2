@@ -10,8 +10,6 @@ import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import org.apache.taglibs.standard.lang.jstl.test.beans.Factory;
-import org.omg.PortableServer.SERVANT_RETENTION_POLICY_ID;
 
 import java.io.Serializable;
 

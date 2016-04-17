@@ -2,7 +2,6 @@ package ch.avocado.share.model.factory;
 
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.data.Rating;
 
 import java.util.ArrayList;
 import java.util.Date;

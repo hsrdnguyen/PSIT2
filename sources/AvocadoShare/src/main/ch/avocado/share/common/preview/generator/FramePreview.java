@@ -1,6 +1,5 @@
 package ch.avocado.share.common.preview.generator;
 
-import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.form.FormBuilder;
 import ch.avocado.share.common.preview.IPreviewGenerator;
 

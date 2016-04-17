@@ -1,14 +1,10 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.Mock.FileDataHandlerMock;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import org.bouncycastle.math.raw.Mod;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

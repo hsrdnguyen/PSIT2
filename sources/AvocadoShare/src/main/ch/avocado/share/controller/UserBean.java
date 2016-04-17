@@ -1,6 +1,9 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.data.EmailAddress;
+import ch.avocado.share.model.data.EmailAddressVerification;
+import ch.avocado.share.model.data.User;
+import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
