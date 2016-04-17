@@ -52,10 +52,8 @@ public class UserSession {
 		if(session == null) throw new IllegalArgumentException("session can't be null");
 		this.session = session;
         String userId = (String) this.session.getAttribute(SESSION_UID);
-		System.out.println("Session got UID: " + userId);
         user = null;
         loadUser(userId);
-		System.out.println("User: " + user);
     }
 
     private void loadUser(String userId) {
