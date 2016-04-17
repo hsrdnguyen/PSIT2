@@ -20,6 +20,8 @@ public class SQLQueryConstants {
     public static final int UPDATE_OWNERSHIP_INDEX_OBJECT = 2;
     public static final String DELETE_OWNERSHIP = "DELETE FROM avocado_share.ownership WHERE object_id = ?";
     public static final int DELETE_OWNERSHIP_INDEX_OBJECT = 1;
+    public static final String SELECT_OWNED_IDS = "SELECT object_id FROM avocado_share.ownership WHERE owner_id = ?";
+    public static final int SELECT_OWNED_IDS_OWNER_INDEX = 1;
 
 
     public final static class Module {
