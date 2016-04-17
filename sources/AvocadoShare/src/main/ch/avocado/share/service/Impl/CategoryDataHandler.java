@@ -19,7 +19,7 @@ import java.util.List;
  * Created by kunzlio1 on 23.03.2016.
  */
 public class CategoryDataHandler implements ICategoryDataHandler {
-    //TODO @kunzlio1: Sobald an DB, Tests schreiben...
+    //TODO @kunzlio1: Tests schreiben...
     /**
      * adds all categories from new created AccessControlObject to the database
      * @param accessObject the new created AccessControlObject
@@ -180,27 +180,24 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_ADD_CATEGORY);
             preparedStatement.setLong(1, Long.parseLong(accessObjectReferenceId));
             preparedStatement.setString(2, name);
-            preparedStatement.execute();
+            return preparedStatement.execute();
         } catch (SQLException e) {
             return false;
         }
-        return true;
     }
 
     private boolean deleteCategoryAssignedObject(String name, String accessObjectReferenceId) {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) return false;
         PreparedStatement preparedStatement;
-        ResultSet resultSet;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_DELETE_CATEGORY_FROM_OBJECT);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, accessObjectReferenceId);
-            resultSet = preparedStatement.executeQuery();
+            return connectionHandler.deleteDataSet(preparedStatement);
         } catch (SQLException e) {
             return false;
         }
-        return true;
     }
 
     private IDatabaseConnectionHandler getDatabaseHandler() {
