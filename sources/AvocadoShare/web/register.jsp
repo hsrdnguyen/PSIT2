@@ -47,7 +47,7 @@
               <span class="octicon octicon-person"></span>
             </button>
             <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
-              <form action="indexlog.jsp" method="POST" action="#login">
+              <form method="POST" action="#login">
                 <fieldset>
                   <div class="input-group dropdown-item">
                     <label for="navbar-login-username" class="input-group-addon">
@@ -65,12 +65,9 @@
                     </label>
                     <input id="navbar-login-password" type="password" class="form-control" placeholder="Passwort">
                   </div>
-                  </fieldset>
-                  </form>
-                  <a href="document_view2.jsp"><input type="submit" value="Anmelden" class="dropdown-item"/>
-                  </a>
-                  <a href="register.jsp"><input action="contact.jsp" class="dropdown-item" type="submit" value="Registrieren">
-                  </a>
+                  <input type="submit" value="Anmelden" class="dropdown-item"/>
+                </fieldset>
+              </form>
             </div>
           </div>
         </li>
@@ -79,83 +76,72 @@
       </div>
     </nav>
 </header>
+<main class="container container1">
+  <h1>Registrierung</h1>
+  <div class="text-contact">
 
+	<div style="collapsed-contact" aria-expanded="true" class="collapse in" id="message-form">
+	<p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p><div id="xform" class="xform">
 
+    <form action="" method="post" id="form_formular" class="contact_action">
 
-<main class="container">
-  <h1> Dokumentenansicht</h1>
-
-
-
-
-
-
-
-
-
-
-
-    <section class="document-show">
-      <div class="list-group">
-        <div class="list-group-item list-group-header"><h2>Kurzeinstieg in Anlysis
-
-
-<button id="navbar-login-toggle-button" class="btn  btn-secondary btn-secondary1 "
-          type="submit">Download</button>
-
-          <button id="navbar-login-toggle-button" class="btn btn-secondary "
-            type="submit">Print</button>
-
-
-              </h2>
+<div class="form-group" id="formular-anrede">
+    <label class="control-label" for="formular-field-1">Anrede</label>
+        <select class="form-control" id="formular-field-1" name="anrede">
+                    <option value="Frau">Frau</option>
+                    <option value="Herr">Herr</option>
+            </select>
         </div>
-
-        <div class="list-group-item">
-          <div id="single-post-info">
-                        <p>
-                        <i>30 Feb, 2016  Author: Max Müsli</i></p>
-        							</div>
-          <h3 class="list-group-item-heading">Analysis für Dummies</h3>
-
-          <p class="list-group-item-text"><h4>Lorem ipsum dolor sit amet</h4>
-<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mattis, nulla id pretium malesuada, dui est laoreet risus, ac rhoncus eros diam id odio. Duis elementum ligula eu ipsum condimentum accumsan. </p>
-<p> Vivamus euismod elit ac libero facilisis tristique. Duis mollis non ligula vel tincidunt. Nulla consectetur libero id nunc ornare, vel vulputate tellus mollis. Sed quis nulla magna. Integer rhoncus sem quis ultrices lobortis. Maecenas tempus nulla quis dolor vulputate egestas. Phasellus cursus tortor quis massa faucibus fermentum vel sit amet tortor. Phasellus vehicula lorem et tortor luctus, a dignissim lacus tempor. Aliquam volutpat molestie metus sit amet aliquam. Duis vestibulum quam tortor, sed ultrices orci sagittis nec. </p>
-<h4>Sed sit amet metus sit</h4>
-<div class="single-post-image">
-<img alt="Post Title" src="img/mathe.png">
-</div>
-<p> Proin fermentum, purus id eleifend molestie, nisl arcu rutrum tellus,
-  a luctus erat tortor ut augue. Vivamus feugiat nisi sit amet dignissim fermentum.
-  Duis elementum mattis lacinia. Sed sit amet metus sit amet leo semper feugiat. Nulla
-  vel orci nec neque interdum facilisis egestas vitae lorem. Phasellus elit ante, posuere
-  at augue quis, porta vestibulum magna. Nullam non mattis odio. Donec eget velit leo.
-  Nunc et diam volutpat tellus ultrices fringilla eu a neque. Integer lectus nunc,
-  vestibulum a turpis vitae, malesuada lacinia nibh. In sit amet leo ut turpis convallis
-  bibendum. Nullam nec purus sapien. Quisque sollicitudin cursus felis sit amet aliquam.
-  at augue quis, porta vestibulum magna. Nullam non mattis odio. Donec eget velit leo.
-  Nunc et diam volutpat tellus ultrices fringilla eu a neque. Integer lectus nunc,
-  vestibulum a turpis vitae, malesuada lacinia nibh. In sit amet leo ut turpis convallis
-  bibendum. Nullam nec purus sapien. Quisque sollicitudin cursus felis sit amet aliquam.
-</p>
-</div>
-</p>
+<div class="form-group" id="formular-vorname">
+    <label class="control-label" for="formular-field-2">Vorname *</label>
+    <input class="form-control" name="vorname" id="formular-field-2" value="" type="text">
+    </div>
+<div class="form-group" id="formular-nachname">
+    <label class="control-label" for="formular-field-3">Nachname *</label>
+    <input class="form-control" name="nachname" id="formular-field-3" value="" type="text">
+    </div>
+<div class="form-group" id="formular-class">
+    <label class="control-label" for="formular-field-4">Klasse</label>
+    <input class="form-control" name="class" id="formular-field-4" value="" type="text">
+    </div>
+<div class="form-group form-email" id="formular-email">
+    <label class="control-label" for="formular-field-5">E-mail *</label>
+    <input class="form-control" name="email" id="formular-field-5" value="" type="email">
+    </div>
+<div class="form-group" id="formular-betreff">
+    <label class="control-label" for="formular-field-6">Passwort *</label>
+    <input class="form-control" name="Passwort" id="formular-field-6" value="" type="text">
+    </div>
+    <div class="form-group" id="formular-betreff">
+        <label class="control-label" for="formular-field-6">Passwort bestätigen *</label>
+        <input class="form-control" name="Passwort" id="formular-field-6" value="" type="text">
         </div>
+<div class="form-group" id="formular-msg">
+    <label class="control-label" for="formular-field-7">Berechtigung</label>
+    <input class="form-control" name="Passwort" id="formular-field-6" value="Wird durch Administrator erteilt..." type="text">
+    </div>
 
 
-<div class="list-group-item list-group-header"><h2>Änliche Beiträge</h2></div>
+
+    <div class="form-group" id="formular-msg">
+        <label class="control-label" for="formular-field-7">
+          Profilbild</label>
+  <div class="form-group" id="formular-msg">
+          <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Datei auswählen...</button>
+          <input name="send" value="1" type="hidden">
+        <button class="btn-primary" type="submit" name="submit" id="formular-field-8">Hochladen</button>
+        <input name="send" value="1" type="hidden">
+
+        </div></div>
 
 
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">Webdesign für Nerds</h4>
-          <p class="list-group-item-text">HTML &amp; Unicode im Web.</p>
-        </a>
-        <a href="#" class="list-group-item">
-          <h4 class="list-group-item-heading">MANIT</h4>
-          <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-        </a>
-      </div>
-    </section>
-  </div>
+
+<button class="btn-primary" type="submit" name="submit" id="formular-field-8">Senden</button>
+<input name="send" value="1" type="hidden">
+</form>
+</div>
+</div>
+</div>
 </main>
 </div> <!-- /#footerpusher -->
 <footer class="text-muted">
