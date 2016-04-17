@@ -61,6 +61,7 @@ public class FileAccessBean implements Serializable {
             currentLevel = securityHandler.getAccessLevel(user, file);
             owningUser = userDataHandler.getUser(file.getOwnerId());
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             return false;
         }
         if (currentLevel.containsLevel(AccessLevelEnum.READ)) {
