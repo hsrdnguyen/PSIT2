@@ -63,7 +63,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        if(ownerId == null) {
+        if (ownerId == null) {
             ownerId = id;
         }
         return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name);
@@ -80,9 +80,11 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
         ArrayList<Group> groups = new ArrayList<>(ids.size());
         for (String id : ids) {
-            Group group = getGroup(id);
-            if (group != null) {
-                groups.add(group);
+            if (id != null) {
+                Group group = getGroup(id);
+                if (group != null) {
+                    groups.add(group);
+                }
             }
         }
         groups.trimToSize();
@@ -132,10 +134,10 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
             statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.UPDATE);
             statement.setInt(SQLQueryConstants.Group.UPDATE_INDEX_ID, Integer.parseInt(group.getId()));
             statement.setString(SQLQueryConstants.Group.UPDATE_INDEX_NAME, group.getName());
-            if(!getConnectionHandler().updateDataSet(statement)) {
+            if (!getConnectionHandler().updateDataSet(statement)) {
                 return false;
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
         return updateObject(group);

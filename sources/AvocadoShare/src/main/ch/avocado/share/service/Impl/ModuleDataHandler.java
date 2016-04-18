@@ -1,10 +1,14 @@
 package ch.avocado.share.service.Impl;
 
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
+import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import org.bouncycastle.asn1.icao.ICAOObjectIdentifiers;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -29,6 +33,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+        addCategories(module);
         return module.getId();
     }
 
@@ -38,18 +43,51 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     }
 
     private Module getModuleFromResult(ResultSet resultSet) throws DataHandlerException {
-        String id, name, description;
+        String id, name, description, ownerId;
         Date creationDate;
         try {
             if (!resultSet.next()) return null;
-            id = Integer.toString(resultSet.getInt(SQLQueryConstants.Module.RESULT_INDEX_ID));
+            id = Long.toString(resultSet.getLong(SQLQueryConstants.Module.RESULT_INDEX_ID));
             name = resultSet.getString(SQLQueryConstants.Module.RESULT_INDEX_NAME);
             description = resultSet.getString(SQLQueryConstants.Module.RESULT_INDEX_DESCRIPTION);
             creationDate = resultSet.getDate(SQLQueryConstants.Module.RESULT_INDEX_CREATION_DATE);
+            ownerId = Long.toString(resultSet.getLong(SQLQueryConstants.Module.RESULT_INDEX_OWNER));
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Module(id, new ArrayList<Category>(), creationDate, 0.0f, "", description, name);
+        return new Module(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name);
+    }
+
+    private void getCategories(Module module) throws DataHandlerException {
+        ICategoryDataHandler categoryDataHandler;
+        try {
+            categoryDataHandler = ServiceLocator.getService(ICategoryDataHandler.class);
+        } catch (ServiceNotFoundException e) {
+            throw new DataHandlerException(e);
+        }
+        List<Category> categories = categoryDataHandler.getAccessObjectAssignedCategories(module.getId());
+        module.setCategories(categories);
+    }
+
+    private void updateCategories(Module module) throws DataHandlerException {
+        ICategoryDataHandler categoryDataHandler;
+        try {
+            categoryDataHandler = ServiceLocator.getService(ICategoryDataHandler.class);
+        }catch (ServiceNotFoundException e) {
+            throw new DataHandlerException(e);
+        }
+        Module oldModule = getModule(module.getId());
+        categoryDataHandler.updateAccessObjectCategories(oldModule, module);
+    }
+
+    private void addCategories(Module module) throws  DataHandlerException {
+        ICategoryDataHandler categoryDataHandler;
+        try {
+            categoryDataHandler = ServiceLocator.getService(ICategoryDataHandler.class);
+        }catch (ServiceNotFoundException e) {
+            throw new DataHandlerException(e);
+        }
+        categoryDataHandler.addAccessObjectCategories(module);
     }
 
     @Override
@@ -63,13 +101,20 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return getModuleFromResult(resultSet);
+        Module module = getModuleFromResult(resultSet);
+        if(module != null) {
+            getCategories(module);
+        }
+        return module;
     }
 
     @Override
     public List<Module> getModules(Collection<String> ids) throws DataHandlerException {
         List<Module> modules = new ArrayList<>(ids.size());
         for (String id : ids) {
+            if(id == null) {
+                continue;
+            }
             Module module = getModule(id);
             if (module != null) {
                 modules.add(module);
@@ -88,6 +133,9 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             success = getConnectionHandler().updateDataSet(statement);
             if (success) {
                 success = updateObject(module);
+            }
+            if (success) {
+                updateCategories(module);
             }
             return success;
         } catch (SQLException e) {
