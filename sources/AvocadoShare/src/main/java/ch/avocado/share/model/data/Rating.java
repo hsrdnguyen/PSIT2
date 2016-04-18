@@ -18,16 +18,16 @@ public class Rating {
         this.ratedObjectId = ratedObjectId;
     }
 
-    public void addRatingUserId(long userId){
-        ratingUserIds.add(userId);
+    public void addRatingUserId(long ratingUserId){
+        ratingUserIds.add(ratingUserId);
     }
 
-    public boolean hasUserRated(long userId){
-        return ratingUserIds.contains(userId);
+    public boolean hasUserRated(long ratingUserId){
+        return ratingUserIds.contains(ratingUserId);
     }
 
-    public void setRatedObjectId(long objectId){
-        this.ratedObjectId = objectId;
+    public void setRatedObjectId(long ratedObjectId){
+        this.ratedObjectId = ratedObjectId;
     }
 
     public long getRatedObjectId(){
