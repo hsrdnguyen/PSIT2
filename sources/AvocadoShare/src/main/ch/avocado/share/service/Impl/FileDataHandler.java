@@ -218,37 +218,35 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private List<Category> getFileCategoriesFromDb(String fileId){
+    private List<Category> getFileCategoriesFromDb(String fileId) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if (fileId == null || fileId.trim().isEmpty() || categoryHandler == null) return null;
+        if (fileId == null || fileId.trim().isEmpty()) return null;
         return categoryHandler.getAccessObjectAssignedCategories(fileId);
     }
 
-    private boolean addFileCategoriesToDb(File file) {
+    private boolean addFileCategoriesToDb(File file) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if (categoryHandler == null) return false;
         if (!categoryHandler.addAccessObjectCategories(file)) return false;
-
         return true;
     }
 
-    private boolean updateFileCategoriesFromDb(File oldFile, File changedFile) {
+    private boolean updateFileCategoriesFromDb(File oldFile, File changedFile) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        return categoryHandler != null && categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
+        return categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
     }
 
-    private File getFileFromSelectResultSet(ResultSet resultSet) {
+    private File getFileFromSelectResultSet(ResultSet resultSet) throws DataHandlerException {
         try {
             if (resultSet.next()) {
                 return createFileFromResultSet(resultSet);
             }
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
         return null;
     }
 
-    private List<File> getMultipleFilesFromResultSet(ResultSet resultSet) {
+    private List<File> getMultipleFilesFromResultSet(ResultSet resultSet) throws DataHandlerException {
         try {
             List<File> files = new ArrayList<>();
             while (resultSet.next()) {
@@ -256,11 +254,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             }
             return files;
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
-    private File createFileFromResultSet(ResultSet resultSet) throws SQLException {
+    private File createFileFromResultSet(ResultSet resultSet) throws SQLException, DataHandlerException {
         File file = FileFactory.getDefaultFile();
         file.setId(resultSet.getString(1));
         file.setTitle(resultSet.getString(2));
@@ -274,11 +272,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return file;
     }
 
-    private ICategoryDataHandler getCategoryDataHandler() {
+    private ICategoryDataHandler getCategoryDataHandler() throws DataHandlerException {
         try {
             return ServiceLocator.getService(ICategoryDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 }

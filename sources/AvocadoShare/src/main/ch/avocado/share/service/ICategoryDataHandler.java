@@ -2,6 +2,7 @@ package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.util.List;
 
@@ -17,14 +18,14 @@ public interface ICategoryDataHandler {
      * @return true if updated successfully
      */
     boolean updateAccessObjectCategories(AccessControlObjectBase oldAccessObject,
-                                         AccessControlObjectBase changedAccessObject);
+                                         AccessControlObjectBase changedAccessObject) throws DataHandlerException;
 
     /**
      * adds all categories from new created AccessControlObject to the database
      * @param accessObject the new created AccessControlObject
      * @return true if added all categories successful
      */
-    boolean addAccessObjectCategories(AccessControlObjectBase accessObject);
+    boolean addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException;
 
     /**
      * checks if a Category is already added to a AccessControlObject
