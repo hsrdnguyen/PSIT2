@@ -1,14 +1,18 @@
 <%@
-        page import="ch.avocado.share.servlet.LoginServlet" %><%@
-        page import="ch.avocado.share.controller.UserSession" %><%@
-        page import="ch.avocado.share.common.Encoder" %><%@
-        page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %><%
+        page import="ch.avocado.share.servlet.LoginServlet" %>
+<%@
+        page import="ch.avocado.share.controller.UserSession" %>
+<%@
+        page import="ch.avocado.share.common.Encoder" %>
+<%@
+        page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%
 
     String baseUrl = request.getServletContext().getContextPath();
     String currentUrl = request.getRequestURI();
     UserSession userSession = new UserSession(request);
     String name;
-    if(userSession.isAuthenticated()) {
+    if (userSession.isAuthenticated()) {
         name = Encoder.forHtml(userSession.getUser().getFullName());
     }
 %>
@@ -30,7 +34,7 @@
         <nav class="navbar navbar-dark bg-inverse">
             <div class="container">
                 <button class="navbar-toggler hidden-md-up" type="button" data-toggle="collapse"
-                    data-target="#exCollapsingNavbar2">
+                        data-target="#exCollapsingNavbar2">
                     &#9776;
                 </button>
                 <div class="collapse navbar-toggleable-sm" id="exCollapsingNavbar2">
@@ -38,7 +42,7 @@
                         Avocado Share
                     </a>
                     <ul class="nav navbar-nav">
-                        <% if(userSession.isAuthenticated()) { %>
+                        <% if (userSession.isAuthenticated()) { %>
                         <li class="nav-item">
                             <a class="nav-link" href="<%=baseUrl%>/group">Gruppen</a>
                         </li>
@@ -61,7 +65,7 @@
                         <li class="nav-item pull-md-right">
                             <form action="#search" class="form-inline">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Suchen nach..." />
+                                    <input type="text" class="form-control" placeholder="Suchen nach..."/>
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit">Los!</button>
                                     </span>
@@ -69,9 +73,10 @@
                             </form>
                         </li>
 
-                        <% if(userSession.isAuthenticated()) { %>
+                        <% if (userSession.isAuthenticated()) { %>
                         <li class="nav-item pull-md-right">
-                            <a href="<%=baseUrl%>/file?action=create" class="btn btn-primary-outline"><span class="octicon octicon-plus"></span></a>
+                            <a href="<%=baseUrl%>/file?action=create" class="btn btn-primary-outline"><span
+                                    class="octicon octicon-plus"></span></a>
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->
@@ -85,34 +90,36 @@
                                 </button>
                                 <div id="navbar-login" class="dropdown-menu"
                                      aria-labelledby="navbar-login-toggle-button">
-                                    <% if(userSession.isAuthenticated()) { %>
-                                    <a class="dropdown-item" href="<%=baseUrl%>/user?id=<%=Encoder.forUrlAttribute(userSession.getUserId())%>">Profil</a>
+                                    <% if (userSession.isAuthenticated()) { %>
+                                    <a class="dropdown-item"
+                                       href="<%=baseUrl%>/user?id=<%=Encoder.forUrlAttribute(userSession.getUserId())%>">Profil</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>
                                     <!-- login formular -->
                                     <form action="<%=baseUrl%>/login" method="POST">
-
-                                            <div class="input-group dropdown-item" style="margin-bottom: 0">
-                                                <label for="navbar-login-username" class="input-group-addon">
-                                                    <span class="octicon octicon-person"></span>
-                                                    <span class="sr-only">Benutzername</span>
-                                                </label>
-                                                <input id="navbar-login-username" type="email" class="form-control" required
-                                                       name="<%=LoginServlet.FIELD_EMAIL %>" placeholder="E-Mail"/>
-                                            </div>
-                                            <div class="input-group dropdown-item" style="margin-bottom: 0">
-                                                <label for="navbar-login-password" class="input-group-addon">
-                                                    <span class="octicon octicon-lock"></span>
-                                                    <span class="sr-only">Passwort</span>
-                                                </label>
-                                                <input id="navbar-login-password" type="password" class="form-control"
-                                                       required pattern=".{9,}" title="Ihr Passwort ist mindestens 9 Zeichen lang."
-                                                       name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
-                                            </div>
-                                        <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>" name="<%=LoginServlet.FIELD_REDIRECT_TO%>" />
+                                        <div class="input-group dropdown-item" style="margin-bottom: 0">
+                                            <label for="navbar-login-username" class="input-group-addon">
+                                                <span class="octicon octicon-person"></span>
+                                                <span class="sr-only">Benutzername</span>
+                                            </label>
+                                            <input id="navbar-login-username" type="email" class="form-control" required
+                                                   name="<%=LoginServlet.FIELD_EMAIL %>" placeholder="E-Mail"/>
+                                        </div>
+                                        <div class="input-group dropdown-item" style="margin-bottom: 0">
+                                            <label for="navbar-login-password" class="input-group-addon">
+                                                <span class="octicon octicon-lock"></span>
+                                                <span class="sr-only">Passwort</span>
+                                            </label>
+                                            <input id="navbar-login-password" type="password" class="form-control"
+                                                   required pattern=".{9,}"
+                                                   title="Ihr Passwort ist mindestens 9 Zeichen lang."
+                                                   name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
+                                        </div>
+                                        <input type="hidden" value="<%=Encoder.forHtmlAttribute(currentUrl) %>"
+                                               name="<%=LoginServlet.FIELD_REDIRECT_TO%>"/>
                                         <div class="dropdown-item">
-                                            <input type="submit" class="btn btn-secondary" value="Anmelden" />
+                                            <input type="submit" class="btn btn-secondary" value="Anmelden"/>
                                         </div>
                                     </form>
                                     <div class="dropdown-divider"></div>
@@ -133,4 +140,4 @@
             </div>
         </nav>
     </header>
-        <main class="container">
+    <main class="container">
