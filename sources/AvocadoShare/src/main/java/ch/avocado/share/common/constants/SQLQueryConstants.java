@@ -109,7 +109,7 @@ public class SQLQueryConstants {
     public static final class Category {
         public static final String SQL_SELECT_CATEGORY_BY_NAME = "SELECT object_id, name FROM category WHERE name = ?";
 
-        public static final String SQL_SELECT_CATEGORY_BY_NAME_AND_OBJECT_ID = "SELECT object_id, name FROM category WHERE name = '?' AND object_id = ?";
+        public static final String SQL_SELECT_CATEGORY_BY_NAME_AND_OBJECT_ID = "SELECT object_id, name FROM category WHERE name = ? AND object_id = ?";
 
         public static final String SQL_SELECT_CATEGORIES_BY_OBJECT_ID = "SELECT name FROM category WHERE object_id = ?";
 

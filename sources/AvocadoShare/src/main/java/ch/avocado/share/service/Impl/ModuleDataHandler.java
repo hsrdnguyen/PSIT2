@@ -77,7 +77,9 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             throw new DataHandlerException(e);
         }
         Module oldModule = getModule(module.getId());
-        categoryDataHandler.updateAccessObjectCategories(oldModule, module);
+        if(!categoryDataHandler.updateAccessObjectCategories(oldModule, module)) {
+            throw new DataHandlerException("Failed to update categories of an existing module");
+        }
     }
 
     private void addCategories(Module module) throws  DataHandlerException {

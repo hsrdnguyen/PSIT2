@@ -111,7 +111,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             preparedStatement.setString(1, name);
             preparedStatement.setLong(2, Long.parseLong(accessObjectReferenceId));
             resultSet = preparedStatement.executeQuery();
-            return !resultSet.wasNull();
+            return resultSet.next();
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -171,7 +171,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     private boolean addCategory(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null || hasCategoryAssignedObject(name, accessObjectReferenceId)) return false;
+        if(hasCategoryAssignedObject(name, accessObjectReferenceId)) return true;
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_ADD_CATEGORY);
@@ -186,7 +186,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     private boolean deleteCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return false;
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_DELETE_CATEGORY_FROM_OBJECT);
