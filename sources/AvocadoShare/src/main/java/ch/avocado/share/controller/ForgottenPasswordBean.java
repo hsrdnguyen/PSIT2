@@ -12,6 +12,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by coffeemakr on 21.03.16.
@@ -44,7 +45,7 @@ public class ForgottenPasswordBean implements Serializable {
     private boolean storeVerification(User user, IUserDataHandler userDataHandler) {
         PasswordResetVerification verification = user.getPassword().getPasswordResetVerification();
         try {
-            if(!userDataHandler.addPasswordResetVerification(verification, user.getId())) {
+            if (!userDataHandler.addPasswordResetVerification(verification, user.getId())) {
                 errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
                 return false;
             }
@@ -56,7 +57,13 @@ public class ForgottenPasswordBean implements Serializable {
         return true;
     }
 
-
+    /**
+     * Send the reset link to the user
+     *
+     * @param user The user who should receive the mail
+     * @return True if the mail could be sent successfully. Otherwise {@code false} is returned and
+     * the {@link #errorMessage} is set accordingly.
+     */
     private boolean sendResetMail(User user) {
         IMailingService mailingService;
         try {
@@ -65,7 +72,7 @@ public class ForgottenPasswordBean implements Serializable {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return false;
         }
-        if(!mailingService.sendPasswordResetEmail(user)) {
+        if (!mailingService.sendPasswordResetEmail(user)) {
             errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
             return false;
         }
@@ -73,13 +80,15 @@ public class ForgottenPasswordBean implements Serializable {
     }
 
     /**
+     * Make sure you call {@link #setEmail(String)} before calling this method.
+     *
      * @return True if a password reset link was send to the user
      */
     public boolean requestNewPassword() {
         if (checkParameterEmail()) return false;
 
         IUserDataHandler userDataHandler = getUserDataHandler();
-        if(userDataHandler == null) return false;
+        if (userDataHandler == null) return false;
 
         User user = getUserFromEmail(userDataHandler, email);
         if (user == null) {
@@ -88,7 +97,7 @@ public class ForgottenPasswordBean implements Serializable {
         }
 
         user.getPassword().setPasswordResetVerification(createPasswordResetVerification());
-        if(!storeVerification(user, userDataHandler)) {
+        if (!storeVerification(user, userDataHandler)) {
             return false;
         }
 
@@ -100,6 +109,11 @@ public class ForgottenPasswordBean implements Serializable {
         return new PasswordResetVerification(expiry);
     }
 
+    /**
+     * Checks if the email is set and not empty
+     *
+     * @return True is the email is valid. Otherwise false is returned and {@link #errorMessage} is set accordingly.
+     */
     private boolean checkParameterEmail() {
         if (email == null || email.isEmpty()) {
             errorMessage = ErrorMessageConstants.ERROR_EMPTY_EMAIL;
@@ -108,24 +122,27 @@ public class ForgottenPasswordBean implements Serializable {
         return false;
     }
 
+    /**
+     * Set the password reset code.
+     *
+     * @param code The password reset code.
+     */
     public void setCode(String code) {
         if (code == null) throw new IllegalArgumentException("code can't be null");
         this.code = code;
     }
 
-    public String getPasswordConfirmation() {
-        return passwordConfirmation;
-    }
-
+    /**
+     * @param passwordConfirmation The repeated password
+     */
     public void setPasswordConfirmation(String passwordConfirmation) {
         if (passwordConfirmation == null) throw new IllegalArgumentException("passwordConfirmation can't be null");
         this.passwordConfirmation = passwordConfirmation;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
+    /**
+     * @param password The new password
+     */
     public void setPassword(String password) {
         if (password == null) throw new IllegalArgumentException("password can't be null");
         this.password = password;
@@ -133,13 +150,14 @@ public class ForgottenPasswordBean implements Serializable {
 
     /**
      * If an error occurs while retrieving the user the {@link #errorMessage} is set.
+     *
      * @param userDataHandler The data handler to use
-     * @param email The email of the user
+     * @param email           The email of the user
      * @return The user or null
      */
     private User getUserFromEmail(IUserDataHandler userDataHandler, String email) {
-        if(userDataHandler == null) throw new IllegalArgumentException("userDataHandler is null");
-        if(email == null) throw new IllegalArgumentException("email is null");
+        if (userDataHandler == null) throw new IllegalArgumentException("userDataHandler is null");
+        if (email == null) throw new IllegalArgumentException("email is null");
         User user;
         try {
             user = userDataHandler.getUserByEmailAddress(email);
@@ -153,6 +171,7 @@ public class ForgottenPasswordBean implements Serializable {
     /**
      * If this function failes to retrieve the user data handler and returns null
      * the {@link #errorMessage} is set accordingly.
+     *
      * @return The user data handler or null
      */
     private IUserDataHandler getUserDataHandler() {
@@ -166,9 +185,10 @@ public class ForgottenPasswordBean implements Serializable {
         return userDataHandler;
     }
 
-    private User getUserFromEmailWithVerifications() {
+
+    private User getUserFromEmailAndCode(String email, String code) {
         IUserDataHandler userDataHandler = getUserDataHandler();
-        if(userDataHandler == null) return null;
+        if (userDataHandler == null) return null;
 
         User user = getUserFromEmail(userDataHandler, email);
         if (user == null) {
@@ -183,20 +203,21 @@ public class ForgottenPasswordBean implements Serializable {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;
         }
-        Date longest = verifications.get(0).getExpiry();
-        user.getPassword().setPasswordResetVerification(verifications.get(0));
 
-        for (PasswordResetVerification v : verifications) {
-            if (v.getExpiry().compareTo(longest) > 0) {
-                user.getPassword().setPasswordResetVerification(v);
-                longest = v.getExpiry();
+        PasswordResetVerification matchedVerification = null;
+        for (Iterator<PasswordResetVerification> iterator = verifications.iterator(); iterator.hasNext() && matchedVerification == null; ) {
+            PasswordResetVerification verification = iterator.next();
+            if (verification.getCode().equals(code)) {
+                matchedVerification = verification;
             }
         }
-
+        if (matchedVerification == null) {
+            this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
+            return null;
+        }
+        user.getPassword().setPasswordResetVerification(matchedVerification);
         return user;
     }
-
-
 
 
     /**
@@ -214,16 +235,19 @@ public class ForgottenPasswordBean implements Serializable {
         } else if (!password.equals(passwordConfirmation)) {
             errorMessage = ErrorMessageConstants.ERROR_PASSWORDS_DO_NOT_MATCH;
         } else {
-            User user = getUserFromEmailWithVerifications();
-            if (user != null && user.resetPassword(password, code)) {
-                try {
-                    ServiceLocator.getService(IUserDataHandler.class).updateUser(user);
-                    return true;
-                } catch (ServiceNotFoundException | DataHandlerException e) {
-                    errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            User user = getUserFromEmailAndCode(email, code);
+            if (user != null) {
+                if (user.resetPassword(password, code)) {
+                    try {
+                        ServiceLocator.getService(IUserDataHandler.class).updateUser(user);
+                        return true;
+                    } catch (ServiceNotFoundException | DataHandlerException e) {
+                        errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+                    }
+                } else {
+                    errorMessage = ErrorMessageConstants.ERROR_CODE_EXPIRED;
+                    return false;
                 }
-            } else {
-                errorMessage = ErrorMessageConstants.ERROR_GENERAL_FAILURE;
             }
         }
         return false;
