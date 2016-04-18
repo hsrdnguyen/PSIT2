@@ -1,51 +1,52 @@
 package ch.avocado.share.model.data;
 
+import ch.avocado.share.common.constants.sql.RatingConstants;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Created by bergm on 15/03/2016.
+ * Created by kunzlio1 on 18.04.2016.
  */
 public class Rating {
+    private List<Long> ratingUserIds;
+    private long ratedObjectId;
+    private float rating;
 
-    static private final int MIN_RATING_VALUE = 0;
-    static private final int MAX_RATING_VALUE = 6;
-
-    private User ratingUser;
-    private int rating;
-
-    public Rating(User ratingUser, int rating) {
-        setRating(rating);
-        setRatingUser(ratingUser);
+    public Rating(long ratedObjectId){
+        ratingUserIds = new ArrayList<>();
+        this.ratedObjectId = ratedObjectId;
     }
 
-    /**
-     * @return The user who rated
-     */
-    public User getRatingUser() {
-        return ratingUser;
+    public void addRatingUserId(long userId){
+        ratingUserIds.add(userId);
     }
 
-    /**
-     * @param ratingUser The user who rated
-     */
-    public void setRatingUser(User ratingUser) {
-        if (ratingUser == null) throw new IllegalArgumentException("ratingUser is null");
-        this.ratingUser = ratingUser;
+    public boolean hasUserRated(long userId){
+        return ratingUserIds.contains(userId);
     }
 
-    /**
-     * @return The rating value
-     */
-    public int getRating() {
-        return rating;
+    public void setRatedObjectId(long objectId){
+        this.ratedObjectId = objectId;
     }
 
-    /**
-     * @param rating The rating value
-     * The rating has to be between {@value MIN_RATING_VALUE} and {@value MAX_RATING_VALUE}.
-     */
-    public void setRating(int rating) {
-        if(rating < MIN_RATING_VALUE || rating > MAX_RATING_VALUE) {
-            throw new IllegalArgumentException("Rating not between " + MIN_RATING_VALUE + " and " + MAX_RATING_VALUE);
+    public long getRatedObjectId(){
+        return ratedObjectId;
+    }
+
+    public int getNumberOfRatings(){
+        return ratingUserIds.size();
+    }
+
+    public float getRating(){
+        return rating / ((float)ratingUserIds.size());
+    }
+
+    public void addRating(int rating){
+        if(rating < RatingConstants.MIN_RATING_VALUE || rating > RatingConstants.MAX_RATING_VALUE) {
+            throw new IllegalArgumentException("Rating not between " + RatingConstants.MIN_RATING_VALUE
+                    + " and " + RatingConstants.MAX_RATING_VALUE);
         }
-        this.rating = rating;
+        this.rating += rating;
     }
 }
