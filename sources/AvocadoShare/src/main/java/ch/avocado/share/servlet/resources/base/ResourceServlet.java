@@ -36,7 +36,7 @@ import java.util.*;
  */
 public abstract class ResourceServlet<E extends AccessControlObjectBase> extends GenericServlet {
 
-    private static final String PARAMETER_ACTION = "action";
+    public static final String PARAMETER_ACTION = "action";
     public static final String ERROR_ACTION_NOT_ALLOWED = "Aktion nicht erlaubt: ";
     public static final String ERROR_SET_CONTROLLER_ATTRIBUTES_FAILED = "Controller konnte nicht inititialisiert werden.";
     public static final String ACTION_EDIT = "edit";
