@@ -79,7 +79,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
      * @return the Category object
      */
     @Override
-    public Category getCategoryByName(String name) {
+    public Category getCategoryByName(String name) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) return null;
         PreparedStatement preparedStatement;
@@ -90,8 +90,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             resultSet = preparedStatement.executeQuery();
             return createCategoryFromResultSet(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
@@ -102,7 +101,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
      * @return true if the Category is already added to the AccessControlObject
      */
     @Override
-    public boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId) {
+    public boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) return false;
         PreparedStatement preparedStatement;
@@ -110,11 +109,11 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_SELECT_CATEGORY_BY_NAME_AND_OBJECT_ID);
             preparedStatement.setString(1, name);
-            preparedStatement.setString(2, accessObjectReferenceId);
+            preparedStatement.setLong(2, Long.parseLong(accessObjectReferenceId));
             resultSet = preparedStatement.executeQuery();
             return !resultSet.wasNull();
         } catch (SQLException e) {
-            return false;
+            throw new DataHandlerException(e);
         }
     }
 
@@ -124,7 +123,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
      * @return the accessObject assigned categories.
      */
     @Override
-    public List<Category> getAccessObjectAssignedCategories(String accessControlObjectId){
+    public List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) return null;
         PreparedStatement preparedStatement;
@@ -135,12 +134,11 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             resultSet = preparedStatement.executeQuery();
             return createAccessObjectAssignedCategories(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
-    private Category createCategoryFromResultSet(ResultSet resultSet){
+    private Category createCategoryFromResultSet(ResultSet resultSet) throws DataHandlerException {
         Category category = CategoryFactory.getDefaultCategory();
         try {
             if(resultSet.next()) {
@@ -150,13 +148,12 @@ public class CategoryDataHandler implements ICategoryDataHandler {
                 }while (resultSet.next());
             }
         }catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new DataHandlerException(e);
         }
         return category;
     }
 
-    private List<Category> createAccessObjectAssignedCategories(ResultSet resultSet){
+    private List<Category> createAccessObjectAssignedCategories(ResultSet resultSet) throws DataHandlerException {
         List<Category> categories = new ArrayList<>();
         try {
             while(resultSet.next()) {
@@ -167,8 +164,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
                 categories.add(category);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new DataHandlerException(e);
         }
         return categories;
     }
@@ -188,27 +184,25 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         return true;
     }
 
-    private boolean deleteCategoryAssignedObject(String name, String accessObjectReferenceId) {
+    private boolean deleteCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) return false;
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_DELETE_CATEGORY_FROM_OBJECT);
             preparedStatement.setString(1, name);
-            preparedStatement.setString(2, accessObjectReferenceId);
+            preparedStatement.setLong(2, Long.parseLong(accessObjectReferenceId));
             return connectionHandler.deleteDataSet(preparedStatement);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DataHandlerException(e);
         }
     }
 
-    private IDatabaseConnectionHandler getDatabaseHandler() {
+    private IDatabaseConnectionHandler getDatabaseHandler() throws DataHandlerException {
         try {
             return ServiceLocator.getService(IDatabaseConnectionHandler.class);
         } catch (ServiceNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 }

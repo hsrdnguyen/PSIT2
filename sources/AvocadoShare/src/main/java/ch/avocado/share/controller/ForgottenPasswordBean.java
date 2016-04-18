@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 /**
- * Created by coffeemakr on 21.03.16.
+ * Bean to reset a forgotten password.
  */
 public class ForgottenPasswordBean implements Serializable {
     private String email;
@@ -97,11 +97,7 @@ public class ForgottenPasswordBean implements Serializable {
         }
 
         user.getPassword().setPasswordResetVerification(createPasswordResetVerification());
-        if (!storeVerification(user, userDataHandler)) {
-            return false;
-        }
-
-        return sendResetMail(user);
+        return storeVerification(user, userDataHandler) && sendResetMail(user);
     }
 
     private PasswordResetVerification createPasswordResetVerification() {
@@ -169,7 +165,7 @@ public class ForgottenPasswordBean implements Serializable {
     }
 
     /**
-     * If this function failes to retrieve the user data handler and returns null
+     * If this function fails to retrieve the user data handler and returns null
      * the {@link #errorMessage} is set accordingly.
      *
      * @return The user data handler or null
