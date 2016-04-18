@@ -1,3 +1,9 @@
+<%@ page import="ch.avocado.share.model.data.File
+
+<%@ page import="java.util.List" %>
+<jsp:useBean id="searchBean" class="ch.avocado.share.controller.SearchBean"/>
+<%@include file="includes/header.jsp"%>
+" %>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -130,6 +136,13 @@
     </div>
       </div>
     </section>
+      <%
+          List<File> results = searchBean.search();
+
+          for (File file : results) {
+            out.write(file.getTitle() + "</br>");
+          }
+      %>
     <section class="document-show">
       <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>

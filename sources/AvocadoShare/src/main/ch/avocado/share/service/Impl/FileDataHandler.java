@@ -116,8 +116,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         try {
             IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
 
-            String query = SQLQueryConstants.File.SEARCH_QUERY_START;
-            query += query + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
+            String query = SQLQueryConstants.File.SEARCH_QUERY_START + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
 
             for (String tmp : searchTerms) {
                 // TODO @bergmsas: equals verwenden?
@@ -133,7 +132,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
                 ps.setString(i, tmp);
                 i++;
             }
+
             ResultSet rs = connectionHandler.executeQuery(ps);
+
             return getMultipleFilesFromResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
