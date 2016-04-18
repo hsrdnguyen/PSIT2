@@ -4,7 +4,9 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.MailingServiceMock;
+import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +36,7 @@ public class SecurityHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-
+        DatabaseConnectionHandlerMock.use();
         MailingServiceMock.use();
 
         securityHandler = new SecurityHandler();
@@ -72,6 +74,21 @@ public class SecurityHandlerTest {
         assertNotNull(groupThree.getId());
         assertNotNull(groupDataHandler.getGroup(groupThree.getId()));
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        try {
+            IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+            IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+            userDataHandler.deleteUser(user);
+            userDataHandler.deleteUser(owningUser);
+            groupDataHandler.deleteGroup(groupOne);
+            groupDataHandler.deleteGroup(groupTwo);
+            groupDataHandler.deleteGroup(groupThree);
+        } finally {
+            ServiceLocatorModifier.restore();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -267,7 +284,7 @@ public class SecurityHandlerTest {
     @Test
     public void testGetObjectsOnWhichIdentityHasAccessLevel() throws Exception {
         List<String> ids;
-        ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(owningUser,  AccessLevelEnum.READ);
+        ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(owningUser, AccessLevelEnum.READ);
         // The owning user has access on all its groups.
         assertTrue(ids.contains(groupOne.getId()));
         assertTrue(ids.contains(groupTwo.getId()));
@@ -302,16 +319,5 @@ public class SecurityHandlerTest {
 
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.OWNER);
         assertEquals(0, ids.size());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
-        userDataHandler.deleteUser(user);
-        userDataHandler.deleteUser(owningUser);
-        groupDataHandler.deleteGroup(groupOne);
-        groupDataHandler.deleteGroup(groupTwo);
-        groupDataHandler.deleteGroup(groupThree);
     }
 }

@@ -4,13 +4,17 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
+import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.test.Asserts;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
 
+import static ch.avocado.share.test.Asserts.*;
 import static org.junit.Assert.*;
 
 /**
@@ -28,34 +32,9 @@ public class FileDataHandlerTest {
 
     private Stack<String> notDeletedIds;
 
-    static List<String> getCategoryNames(List<Category> categories) {
-        if(categories == null) throw new IllegalArgumentException("categories is null");
-        ArrayList<String> names = new ArrayList<>(categories.size());
-        for(Category category: categories) {
-            names.add(category.getName());
-        }
-        return names;
-    }
-
-    static void assertCategoriesEquals(List<Category> expected, List<Category> actual) {
-        List<String> expectedNames = getCategoryNames(expected);
-        List<String> actualNames = getCategoryNames(actual);
-        for (Iterator<String> iterator = expectedNames.iterator(); iterator.hasNext(); ) {
-            String expectedName = iterator.next();
-            assertTrue("Category \"" + expectedName + "\" not in actual categories", actualNames.contains(expectedName));
-            iterator.remove();
-        }
-        if(!expectedNames.isEmpty()) {
-            String missingNames = "";
-            for(String name: expectedNames) {
-                missingNames += "\"" + name + "\" ";
-            }
-            fail("Missing categories: " + missingNames);
-        }
-    }
-
     @Before
     public void setUp() throws Exception {
+        DatabaseConnectionHandlerMock.use();
         fileDataHandler = new FileDataHandler();
 
 
@@ -64,10 +43,10 @@ public class FileDataHandlerTest {
         String emailTwo = "unexsiting_email2@zhaw.ch";
         user = userDataHandler.getUserByEmailAddress(emailOne);
         userTwo = userDataHandler.getUserByEmailAddress(emailTwo);
-        if(user != null) {
+        if (user != null) {
             userDataHandler.deleteUser(user);
         }
-        if(userTwo != null) {
+        if (userTwo != null) {
             userDataHandler.deleteUser(userTwo);
         }
 
@@ -91,13 +70,13 @@ public class FileDataHandlerTest {
     }
 
     private void deleteModules() throws DataHandlerException {
-        if(module != null && module.getId() != null) {
-            if(module.getId() != null) {
+        if (module != null && module.getId() != null) {
+            if (module.getId() != null) {
                 moduleDataHandler.deleteModule(module);
             }
         }
-        if(moduleTwo != null) {
-            if(moduleTwo.getId() != null) {
+        if (moduleTwo != null) {
+            if (moduleTwo.getId() != null) {
                 moduleDataHandler.deleteModule(moduleTwo);
             }
         }
@@ -105,21 +84,23 @@ public class FileDataHandlerTest {
 
     @After
     public void tearDown() throws Exception {
-
-        deleteModules();
-
-        userDataHandler.deleteUser(user);
-        userDataHandler.deleteUser(userTwo);
-        while(!notDeletedIds.isEmpty()) {
-            try {
-                File file = fileDataHandler.getFile(notDeletedIds.pop());
-                if (file != null) {
-                    System.out.println("Deleting file: "+ file);
-                    fileDataHandler.deleteFile(file);
+        try {
+            deleteModules();
+            userDataHandler.deleteUser(user);
+            userDataHandler.deleteUser(userTwo);
+            while (!notDeletedIds.isEmpty()) {
+                try {
+                    File file = fileDataHandler.getFile(notDeletedIds.pop());
+                    if (file != null) {
+                        System.out.println("Deleting file: " + file);
+                        fileDataHandler.deleteFile(file);
+                    }
+                } catch (DataHandlerException e) {
+                    e.printStackTrace();
                 }
-            } catch (DataHandlerException e ) {
-                e.printStackTrace();
             }
+        } finally {
+            ServiceLocatorModifier.restore();
         }
     }
 
@@ -224,7 +205,7 @@ public class FileDataHandlerTest {
         assertEquals("list should have two files", 2, files.size());
         assertFalse(files.contains(null));
 
-        for(File file: files) {
+        for (File file : files) {
             assertTrue(file.getId().equals(fileOne.getId()) || file.getId().equals(fileTwo.getId()));
         }
     }
