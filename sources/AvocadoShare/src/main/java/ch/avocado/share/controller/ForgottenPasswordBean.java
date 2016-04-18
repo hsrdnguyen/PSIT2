@@ -92,8 +92,7 @@ public class ForgottenPasswordBean implements Serializable {
             return false;
         }
 
-        sendResetMail(user);
-        return true;
+        return sendResetMail(user);
     }
 
     private PasswordResetVerification createPasswordResetVerification() {
