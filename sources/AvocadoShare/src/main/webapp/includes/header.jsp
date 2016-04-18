@@ -71,7 +71,7 @@
 
                         <% if(userSession.isAuthenticated()) { %>
                         <li class="nav-item pull-md-right">
-                            <a href="<%=baseUrl%>/file?action=create" class="btn btn-secondary"><span class="octicon octicon-plus"></span></a>
+                            <a href="<%=baseUrl%>/file?action=create" class="btn btn-primary-outline"><span class="octicon octicon-plus"></span></a>
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->
