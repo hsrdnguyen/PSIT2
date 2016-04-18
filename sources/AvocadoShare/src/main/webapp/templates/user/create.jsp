@@ -2,6 +2,8 @@
 <%@ page import="ch.avocado.share.model.data.User" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.servlet.resources.UserServlet" %>
+<%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -12,8 +14,18 @@
     form.setReadableFieldName("password", "Passwort");
     form.setReadableFieldName("passwordConfirmation", "Passwort wiederholen");
     form.setReadableFieldName("mail", "E-Mail *");
+    boolean alreadyLoggedIn = new UserSession(request).isAuthenticated();
 %>
 <h1>Registrierung</h1>
+<% if(alreadyLoggedIn) { %>
+    <div class="alert alert-info">
+        Sie sind bereits angemeldet.
+    </div>
+    <script type="application/javascript">
+        var currentPaths = document.location.href.split("/");
+        document.location.href = currentPaths.slice(0, currentPaths.length - 1).join("/");
+    </script>
+<% } else { %>
 <% if(!form.getFormErrors().isEmpty()) { %>
     <div class="alert alert-danger">
         <%=form.getFormErrors()%>
@@ -63,3 +75,4 @@
         </form>
     </div>
 </div>
+<% } %>
