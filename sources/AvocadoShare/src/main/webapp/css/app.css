@@ -1,3 +1,10 @@
+
+body {
+	background: url("../img/cloud.jpg") repeat-y;
+	background-size: 100%;
+	/*color: #373a3c;*/
+}
+
 header nav .octicon {
 	font-size: 1.4em;
 }
@@ -117,6 +124,24 @@ a.modul-link:hover .modul {
     position: relative;
     overflow: hidden;
 }
-* {fd
+* {
     box-sizing: border-box;
+}
+
+
+.filter {
+	float: left;
+	min-height: 1px;
+	padding-left: 0.9375rem;
+	padding-right: 0.9375rem;
+	position: relative;
+	width: 30%;
+}
+.document-show {
+	float: left;
+	min-height: 1px;
+	padding-left: 0.9375rem;
+	padding-right: 0.9375rem;
+	position: relative;
+	width: 70%;
 }

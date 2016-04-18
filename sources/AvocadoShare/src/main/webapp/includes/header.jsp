@@ -19,14 +19,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Avocado Share</title>
-    <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<%=baseUrl%>/components/octicons/octicons/octicons.css">
+    <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="<%=baseUrl%>/css/octicons.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
 </head>
 <body>
 <div id="footerpusher">
-    <header>
-        <nav class="navbar navbar-light bg-faded">
+    <div>
+        <nav class="bg-inverse navbar navbar-dark">
             <div class="container">
                 <button class="navbar-toggler hidden-md-up" type="button" data-toggle="collapse"
                     data-target="#exCollapsingNavbar2">
@@ -131,5 +131,5 @@
                 </div>
             </div>
         </nav>
-    </header>
-    <main class="container">
+    </div>
+    <div class="container">

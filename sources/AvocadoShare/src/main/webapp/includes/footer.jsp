@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %><%
     String baseUrlFooter = request.getServletContext().getContextPath();
 %>
-</main>
+</div>
 </div> <!-- /#footerpusher -->
-<footer class="text-muted">
-    <div class="container">
+<footer class="bg-inverse">
+    <div class="container text-muted">
         <ul>
             <li><a href="#about">&Uuml;ber uns</a></li>
             <li><a href="contact.jsp">Kontakt</a></li>
