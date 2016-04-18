@@ -66,35 +66,35 @@ public class RatingDataHandler implements IRatingDataHandler{
     /**
      * Insert a new Ranking int to the database.
      * @param ratedAccessObjectId The id of the rated AccessControlObject.
-     * @param userId The id of the rating User.
+     * @param ratingUserId The id of the rating User.
      * @param rating The rating, which the User gave to the AccessControlObject.
      * @return The primary key, from the inserted dataset.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    public long addRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException {
+    public long addRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
         if(rating < RatingConstants.MIN_RATING_VALUE || rating > RatingConstants.MAX_RATING_VALUE) {
             throw new DataHandlerException("Rating not between " + RatingConstants.MIN_RATING_VALUE
                     + " and " + RatingConstants.MAX_RATING_VALUE);
         }
 
-        return insertRating(ratedAccessObjectId, userId, rating);
+        return insertRating(ratedAccessObjectId, ratingUserId, rating);
     }
 
     /**
      * Deletes a Ranking from the database.
      * @param ratedAccessObjectId The id of the rated AccessControlObject.
-     * @param userId The id of the rating User.
+     * @param ratingUserId The id of the rating User.
      * @return True if the Ranking was deleted from the database. False if not.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    public boolean deleteRating(long ratedAccessObjectId, long userId) throws DataHandlerException {
+    public boolean deleteRating(long ratedAccessObjectId, long ratingUserId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_DELETE_RATING);
             preparedStatement.setLong(1, ratedAccessObjectId);
-            preparedStatement.setLong(2, userId);
+            preparedStatement.setLong(2, ratingUserId);
             return connectionHandler.deleteDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -104,12 +104,12 @@ public class RatingDataHandler implements IRatingDataHandler{
     /**
      * Updated a Ranking in the database.
      * @param ratedAccessObjectId The id of the rated AccessControlObject.
-     * @param userId The id of the rating User.
+     * @param ratingUserId The id of the rating User.
      * @param rating The changed rating, which the User gave to the AccessControlObject.
      * @return True if the Ranking was updated correctly in the database. False if not.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    public boolean updateRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException {
+    public boolean updateRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
@@ -117,21 +117,21 @@ public class RatingDataHandler implements IRatingDataHandler{
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_UPDATE_RATING);
             preparedStatement.setInt(1, rating);
             preparedStatement.setLong(2, ratedAccessObjectId);
-            preparedStatement.setLong(3, userId);
+            preparedStatement.setLong(3, ratingUserId);
             return connectionHandler.updateDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
 
-    private long insertRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException{
+    private long insertRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException{
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_ADD_RATING);
             preparedStatement.setLong(1, ratedAccessObjectId);
-            preparedStatement.setLong(2, userId);
+            preparedStatement.setLong(2, ratingUserId);
             preparedStatement.setInt(3, rating);
             return Long.parseLong(connectionHandler.insertDataSet(preparedStatement));
         } catch (SQLException e) {
