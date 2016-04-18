@@ -88,12 +88,16 @@ public class UserBean extends ResourceBean<User> {
         }
     }
 
-    private void addEmailAddress(User user, String emailAddress) throws HttpBeanException, DataHandlerException {
+    private void addEmailToUser(User user, String emailaddress) {
         long theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
         Date nextWeek = new Date(theFuture);
         EmailAddressVerification verification = new EmailAddressVerification(nextWeek);
-        EmailAddress mail = new EmailAddress(false, emailAddress, verification);
+        EmailAddress mail = new EmailAddress(false, emailaddress, verification);
         user.setMail(mail);
+    }
+
+    private void storeNewEmailAddress(User user, String emailAddress) throws HttpBeanException, DataHandlerException {
+        addEmailToUser(user, emailAddress);
         getService(IUserDataHandler.class).addMail(user);
         getService(IMailingService.class).sendVerificationEmail(user);
     }
@@ -113,7 +117,7 @@ public class UserBean extends ResourceBean<User> {
         user.setPrename(getPrename());
         user.setSurname(getSurname());
         user.setPassword(password);
-        addEmailAddress(user, mail);
+        addEmailToUser(user, mail);
         user.setId(getService(IUserDataHandler.class).addUser(user));
         getService(IMailingService.class).sendVerificationEmail(user);
         return user;
@@ -154,7 +158,7 @@ public class UserBean extends ResourceBean<User> {
         if(mail != null) {
             checkEmailAddress(user);
             if (!user.hasErrors() && !user.getMail().getAddress().equals(mail)) {
-                addEmailAddress(user, mail);
+                storeNewEmailAddress(user, mail);
             }
         }
 
