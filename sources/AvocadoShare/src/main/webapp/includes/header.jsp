@@ -24,9 +24,10 @@
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
 </head>
 <body>
+<div class="container" id="hacky-background"></div>
 <div id="footerpusher">
-    <div>
-        <nav class="bg-inverse navbar navbar-dark">
+    <header>
+        <nav class="navbar navbar-dark bg-inverse">
             <div class="container">
                 <button class="navbar-toggler hidden-md-up" type="button" data-toggle="collapse"
                     data-target="#exCollapsingNavbar2">
@@ -58,11 +59,11 @@
                         <% } %>
                         <!-- Navbar Search -->
                         <li class="nav-item pull-md-right">
-                            <form action="document_view.jsp" class="form-inline">
+                            <form action="#search" class="form-inline">
                                 <div class="input-group">
                                     <input type="text" class="form-control" placeholder="Suchen nach..." />
                                     <span class="input-group-btn">
-                                        <button class="btn btn-secondary" type="submit">Los!</button>
+                                        <button class="btn btn-primary" type="submit">Los!</button>
                                     </span>
                                 </div>
                             </form>
@@ -77,7 +78,7 @@
                         <li class="nav-item hidden-sm-down pull-md-right">
                             <div class="dropdown">
                                 <!-- User button -->
-                                <button class="btn btn-secondary dropdown-toggle"
+                                <button class="btn btn-primary-outline dropdown-toggle"
                                         type="button" id="navbar-login-toggle-button"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="octicon octicon-person"></span>
@@ -131,5 +132,5 @@
                 </div>
             </div>
         </nav>
-    </div>
-    <div class="container">
+    </header>
+        <main class="container">

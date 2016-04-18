@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %><%
     String baseUrlFooter = request.getServletContext().getContextPath();
 %>
-</div>
+        </main>
 </div> <!-- /#footerpusher -->
 <footer class="bg-inverse">
     <div class="container text-muted">
