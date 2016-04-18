@@ -17,7 +17,6 @@ import java.util.Stack;
 
 import static ch.avocado.share.test.Asserts.assertCategoriesEquals;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class ModuleDataHandlerTest {
 
