@@ -10,6 +10,9 @@ import ch.avocado.share.servlet.resources.base.ResourceServlet;
 import ch.avocado.share.servlet.resources.base.ViewRenderer;
 
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @WebServlet("/user")
 public class UserServlet extends ResourceServlet<User> {
@@ -44,6 +47,16 @@ public class UserServlet extends ResourceServlet<User> {
 
         }
         throw new RuntimeException();
+    }
+
+    @Override
+    protected void redirectAfterSuccess(HttpServletRequest request, HttpServletResponse response, Action action, User object) throws IOException {
+        if (action == Action.CREATE) {
+            String baseUrl = request.getServletContext().getContextPath();
+            response.sendRedirect(baseUrl + "/register_success.jsp");
+        } else {
+            super.redirectAfterSuccess(request, response, action, object);
+        }
     }
 
 }
