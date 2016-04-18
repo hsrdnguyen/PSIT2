@@ -48,6 +48,8 @@ public class SQLQueryConstants {
         public static final String UPDATE_QUERY = "UPDATE " + table + " SET name=? WHERE id=?";
         public static final int UPDATE_QUERY_INDEX_ID = 2;
         public static final int UPDATE_QUERY_INDEX_NAME = 1;
+        public static final String SELECT_FILES = "SELECT file_id FROM avocado_share.uploaded_into WHERE module_id = ?";
+        public static final int SELECT_FILES_INDEX_MODULE = 1;
     }
 
     /**

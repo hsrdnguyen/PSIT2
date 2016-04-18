@@ -145,17 +145,23 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public boolean addMail(User user) throws DataHandlerException {
+        if(user == null) throw new IllegalArgumentException("user is null");
+        if(user.getId() == null) throw new IllegalArgumentException("user.id is null");
+        if(user.getMail() == null) throw new IllegalArgumentException("user.mail is null");
+        if(user.getMail().getAddress() == null) throw new IllegalArgumentException("user.mail.address is null");
+
         PreparedStatement stmt;
         IDatabaseConnectionHandler connectionHandler;
         connectionHandler = getConnectionHandler();
+        long userId = Long.parseLong(user.getId());
         try {
             stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_MAIL_QUERY);
-            stmt.setString(1, user.getId());
+            stmt.setLong(1, userId);
             stmt.setString(2, user.getMail().getAddress());
             connectionHandler.insertDataSet(stmt);
 
             stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_MAIL_VERIFICATION_QUERY);
-            stmt.setString(1, user.getId());
+            stmt.setLong(1, userId);
             EmailAddress mail = user.getMail();
             stmt.setString(2, mail.getAddress());
             EmailAddressVerification verification = mail.getVerification();
