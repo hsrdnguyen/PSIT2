@@ -20,9 +20,11 @@ public class UserBean extends ResourceBean<User> {
     public static final String ERROR_PASSWORD_TOO_SHORT = "Das Passwort muss mindestens 8 Zeichen lang sein.";
     private static final String ERROR_EMPTY_EMAIL = "E-Mail-Adresse darf nicht leer sein.";
     private static final String ERROR_INVALID_EMAIL = "Die E-Mail-Adresse ist ungültig oder leider nicht erlaubt.";
-    public static final String ERROR_EMPTY_PASSWORD = "ERROR_EMPTY_PASSWORD";
-    public static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Passwort-Bestätigung darf nicht leer sein.";
-    public static final String ERROR_PASSWORD_CONFIRMATION_INCORRECT = "Passwörter stimmen nicht überein.";
+    public static final String ERROR_EMPTY_PASSWORD = "Das Password darf nicht leer sein.";
+    public static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Die Passwort-Bestätigung darf nicht leer sein.";
+    public static final String ERROR_PASSWORD_CONFIRMATION_INCORRECT = "Die Passwörter stimmen nicht überein.";
+    private static final String PRENAME_TOO_LONG = "Der Vorname ist zu lang.";
+    private static final String SURNAME_TOO_LONG = "Der Nachname ist zu lang.";
 
     private String prename;
     private String surname;
@@ -30,6 +32,9 @@ public class UserBean extends ResourceBean<User> {
     private String password;
     private String passwordConfirmation;
     private String avatar = null;
+
+    private static final int MAX_LENGTH_PRENAME = 50;
+    private static final int MAX_LENGTH_SURNAME = 50;
 
     @Override
     protected boolean hasMembers() {
@@ -39,12 +44,16 @@ public class UserBean extends ResourceBean<User> {
     private void checkPrename(User user) {
         if(getPrename() == null || getPrename().isEmpty()) {
             user.addFieldError("prename", ERROR_EMPTY_PRENAME);
+        } else if(getPrename().length() > MAX_LENGTH_PRENAME) {
+            user.addFieldError("prename", PRENAME_TOO_LONG);
         }
     }
 
     private void checkSurname(User user) {
         if(getSurname() == null || getSurname().isEmpty()) {
             user.addFieldError("surname", ERROR_EMPTY_SURNAME);
+        } else if(getSurname().length() > MAX_LENGTH_SURNAME) {
+            user.addFieldError("surname", SURNAME_TOO_LONG);
         }
     }
 
