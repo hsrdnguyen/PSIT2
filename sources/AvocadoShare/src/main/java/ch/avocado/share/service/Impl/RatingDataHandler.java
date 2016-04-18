@@ -33,20 +33,7 @@ public class RatingDataHandler implements IRatingDataHandler{
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_SELECT_BY_OBJECT_ID);
             preparedStatement.setLong(1, ratedObjectId);
             resultSet = preparedStatement.executeQuery();
-            Rating rating = null;
-            try {
-                if (resultSet.next()){
-                    rating = new Rating(resultSet.getLong(1));
-                    do {
-                        rating.addRatingUserId(resultSet.getLong(2));
-                        rating.addRating(resultSet.getInt(3));
-                    }while (resultSet.next());
-                }
-            } catch (SQLException e) {
-                throw new DataHandlerException(e);
-            }
-            if (rating != null) return rating;
-            throw new DataHandlerException("There's no rating for that object");
+            return getRatingFromResultSet(resultSet);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -86,22 +73,11 @@ public class RatingDataHandler implements IRatingDataHandler{
      */
     public long addRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException {
         if(rating < RatingConstants.MIN_RATING_VALUE || rating > RatingConstants.MAX_RATING_VALUE) {
-            throw new IllegalArgumentException("Rating not between " + RatingConstants.MIN_RATING_VALUE
+            throw new DataHandlerException("Rating not between " + RatingConstants.MIN_RATING_VALUE
                     + " and " + RatingConstants.MAX_RATING_VALUE);
         }
-        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
 
-        PreparedStatement preparedStatement;
-        try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_ADD_RATING);
-            preparedStatement.setLong(1, ratedAccessObjectId);
-            preparedStatement.setLong(2, userId);
-            preparedStatement.setInt(3, rating);
-            return Long.parseLong(connectionHandler.insertDataSet(preparedStatement));
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
+        return insertRating(ratedAccessObjectId, userId, rating);
     }
 
     /**
@@ -146,6 +122,38 @@ public class RatingDataHandler implements IRatingDataHandler{
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+    }
+
+    private long insertRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException{
+        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
+        if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
+        PreparedStatement preparedStatement;
+        try {
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_ADD_RATING);
+            preparedStatement.setLong(1, ratedAccessObjectId);
+            preparedStatement.setLong(2, userId);
+            preparedStatement.setInt(3, rating);
+            return Long.parseLong(connectionHandler.insertDataSet(preparedStatement));
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+    }
+
+    private Rating getRatingFromResultSet(ResultSet resultSet) throws DataHandlerException {
+        Rating rating = null;
+        try {
+            if (resultSet.next()){
+                rating = new Rating(resultSet.getLong(1));
+                do {
+                    rating.addRatingUserId(resultSet.getLong(2));
+                    rating.addRating(resultSet.getInt(3));
+                }while (resultSet.next());
+            }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        if (rating != null) return rating;
+        throw new DataHandlerException("There's no rating for that object");
     }
 
     private IDatabaseConnectionHandler getDatabaseHandler() {
