@@ -406,6 +406,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     throw new RuntimeException("Action not implemented");
             }
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             throw new HttpBeanException(e);
         }
         if (redirectTo != null) {

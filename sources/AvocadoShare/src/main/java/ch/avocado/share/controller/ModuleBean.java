@@ -36,7 +36,7 @@ public class ModuleBean extends ResourceBean<Module> {
 
     @Override
     public Module create() throws HttpBeanException, DataHandlerException {
-        Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), "", "");
+        Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), "", "", new ArrayList<>());
         checkParameterDescription(module);
         checkParameterName(module);
         if (module.isValid()) {
