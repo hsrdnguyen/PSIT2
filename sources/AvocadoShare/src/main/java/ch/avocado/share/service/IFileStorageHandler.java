@@ -19,19 +19,25 @@ public interface IFileStorageHandler {
 
     /**
      * Gets the file on the given location
-     * @param reference reference to the file
+     * @param filepath reference to the file
      * @return input stream for the file
      */
-    InputStream readFile(String reference) throws FileStorageException;
+    InputStream readFile(String filepath) throws FileStorageException;
 
     /**
      * Checks if a file on the given location exists
-     * @param reference reference to the file
+     * @param filepath reference to the file
      * @return true if the file exists
      */
-    boolean fileExists(String reference) throws FileStorageException;
+    boolean fileExists(String filepath) throws FileStorageException;
 
-    String getContentType(String reference) throws FileStorageException;
+    /**
+     *Gets the contentType (type of file: pdf, jpg, docx) of the file
+     * @param filepath path to the file
+     * @return contentType as string
+     * @throws FileStorageException
+     */
+    String getContentType(String filepath) throws FileStorageException;
 
-    long getFileSize(String reference) throws FileStorageException;
+    long getFileSize(String filepath) throws FileStorageException;
 }
