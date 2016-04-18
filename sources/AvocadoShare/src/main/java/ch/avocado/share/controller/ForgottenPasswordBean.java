@@ -204,6 +204,16 @@ public class ForgottenPasswordBean implements Serializable {
             return null;
         }
 
+        PasswordResetVerification matchedVerification = getVerificationByCode(code, verifications);
+        if (matchedVerification == null) {
+            this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
+            return null;
+        }
+        user.getPassword().setPasswordResetVerification(matchedVerification);
+        return user;
+    }
+
+    private PasswordResetVerification getVerificationByCode(String code, ArrayList<PasswordResetVerification> verifications) {
         PasswordResetVerification matchedVerification = null;
         for (Iterator<PasswordResetVerification> iterator = verifications.iterator(); iterator.hasNext() && matchedVerification == null; ) {
             PasswordResetVerification verification = iterator.next();
@@ -211,12 +221,7 @@ public class ForgottenPasswordBean implements Serializable {
                 matchedVerification = verification;
             }
         }
-        if (matchedVerification == null) {
-            this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
-            return null;
-        }
-        user.getPassword().setPasswordResetVerification(matchedVerification);
-        return user;
+        return matchedVerification;
     }
 
 
