@@ -1,8 +1,9 @@
 package ch.avocado.share.model.data;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BaseMailVerificationTest {
 	@Test

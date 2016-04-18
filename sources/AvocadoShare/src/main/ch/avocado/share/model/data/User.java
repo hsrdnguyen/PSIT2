@@ -14,8 +14,8 @@ public class User extends AccessIdentity {
     private String avatar;
     private EmailAddress mail;
 
-    public User(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
-        super(id, categories, creationDate, rating, ownerId, description);
+    public User(String id, List<Category> categories, Date creationDate, float rating, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
+        super(id, categories, creationDate, rating, null, description);
         setAvatar(avatar);
         setMail(mail);
         setPassword(password);
@@ -24,21 +24,15 @@ public class User extends AccessIdentity {
     }
 
     public User(UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
-        super(null, null, new Date(), 0.0f, "", "");
-        setAvatar(avatar);
-        setMail(mail);
-        setPassword(password);
-        setPrename(prename);
-        setSurname(surname);
+        this(null, null, new Date(), 0.0f, "", password, prename, surname, avatar, mail);
     }
 
     /**
      * @return The userpassword object
      */
     public UserPassword getPassword() {
-    	return this.password;
-
-     }
+        return this.password;
+    }
 
     /**
      * @param password The password object (not null)
@@ -52,8 +46,8 @@ public class User extends AccessIdentity {
      * @param password The plaintext password (not null)
      */
     public void setPassword(String password) {
-    	if (password == null) throw new IllegalArgumentException("password is null");
-    	this.password = UserPassword.fromPassword(password);
+        if (password == null) throw new IllegalArgumentException("password is null");
+        this.password = UserPassword.fromPassword(password);
     }
 
     /**
@@ -125,15 +119,12 @@ public class User extends AccessIdentity {
 
     /**
      * @param password The new password as plaintext (not null)
-     * @param code The reset code (not null)
+     * @param code     The reset code (not null)
      * @return {@code true} if the code is correct and the password changed.
      */
     public boolean resetPassword(String password, String code) {
         PasswordResetVerification verification = getPassword().getPasswordResetVerification();
-        if (verification != null && !verification.isExpired() && verification.getCode().equals(code)) {
-            return true;
-        }
-        return false;
+        return verification != null && !verification.isExpired() && verification.getCode().equals(code);
     }
 
 

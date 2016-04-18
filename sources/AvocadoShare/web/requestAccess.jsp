@@ -1,9 +1,9 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <jsp:useBean id="accessBean" class="ch.avocado.share.controller.FileAccessBean" />
 <jsp:setProperty name="accessBean" property="fileId" />
 <%@include file="includes/header.jsp"%>
 <%
-    accessBean.setRequestingUserMail("sascha.berg.sb@gmail.com");
+    accessBean.setRequesterUserMail("sascha.berg.sb@gmail.com");
     if(accessBean.requestAccess()) {
 %>
 <div class="alert alert-success">

@@ -19,11 +19,12 @@ import java.util.List;
  */
 public class ModuleBean extends ResourceBean<Module> {
 
+    public static final String ERROR_MODULE_NOT_FOUND = "Modul konnte nicht gefunden werden.";
     private String name;
 
-    private void checkParameterName() {
+    private void checkParameterName(Module module) {
         if (getName() == null || getName().isEmpty()) {
-            addFormError("name", ErrorMessageConstants.ERROR_NO_NAME);
+            module.addFieldError("name", ErrorMessageConstants.ERROR_NO_NAME);
         }
     }
 
@@ -32,23 +33,19 @@ public class ModuleBean extends ResourceBean<Module> {
         return true;
     }
 
-    @Override
-    protected String getTemplateFolder() {
-        return "module_templates/";
-    }
 
     @Override
     public Module create() throws HttpBeanException, DataHandlerException {
-        checkParameterDescription();
-        checkParameterName();
-        if (!hasErrors()) {
+        Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), "", "");
+        checkParameterDescription(module);
+        checkParameterName(module);
+        if (module.isValid()) {
             IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
-            Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), getDescription(), getName());
-            module.setOwnerId(getAccessingUser().getId());
+            module.setName(getName());
+            module.setDescription(getDescription());
             moduleDataHandler.addModule(module);
-            return module;
         }
-        return null;
+        return module;
     }
 
     @Override
@@ -66,12 +63,11 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
-    public void update() throws HttpBeanException, DataHandlerException {
-        Module module = getObject();
+    public void update(Module module) throws HttpBeanException, DataHandlerException {
         boolean updated = false;
         if (getName() != null && !getName().equals(module.getName())) {
-            checkParameterName();
-            if (!hasErrors()) {
+            checkParameterName(module);
+            if (module.isValid()) {
                 module.setName(getName());
                 updated = true;
             }
@@ -79,21 +75,16 @@ public class ModuleBean extends ResourceBean<Module> {
 
         updated |= updateDescription(module);
 
-        if(!hasErrors() && updated) {
+        if(module.isValid() && updated) {
             if(!getService(IModuleDataHandler.class).updateModule(module)) {
-                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, "Modul konnte nicht gefunden werden.");
+                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_MODULE_NOT_FOUND);
             }
         }
     }
 
     @Override
-    public void destroy() throws HttpBeanException, DataHandlerException {
-        getService(IModuleDataHandler.class).deleteModule(getObject());
-    }
-
-    @Override
-    public String getAttributeName() {
-        return "Module";
+    public void destroy(Module module) throws HttpBeanException, DataHandlerException {
+        getService(IModuleDataHandler.class).deleteModule(module);
     }
 
     public String getName() {

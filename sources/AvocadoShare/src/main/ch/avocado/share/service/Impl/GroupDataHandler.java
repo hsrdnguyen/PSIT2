@@ -3,10 +3,10 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by coffeemakr on 21.03.16.
+ * Implementation of the group data handler which accesses
+ * the database by using {@link IDatabaseConnectionHandler}
  */
 public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandler {
 
@@ -57,12 +58,15 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
             id = resultSet.getString(SQLQueryConstants.Group.RESULT_ID_INDEX);
             name = resultSet.getString(SQLQueryConstants.Group.RESULT_NAME_INDEX);
             description = resultSet.getString(SQLQueryConstants.Group.RESULT_DESCRIPTION_INDEX);
-            creationDate = resultSet.getDate(SQLQueryConstants.Group.RESULT_CREATION_DATE);
+            creationDate = resultSet.getTimestamp(SQLQueryConstants.Group.RESULT_CREATION_DATE);
             ownerId = resultSet.getString(SQLQueryConstants.Group.RESULT_OWNER_ID);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, name, description);
+        if(ownerId == null) {
+            ownerId = id;
+        }
+        return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name);
     }
 
     @Override
@@ -74,16 +78,16 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
     @Override
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
-        List<Group> groups = new ArrayList<>(ids.size());
+        ArrayList<Group> groups = new ArrayList<>(ids.size());
         for (String id : ids) {
             Group group = getGroup(id);
             if (group != null) {
                 groups.add(group);
             }
         }
+        groups.trimToSize();
         return groups;
     }
-
 
     private PreparedStatement getInsertStatement(String id, String name) throws DataHandlerException {
         if (name == null) throw new IllegalArgumentException("name is null");
@@ -114,12 +118,9 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     public String addGroup(Group group) throws DataHandlerException {
         if (group == null) throw new IllegalArgumentException("group is null");
         if (group.getId() != null) throw new IllegalArgumentException("group.getId() is not null");
-
-        String id = addAccessControlObject(group.getDescription());
-        group.setId(id);
+        group.setId(addAccessControlObject(group));
         PreparedStatement statement = getInsertStatement(group.getId(), group.getName());
         executeInsertStatement(statement);
-        addOwnership(Integer.parseInt(group.getOwnerId()), Integer.parseInt(group.getId()));
         return group.getId();
     }
 
@@ -137,7 +138,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         }catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return updateDescription(group.getId(), group.getDescription());
+        return updateObject(group);
     }
 
     @Override

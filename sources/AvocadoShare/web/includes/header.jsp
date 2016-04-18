@@ -2,7 +2,7 @@
         page import="ch.avocado.share.servlet.LoginServlet" %><%@
         page import="ch.avocado.share.controller.UserSession" %><%@
         page import="ch.avocado.share.common.Encoder" %><%@
-        page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %><%
+        page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %><%
 
     String baseUrl = request.getServletContext().getContextPath();
     String currentUrl = request.getRequestURI();
@@ -70,7 +70,7 @@
 
                         <% if(userSession.isAuthenticated()) { %>
                         <li class="nav-item pull-md-right">
-                            <a href="<%=baseUrl%>/file/?action=create" class="btn btn-secondary"><span class="octicon octicon-plus"></span></a>
+                            <a href="<%=baseUrl%>/file?action=create" class="btn btn-secondary"><span class="octicon octicon-plus"></span></a>
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->
@@ -85,7 +85,7 @@
                                 <div id="navbar-login" class="dropdown-menu"
                                      aria-labelledby="navbar-login-toggle-button">
                                     <% if(userSession.isAuthenticated()) { %>
-                                    <a class="dropdown-item" href="<%=baseUrl%>/user/?id=<%=Encoder.forUrlAttribute(userSession.getUserId())%>">Profil</a>
+                                    <a class="dropdown-item" href="<%=baseUrl%>/user?id=<%=Encoder.forUrlAttribute(userSession.getUserId())%>">Profil</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="<%=baseUrl%>/logout">Abmelden</a>
                                     <% } else { %>
@@ -120,7 +120,7 @@
                                             <span class="dropdown-item">Anmelden</span>
                                         </a>
                                         -->
-                                    <a href="<%=baseUrl%>/user/?action=create">
+                                    <a href="<%=baseUrl%>/user?action=create">
                                         <span class="dropdown-item">Registrieren</span>
                                     </a>
                                     <% } %>

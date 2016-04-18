@@ -41,8 +41,8 @@ public class ForgottenPasswordBean implements Serializable {
     }
 
     /**
-     * @todo: this method needs some refactoring
      * @return True if a password reset link was send to the user
+     * @todo: this method needs some refactoring
      */
     public boolean createNewPassword() {
         IMailingService mailingService;
@@ -55,33 +55,25 @@ public class ForgottenPasswordBean implements Serializable {
         try {
             mailingService = ServiceLocator.getService(IMailingService.class);
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        } catch (ServiceNotFoundException e) {
-            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
-            return false;
-        }
-        try {
             user = userDataHandler.getUserByEmailAddress(email);
-        } catch (DataHandlerException e) {
+        } catch (ServiceNotFoundException | DataHandlerException e) {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return false;
         }
         if (user == null) {
             return true;
         }
+
         Date expiry = PasswordResetVerification.getDateFromExpiryInHours(24 * 2);
         PasswordResetVerification passwordResetVerification = new PasswordResetVerification(expiry);
         user.getPassword().setPasswordResetVerification(passwordResetVerification);
+
         try {
             userDataHandler.addPasswordResetVerification(passwordResetVerification, user.getId());
-        } catch (DataHandlerException e) {
-            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
-            return false;
-        }
-        if (!mailingService.sendPasswordResetEmail(user)) {
-            errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
-            return false;
-        }
-        try {
+            if (!mailingService.sendPasswordResetEmail(user)) {
+                errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
+                return false;
+            }
             userDataHandler.updateUser(user);
         } catch (DataHandlerException e) {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
@@ -121,14 +113,14 @@ public class ForgottenPasswordBean implements Serializable {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;
         }
-        User user = null;
+        User user;
         try {
             user = userDataHandler.getUserByEmailAddress(this.email);
         } catch (DataHandlerException e) {
-            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;;
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;
         }
-        ArrayList<PasswordResetVerification> verifications = null;
+        ArrayList<PasswordResetVerification> verifications;
         try {
             verifications = userDataHandler.getPasswordVerifications(user.getId());
         } catch (DataHandlerException e) {
@@ -138,8 +130,8 @@ public class ForgottenPasswordBean implements Serializable {
         Date longest = verifications.get(0).getExpiry();
         user.getPassword().setPasswordResetVerification(verifications.get(0));
 
-        for (PasswordResetVerification v: verifications) {
-            if (v.getExpiry().compareTo(longest) > 0){
+        for (PasswordResetVerification v : verifications) {
+            if (v.getExpiry().compareTo(longest) > 0) {
                 user.getPassword().setPasswordResetVerification(v);
                 longest = v.getExpiry();
             }
@@ -175,7 +167,7 @@ public class ForgottenPasswordBean implements Serializable {
                 } catch (ServiceNotFoundException | DataHandlerException e) {
                     errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
                 }
-            }else {
+            } else {
                 errorMessage = ErrorMessageConstants.ERROR_GENERAL_FAILURE;
             }
         }

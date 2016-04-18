@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by coffeemakr on 31.03.16.
@@ -37,7 +37,7 @@ public class FileTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetTypeNull() throws Exception {
-        file.setType(null);
+        file.setExtension(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -69,8 +69,8 @@ public class FileTest {
     @Test
     public void testSetType() throws Exception {
         String type="Type";
-        file.setType(type);
-        assertEquals(type, file.getType());
+        file.setExtension(type);
+        assertEquals(type, file.getExtension());
     }
 
     @Test

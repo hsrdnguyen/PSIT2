@@ -6,15 +6,16 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.factory.FileFactory;
-import ch.avocado.share.service.*;
+import ch.avocado.share.service.IFileDataHandler;
+import ch.avocado.share.service.IFileStorageHandler;
+import ch.avocado.share.service.IModuleDataHandler;
+import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +23,9 @@ import java.util.List;
 public class FileBean extends ResourceBean<File> {
 
     private String title;
-    // private String author;   //TODO @kunzlio1: Sascha fragen für was author? eg. ersteller?
     private List<Category> categories;
-    private FileItem uploadedFileItem;
+    private FileItem fileItem;
     private String moduleId;
-
-    @Override
-    protected String getTemplateFolder() {
-        return "file_templates/";
-    }
 
     @Override
     protected boolean hasMembers() {
@@ -38,89 +33,32 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    protected boolean hasIdentifier() {
+    public boolean hasIdentifier() {
         return (getTitle() != null && getModuleId() != null) || getId() != null;
     }
 
-    private void parseMultipartFormData(HttpServletRequest request) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        if (request.getContentType() == null || !request.getContentType().contains("multipart/form-data")) {
-            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, ErrorMessageConstants.ERROR_CONTENT_TYPE_NOT_ALLOWED);
-        }
-        List<FileItem> items;
-        try {
-            items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-        } catch (FileUploadException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-        }
-        for (FileItem item : items) {
-            if (item.isFormField()) {
-                switch (item.getFieldName()) {
-                    case "description":
-                        setDescription(item.getString());
-                        break;
-                    case "title":
-                        setTitle(item.getString());
-                        break;
-                    case "moduleId":
-                        setModuleId(item.getString());
-                        break;
-                    case "method":
-                        setMethod(item.getString());
-                        break;
-                    case "id":
-                        setId(item.getString());
-                        break;
-                    case "action":
-                        setAction(item.getString());
-                        break;
-                }
-            } else {
-                setUploadedFileItem(item);
-            }
-        }
-    }
-
-    @Override
-    public TemplateType executeRequest(HttpServletRequest request, HttpServletResponse response) {
-        if (request.getMethod().equalsIgnoreCase("POST") && request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
-            try {
-                parseMultipartFormData(request);
-            } catch (HttpBeanException e) {
-                sendErrorFromHttpBeanException(e, response);
-                return null;
-            }
-        }
-        return super.executeRequest(request, response);
-    }
-
-
-    private File getFileFromParameters(String path) {
-        File file = FileFactory.getDefaultFile();
-        file.setTitle(getTitle());
-        file.setCategories(getCategories());
-        file.setDescription(getDescription());
-        file.setPath(path);
-        return file;
-    }
 
     @Override
     public File create() throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
-        checkParameterTitle();
-        checkParameterDescription();
-        checkParameterModuleId();
-        //checkParameterAuthor();
-        if (!hasErrors()) {
+        File file = FileFactory.getDefaultFile();
+        checkParameterTitle(file);
+        checkParameterDescription(file);
+        checkParameterModuleId(file);
+        checkUploadedFile(file);
+        if (!file.hasErrors()) {
             Module module = moduleDataHandler.getModule(getModuleId());
             if(module == null) {
-                addFormError("module", "Modul existiert nicht.");
+                file.addFieldError("module", "Modul existiert nicht.");
                 return null;
             }
             ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
-            String path = uploadFile(getUploadedFileItem());
-            File file = getFileFromParameters(path);
+            String path = uploadFile(getFileItem());
+            file.setTitle(getTitle());
+            file.setCategories(getCategories());
+            file.setDescription(getDescription());
+            file.setPath(path);
             file.setOwnerId(getAccessingUser().getId());
             String fileId;
             fileId = fileDataHandler.addFile(file);
@@ -128,9 +66,14 @@ public class FileBean extends ResourceBean<File> {
             if (file == null) {
                 throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
             }
-            return file;
         }
-        return null;
+        return file;
+    }
+
+    private void checkUploadedFile(File file) {
+        if(getFileItem() == null) {
+            file.addFieldError("fileItem", "Keine Datei ausgewählt.");
+        }
     }
 
     /**
@@ -159,7 +102,7 @@ public class FileBean extends ResourceBean<File> {
      */
     @Override
     public List<File> index() throws HttpBeanException {
-        ISecurityHandler securityHandler = getSecurityHandler();
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         if(getAccessingUser() != null) {
             try {
@@ -190,13 +133,13 @@ public class FileBean extends ResourceBean<File> {
 
 
     @Override
-    public void update() throws HttpBeanException {
+    public void update(File object) throws HttpBeanException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        File file = getObject();
+        File file = object;
         boolean changed = false;
         if (getTitle() != null && !file.getTitle().equals(getTitle())) {
-            checkParameterTitle();
-            if (!hasErrors()) {
+            checkParameterTitle(file);
+            if (!file.hasErrors()) {
                 file.setTitle(getTitle());
                 changed = true;
             }
@@ -205,26 +148,26 @@ public class FileBean extends ResourceBean<File> {
         changed |= updateDescription(file);
 
         if (getModuleId() != null && !file.getModuleId().equals(getModuleId())) {
-            checkParameterModuleId();
-            if (!hasErrors()) {
+            checkParameterModuleId(file);
+            if (!file.hasErrors()) {
                 file.setModuleId(getModuleId());
                 changed = true;
             }
         }
 
         if (getCategories() != null) {
-            if (!hasErrors()) {
+            if (!file.hasErrors()) {
                 file.setCategories(getCategories());
                 changed = true;
             }
         }
-        if (getUploadedFileItem() != null && !hasErrors()) {
-            String path = uploadFile(getUploadedFileItem());
+        if (getFileItem() != null && !file.hasErrors()) {
+            String path = uploadFile(getFileItem());
             file.setPath(path);
             changed = true;
         }
 
-        if (!hasErrors() && changed) {
+        if (!file.hasErrors() && changed) {
             try{
                 if(!fileDataHandler.updateFile(file)) {
                     throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
@@ -237,10 +180,10 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public void destroy() throws HttpBeanException {
+    public void destroy(File object) throws HttpBeanException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         try {
-            if (!fileDataHandler.deleteFile(getObject())) {
+            if (!fileDataHandler.deleteFile(object)) {
                 throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
             }
         } catch (DataHandlerException e) {
@@ -248,12 +191,6 @@ public class FileBean extends ResourceBean<File> {
             throw new HttpBeanDatabaseException();
         }
     }
-
-    @Override
-    public String getAttributeName() {
-        return "File";
-    }
-
 
     /**
      * Uploads the file to the server and stores it using {@link IFileStorageHandler}.
@@ -263,7 +200,7 @@ public class FileBean extends ResourceBean<File> {
      * @throws HttpBeanException
      */
     public String uploadFile(FileItem fileItem) throws HttpBeanException {
-        if (fileItem == null) throw new IllegalArgumentException("uploadedFileItem is null");
+        if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
         DiskFileItemFactory factory = new DiskFileItemFactory();
         // maximum size that will be stored in memory
         factory.setSizeThreshold(FileConstants.MAX_MEM_SIZE);
@@ -298,15 +235,15 @@ public class FileBean extends ResourceBean<File> {
     /**
      * @return The uploaded file
      */
-    private FileItem getUploadedFileItem() {
-        return uploadedFileItem;
+    private FileItem getFileItem() {
+        return fileItem;
     }
 
     /**
-     * @param uploadedFileItem The uploaded file
+     * @param fileItem The uploaded file
      */
-    private void setUploadedFileItem(FileItem uploadedFileItem) {
-        this.uploadedFileItem = uploadedFileItem;
+    public void setFileItem(FileItem fileItem) {
+        this.fileItem = fileItem;
     }
 
     /**
@@ -316,43 +253,58 @@ public class FileBean extends ResourceBean<File> {
         return categories;
     }
 
+    /**
+     * Adds a category to the file, by handing over the name of the category
+     * @param categoryName The name of the category which you want to add to the file
+     */
+    public void addCategory(String categoryName){
+        if (categoryName == null || categoryName.trim().isEmpty())
+            throw new IllegalArgumentException("categoryName is null or emty");
+        Category category = new Category(categoryName.trim());
+        if (categories.contains(category))
+            throw new IllegalArgumentException("Category was allready added to File");
+        //TODO @kunzlio1: fragen wie das mit ErrorMessages ausgeben genau gehandelt wird.
+        categories.add(category);
+    }
 
-    private void checkParameterTitle() throws HttpBeanException {
-        checkParameterModuleId();
-        if (hasErrors()) {
+    /**
+     * Remove a category from the file
+     * @param category The category which you want to remove from the file
+     */
+    public void removeCategory(Category category){
+        if (category == null) throw new IllegalArgumentException("category is null");
+        categories.remove(category); //TODO @kunzlio1: fragen was wir aus dem jsp heraus bekommen? (Category Obj oder name)
+    }
+
+
+    private void checkParameterTitle(File file) throws HttpBeanException {
+        checkParameterModuleId(file);
+        if (file.hasErrors()) {
             return;
         }
         if (getTitle() == null || getTitle().trim().isEmpty()) {
-            addFormError("title", ErrorMessageConstants.ERROR_NO_TITLE);
+            file.addFieldError("title", ErrorMessageConstants.ERROR_NO_TITLE);
         } else {
             setTitle(getTitle().trim());
             IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
 
             try {
                 if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
-                    addFormError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
+                    file.addFieldError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
                 }
             } catch (DataHandlerException e) {
-                addFormError("title", ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+                file.addFieldError("title", ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
             }
         }
     }
 
-    private void checkParameterModuleId() {
+    private void checkParameterModuleId(File file) {
         if (getModuleId() == null || getModuleId().trim().isEmpty()) {
-            addFormError("moduleId", ErrorMessageConstants.ERROR_NO_MODULE_ID);
+            file.addFieldError("moduleId", ErrorMessageConstants.ERROR_NO_MODULE_ID);
         } else {
             setModuleId(getModuleId().trim());
         }
     }
-
-//    private void checkParameterAuthor() {
-//        if (author == null || author.trim().isEmpty()) {
-//            addFormError("description", ERROR_NO_AUTHOR);
-//        } else {
-//            author = author.trim();
-//        }
-//    }
 
     public String getModuleId() {
         return moduleId;

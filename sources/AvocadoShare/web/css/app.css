@@ -16,7 +16,7 @@ header  nav .login-form {
 }
 
 html, body{
-	height: 100%; 
+	height: 100%;
 }
 
 #footerpusher{
@@ -30,7 +30,7 @@ footer{
 	height: 200px;
 	padding-top: 3rem;
 	/* box */
-	background-color: rgb(230,230,230);
+	background-color: black;
 	/* font */
 	font-size: 85%;
 }
@@ -52,11 +52,6 @@ footer ul li a:link {
 
 h1 {
 	margin-bottom: 2rem;
-}
-
-
-h2:not(:first-child), h3:not(:first-child) {
-	margin-top: 3rem;
 }
 
 main {
@@ -122,30 +117,6 @@ a.modul-link:hover .modul {
     position: relative;
     overflow: hidden;
 }
-
-.preview iframe, .preview frame {
-	width: 100%;
-	min-height: 800px;
-	height: 100%;
-}
-
-.preview pre {
-	width: 100%;
-	line-break: auto;
-	background-color: #e7e7e7;
-	border: 1px solid #a0a0a0;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	overflow: scroll;
-    padding: 1em;
-}
-
-.preview video {
-	width: 100%;
-}
-
-* {
+* {fd
     box-sizing: border-box;
 }
-

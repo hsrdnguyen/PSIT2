@@ -56,6 +56,7 @@ dfn {
 h1 {
     font-size: 2em;
     margin: 0.67em 0;
+    color: black !important;
 }
 mark {
     background: #ff0 none repeat scroll 0 0;
@@ -274,12 +275,15 @@ html {
     font-size: 16px;
 }
 body {
-    background-color: #fff;
+    background-image: url("../../../../img/cloud.jpg");
+    background-repeat:repeat-y;
+    background-size: 100%;
     color: #373a3c;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 1rem;
     line-height: 1.5;
 }
+
 [tabindex="-1"]:focus {
     outline: 0 none !important;
 }
@@ -487,6 +491,7 @@ hr {
     border-bottom-right-radius: 0.25rem;
     padding-left: 10px;
     padding-top: 10px;
+    background-color: white;
 }
 .small, small {
     font-size: 80%;
@@ -654,6 +659,11 @@ pre code {
 @media (min-width: 1200px) {
 .container {
     max-width: 1140px;
+
+}
+.container1 {
+    max-width: 1140px;
+    background-color: rgba(3, 4, 200, 0.08);
 }
 }
 .container-fluid {
@@ -3005,11 +3015,12 @@ input.btn-block[type="button"], input.btn-block[type="reset"], input.btn-block[t
     margin-left: 1rem;
 }
 .navbar-light .navbar-brand {
-    color: rgba(0, 0, 0, 0.8);
-
+  font-weight: bold;
+  color:#fff;
+  margin-left: 1rem;
 }
 .navbar-light .navbar-brand:focus, .navbar-light .navbar-brand:hover {
-    color: rgba(0, 0, 0, 0.8);
+    color: #43A28F;
 }
 .navbar-light .navbar-nav .nav-link {
     color: rgba(0, 0, 0, 0.3);
@@ -4571,7 +4582,8 @@ a.text-danger:focus, a.text-danger:hover {
     color: #eceeef;
 }
 .bg-faded {
-    background-color: #f7f7f9;
+    background-color: black;
+    
     height: 65px;
     padding-top: 13px;
 }

@@ -27,23 +27,19 @@ public class GroupBean extends ResourceBean<Group> {
         return true;
     }
 
-    @Override
-    protected String getTemplateFolder() {
-        return "group_templates/";
-    }
-
-    private void checkNameNotEmpty() {
+    private void checkNameNotEmpty(Group group) {
         if (name == null || name.trim().isEmpty()) {
-            addFormError("name", ErrorMessageConstants.ERROR_NO_NAME);
+            group.addFieldError("name", ErrorMessageConstants.ERROR_NO_NAME);
         } else {
             name = name.trim();
         }
     }
 
-    private void checkNameIsUnique() throws HttpBeanException {
+    private void checkNameIsUnique(Group group) throws HttpBeanException {
         try {
             if (getService(IGroupDataHandler.class).getGroupByName(name) != null) {
-                addFormError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
+                group.setName(name);
+                group.addFieldError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
             }
         } catch (DataHandlerException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -51,35 +47,24 @@ public class GroupBean extends ResourceBean<Group> {
         }
     }
 
-    protected void checkParameterDescription() {
-        if (description == null || description.trim().isEmpty()) {
-            addFormError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
-        } else {
-            description = description.trim();
-        }
-    }
-
-
     @Override
-    protected boolean hasIdentifier() {
+    public boolean hasIdentifier() {
         return name != null || getId() != null;
     }
-
 
     @Override
     public Group create() throws HttpBeanException, DataHandlerException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
-        checkNameNotEmpty();
-        checkNameIsUnique();
-        checkParameterDescription();
-        if (!hasErrors()) {
-            Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), description, name);
-            group.setOwnerId(getAccessingUser().getId());
+        Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), "", "");
+        checkNameNotEmpty(group);
+        checkNameIsUnique(group);
+        checkParameterDescription(group);
+        if (group.isValid()) {
+            group.setName(name);
+            group.setDescription(description);
             groupDataHandler.addGroup(group);
-            return group;
         }
-        // TODO: return group even when parameters were incorrect
-        return null;
+        return group;
     }
 
     @Override
@@ -100,7 +85,7 @@ public class GroupBean extends ResourceBean<Group> {
 
     @Override
     public List<Group> index() throws HttpBeanException {
-        ISecurityHandler securityHandler = getSecurityHandler();
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         List<Group> groupList;
         if (getAccessingUser() != null) {
@@ -116,19 +101,19 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public void update() throws HttpBeanException, DataHandlerException {
+    public void update(Group group) throws HttpBeanException, DataHandlerException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
-        checkParameterDescription();
-        checkNameNotEmpty();
-        Group group = getObject();
-        if (!hasErrors()) {
+        checkParameterDescription(group);
+        checkNameNotEmpty(group);
+        if (group.isValid()) {
             if (!name.equals(group.getName())) {
-                checkNameIsUnique();
+                checkNameIsUnique(group);
             }
         }
-        if (!hasErrors()) {
+        if (group.isValid()) {
             group.setName(name);
             group.setDescription(description);
+            System.out.println("Updating: name: " + name + " description: " + description);
             if (!groupDataHandler.updateGroup(group)) {
                 throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
             }
@@ -136,16 +121,11 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public void destroy() throws HttpBeanException, DataHandlerException {
+    public void destroy(Group group) throws HttpBeanException, DataHandlerException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
-        if (!groupDataHandler.deleteGroup(getObject())) {
+        if (!groupDataHandler.deleteGroup(group)) {
             throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
         }
-    }
-
-    @Override
-    public String getAttributeName() {
-        return "Group";
     }
 
     /**
@@ -163,6 +143,7 @@ public class GroupBean extends ResourceBean<Group> {
      * @param description The description of the group
      */
     public void setDescription(String description) {
+        System.out.println("Got description : " + description);
         this.description = description;
     }
 
@@ -172,6 +153,7 @@ public class GroupBean extends ResourceBean<Group> {
      * @param name
      */
     public void setName(String name) {
+        System.out.println("Got name : " + name);
         this.name = name;
     }
 

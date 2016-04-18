@@ -5,6 +5,7 @@ import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.model.factory.CategoryFactory;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * Created by kunzlio1 on 23.03.2016.
  */
 public class CategoryDataHandler implements ICategoryDataHandler {
-    //TODO @kunzlio1: Sobald an DB, Tests schreiben...
+    //TODO @kunzlio1: Tests schreiben...
     /**
      * adds all categories from new created AccessControlObject to the database
      * @param accessObject the new created AccessControlObject
@@ -83,14 +84,14 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SQL_SELECT_CATEGORY_BY_NAME);
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_SELECT_CATEGORY_BY_NAME);
             preparedStatement.setString(1, name);
             resultSet = preparedStatement.executeQuery();
+            return createCategoryFromResultSet(resultSet);
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
-        //TODO: @kunzlio1: return result set, sobald an db angebunden...
-        return null;
     }
 
     /**
@@ -106,7 +107,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SQL_SELECT_CATEGORY_BY_NAME_AND_OBJECT_ID);
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_SELECT_CATEGORY_BY_NAME_AND_OBJECT_ID);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, accessObjectReferenceId);
             resultSet = preparedStatement.executeQuery();
@@ -116,36 +117,87 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         }
     }
 
+    /**
+     * Returns all categories, which are assigned to AccessControlObject.
+     * @param accessControlObjectId the accessObjectId, for which the categories should be returned.
+     * @return the accessObject assigned categories.
+     */
+    @Override
+    public List<Category> getAccessObjectAssignedCategories(String accessControlObjectId){
+        IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
+        if(connectionHandler == null) return null;
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
+        try {
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_SELECT_CATEGORIES_BY_OBJECT_ID);
+            preparedStatement.setLong(1, Long.parseLong(accessControlObjectId));
+            resultSet = preparedStatement.executeQuery();
+            return createAccessObjectAssignedCategories(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Category createCategoryFromResultSet(ResultSet resultSet){
+        Category category = CategoryFactory.getDefaultCategory();
+        try {
+            if(resultSet.next()) {
+                category.setName(resultSet.getString(2));
+                do {
+                    category.addObjectId(resultSet.getString(1));
+                }while (resultSet.next());
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return category;
+    }
+
+    private List<Category> createAccessObjectAssignedCategories(ResultSet resultSet){
+        List<Category> categories = new ArrayList<>();
+        try {
+            while(resultSet.next()) {
+                Category category = getCategoryByName(resultSet.getString(1));
+                if(category == null) {
+                    return null;
+                }
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return categories;
+    }
+
     private boolean addCategory(String name, String accessObjectReferenceId) {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return false;
+        if(connectionHandler == null || hasCategoryAssignedObject(name, accessObjectReferenceId)) return false;
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SQL_ADD_CATEGORY);
-            preparedStatement.setString(1, accessObjectReferenceId);
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_ADD_CATEGORY);
+            preparedStatement.setLong(1, Long.parseLong(accessObjectReferenceId));
             preparedStatement.setString(2, name);
-            preparedStatement.executeQuery();
+            return preparedStatement.execute();
         } catch (SQLException e) {
             return false;
         }
-
-        return true;
     }
 
     private boolean deleteCategoryAssignedObject(String name, String accessObjectReferenceId) {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) return false;
         PreparedStatement preparedStatement;
-        ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SQL_DELETE_CATEGORY_FROM_OBJECT);
+            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_DELETE_CATEGORY_FROM_OBJECT);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, accessObjectReferenceId);
-            resultSet = preparedStatement.executeQuery();
+            return connectionHandler.deleteDataSet(preparedStatement);
         } catch (SQLException e) {
             return false;
         }
-        return true;
     }
 
     private IDatabaseConnectionHandler getDatabaseHandler() {

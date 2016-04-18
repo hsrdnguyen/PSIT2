@@ -1,7 +1,92 @@
-<%@ page import="ch.avocado.share.model.data.File" %>
+<%@ page import="ch.avocado.share.model.data.File
+
 <%@ page import="java.util.List" %>
 <jsp:useBean id="searchBean" class="ch.avocado.share.controller.SearchBean"/>
 <%@include file="includes/header.jsp"%>
+" %>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avocado Share</title>
+  <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="components/octicons/octicons/octicons.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="footerpusher">
+<header>
+    <nav class="navbar navbar-light bg-faded">
+      <div class="container">
+      <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
+        &#9776;
+      </button>
+      <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+      <a href="index.jsp" class="navbar-brand" href="#">Avocado Share</a>
+      <ul class="nav navbar-nav">
+        <!-- Links for mobile users -->
+        <li class="nav-item hidden-sm-up">
+          <a class="nav-link" href="#login">Login</a>
+        </li>
+        <li class="nav-item hidden-sm-up">
+          <a class="nav-link" href="#register">Register</a>
+        </li>
+        <!-- Navbar Search -->
+        <li class="nav-item pull-md-right">
+          <form action="document_view.jsp" class="form-inline">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search for...">
+              <span class="input-group-btn">
+                <button class="btn btn-secondary" type="submit">Los!</button>
+              </span>
+            </div>
+          </form>
+        </li>
+        <!-- Navbar Login formular -->
+        <li class="nav-item hidden-xs-down pull-md-right">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle"
+                    type="button" id="navbar-login-toggle-button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="octicon octicon-person"></span>
+            </button>
+
+            <div id="navbar-login" class="dropdown-menu" aria-labelledby="navbar-login-toggle-button">
+              <form action="indexlog.jsp" method="POST" action="#login">
+                <fieldset>
+                  <div class="input-group dropdown-item">
+                    <label for="navbar-login-username" class="input-group-addon">
+                      <span class="octicon octicon-person"></span>
+                      <!-- Display label without css and placeholder -->
+                      <span class="sr-only">Benutzername</span>
+                    </label>
+                    <input id="navbar-login-username" type="text" class="form-control" placeholder="Benutzername">
+                  </div>
+                  <div class="input-group dropdown-item">
+                    <label for="navbar-login-password" class="input-group-addon">
+                      <span class="octicon octicon-lock"></span>
+                      <!-- Display label without css and placeholder -->
+                      <span class="sr-only">Passwort</span>
+                    </label>
+                    <input id="navbar-login-password" type="password" class="form-control" placeholder="Passwort">
+                  </div>
+                  </fieldset>
+                  </form>
+                  <a href="document_viewlog.jsp"><input type="submit" value="Anmelden" class="dropdown-item"/>
+                  </a>
+                  <a href="register.jsp"><input action="contact.jsp" class="dropdown-item" type="submit" value="Registrieren">
+                  </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+      </div>
+      </div>
+    </nav>
+</header>
+<main class="container">
   <h1>Dokumentenüberblick</h1>
    <form class="form-inline">
             <div class="input-group">
@@ -76,4 +161,21 @@
       </div>
     </section>
   </div>
-<%@include file="includes/footer.jsp"%>
+</main>
+</div> <!-- /#footerpusher -->
+<footer class="text-muted">
+  <div class="container">
+    <ul>
+      <li><a href="#about">Über uns</a></li>
+      <li><a href="contact.jsp" href="#contact">Kontakt</a></li>
+      <li><a href="#something">Fehler melden</a></li>
+    </ul>
+    <p>Sorgfälltig mit Liebe erstellt von S. Bergman, L. Kunz, D. T. Nguyen und <span title="De Besti">Cyril Müller</span>.</p>
+    <p>&copy; 2015, All rights reserved.</p>
+  </div>
+
+</footer>
+<script type="application/javascript" src="components/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

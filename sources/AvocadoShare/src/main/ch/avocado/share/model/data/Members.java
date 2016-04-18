@@ -6,13 +6,20 @@ import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class Members {
     private final Map<User, AccessLevelEnum> users;
     private final Map<Group, AccessLevelEnum> groups;
     private final AccessControlObjectBase target;
+
+    public Members(AccessControlObjectBase target) {
+        this(new HashMap<User, AccessLevelEnum>(), new HashMap<Group, AccessLevelEnum>(), target);
+    }
 
     public Members(Map<User, AccessLevelEnum> users, Map<Group, AccessLevelEnum> groups, AccessControlObjectBase target) {
         if(users == null) throw new IllegalArgumentException("users is null");

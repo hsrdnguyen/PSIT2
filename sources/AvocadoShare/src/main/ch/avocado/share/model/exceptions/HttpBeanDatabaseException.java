@@ -1,5 +1,7 @@
 package ch.avocado.share.model.exceptions;
+
 import ch.avocado.share.common.constants.ErrorMessageConstants;
+
 import javax.servlet.http.HttpServletResponse;
 
 /**

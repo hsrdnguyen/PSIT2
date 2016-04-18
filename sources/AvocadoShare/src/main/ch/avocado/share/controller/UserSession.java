@@ -1,20 +1,13 @@
 package ch.avocado.share.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class UserSession {
 	
@@ -52,13 +45,11 @@ public class UserSession {
 		if(session == null) throw new IllegalArgumentException("session can't be null");
 		this.session = session;
         String userId = (String) this.session.getAttribute(SESSION_UID);
-		System.out.println("Session got UID: " + userId);
         user = null;
-        findUser();
+        loadUser(userId);
     }
 
-    private void findUser() {
-        String userId = getUserId();
+    private void loadUser(String userId) {
 		if(userId == null) return;
         IUserDataHandler userDataHandler;
         try {
@@ -69,39 +60,22 @@ public class UserSession {
         }
 	}
 
-
+	/**
+	 * @return {@code True} is the user is authenticated
+     */
 	public boolean isAuthenticated() {
 		return getUser() != null;
 	}
-	
+
+	/**
+	 * Authenticate the session to the user.
+	 * @param user The user.
+     */
 	public void authenticate(User user) {
         if(user == null) throw new IllegalArgumentException("user is null");
         this.user = user;
 		session.setAttribute(SESSION_UID, user.getId());
 	}
-
-    /*
-     * Check if the session user has access to the target.
-     * @param requiredLevel The required access level
-     * @param target The accessed object
-     * @return True if the user has the required permissions
-     *
-    public boolean hasAccess(AccessLevelEnum requiredLevel, AccessControlObjectBase target) {
-        User user = getUser();
-        AccessLevelEnum grantedLevel;
-        ISecurityHandler securityHandler;
-        try {
-            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-        } catch (ServiceNotFoundException e) {
-            return false;
-        }
-        if(user != null) {
-            grantedLevel = securityHandler.getAccessLevel(user, target);
-        } else {
-            grantedLevel = securityHandler.getAnonymousAccessLevel(target);
-        }
-        return grantedLevel.containsLevel(requiredLevel);
-    }*/
 
 	public void clearAuthentication() {
         user = null;
@@ -116,6 +90,9 @@ public class UserSession {
     }
 
 	public String getUserId() {
-		return (String) session.getAttribute(SESSION_UID);
+		if(user == null) {
+			return null;
+		}
+		return user.getId();
 	}
 }

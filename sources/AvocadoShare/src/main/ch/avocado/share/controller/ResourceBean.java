@@ -1,73 +1,33 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.HttpStatusCode;
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
-import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.AccessLevelEnum;
+import ch.avocado.share.model.data.Members;
+import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 /**
- * This class should be used for all resources and does the following things:
- * * Check access
- * * Execute appropriate method (get, create, index, etc.)
- * * Include the template accordingly.
- * <p>
- * Once renderRequest is called, this class checks the method of the request.<br/>
- * * GET: Display a form to edit or create an object, display a single element or display a list of elements.<br/>
- * * POST: create a new object (if there is no method parameter in the request)<br/>
- * * PATCH: update the object<br/>
- * * PUT: Replace an element (not implemented yet)
- * <p>
- * The GET request is somewhat special. There are four different cases for a GET-request. Checking is performed
- * in this order:
- * <ul>
- * <li>If {@link #hasIdentifier()} is {@code true}:</li>
- * <ul>
- * <li>  If the attribute {@link #getAction() action} is set to {@value ACTION_EDIT} {@link #get()}
- * is called an the template {@link #getEditDispatcher(HttpServletRequest)} is included.
- * </li>
- * <li>  Otherwise {@link #get()} is called and  {@link #getDetailDispatcher(HttpServletRequest)} is included</li>
- * </ul>
- * <li>
- * If {@link #hasIdentifier()} is {@code false}:
- * </li><ul><li>
- * If the attribute {@link #getAction() action} is set to {@value ACTION_CREATE}
- * the template {@link #getCreateDispatcher(HttpServletRequest)} to create a new
- * object is included.
- * </li>
- * <li>
- * Otherwise {@link #index()} is called and the template
- * {@link #getIndexDispatcher(HttpServletRequest)} is included
- * </li></ul></ul>
+ * Bean to modify, view or list resources.
+ * No access check is done in this methods.
  *
  * @param <E> The subclass of AccessControlObjectBase to handle.
  */
-public abstract class ResourceBean<E extends AccessControlObjectBase> extends RequestHandlerBeanBase {
-    public static final String ATTRIBUTE_FORM_ERRORS = "ch.avocado.share.controller.FormErrors";
-
-    /**
-     * The object which is returned by {@link #get()} is stored in this field.
-     *
-     * @see #getObject()
-     */
-    private E object;
+public abstract class ResourceBean<E extends AccessControlObjectBase> implements Serializable {
 
     private String id;
-    private Map<String, String> formErrors = new HashMap<>();
 
-    /**
-     * The action parameter
-     */
-    private String action;
     private String description;
 
     /**
@@ -78,14 +38,11 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      *
      * @return True if the bean has a valid identifier
      */
-    protected boolean hasIdentifier() {
+    public boolean hasIdentifier() {
         return getId() != null;
     }
 
     /**
-     * Make sure you set an error with {@link #addFormError(String, String)}
-     * if you return null!
-     *
      * @return The new created object or null if there are errors.
      * @throws HttpBeanException
      */
@@ -111,22 +68,31 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      * Updates the object which can be accessed through getObject().
      * Use addFormError if there are invalid or missing parameters.
      *
+     * @param object
      * @throws HttpBeanException
      */
-    public abstract void update() throws HttpBeanException, DataHandlerException;
+    public abstract void update(E object) throws HttpBeanException, DataHandlerException;
 
-    protected boolean updateDescription(AccessControlObjectBase module) {
+    /**
+     * Update the descriptipon of the object
+     * @param object the object on which the description is updated if there is no error.
+     * @return true if the description has been changed.
+     */
+    protected boolean updateDescription(AccessControlObjectBase object) {
         boolean updated = false;
-        if (getDescription() != null && !getDescription().equals(module.getDescription())) {
-            checkParameterDescription();
-            if (!hasErrors()) {
-                module.setDescription(getDescription());
+        if (getDescription() != null && !getDescription().equals(object.getDescription())) {
+            checkParameterDescription(object);
+            if (!object.hasErrors()) {
+                object.setDescription(getDescription());
                 updated = true;
             }
         }
         return updated;
     }
 
+    /**
+     * @return {@code true} if the resource has members and these should be loaded.
+     */
     protected abstract boolean hasMembers();
 
     /**
@@ -134,159 +100,20 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
      *
      * @throws HttpBeanException
      */
-    public abstract void destroy() throws HttpBeanException, DataHandlerException;
+    public abstract void destroy(E object) throws HttpBeanException, DataHandlerException;
 
     /**
      * Replace the object
      *
      * @throws HttpBeanException
      */
-    public void replace() throws HttpBeanException, DataHandlerException {
+    public void replace(E object) throws HttpBeanException, DataHandlerException {
         throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Replacement not allowed");
     }
 
-    public abstract String getAttributeName();
 
-    public String getPluralAttributeName() {
-        return getAttributeName() + "s";
-    }
-
-    /**
-     * Handle DELETE request
-     *
-     * @param request
-     * @return
-     * @throws HttpBeanException
-     */
-    @Override
-    protected TemplateType doDelete(HttpServletRequest request) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        TemplateType templateType;
-        try {
-            object = get();
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanDatabaseException();
-        }
-        if (object == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
-        }
-        ensureAccessingUserHasAccess(object, AccessLevelEnum.MANAGE);
-        try {
-            destroy();
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanDatabaseException();
-        }
-        if (!hasErrors()) {
-            setFormErrorsInRequestAttribute(request);
-            templateType = TemplateType.EDIT;
-            request.setAttribute("Members", getMembers());
-            request.setAttribute(getAttributeName(), object);
-        } else {
-            templateType = TemplateType.INDEX;
-        }
-        return templateType;
-    }
-
-    /**
-     * Handle POST request
-     *
-     * @param request
-     * @return
-     * @throws HttpBeanException
-     */
-    @Override
-    protected TemplateType doPatch(HttpServletRequest request) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        TemplateType templateType;
-        System.out.println("PATCH");
-        try {
-            object = get();
-        } catch (DataHandlerException e) {
-            throw new HttpBeanDatabaseException();
-        }
-        if (object == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
-        }
-        ensureAccessingUserHasAccess(object, AccessLevelEnum.WRITE);
-        try {
-            update();
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanDatabaseException();
-        }
-        if (!hasErrors()) {
-            // On success show details
-            templateType = TemplateType.DETAIL;
-        } else {
-            // On failure show edit form again
-            setFormErrorsInRequestAttribute(request);
-            templateType = TemplateType.EDIT;
-        }
-        request.setAttribute("Members", getMembers());
-        request.setAttribute(getAttributeName(), object);
-        return templateType;
-    }
-
-
-    /**
-     * Handle GET request
-     *
-     * @param request
-     * @return
-     * @throws HttpBeanException
-     */
-    @Override
-    protected TemplateType doGet(HttpServletRequest request) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        TemplateType templateType;
-        if (hasIdentifier()) {
-            templateType = doGetOnObject(request);
-        } else {
-            templateType = doGetOnIndex(request);
-        }
-        return templateType;
-    }
-
-
-    /**
-     * Handle GET requests on a single object
-     * This object will be available in the
-     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
-     * named {@link #getAttributeName()}} and has the type {@link AccessControlObjectBase}.
-     *
-     * @param request
-     * @return The template type
-     * @throws HttpBeanException
-     */
-    private TemplateType doGetOnObject(HttpServletRequest request) throws HttpBeanException {
-        TemplateType templateType;
-        try {
-            object = get();
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanDatabaseException();
-        }
-        if (object == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_GET_FAILED);
-        }
-        if (isEdit()) {
-            System.out.println("EDIT");
-            templateType = TemplateType.EDIT;
-            ensureAccessingUserHasAccess(object, AccessLevelEnum.WRITE);
-        } else {
-            System.out.println("DETAIL");
-            templateType = TemplateType.DETAIL;
-            ensureAccessingUserHasAccess(object, AccessLevelEnum.READ);
-        }
-        request.setAttribute("Members", getMembers());
-        request.setAttribute(getAttributeName(), object);
-        return templateType;
-    }
-
-    private Members getMembers() throws HttpBeanException {
-        if(object == null) throw new IllegalStateException("object is null");
+    public Members getMembers(E object) throws HttpBeanException {
+        if (object == null) throw new IllegalStateException("object is null");
         Members members;
         if (!hasMembers()) {
             return null;
@@ -310,132 +137,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         return getService(ISecurityHandler.class).getGroupsWithAccessIncluding(AccessLevelEnum.READ, object);
     }
 
-    /**
-     * Handle GET request on the index (not on a single object)
-     * This list will be available in the
-     * {@link HttpServletRequest#getAttribute(String) servlet attribute} named
-     * named {@link #getPluralAttributeName()} and has the type {@link AccessControlObjectBase E[]}.
-     *
-     * @param request
-     * @return The template type
-     * @throws HttpBeanException
-     */
-    private TemplateType doGetOnIndex(HttpServletRequest request) throws HttpBeanException {
-        TemplateType templateType;
-        if (isCreate()) {
-            System.out.println("CREATE");
-            ensureIsAuthenticatedToCreate();
-            templateType = TemplateType.CREATE;
-        } else {
-            List<E> objectList;
-            try {
-                objectList = index();
-            } catch (DataHandlerException e) {
-                e.printStackTrace();
-                throw new HttpBeanDatabaseException();
-            }
-            if (objectList == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_INDEX_FAILED);
-            }
-            System.out.println("INDEX");
-            for (E objectInList : objectList) {
-                ensureAccessingUserHasAccess(objectInList, AccessLevelEnum.READ);
-            }
-            templateType = TemplateType.INDEX;
-            request.setAttribute(getPluralAttributeName(), objectList);
-        }
-        return templateType;
-    }
-
-
-    /**
-     * Handle POST request
-     *
-     * @param request
-     * @return
-     * @throws HttpBeanException
-     */
-    @Override
-    protected TemplateType doPost(HttpServletRequest request) throws HttpBeanException {
-        ensureIsAuthenticatedToCreate();
-        TemplateType templateType;
-        try {
-            object = create();
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanDatabaseException();
-        }
-        if (object == null && !hasErrors()) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.ERROR_CREATE_FAILED);
-        }
-        request.setAttribute(getAttributeName(), object);
-        if (hasErrors()) {
-            setFormErrorsInRequestAttribute(request);
-            templateType = TemplateType.CREATE;
-        } else {
-            request.setAttribute("Members", getMembers());
-            templateType = TemplateType.DETAIL;
-        }
-        return templateType;
-    }
-
-
-    /**
-     * Add a error related to a parameter
-     *
-     * @param parameter the parameter
-     * @param message   the message describing the error
-     */
-    protected void addFormError(String parameter, String message) {
-        this.formErrors.put(parameter, message);
-    }
-
-    /**
-     * @return True if there occured errors while processing a request
-     */
-    public boolean hasErrors() {
-        return !formErrors.isEmpty();
-    }
-
-    /**
-     * @return True of the request has the action parameter set to {@value ACTION_EDIT}
-     */
-    private boolean isEdit() {
-        return ACTION_EDIT.equals(action);
-    }
-
-    /**
-     * @return True of the request has the action parameter set to {@value ACTION_CREATE}
-     */
-    private boolean isCreate() {
-        System.out.println("Create?: " + action);
-        return ACTION_CREATE.equals(action);
-    }
-
-    /**
-     * @return The action parameter
-     */
-    public String getAction() {
-        return action;
-    }
-
-    /**
-     * Set the action parameter
-     *
-     * @param action
-     */
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    /**
-     * Returns the object or null if get() wasn't called or failed.
-     *
-     * @return The object or null.
-     */
-    protected E getObject() {
-        return object;
-    }
 
     /**
      * Returns the identifier of the object
@@ -455,13 +156,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         this.id = id;
     }
 
-    public Map<String, String> getFormErrors() {
-        return new HashMap<>(this.formErrors);
-    }
-
-    private void setFormErrorsInRequestAttribute(HttpServletRequest request) {
-        request.setAttribute(ATTRIBUTE_FORM_ERRORS, getFormErrors());
-    }
 
     /**
      * @return The description of the file
@@ -477,11 +171,80 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> extends Re
         this.description = description;
     }
 
-    protected void checkParameterDescription() {
+    protected void checkParameterDescription(AccessControlObjectBase model) {
         if (getDescription() == null || getDescription().trim().isEmpty()) {
-            addFormError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
+            model.addFieldError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
         } else {
             setDescription(getDescription().trim());
         }
+    }
+
+
+    private User accessingUser;
+
+    /**
+     * Mapper for {@link ServiceLocator#getService(Class)} which raises a  HttpBeanException instead.
+     *
+     * @param serviceClass
+     * @param <E>
+     * @return The service
+     * @throws HttpBeanException
+     */
+    protected static <E> E getService(Class<E> serviceClass) throws HttpBeanException {
+        try {
+            return ServiceLocator.getService(serviceClass);
+        } catch (ServiceNotFoundException e) {
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
+        }
+    }
+
+    /**
+     * Checks if the {@link #getAccessingUser() accessing user} has the required level of access.
+     *
+     * @param target        The access target
+     * @param requiredLevel The required level of access on the target.
+     * @throws HttpBeanException If the required access is not met.
+     */
+    protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws HttpBeanException {
+        if (target == null) throw new IllegalArgumentException("target is null");
+        if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
+        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
+        AccessLevelEnum grantedAccessLevel;
+        // TODO: remove
+        System.out.println("Accessing user : " + getAccessingUser());
+        try {
+            if (getAccessingUser() == null) {
+                grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
+            } else {
+                grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
+            }
+        } catch (DataHandlerException e) {
+            e.printStackTrace();
+            throw new HttpBeanDatabaseException();
+        }
+        // TODO: remove
+        System.out.println("Level: " + grantedAccessLevel);
+        if (!grantedAccessLevel.containsLevel(requiredLevel)) {
+            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
+        }
+    }
+
+    /**
+     * Sets the the user which accesses the object.
+     *
+     * @param accessingUser the user or null if the user is not authenticated.
+     */
+    public void setAccessingUser(User accessingUser) {
+        this.accessingUser = accessingUser;
+    }
+
+    /**
+     * Get the accessing user.
+     *
+     * @return Returns the accessing user object if the user is authenticated.
+     * Otherwise null is returned.
+     */
+    public User getAccessingUser() {
+        return accessingUser;
     }
 }

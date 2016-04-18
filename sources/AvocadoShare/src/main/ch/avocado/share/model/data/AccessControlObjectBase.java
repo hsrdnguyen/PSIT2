@@ -1,12 +1,13 @@
 package ch.avocado.share.model.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by bergm on 15/03/2016.
  */
-public abstract class AccessControlObjectBase {
+public abstract class AccessControlObjectBase extends Model{
 
     private String id;
     private List<Category> categories;
@@ -19,7 +20,7 @@ public abstract class AccessControlObjectBase {
     /**
      * Constructor
      * @param id
-     * @param categories
+     * @param categories A list of categories or null if there are no categories.
      * @param creationDate
      * @param rating
      * @param ownerId
@@ -27,7 +28,7 @@ public abstract class AccessControlObjectBase {
      */
     public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
         this.id = id;
-        this.categories = categories;
+        setCategories(categories);
         setCreationDate(creationDate);
         this.rating = rating;
         setOwnerId(ownerId);
@@ -61,6 +62,9 @@ public abstract class AccessControlObjectBase {
      * @param categories The categories assigned to this object
      */
     public void setCategories(List<Category> categories) {
+        if(categories == null) {
+            categories = new ArrayList<>();
+        }
         this.categories = categories;
         setDirty(true);
     }
@@ -106,7 +110,7 @@ public abstract class AccessControlObjectBase {
      * @param ownerId Identifier of the owner object.
      */
     public void setOwnerId(String ownerId) {
-        if(ownerId == null) throw new IllegalArgumentException("ownerId is null");
+        // if(ownerId == null) throw new IllegalArgumentException("ownerId is null");
         this.ownerId = ownerId;
         setDirty(true);
     }

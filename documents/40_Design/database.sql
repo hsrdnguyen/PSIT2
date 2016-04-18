@@ -154,7 +154,6 @@ CREATE TABLE uploaded_into
 (
   file_id INTEGER NOT NULL,
   module_id INTEGER NOT NULL,
-  Level INTEGER NOT NULL,
   CONSTRAINT fk_uploaded_into_file_id FOREIGN KEY(file_id) REFERENCES File(id) ON DELETE CASCADE,
   CONSTRAINT fk_uploaded_into_module_id FOREIGN KEY(module_id) REFERENCES Module(id) ON DELETE CASCADE,
   CONSTRAINT pk_uploaded_into PRIMARY KEY(file_id),

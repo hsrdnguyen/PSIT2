@@ -2,7 +2,6 @@ package ch.avocado.share.common;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 
 /**
  * Encoder for servlets.
@@ -27,7 +26,7 @@ public class Encoder {
             case 62: // >
                 letter = "&gt;";
                 break;
-            case 160: // {{bg|blue|&nbsp;}}
+            case 160: // non-breaking space
                 letter = "&nbsp;";
                 break;
             case 161: // ¡
@@ -66,7 +65,7 @@ public class Encoder {
             case 172: // ¬
                 letter = "&not;";
                 break;
-            case 173: // style="background:#ddd"| &nbsp;
+            case 173: //
                 letter = "&shy;";
                 break;
             case 174: // ®
@@ -108,7 +107,7 @@ public class Encoder {
             case 186: // º
                 letter = "&ordm;";
                 break;
-            case 187: // &raquo; <!-- Warning: don't use the » character directly or MediaWiki will add U+00A0 NO-BREAK SPACE before it. -->
+            case 187: // »
                 letter = "&raquo;";
                 break;
             case 188: // ¼
@@ -495,25 +494,25 @@ public class Encoder {
             case 982: // ϖ
                 letter = "&piv;";
                 break;
-            case 8194: // {{bg|blue|&ensp;}}
+            case 8194:
                 letter = "&ensp;";
                 break;
-            case 8195: // {{bg|blue|&emsp;}}
+            case 8195:
                 letter = "&emsp;";
                 break;
-            case 8201: // {{bg|blue|&thinsp;}}
+            case 8201:
                 letter = "&thinsp;";
                 break;
-            case 8204: // style="background:#ddd"| &nbsp;
+            case 8204:
                 letter = "&zwnj;";
                 break;
-            case 8205: // style="background:#ddd"| &nbsp;
+            case 8205:
                 letter = "&zwj;";
                 break;
-            case 8206: // style="background:#ddd"| &nbsp;
+            case 8206:
                 letter = "&lrm;";
                 break;
-            case 8207: // style="background:#ddd"| &nbsp;
+            case 8207:
                 letter = "&rlm;";
                 break;
             case 8211: // –
@@ -576,19 +575,19 @@ public class Encoder {
             case 8364: // €
                 letter = "&euro;";
                 break;
-            case 8465: // {{unicode|ℑ}}
+            case 8465: // ℑ
                 letter = "&image;";
                 break;
-            case 8472: // {{unicode|℘}}
+            case 8472: // ℘
                 letter = "&weierp;";
                 break;
-            case 8476: // {{unicode|ℜ}}
+            case 8476: // ℜ
                 letter = "&real;";
                 break;
             case 8482: // ™
                 letter = "&trade;";
                 break;
-            case 8501: // {{unicode|ℵ}}
+            case 8501: // ℵ
                 letter = "&alefsym;";
                 break;
             case 8592: // ←
@@ -606,22 +605,22 @@ public class Encoder {
             case 8596: // ↔
                 letter = "&harr;";
                 break;
-            case 8629: // {{unicode|↵}}
+            case 8629: // ↵
                 letter = "&crarr;";
                 break;
-            case 8656: // {{unicode|⇐}}
+            case 8656: // ⇐
                 letter = "&lArr;";
                 break;
-            case 8657: // {{unicode|⇑}}
+            case 8657: // ⇑
                 letter = "&uArr;";
                 break;
-            case 8658: // {{unicode|⇒}}
+            case 8658: // ⇒
                 letter = "&rArr;";
                 break;
-            case 8659: // {{unicode|⇓}}
+            case 8659: // ⇓
                 letter = "&dArr;";
                 break;
-            case 8660: // {{unicode|⇔}}
+            case 8660: // ⇔
                 letter = "&hArr;";
                 break;
             case 8704: // ∀
@@ -633,7 +632,7 @@ public class Encoder {
             case 8707: // ∃
                 letter = "&exist;";
                 break;
-            case 8709: // {{unicode|∅}}
+            case 8709: // ∅
                 letter = "&empty;";
                 break;
             case 8711: // ∇
@@ -642,7 +641,7 @@ public class Encoder {
             case 8712: // ∈
                 letter = "&isin;";
                 break;
-            case 8713: // {{unicode|∉}}
+            case 8713: // ∉
                 letter = "&notin;";
                 break;
             case 8715: // ∋
@@ -657,7 +656,7 @@ public class Encoder {
             case 8722: // −
                 letter = "&minus;";
                 break;
-            case 8727: // {{unicode|∗}}
+            case 8727: // ∗
                 letter = "&lowast;";
                 break;
             case 8730: // √
@@ -693,7 +692,7 @@ public class Encoder {
             case 8764: // ∼
                 letter = "&sim;";
                 break;
-            case 8773: // {{unicode|≅}}
+            case 8773: // ≅
                 letter = "&cong;";
                 break;
             case 8776: // ≈
@@ -717,7 +716,7 @@ public class Encoder {
             case 8835: // ⊃
                 letter = "&sup;";
                 break;
-            case 8836: // {{unicode|⊄}}
+            case 8836: // ⊄
                 letter = "&nsub;";
                 break;
             case 8838: // ⊆
@@ -729,7 +728,7 @@ public class Encoder {
             case 8853: // ⊕
                 letter = "&oplus;";
                 break;
-            case 8855: // {{unicode|⊗}}
+            case 8855: // ⊗
                 letter = "&otimes;";
                 break;
             case 8869: // ⊥
@@ -797,8 +796,6 @@ public class Encoder {
     public static String forHtml(String value) {
         if(value == null) value = "";
         value = htmlEntities(value);
-        // TODO: is this a good idea?
-        value = value.replaceAll("\n", "<br/>");
         return value;
     }
 
