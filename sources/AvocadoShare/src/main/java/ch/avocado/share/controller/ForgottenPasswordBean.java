@@ -75,7 +75,7 @@ public class ForgottenPasswordBean implements Serializable {
     /**
      * @return True if a password reset link was send to the user
      */
-    public boolean createNewPassword() {
+    public boolean requestNewPassword() {
         if (checkParameterEmail()) return false;
 
         IUserDataHandler userDataHandler = getUserDataHandler();
@@ -91,7 +91,7 @@ public class ForgottenPasswordBean implements Serializable {
         if(!storeVerification(user, userDataHandler)) {
             return false;
         }
-        
+
         sendResetMail(user);
         return true;
     }
