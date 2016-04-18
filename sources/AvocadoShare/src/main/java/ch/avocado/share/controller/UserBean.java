@@ -25,6 +25,7 @@ public class UserBean extends ResourceBean<User> {
     public static final String ERROR_PASSWORD_CONFIRMATION_INCORRECT = "Die Passwörter stimmen nicht überein.";
     private static final String PRENAME_TOO_LONG = "Der Vorname ist zu lang.";
     private static final String SURNAME_TOO_LONG = "Der Nachname ist zu lang.";
+    private static final String ERROR_EMAIL_NOT_ZHAW = "Zurzeit sind nur E-Mail-Adressen der Zürcher Hochschule für Angewandte Wissenschaften (zhaw.ch) erlaubt.";
 
     private String prename;
     private String surname;
@@ -57,11 +58,19 @@ public class UserBean extends ResourceBean<User> {
         }
     }
 
+    private void checkEmailIsZhaw(User user) {
+        if(!getMail().endsWith("@zhaw.ch") || !getMail().endsWith("@students.zhaw.ch")) {
+            user.addFieldError("mail", ERROR_EMAIL_NOT_ZHAW);
+        }
+    }
+
     private void checkEmailAddress(User user) {
         if (getMail() == null) {
             user.addFieldError("mail", ERROR_EMPTY_EMAIL);
         } else if (!getMail().toLowerCase().matches("[a-z0-9]+[_a-z0-9\\.-]*[a-z0-9]+@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})")) {
             user.addFieldError("mail", ERROR_INVALID_EMAIL);
+        } else {
+            checkEmailIsZhaw(user);
         }
     }
 
