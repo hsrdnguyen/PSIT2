@@ -1,15 +1,13 @@
 package ch.avocado.share.model.data;
 
+import ch.avocado.share.common.constants.sql.RatingConstants;
+
 /**
  * Created by bergm on 15/03/2016.
  */
 public class RatingUser {
 
     //TODO: Diese Klasse wird eventuell gar nicht gebraucht...
-
-    static protected final int MIN_RATING_VALUE = 0;
-    static protected final int MAX_RATING_VALUE = 6;
-
     private int ratingUserId;
     private int ratedObjectId;
     private int rating;
@@ -43,11 +41,12 @@ public class RatingUser {
 
     /**
      * @param rating The rating value
-     * The rating has to be between {@value MIN_RATING_VALUE} and {@value MAX_RATING_VALUE}.
+     * The rating has to be between the max and the min rating value.
      */
     public void setRating(int rating) {
-        if(rating < MIN_RATING_VALUE || rating > MAX_RATING_VALUE) {
-            throw new IllegalArgumentException("Rating not between " + MIN_RATING_VALUE + " and " + MAX_RATING_VALUE);
+        if(rating < RatingConstants.MIN_RATING_VALUE || rating > RatingConstants.MAX_RATING_VALUE) {
+            throw new IllegalArgumentException("Rating not between " + RatingConstants.MIN_RATING_VALUE
+                    + " and " + RatingConstants.MAX_RATING_VALUE);
         }
         this.rating = rating;
     }
