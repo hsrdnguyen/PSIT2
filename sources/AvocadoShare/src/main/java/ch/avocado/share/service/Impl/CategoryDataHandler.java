@@ -8,6 +8,7 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.model.factory.CategoryFactory;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,14 +20,14 @@ import java.util.List;
  * Created by kunzlio1 on 23.03.2016.
  */
 public class CategoryDataHandler implements ICategoryDataHandler {
-    //TODO @kunzlio1: Sobald an DB, Tests schreiben...
+    //TODO @kunzlio1: Tests schreiben...
     /**
      * adds all categories from new created AccessControlObject to the database
      * @param accessObject the new created AccessControlObject
      * @return true if added all categories successful
      */
     @Override
-    public boolean addAccessObjectCategories(AccessControlObjectBase accessObject){
+    public boolean addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException {
         for (Category category : accessObject.getCategories()) {
             if (!addCategory(category.getName(), accessObject.getId()))
                 return false;
@@ -43,7 +44,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
      */
     @Override
     public boolean updateAccessObjectCategories(AccessControlObjectBase oldAccessObject,
-                                                AccessControlObjectBase changedAccessObject){
+                                                AccessControlObjectBase changedAccessObject) throws DataHandlerException {
         List<Category> delCategories = new ArrayList<>();
         List<Category> newCategories = new ArrayList<>();
 
@@ -172,7 +173,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         return categories;
     }
 
-    private boolean addCategory(String name, String accessObjectReferenceId) {
+    private boolean addCategory(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null || hasCategoryAssignedObject(name, accessObjectReferenceId)) return false;
         PreparedStatement preparedStatement;
@@ -182,7 +183,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             preparedStatement.setString(2, name);
             preparedStatement.execute();
         } catch (SQLException e) {
-            return false;
+            throw new DataHandlerException(e);
         }
         return true;
     }
@@ -191,22 +192,22 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if(connectionHandler == null) return false;
         PreparedStatement preparedStatement;
-        ResultSet resultSet;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Category.SQL_DELETE_CATEGORY_FROM_OBJECT);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, accessObjectReferenceId);
-            resultSet = preparedStatement.executeQuery();
+            return connectionHandler.deleteDataSet(preparedStatement);
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
-        return true;
     }
 
     private IDatabaseConnectionHandler getDatabaseHandler() {
         try {
             return ServiceLocator.getService(IDatabaseConnectionHandler.class);
         } catch (ServiceNotFoundException e) {
+            e.printStackTrace();
             return null;
         }
     }

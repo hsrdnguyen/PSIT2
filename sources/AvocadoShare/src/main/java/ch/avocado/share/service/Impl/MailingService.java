@@ -1,7 +1,6 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.constants.MailingConstants;
-import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IMailingService;

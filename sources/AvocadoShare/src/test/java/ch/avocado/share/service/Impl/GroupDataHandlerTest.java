@@ -4,13 +4,15 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
+import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -45,6 +47,7 @@ public class GroupDataHandlerTest {
 
     @Before
     public void setUp() throws Exception {
+        DatabaseConnectionHandlerMock.use();
         groupDataHandler = new GroupDataHandler();
 
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
@@ -60,11 +63,14 @@ public class GroupDataHandlerTest {
 
     @After
     public void tearDown() throws Exception {
-        IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        userDataHandler.deleteUser(user);
-        userDataHandler.deleteUser(userTwo);
-        deleteExistingTestGroups();
-
+        try {
+            IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
+            userDataHandler.deleteUser(user);
+            userDataHandler.deleteUser(userTwo);
+            deleteExistingTestGroups();
+        } finally {
+            ServiceLocatorModifier.restore();
+        }
     }
 
     @Test
@@ -84,6 +90,7 @@ public class GroupDataHandlerTest {
         ids.add(id);
         // Add another id to the list
         ids.add(user.getId());
+        ids.add(null);
         List<Group> groups = groupDataHandler.getGroups(ids);
         assertFalse("groups contain null", groups.contains(null));
         assertEquals("fetched groups differ from possible groups", 2, groups.size());
@@ -107,7 +114,8 @@ public class GroupDataHandlerTest {
         assertEquals(id, queryGroup.getId());
         assertEquals(name, queryGroup.getName());
         assertEquals(description, queryGroup.getDescription());
-        assertTrue(created.getTime() - queryGroup.getCreationDate().getTime() < 100);
+        assertEquals(user.getId(), queryGroup.getOwnerId());
+        assertTrue(created.getTime() - queryGroup.getCreationDate().getTime() < 1000);
         assertTrue(groupDataHandler.deleteGroup(group));
     }
 

@@ -10,21 +10,30 @@ import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import org.apache.taglibs.standard.lang.jstl.test.beans.Factory;
-import org.omg.PortableServer.SERVANT_RETENTION_POLICY_ID;
 
 import java.io.Serializable;
 
 /**
- * Created by bergm on 29/03/2016.
+ * Bean to allow requesting and granting request to a file.
  */
 public class FileAccessBean implements Serializable {
 
+    /**
+     * The identifier of the file
+     */
     private String fileId;
+
+    /**
+     * The e-mail address of the user who requests the access.
+     */
     private String requesterUserMail;
     private String ownerUserId;
     private String requesterUserId;
 
+    /**
+     * Please make shure that {@link #setFileId(String)} and {@link #requesterUserMail}
+     * @return
+     */
     public boolean requestAccess() {
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
         if (requesterUserMail == null) throw new IllegalArgumentException("requestingUserMail is null");
@@ -61,6 +70,7 @@ public class FileAccessBean implements Serializable {
             currentLevel = securityHandler.getAccessLevel(user, file);
             owningUser = userDataHandler.getUser(file.getOwnerId());
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             return false;
         }
         if (currentLevel.containsLevel(AccessLevelEnum.READ)) {

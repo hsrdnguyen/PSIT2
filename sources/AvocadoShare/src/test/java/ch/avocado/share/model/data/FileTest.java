@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by coffeemakr on 31.03.16.

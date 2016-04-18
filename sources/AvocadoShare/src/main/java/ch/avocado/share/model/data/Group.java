@@ -3,7 +3,6 @@ package ch.avocado.share.model.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.IllformedLocaleException;
 import java.util.List;
 
 /**

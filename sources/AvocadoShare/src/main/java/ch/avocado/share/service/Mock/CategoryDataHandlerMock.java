@@ -2,7 +2,6 @@ package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.ICategoryDataHandler;
 
 import java.util.List;

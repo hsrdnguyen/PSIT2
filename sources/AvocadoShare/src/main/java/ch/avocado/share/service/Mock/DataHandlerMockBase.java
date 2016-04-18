@@ -5,10 +5,11 @@ package ch.avocado.share.service.Mock;
  */
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.Group;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
     protected Map<String, E> objects;

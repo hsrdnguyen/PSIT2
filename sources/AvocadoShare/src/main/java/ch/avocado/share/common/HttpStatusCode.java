@@ -82,11 +82,11 @@ public enum HttpStatusCode {
      * Status code (302) indicating that the resource has temporarily
      * moved to another location, but that future references should
      * still use the original URI to access the resource.
-     *
+     * <p>
      * This definition is being retained for backwards compatibility.
      * FOUND is now the preferred definition.
      */
-     MOVED_TEMPORARILY(302),
+    MOVED_TEMPORARILY(302),
 
     /**
      * Status code (302) indicating that the resource reside
@@ -95,26 +95,26 @@ public enum HttpStatusCode {
      * Request-URI for future requests.(HTTP/1.1) To represent the
      * status code (302), it is recommended to use this variable.
      */
-     FOUND(302),
+    FOUND(302),
 
     /**
      * Status code (303) indicating that the response to the request
      * can be found under a different URI.
      */
-     SEE_OTHER(303),
+    SEE_OTHER(303),
 
     /**
      * Status code (304) indicating that a conditional GET operation
      * found that the resource was available and not modified.
      */
-     NOT_MODIFIED(304),
+    NOT_MODIFIED(304),
 
     /**
      * Status code (305) indicating that the requested resource
      * <em>MUST</em> be accessed through the proxy given by the
      * <code><em>Location</em></code> field.
      */
-     USE_PROXY(305),
+    USE_PROXY(305),
 
     /**
      * Status code (307) indicating that the requested resource
@@ -122,24 +122,24 @@ public enum HttpStatusCode {
      * <em>SHOULD</em> be given by the <code><em>Location</em></code>
      * field in the response.
      */
-     TEMPORARY_REDIRECT(307),
+    TEMPORARY_REDIRECT(307),
 
     /**
      * Status code (400) indicating the request sent by the client was
      * syntactically incorrect.
      */
-     BAD_REQUEST(400),
+    BAD_REQUEST(400),
 
     /**
      * Status code (401) indicating that the request requires HTTP
      * authentication.
      */
-     UNAUTHORIZED(401),
+    UNAUTHORIZED(401),
 
     /**
      * Status code (402) reserved for future use.
      */
-     PAYMENT_REQUIRED(402),
+    PAYMENT_REQUIRED(402),
 
     /**
      * Status code (403) indicating the server understood the request
@@ -284,6 +284,10 @@ public enum HttpStatusCode {
      */
     UNKNOWN_ERROR(520);
 
+
+    /**
+     * Translator for HTTP messages.
+     */
     static class HttpStatusCodeTranslator {
         Map<String, String> translations;
 
@@ -315,32 +319,58 @@ public enum HttpStatusCode {
 
         public String translate(String code) {
             String translation = translations.get(code);
-            if(translation == null) {
+            if (translation == null) {
                 return code;
             }
             return translation;
         }
     }
 
+    /**
+     * The numeric status code
+     */
     private final int code;
 
+    /**
+     * The translator which can be used to translate the name.
+     */
     private static HttpStatusCodeTranslator translator = new HttpStatusCodeTranslator();
 
+    /**
+     * Constructor for a new status.
+     *
+     * @param code The numerical value.
+     */
     HttpStatusCode(int code) {
         this.code = code;
     }
 
+    /**
+     * Try to translate the {@link #name()} to a human readable string.
+     *
+     * @return The human readable message or if the name is not translated it returns {@link #name()}
+     */
     public String getMessage() {
         return translator.translate(this.name());
     }
 
+    /**
+     * @return The status code.
+     */
     public int getCode() {
         return code;
     }
 
+    /**
+     * Try to resolve the a http status number to an object.
+     *
+     * @param codeNumber The numerical status code.
+     * @return The HttpStatusCode object and if there is no value for this status
+     *         {@link HttpStatusCode#UNKNOWN_ERROR} is returned.
+     */
     static public HttpStatusCode fromCode(int codeNumber) {
-        for(HttpStatusCode code: values()) {
-            if(code.getCode() == codeNumber) {
+        for (HttpStatusCode code : values()) {
+            if (code.getCode() == codeNumber) {
                 return code;
             }
         }

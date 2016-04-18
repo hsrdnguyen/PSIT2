@@ -3,10 +3,9 @@ package ch.avocado.share.model.data;
 import ch.avocado.share.common.Base64;
 import ch.avocado.share.common.BinaryTokenGenerator;
 import ch.avocado.share.common.TokenGenerator;
+import org.bouncycastle.crypto.generators.SCrypt;
 
 import java.io.Serializable;
-
-import org.bouncycastle.crypto.generators.*;
 
 /**
  * Class to handle user passwords.

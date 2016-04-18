@@ -3,17 +3,18 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
-import ch.avocado.share.model.data.*;
+import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.AccessLevelEnum;
+import ch.avocado.share.model.data.Members;
+import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

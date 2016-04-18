@@ -5,7 +5,6 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;

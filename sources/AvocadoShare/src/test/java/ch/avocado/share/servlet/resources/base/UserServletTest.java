@@ -11,9 +11,9 @@ import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.Mock.UserDataHandlerMock;
 import ch.avocado.share.servlet.resources.UserServlet;
 import ch.avocado.share.test.UserArgumentMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -46,6 +45,11 @@ public class UserServletTest {
 
     }
 
+
+    @After
+    public void restoreServices() throws Exception {
+        ServiceLocatorModifier.restore();
+    }
 
     private void resetServlet() throws Exception {
         servlet = spy(new UserServlet());

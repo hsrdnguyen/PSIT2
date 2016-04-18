@@ -1,10 +1,8 @@
 package ch.avocado.share.model.data;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-import ch.avocado.share.model.data.UserPassword;
+import static org.junit.Assert.*;
 
 /**
  * @author muellcy1

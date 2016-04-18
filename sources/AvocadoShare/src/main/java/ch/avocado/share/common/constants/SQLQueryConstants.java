@@ -1,7 +1,5 @@
 package ch.avocado.share.common.constants;
 
-import java.sql.PreparedStatement;
-
 /**
  * Created by bergm on 22/03/2016.
  */
@@ -20,6 +18,8 @@ public class SQLQueryConstants {
     public static final int UPDATE_OWNERSHIP_INDEX_OBJECT = 2;
     public static final String DELETE_OWNERSHIP = "DELETE FROM avocado_share.ownership WHERE object_id = ?";
     public static final int DELETE_OWNERSHIP_INDEX_OBJECT = 1;
+    public static final String SELECT_OWNED_IDS = "SELECT object_id FROM avocado_share.ownership WHERE owner_id = ?";
+    public static final int SELECT_OWNED_IDS_OWNER_INDEX = 1;
 
 
     public final static class Module {
@@ -28,15 +28,19 @@ public class SQLQueryConstants {
         public static final int INSERT_QUERY_ID_INDEX = 1;
         public static final int INSERT_QUERY_NAME_INDEX = 2;
 
-        private static final String SELECT_COLUMNS = "m.id, description, name, creation_date";
+        private static final String SELECT_COLUMNS = "m.id, description, name, creation_date, owner.owner_id";
         public static final int RESULT_INDEX_ID = 1;
         public static final int RESULT_INDEX_DESCRIPTION = 2;
         public static final int RESULT_INDEX_NAME = 3;
         public static final int RESULT_INDEX_CREATION_DATE = 4;
+        public static final int RESULT_INDEX_OWNER = 5;
 
         public static final String SELECT_QUERY = "" +
                 "SELECT " + SELECT_COLUMNS + " FROM " + table + " AS m " +
-                " JOIN avocado_share.access_control as a ON m.id = a.id " +
+                "   JOIN avocado_share.access_control as a " +
+                "       ON m.id = a.id " +
+                "   LEFT JOIN avocado_share.ownership AS owner " +
+                "       ON a.id = owner.object_id " +
                 "   WHERE a.id = ? ";
 
         public static final int SELECT_QUERY_INDEX_ID = 1;
@@ -114,22 +118,34 @@ public class SQLQueryConstants {
         public static final String SQL_DELETE_CATEGORY_FROM_OBJECT = "DELETE FROM category WHERE name = ? AND object_id = ?";
     }
 
+    public static final class Rating{
+        public static final String SQL_ADD_RATING = "INSERT INTO rating (object_id, identity_id, rating) VALUES (?, ?)";
+
+        public static final String SQL_DELETE_RATING = "DELETE FROM rating WHERE object_id = ? AND identity_id = ?";
+
+        public static final String SQL_UPDATE_RATING = "UPDATE rating SET rating = ? WHERE object_id = ? AND identity_id = ?";
+    }
+
     public static final class File {
         public static final String SELECT_BY_ID_QUERY = "" +
-                "SELECT o.id, title, description, last_changed, creation_date, path, module_id " +
+                "SELECT o.id, title, description, last_changed, creation_date, path, module_id, owner.owner_id " +
                 "   FROM file AS f " +
                 "JOIN access_control AS o " +
                 "   ON f.id = o.id " +
                 "JOIN avocado_share.uploaded_into AS u " +
                 "   ON u.file_id = f.id " +
+                "LEFT JOIN avocado_share.ownership AS owner " +
+                "   ON owner.object_id = f.id " +
                 "WHERE o.id = ?";
         public static final String SELECT_BY_TITLE_QUERY_AND_MODULE = "" +
-                "SELECT o.id, title, description, last_changed, creation_date, path, module_id " +
+                "SELECT o.id, title, description, last_changed, creation_date, path, module_id, owner.owner_id " +
                 "   FROM file AS f " +
                 "JOIN access_control AS o " +
                 "   ON f.id = o.id " +
                 "JOIN avocado_share.uploaded_into AS u " +
                 "   ON u.file_id = f.id " +
+                "LEFT JOIN avocado_share.ownership AS owner " +
+                "   ON owner.object_id = f.id " +
                 "WHERE title = ? AND module_id = ?";
         public static final String INSERT_QUERY = "INSERT INTO avocado_share.file (id, title, last_changed, path) VALUES (?, ?, ?, ?)";
         public static final String UPDATE_QUERY = "UPDATE file SET title=?, last_changed=?, path=? WHERE id = ?";

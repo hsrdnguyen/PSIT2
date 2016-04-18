@@ -11,10 +11,13 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.sql.*;
-
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * File Data handler.
@@ -89,12 +92,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.File.SELECT_BY_ID_QUERY);
             preparedStatement.setLong(1, Long.parseLong(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
-            File file = getFileFromSelectResultSet(resultSet);
-            if (file != null) {
-                String ownerId = getOwnerId(fileId);
-                file.setOwnerId(ownerId);
-            }
-            return file;
+            return getFileFromSelectResultSet(resultSet);
         } catch (SQLException e) {
             return null;
         }
@@ -118,8 +116,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         try {
             IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
 
-            String query = SQLQueryConstants.File.SEARCH_QUERY_START;
-            query += query + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
+            String query = SQLQueryConstants.File.SEARCH_QUERY_START + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
 
             for (String tmp : searchTerms) {
                 // TODO @bergmsas: equals verwenden?
@@ -135,7 +132,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
                 ps.setString(i, tmp);
                 i++;
             }
+
             ResultSet rs = connectionHandler.executeQuery(ps);
+
             return getMultipleFilesFromResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,9 +156,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setLong(2, parsedModuleId);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             return getFileFromSelectResultSet(resultSet);
-
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
@@ -220,37 +218,35 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private List<Category> getFileCategoriesFromDb(String fileId){
+    private List<Category> getFileCategoriesFromDb(String fileId) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if (fileId == null || fileId.trim().isEmpty() || categoryHandler == null) return null;
+        if (fileId == null || fileId.trim().isEmpty()) return null;
         return categoryHandler.getAccessObjectAssignedCategories(fileId);
     }
 
-    private boolean addFileCategoriesToDb(File file) {
+    private boolean addFileCategoriesToDb(File file) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if (categoryHandler == null) return false;
         if (!categoryHandler.addAccessObjectCategories(file)) return false;
-
         return true;
     }
 
-    private boolean updateFileCategoriesFromDb(File oldFile, File changedFile) {
+    private boolean updateFileCategoriesFromDb(File oldFile, File changedFile) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        return categoryHandler != null && categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
+        return categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
     }
 
-    private File getFileFromSelectResultSet(ResultSet resultSet) {
+    private File getFileFromSelectResultSet(ResultSet resultSet) throws DataHandlerException {
         try {
             if (resultSet.next()) {
                 return createFileFromResultSet(resultSet);
             }
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
         return null;
     }
 
-    private List<File> getMultipleFilesFromResultSet(ResultSet resultSet) {
+    private List<File> getMultipleFilesFromResultSet(ResultSet resultSet) throws DataHandlerException {
         try {
             List<File> files = new ArrayList<>();
             while (resultSet.next()) {
@@ -258,11 +254,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             }
             return files;
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
-    private File createFileFromResultSet(ResultSet resultSet) throws SQLException {
+    private File createFileFromResultSet(ResultSet resultSet) throws SQLException, DataHandlerException {
         File file = FileFactory.getDefaultFile();
         file.setId(resultSet.getString(1));
         file.setTitle(resultSet.getString(2));
@@ -271,15 +267,16 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
         file.setPath(resultSet.getString(6));
         file.setModuleId(resultSet.getString(7));
+        file.setOwnerId(resultSet.getString(8));
         file.setCategories(getFileCategoriesFromDb(file.getId()));
         return file;
     }
 
-    private ICategoryDataHandler getCategoryDataHandler() {
+    private ICategoryDataHandler getCategoryDataHandler() throws DataHandlerException {
         try {
             return ServiceLocator.getService(ICategoryDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 }

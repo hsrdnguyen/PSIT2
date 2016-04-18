@@ -1,20 +1,13 @@
 package ch.avocado.share.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class UserSession {
 	
@@ -52,10 +45,8 @@ public class UserSession {
 		if(session == null) throw new IllegalArgumentException("session can't be null");
 		this.session = session;
         String userId = (String) this.session.getAttribute(SESSION_UID);
-		System.out.println("Session got UID: " + userId);
         user = null;
         loadUser(userId);
-		System.out.println("User: " + user);
     }
 
     private void loadUser(String userId) {

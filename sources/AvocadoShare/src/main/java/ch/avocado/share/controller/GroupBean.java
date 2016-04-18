@@ -1,7 +1,6 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.constants.ErrorMessageConstants;
-import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;

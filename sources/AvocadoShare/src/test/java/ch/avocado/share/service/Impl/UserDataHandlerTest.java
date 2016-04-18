@@ -3,15 +3,17 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.model.data.UserPassword;
+import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
+import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -22,7 +24,13 @@ public class UserDataHandlerTest {
 
     @Before
     public void init() throws Exception {
+        DatabaseConnectionHandlerMock.use();
         service = new UserDataHandler();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        ServiceLocatorModifier.restore();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -84,5 +92,4 @@ public class UserDataHandlerTest {
         assertNull(service.getUser(user.getId()));
         assertNull(service.getUserByEmailAddress(user.getMail().getAddress()));
     }
-
 }

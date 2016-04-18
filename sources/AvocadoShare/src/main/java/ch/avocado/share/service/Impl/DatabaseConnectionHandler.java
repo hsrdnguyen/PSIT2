@@ -9,7 +9,7 @@ import java.sql.*;
  */
 public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
-    private static Connection conn;
+    protected static Connection conn;
 
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.postgresql.Driver";
@@ -74,7 +74,7 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
         return result;
     }
 
-    private void ensureConnection() throws SQLException {
+    protected void ensureConnection() throws SQLException {
         if (conn == null || conn.isClosed())
         {
             conn =  DriverManager.getConnection(DB_URL,USER,PASS);
@@ -82,6 +82,4 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
             setSchema.execute("SET search_path TO avocado_share;");
         }
     }
-
-
 }

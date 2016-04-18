@@ -3,8 +3,6 @@ package ch.avocado.share.model.data;
 import ch.avocado.share.common.CharsetTokenGenerator;
 import ch.avocado.share.common.TokenGenerator;
 
-import java.sql.Time;
-import java.util.Calendar;
 import java.util.Date;
 
 /**

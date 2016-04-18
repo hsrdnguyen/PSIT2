@@ -4,7 +4,6 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IGroupDataHandler;
-import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.util.ArrayList;
