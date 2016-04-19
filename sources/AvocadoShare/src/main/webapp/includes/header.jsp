@@ -28,7 +28,9 @@
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
 </head>
 <body>
+<div id="hacky-background-container">
 <div class="container" id="hacky-background"></div>
+</div>
 <div id="footerpusher">
     <header>
         <nav class="navbar navbar-dark bg-inverse">

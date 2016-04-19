@@ -84,12 +84,24 @@ main {
     padding-top: 3em;
 }
 
+#hacky-background-container {
+    /* make the background a bit greater than the container */
+    margin-left: -1em;
+    margin-right: -1em;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
 #hacky-background {
     background-color: rgba(255, 255, 255, 0.6);
     top: 0px;
     left: 0px;
     position: relative;
-    height: 100vh;
+    height: 100%;
     margin-bottom: -100vh;
     z-index: -1;
 }
