@@ -5,6 +5,7 @@
          language="java"
          isErrorPage="true"
 %>
+<%@include file="includes/header.jsp" %>
 <%
     String message;
     if (exception != null) {
@@ -17,9 +18,6 @@
     }
     HttpStatusCode statusCode = HttpStatusCode.fromCode(response.getStatus());
     message = Encoder.forHtml(message);
-%>
-<%@include file="includes/header.jsp" %>
-<%
     if (statusCode.getCode() == 200) {
         // If it wasn't an error we direct to the
         response.sendRedirect(baseUrl);
