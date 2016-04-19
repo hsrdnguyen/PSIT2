@@ -85,9 +85,6 @@ main {
 }
 
 #hacky-background-container {
-    /* make the background a bit greater than the container */
-    margin-left: -1em;
-    margin-right: -1em;
     position: fixed;
     top: 0px;
     left: 0px;
