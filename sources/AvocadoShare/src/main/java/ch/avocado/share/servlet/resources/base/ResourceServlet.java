@@ -571,7 +571,13 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             Enumeration<String> parameterNames = request.getParameterNames();
             while (parameterNames.hasMoreElements()) {
                 String paramName = parameterNames.nextElement();
-                parameter.put(paramName, request.getParameter(paramName));
+                String value = request.getParameter(paramName);
+                try {
+                    value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                parameter.put(paramName, value);
             }
             return parameter;
         }
