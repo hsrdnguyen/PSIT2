@@ -402,6 +402,10 @@ a:focus {
   outline-offset: -2px;
 }
 
+.bg-inverse a:focus, .bg-inverse a:hover {
+  color: #00ac98;
+}
+
 pre {
   margin-top: 0;
   margin-bottom: 1rem;

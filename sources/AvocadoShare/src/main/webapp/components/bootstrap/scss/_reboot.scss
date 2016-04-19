@@ -169,6 +169,13 @@ a {
   }
 }
 
+.bg-inverse {
+  a {
+    @include hover-focus {
+      color: $link-hover-color-inverse;
+    }
+  }
+}
 
 //
 // Code
