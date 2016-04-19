@@ -66,7 +66,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             if (!resultSet.next()) {
                 return null;
             }
-            id = "" + resultSet.getInt(UserConstants.USER_RESULT_ID_INDEX);
+            id = "" + resultSet.getLong(UserConstants.USER_RESULT_ID_INDEX);
             description = resultSet.getString(UserConstants.USER_RESULT_DESCRIPTION_INDEX);
             boolean emailVerified = resultSet.getBoolean(UserConstants.USER_RESULT_VERIFIED_INDEX);
             String emailAddress = resultSet.getString(UserConstants.USER_RESULT_ADDRESS_INDEX);
@@ -100,7 +100,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if (userId == null) throw new IllegalArgumentException("userId is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_USER_QUERY);
-            preparedStatement.setInt(1, Integer.parseInt(userId));
+            preparedStatement.setLong(1, Long.parseLong(userId));
             return getUserFromPreparedStatement(preparedStatement);
         } catch (Exception e) {
             e.printStackTrace();
