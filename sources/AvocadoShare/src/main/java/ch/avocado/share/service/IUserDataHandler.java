@@ -70,11 +70,11 @@ public interface IUserDataHandler {
 
     /**
      * adds a verificationCode to the db
-     * @param verification verification to be added
+     * @param pwVerification verification to be added
      * @param userId user to use id from
      * @return true if adding was successful
      */
-    boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) throws DataHandlerException;
+    boolean addPasswordResetVerification(PasswordResetVerification pwVerification, String userId) throws DataHandlerException;
 
     /**
      * gets the password resets for a user
@@ -83,5 +83,11 @@ public interface IUserDataHandler {
      */
     ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) throws DataHandlerException;
 
-    List<User> getUsers(Collection<String> strings) throws DataHandlerException;
+    /**
+     * loads multiple users
+     * @param userIdCollection list or collection of ids of the users that should be loaded from the database
+     * @return List of users
+     * @throws DataHandlerException
+     */
+    List<User> getUsers(Collection<String> userIdCollection) throws DataHandlerException;
 }

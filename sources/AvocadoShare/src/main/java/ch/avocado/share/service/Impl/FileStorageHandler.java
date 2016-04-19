@@ -20,8 +20,8 @@ public class FileStorageHandler implements IFileStorageHandler {
     private final int FILE_READ_BUFFER_SIZE = 512;
 
     @Override
-    public String getContentType(String reference) throws FileStorageException {
-        InputStream inputStream = readFile(reference);
+    public String getContentType(String filepath) throws FileStorageException {
+        InputStream inputStream = readFile(filepath);
         Tika tika = new Tika();
         try {
             return tika.detect(inputStream);
