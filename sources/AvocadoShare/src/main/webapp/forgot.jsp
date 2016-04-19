@@ -5,7 +5,7 @@
 <jsp:include page="includes/header.jsp" />
 <%
     boolean showFormular = true;
-    if (request.getMethod() == "POST") {
+    if (request.getMethod().equals("POST")) {
         if (forgottenPassword.requestNewPassword()) {
             showFormular = false;
 %>

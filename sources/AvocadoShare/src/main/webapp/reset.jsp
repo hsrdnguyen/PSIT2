@@ -6,8 +6,14 @@
 <jsp:setProperty name="forgottenPassword" property="password"/>
 <jsp:setProperty name="forgottenPassword" property="passwordConfirmation"/>
 <%@include file="includes/header.jsp"%>
-<% if(request.getMethod().equals("POST")) {
-    if(forgottenPassword.resetPassword()) { %>
+<h2>Passwort zurücksetzen</h2>
+<%
+    boolean showForm = true;
+    if(request.getMethod().equals("POST")) {
+    if(forgottenPassword.resetPassword()) {
+        showForm = false;
+
+%>
         <div class="alert alert-success">
             Password erfolgreich zurückgesetzt.
         </div>
@@ -18,13 +24,19 @@
 <%  }
 } %>
 
-<% if(forgottenPassword.getCode() != null && forgottenPassword.getEmail() != null) { %>
+<% if(showForm && forgottenPassword.getCode() != null && forgottenPassword.getEmail() != null) { %>
     <form method="POST">
-        <input name="password" type="password" />
-        <input name="passwordConfirmation" type="password" />
-        <input type="hidden" name="code" value="<%=Encoder.forHtmlAttribute(forgottenPassword.getCode()) %>">
+        <div class="form-group">
+            <label for="reset-password">Neues Passwort</label>
+            <input id="reset-password" class="form-control" name="password" type="password" />
+        </div>
+        <div class="form-group">
+            <label for="reset-password-confirmation">Neues Passwort wiederholen</label>
+            <input id="reset-password-confirmation" class="form-control" name="passwordConfirmation" type="password" />
+        </div>
+            <input type="hidden" name="code" value="<%=Encoder.forHtmlAttribute(forgottenPassword.getCode()) %>">
         <input type="hidden" name="email" value="<%=Encoder.forHtmlAttribute(forgottenPassword.getEmail())%>">
-        <input type="submit" value="Zurücksetzten" />
+        <input class="btn btn-primary" type="submit" value="Zurücksetzten" />
     </form>
 <% } else { %>
     <div class="alert alert-danger">
