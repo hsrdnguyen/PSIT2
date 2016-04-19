@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Impl;
 
+import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.constants.MailingConstants;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
@@ -8,6 +9,7 @@ import ch.avocado.share.service.IMailingService;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 /**
@@ -21,10 +23,16 @@ public class MailingService implements IMailingService {
         if (user.getMail().getVerification() == null) throw new IllegalArgumentException("emailAddressVerification is Null");
 
         Session session = prepareMessage();
-
+        String email, code;
+        try {
+            email =  Encoder.forUrl(user.getMail().getAddress());
+            code = Encoder.forUrl(user.getMail().getVerification().getCode());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
         try {
             sendEmail(user, session, MailingConstants.VERIFICATION_SUBJECT, String.format(MailingConstants.VERIFICATION_MESSAGE,
-                                    String.format(MailingConstants.VERIFICTAION_URL, user.getMail().getVerification().getCode(), user.getMail().getAddress())));
+                                    String.format(MailingConstants.VERIFICTAION_URL, code, email)));
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
@@ -52,10 +60,18 @@ public class MailingService implements IMailingService {
     @Override
     public boolean sendPasswordResetEmail(User user) {
         if (user == null) throw new IllegalArgumentException("user is Null");
-
+        String code, email;
         Session session = prepareMessage();
+
         try {
-            sendEmail(user, session, MailingConstants.PASSWORD_RESET_SUBJECT, String.format(MailingConstants.PASSWORD_RESET_MESSAGE, user.getPassword().getPasswordResetVerification().getCode(), user.getMail().getAddress()));
+            email =  Encoder.forUrl(user.getMail().getAddress());
+            code = Encoder.forUrl(user.getPassword().getPasswordResetVerification().getCode());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            sendEmail(user, session, MailingConstants.PASSWORD_RESET_SUBJECT, String.format(MailingConstants.PASSWORD_RESET_MESSAGE, code, email));
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
