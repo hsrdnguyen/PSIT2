@@ -63,9 +63,9 @@
                         <% } %>
                         <!-- Navbar Search -->
                         <li class="nav-item pull-md-right">
-                            <form action="#search" class="form-inline">
+                            <form method="post" action="document_view.jsp" class="form-inline">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Suchen nach..."/>
+                                    <input type="text" class="form-control" id="searchString" name="searchString" placeholder="Suchen nach..."/>
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit">Los!</button>
                                     </span>

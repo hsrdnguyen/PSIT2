@@ -120,16 +120,16 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
             for (String tmp : searchTerms) {
                 // TODO @bergmsas: equals verwenden?
-                if (tmp != searchTerms.get(0)) {
+                if (!tmp.equals(searchTerms.get(0))) {
                     query += SQLQueryConstants.File.SEARCH_QUERY_LINK + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
                 }
             }
             PreparedStatement ps = connectionHandler.getPreparedStatement(query);
             int i = 1;
             for (String tmp : searchTerms) {
-                ps.setString(i, tmp);
+                ps.setString(i, "%"+tmp+"%");
                 i++;
-                ps.setString(i, tmp);
+                ps.setString(i, "%"+tmp+"%");
                 i++;
             }
 
@@ -250,7 +250,14 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         try {
             List<File> files = new ArrayList<>();
             while (resultSet.next()) {
-                files.add(createFileFromResultSet(resultSet));
+                File file = FileFactory.getDefaultFile();
+                file.setId(resultSet.getString(1));
+                file.setTitle(resultSet.getString(2));
+                file.setDescription(resultSet.getString(3));
+                file.setLastChanged(new Date(resultSet.getTimestamp(4).getTime()));
+                file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
+                file.setPath(resultSet.getString(6));
+                files.add(file);
             }
             return files;
         } catch (SQLException e) {
