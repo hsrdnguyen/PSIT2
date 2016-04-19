@@ -33,19 +33,19 @@ public interface ICategoryDataHandler {
      * @param accessObjectReferenceId   the id of the AccessControlObject
      * @return true if the Category is already added to the AccessControlObject
      */
-    boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId);
+    boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException;
 
     /**
      * return the Category by passing the Category name
      * @param name the Category name
      * @return the Category object
      */
-    Category getCategoryByName(String name);
+    Category getCategoryByName(String name) throws DataHandlerException;
 
     /**
      * Returns all categories, which are assigned to AccessControlObject.
      * @param accessControlObjectId the accessObjectId, for which the categories should be returned.
      * @return the accessObject assigned categories.
      */
-    List<Category> getAccessObjectAssignedCategories(String accessControlObjectId);
+    List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) throws DataHandlerException;
 }

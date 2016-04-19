@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
@@ -35,6 +36,7 @@ public class ModuleDataHandlerTest {
         DatabaseConnectionHandlerMock.use();
         owner = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "12345.jpg", new EmailAddress(false, "someone@zhaw.ch", new EmailAddressVerification(new Date())));
         ownerTwo = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "12345.jpg", new EmailAddress(false, "someone_other@zhaw.ch", new EmailAddressVerification(new Date())));
+
         assertNotNull(userDataHandler.addUser(owner));
         assertNotNull(userDataHandler.addUser(ownerTwo));
         moduleDataHandler = new ModuleDataHandler();
@@ -71,7 +73,7 @@ public class ModuleDataHandlerTest {
     public void testAddAndGetModule() throws Exception {
         String description, name;
         description = "Description";
-        name = "<-- Unexisting Module -- >";
+        name = "testAddAndGetModule.module";
         List<Category> categories = getTestCategories();
         Module module = new Module(owner.getId(), description, name);
         module.setCategories(categories);
@@ -81,11 +83,24 @@ public class ModuleDataHandlerTest {
         assertNotNull(module.getId());
         assertEquals(id, module.getId());
 
+
+        IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+        File fileOne = new File(owner.getId(), "File from ModulDataHandlerTest (1/2)", "title", "path", new Date(), ".jpg", module.getId());
+        File fileTwo = new File(owner.getId(), "File from ModulDataHandlerTest (2/2)", "title2", "path", new Date(), ".jpg", module.getId());
+        assertNotNull(fileDataHandler.addFile(fileOne));
+        assertNotNull(fileDataHandler.addFile(fileTwo));
+
         Module fetchedModule = moduleDataHandler.getModule(id);
         assertEquals("Fetched name doesn't match", name, fetchedModule.getName());
         assertEquals("Fetched description doesn't match", description, fetchedModule.getDescription());
         assertEquals("Fetched ownerId doesn't match", owner.getId(), fetchedModule.getOwnerId());
+        assertEquals(2, fetchedModule.getFileIds().size());
+        assertTrue(fetchedModule.getFileIds().contains(fileOne.getId()));
+        assertTrue(fetchedModule.getFileIds().contains(fileTwo.getId()));
         assertCategoriesEquals(categories, fetchedModule.getCategories());
+
+        fileDataHandler.deleteFile(fileOne);
+        fileDataHandler.deleteFile(fileTwo);
 
     }
 

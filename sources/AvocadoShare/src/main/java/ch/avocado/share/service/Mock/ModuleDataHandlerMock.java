@@ -25,7 +25,7 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
     private void reset() {
         objects.clear();
         for (int i = 0; i < NUMBER_OF_MODULES; i++) {
-            Module module = new Module("module" + i, new ArrayList<Category>(), new Date(System.currentTimeMillis()), 0.0f, "owner" + i, "Module description " + i, "Module " + i);
+            Module module = new Module("module" + i, new ArrayList<Category>(), new Date(System.currentTimeMillis()), 0.0f, "owner" + i, "Module description " + i, "Module " + i, new ArrayList<>());
             objects.put(module.getId(), module);
         }
     }

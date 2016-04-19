@@ -6,6 +6,7 @@ import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
+import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import org.bouncycastle.asn1.icao.ICAOObjectIdentifiers;
@@ -16,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHandler {
@@ -27,7 +29,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         module.setId(id);
         try {
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Module.INSERT_QUERY);
-            statement.setInt(SQLQueryConstants.Module.INSERT_QUERY_ID_INDEX, Integer.parseInt(id));
+            statement.setLong(SQLQueryConstants.Module.INSERT_QUERY_ID_INDEX, Long.parseLong(id));
             statement.setString(SQLQueryConstants.Module.INSERT_QUERY_NAME_INDEX, module.getName());
             getConnectionHandler().insertDataSet(statement);
         } catch (SQLException e) {
@@ -55,7 +57,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Module(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name);
+        return new Module(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name, new ArrayList<>());
     }
 
     private void getCategories(Module module) throws DataHandlerException {
@@ -77,7 +79,9 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             throw new DataHandlerException(e);
         }
         Module oldModule = getModule(module.getId());
-        categoryDataHandler.updateAccessObjectCategories(oldModule, module);
+        if(!categoryDataHandler.updateAccessObjectCategories(oldModule, module)) {
+            throw new DataHandlerException("Failed to update categories of an existing module");
+        }
     }
 
     private void addCategories(Module module) throws  DataHandlerException {
@@ -94,9 +98,10 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     public Module getModule(String moduleId) throws DataHandlerException {
         // TODO: categoeries, rating and ownerId
         ResultSet resultSet;
+        long moduleIdAsLong = Long.parseLong(moduleId);
         try {
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Module.SELECT_QUERY);
-            statement.setInt(SQLQueryConstants.Module.SELECT_QUERY_INDEX_ID, Integer.parseInt(moduleId));
+            statement.setLong(SQLQueryConstants.Module.SELECT_QUERY_INDEX_ID, moduleIdAsLong);
             resultSet = getConnectionHandler().executeQuery(statement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -104,8 +109,26 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         Module module = getModuleFromResult(resultSet);
         if(module != null) {
             getCategories(module);
+            module.setFileIds(getFileIds(moduleIdAsLong));
         }
         return module;
+    }
+
+
+    private List<String> getFileIds(long moduleId) throws DataHandlerException {
+        List<String> fileIds = new LinkedList<>();
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(SQLQueryConstants.Module.SELECT_FILES);
+            statement.setLong(SQLQueryConstants.Module.SELECT_FILES_INDEX_MODULE, moduleId);
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()) {
+                fileIds.add(resultSet.getString(1));
+            }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return fileIds;
     }
 
     @Override

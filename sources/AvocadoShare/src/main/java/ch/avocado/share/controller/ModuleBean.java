@@ -20,11 +20,14 @@ import java.util.List;
 public class ModuleBean extends ResourceBean<Module> {
 
     public static final String ERROR_MODULE_NOT_FOUND = "Modul konnte nicht gefunden werden.";
+    private static int NAME_MAX_LENGTH = 32;
     private String name;
 
     private void checkParameterName(Module module) {
         if (getName() == null || getName().isEmpty()) {
             module.addFieldError("name", ErrorMessageConstants.ERROR_NO_NAME);
+        } else if(getName().length() > NAME_MAX_LENGTH) {
+            module.addFieldError("name", ErrorMessageConstants.ERROR_NAME_TOO_LONG);
         }
     }
 
@@ -36,7 +39,7 @@ public class ModuleBean extends ResourceBean<Module> {
 
     @Override
     public Module create() throws HttpBeanException, DataHandlerException {
-        Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), "", "");
+        Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), "", "", new ArrayList<>());
         checkParameterDescription(module);
         checkParameterName(module);
         if (module.isValid()) {

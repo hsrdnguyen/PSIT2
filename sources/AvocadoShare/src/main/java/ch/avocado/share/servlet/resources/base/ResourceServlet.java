@@ -36,7 +36,7 @@ import java.util.*;
  */
 public abstract class ResourceServlet<E extends AccessControlObjectBase> extends GenericServlet {
 
-    private static final String PARAMETER_ACTION = "action";
+    public static final String PARAMETER_ACTION = "action";
     public static final String ERROR_ACTION_NOT_ALLOWED = "Aktion nicht erlaubt: ";
     public static final String ERROR_SET_CONTROLLER_ATTRIBUTES_FAILED = "Controller konnte nicht inititialisiert werden.";
     public static final String ACTION_EDIT = "edit";
@@ -349,6 +349,32 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
 
     }
 
+    /**
+     * @param request The request
+     * @param response The response
+     * @param action The succeeded action
+     * @param object The object or null
+     * @throws IOException
+     */
+    protected void redirectAfterSuccess(HttpServletRequest request, HttpServletResponse response, Action action, E object) throws IOException {
+        View view;
+        switch (action) {
+            case VIEW:
+                throw new IllegalArgumentException("action is VIEW");
+            case DELETE:
+                view = View.LIST;
+                break;
+            case UPDATE:
+            case REPLACE:
+            case CREATE:
+                view = View.DETAIL;
+                break;
+            default:
+                throw new RuntimeException("action not implemented");
+        }
+        response.sendRedirect(getUrlForView(request, view, object));
+    }
+
     private void executeBeanAndRenderResult(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException, ServletException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
@@ -357,7 +383,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         Action action = getActionFromMethod(method);
         ResourceBean<E> bean = getResourceBean(request, parameter);
         ViewConfig viewConfig = null;
-        View redirectTo = null;
+        boolean succeeded = false;
         E object = null;
         Members members;
         UserSession session = new UserSession(request);
@@ -377,7 +403,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                         members = bean.getMembers(object);
                         viewConfig = new DetailViewConfig(View.EDIT, request, response, object, members);
                     } else {
-                        redirectTo = View.DETAIL;
+                        succeeded = true;
                     }
                     break;
                 }
@@ -385,7 +411,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     object = bean.get();
                     ensureAccess(session.getUserId(), object.getId(), Action.DELETE);
                     bean.destroy(object);
-                    redirectTo = View.LIST;
+                    succeeded = true;
                     break;
                 }
                 case CREATE: {
@@ -398,7 +424,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     if (object.hasErrors()) {
                         viewConfig = new DetailViewConfig(View.CREATE, request, response, object, new Members(object));
                     } else {
-                        redirectTo = View.DETAIL;
+                        succeeded = true;
                     }
                     break;
                 }
@@ -406,10 +432,11 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     throw new RuntimeException("Action not implemented");
             }
         } catch (DataHandlerException e) {
+            e.printStackTrace();
             throw new HttpBeanException(e);
         }
-        if (redirectTo != null) {
-            response.sendRedirect(getUrlForView(request, redirectTo, object));
+        if (succeeded) {
+            redirectAfterSuccess(request, response, action, object);
         } else if (viewConfig != null) {
             renderViewConfig(request, response, viewConfig);
         }

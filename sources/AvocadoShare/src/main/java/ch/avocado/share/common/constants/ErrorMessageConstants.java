@@ -58,4 +58,7 @@ public final class ErrorMessageConstants {
     public static final String MISSING_PARAMETER = "Fehlende Parameter.";
     public static final String OBJECT_NOT_FOUND = "Objekt konnte nicht gefunden werden";
     public static final String METHOD_NOT_ALLOWED = "Methode nicht erlaubt: ";
+    public static final String ERROR_CODE_EXPIRED = "Der Code ist leider abgelaufen. Bitte beantragen Sie einen neuen.";
+    public static final String ERROR_NAME_TOO_LONG = "Der angegebene Name ist zu lang.";
+    public static final String DESCRIPTION_TOO_LONG = "Die Beschreibung ist zu lang.";
 }

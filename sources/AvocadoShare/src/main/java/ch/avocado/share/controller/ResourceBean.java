@@ -30,6 +30,8 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     private String description;
 
+    private static int DESCRIPTION_MAX_LENGTH = 512;
+
     /**
      * This method returns true if the bean is supplied with an identifier
      * to find a unique element. (key or unique attribute)
@@ -176,6 +178,9 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
             model.addFieldError("description", ErrorMessageConstants.ERROR_NO_DESCRIPTION);
         } else {
             setDescription(getDescription().trim());
+            if(getDescription().length() > DESCRIPTION_MAX_LENGTH) {
+                model.addFieldError("description", ErrorMessageConstants.DESCRIPTION_TOO_LONG);
+            }
         }
     }
 

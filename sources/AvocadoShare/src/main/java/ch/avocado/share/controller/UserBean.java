@@ -20,9 +20,12 @@ public class UserBean extends ResourceBean<User> {
     public static final String ERROR_PASSWORD_TOO_SHORT = "Das Passwort muss mindestens 8 Zeichen lang sein.";
     private static final String ERROR_EMPTY_EMAIL = "E-Mail-Adresse darf nicht leer sein.";
     private static final String ERROR_INVALID_EMAIL = "Die E-Mail-Adresse ist ungültig oder leider nicht erlaubt.";
-    public static final String ERROR_EMPTY_PASSWORD = "ERROR_EMPTY_PASSWORD";
-    public static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Passwort-Bestätigung darf nicht leer sein.";
-    public static final String ERROR_PASSWORD_CONFIRMATION_INCORRECT = "Passwörter stimmen nicht überein.";
+    public static final String ERROR_EMPTY_PASSWORD = "Das Password darf nicht leer sein.";
+    public static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Die Passwort-Bestätigung darf nicht leer sein.";
+    public static final String ERROR_PASSWORD_CONFIRMATION_INCORRECT = "Die Passwörter stimmen nicht überein.";
+    private static final String PRENAME_TOO_LONG = "Der Vorname ist zu lang.";
+    private static final String SURNAME_TOO_LONG = "Der Nachname ist zu lang.";
+    private static final String ERROR_EMAIL_NOT_ZHAW = "Zurzeit sind nur E-Mail-Adressen der Zürcher Hochschule für Angewandte Wissenschaften (zhaw.ch) erlaubt.";
 
     private String prename;
     private String surname;
@@ -30,6 +33,9 @@ public class UserBean extends ResourceBean<User> {
     private String password;
     private String passwordConfirmation;
     private String avatar = null;
+
+    private static final int MAX_LENGTH_PRENAME = 50;
+    private static final int MAX_LENGTH_SURNAME = 50;
 
     @Override
     protected boolean hasMembers() {
@@ -39,12 +45,22 @@ public class UserBean extends ResourceBean<User> {
     private void checkPrename(User user) {
         if(getPrename() == null || getPrename().isEmpty()) {
             user.addFieldError("prename", ERROR_EMPTY_PRENAME);
+        } else if(getPrename().length() > MAX_LENGTH_PRENAME) {
+            user.addFieldError("prename", PRENAME_TOO_LONG);
         }
     }
 
     private void checkSurname(User user) {
         if(getSurname() == null || getSurname().isEmpty()) {
             user.addFieldError("surname", ERROR_EMPTY_SURNAME);
+        } else if(getSurname().length() > MAX_LENGTH_SURNAME) {
+            user.addFieldError("surname", SURNAME_TOO_LONG);
+        }
+    }
+
+    private void checkEmailIsZhaw(User user) {
+        if(!getMail().endsWith("@zhaw.ch") || !getMail().endsWith("@students.zhaw.ch")) {
+            user.addFieldError("mail", ERROR_EMAIL_NOT_ZHAW);
         }
     }
 
@@ -53,6 +69,8 @@ public class UserBean extends ResourceBean<User> {
             user.addFieldError("mail", ERROR_EMPTY_EMAIL);
         } else if (!getMail().toLowerCase().matches("[a-z0-9]+[_a-z0-9\\.-]*[a-z0-9]+@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})")) {
             user.addFieldError("mail", ERROR_INVALID_EMAIL);
+        } else {
+            checkEmailIsZhaw(user);
         }
     }
 
@@ -88,12 +106,16 @@ public class UserBean extends ResourceBean<User> {
         }
     }
 
-    private void addEmailAddress(User user, String emailAddress) throws HttpBeanException, DataHandlerException {
+    private void addEmailToUser(User user, String emailaddress) {
         long theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
         Date nextWeek = new Date(theFuture);
         EmailAddressVerification verification = new EmailAddressVerification(nextWeek);
-        EmailAddress mail = new EmailAddress(false, emailAddress, verification);
+        EmailAddress mail = new EmailAddress(false, emailaddress, verification);
         user.setMail(mail);
+    }
+
+    private void storeNewEmailAddress(User user, String emailAddress) throws HttpBeanException, DataHandlerException {
+        addEmailToUser(user, emailAddress);
         getService(IUserDataHandler.class).addMail(user);
         getService(IMailingService.class).sendVerificationEmail(user);
     }
@@ -113,7 +135,7 @@ public class UserBean extends ResourceBean<User> {
         user.setPrename(getPrename());
         user.setSurname(getSurname());
         user.setPassword(password);
-        addEmailAddress(user, mail);
+        addEmailToUser(user, mail);
         user.setId(getService(IUserDataHandler.class).addUser(user));
         getService(IMailingService.class).sendVerificationEmail(user);
         return user;
@@ -154,7 +176,7 @@ public class UserBean extends ResourceBean<User> {
         if(mail != null) {
             checkEmailAddress(user);
             if (!user.hasErrors() && !user.getMail().getAddress().equals(mail)) {
-                addEmailAddress(user, mail);
+                storeNewEmailAddress(user, mail);
             }
         }
 

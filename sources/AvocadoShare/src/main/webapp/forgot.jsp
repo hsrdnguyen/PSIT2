@@ -6,7 +6,7 @@
 <%
     boolean showFormular = true;
     if (request.getMethod() == "POST") {
-        if (forgottenPassword.createNewPassword()) {
+        if (forgottenPassword.requestNewPassword()) {
             showFormular = false;
 %>
 <div class="alert alert-success">

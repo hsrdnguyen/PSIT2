@@ -54,30 +54,8 @@ public class LoginServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-
-    private void addTestCookie(HttpServletResponse response) {
-        Cookie checkCookie = new Cookie(COOKIE_CHECK_NAME, COOKIE_CHECK_VALUE);
-        response.addCookie(checkCookie);
-    }
-
-    public boolean checkTestCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            return false;
-        }
-        for (Cookie cookie : cookies) {
-            String name = cookie.getName();
-            String value = cookie.getValue();
-            if (name.equals(COOKIE_CHECK_NAME) && value.equals(COOKIE_CHECK_VALUE)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        addTestCookie(response);
         renderLogin(request, response);
     }
 
@@ -103,57 +81,60 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, java.io.IOException {
-        String email = request.getParameter(FIELD_EMAIL);
-        String password = request.getParameter(FIELD_PASSWORD);
-        String redirectUrl = request.getParameter(FIELD_REDIRECT_TO);
-        if(email != null) {
-            request.setAttribute(ATTRIBUTE_EMAIL, email);
-        }
+    private String loginAndGetError(HttpServletRequest request, String email, String password) {
         IUserDataHandler userDataHandler;
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_SECURITY_HANDLER);
-            renderLogin(request, response);
-            return;
+            e.printStackTrace();
+            return ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService();
         }
         if (email == null) {
-            request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_EMAIL);
-            renderLogin(request, response);
+            return ErrorMessageConstants.ERROR_NO_EMAIL;
         } else if (password == null) {
-            request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_NO_PASSWORD);
-            renderLogin(request, response);
+            return ErrorMessageConstants.ERROR_NO_PASSWORD;
         } else {
-            if (!checkTestCookie(request)) {
-                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_COOKIES_DISABLED);
-            }
             User user = null;
             try {
                 user = getUserWithLogin(userDataHandler, email, password);
             } catch (DataHandlerException e) {
                 e.printStackTrace();
-                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
-                renderLogin(request, response);
-                return;
+                return ErrorMessageConstants.DATAHANDLER_EXPCEPTION;
             }
             if (user != null) {
                 if(user.getMail().isVerified()) {
                     UserSession userSession = new UserSession(request);
                     userSession.authenticate(user);
-                    if(redirectUrl == null) {
-                        redirectUrl = request.getContextPath();
-                    }
-                    redirectIfUrlIsValid(redirectUrl, response);
+                    return null;
                 }else {
-                    request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_EMAIL_NOT_VERIFIED);
+                    return ErrorMessageConstants.ERROR_EMAIL_NOT_VERIFIED;
                 }
             } else {
-                request.setAttribute(LOGIN_ERROR, ErrorMessageConstants.ERROR_WRONG_PASSWORD);
-                renderLogin(request, response);
+                return ErrorMessageConstants.ERROR_WRONG_PASSWORD;
             }
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, java.io.IOException {
+
+        String email = request.getParameter(FIELD_EMAIL);
+        String password = request.getParameter(FIELD_PASSWORD);
+        String redirectUrl = request.getParameter(FIELD_REDIRECT_TO);
+
+        if(email != null) {
+            request.setAttribute(ATTRIBUTE_EMAIL, email);
+        }
+        String error = loginAndGetError(request, email, password);
+        if(error != null) {
+            request.setAttribute(LOGIN_ERROR, error);
+            renderLogin(request, response);
+        } else {
+            if(redirectUrl == null) {
+                redirectUrl = request.getServletContext().getContextPath();
+            }
+            redirectIfUrlIsValid(redirectUrl, response);
         }
     }
 }
