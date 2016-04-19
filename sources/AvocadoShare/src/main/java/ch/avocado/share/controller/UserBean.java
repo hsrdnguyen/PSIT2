@@ -59,7 +59,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
     private void checkEmailIsZhaw(User user) {
-        if(!getMail().endsWith("@zhaw.ch") || !getMail().endsWith("@students.zhaw.ch")) {
+        if(!getMail().endsWith("@zhaw.ch") && !getMail().endsWith("@students.zhaw.ch")) {
             user.addFieldError("mail", ERROR_EMAIL_NOT_ZHAW);
         }
     }
