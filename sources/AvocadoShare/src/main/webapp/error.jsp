@@ -5,6 +5,7 @@
          language="java"
          isErrorPage="true"
 %>
+<%@include file="includes/header.jsp" %>
 <%
     String message;
     if (exception != null) {
@@ -17,18 +18,19 @@
     }
     HttpStatusCode statusCode = HttpStatusCode.fromCode(response.getStatus());
     message = Encoder.forHtml(message);
-    // String baseUrl = request.getServletContext().getContextPath();
-    // TODO: try to import header and footer
+    if (statusCode.getCode() == 200) {
+        // If it wasn't an error we direct to the
+        response.sendRedirect(baseUrl);
+    }
 %>
-<%@include file="includes/header.jsp"%>
-    <h2>
-        <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
-        </a> - Oh nein!
-    </h2>
-    <div>
-        <p>
-            <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
-            <%=message%>
-        </p>
-    </div>
-<%@include file="includes/footer.jsp"%>
+<h2>
+    <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
+    </a> - Oh nein!
+</h2>
+<div>
+    <p>
+        <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
+        <%=message%>
+    </p>
+</div>
+<%@include file="includes/footer.jsp" %>

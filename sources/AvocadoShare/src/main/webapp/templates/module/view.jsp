@@ -4,7 +4,6 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.service.exceptions.DataHandlerException" %>
-<%@ page import="ch.avocado.share.model.exceptions.ServiceNotFoundException" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
@@ -17,10 +16,10 @@
     List<File> files;
     boolean fetchFilesFailed = false;
     try {
-        files = module.getFiles()
-    } catch (DataHandlerException | ServiceNotFoundException e) {
+        files = module.getFiles();
+    } catch (DataHandlerException e) {
         e.printStackTrace();
-        files = new ArrayList<>();
+        files = new ArrayList<File>();
         fetchFilesFailed = true;
     }
 
@@ -54,9 +53,14 @@
                         Bitte versuchen Sie es später noch einmal oder kontaktieren Sie ihren Administrator.
                     </div>
 <%
+                } else if(files.isEmpty()) { %>
+                    <div class="list-group-item">
+                        Es existieren noch keine Dateien in diesem Modul.
+                    </div>
+<%
                 } else {
                     for(File file: files) {
-                        String moduleFileName = Encoder.forHtml(file.getTitle())
+                        String moduleFileName = Encoder.forHtml(file.getTitle());
                         String moduleFileLink = baseUrlInModule + "/file?id=" + Encoder.forHtmlAttribute(file.getId());
                         String moduleFileDescription = Encoder.forHtml(file.getDescription());
 %>
