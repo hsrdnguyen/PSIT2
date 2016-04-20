@@ -6,10 +6,7 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.factory.FileFactory;
-import ch.avocado.share.service.IFileDataHandler;
-import ch.avocado.share.service.IFileStorageHandler;
-import ch.avocado.share.service.IModuleDataHandler;
-import ch.avocado.share.service.ISecurityHandler;
+import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
@@ -26,6 +23,7 @@ public class FileBean extends ResourceBean<File> {
     private List<Category> categories;
     private FileItem fileItem;
     private String moduleId;
+    private Rating rating;
 
     @Override
     protected boolean hasMembers() {
@@ -254,8 +252,32 @@ public class FileBean extends ResourceBean<File> {
     }
 
     /**
-     * Adds a category to the file, by handing over the name of the category
-     * @param categoryName The name of the category which you want to add to the file
+     * Gets the current rating value of the file.
+     * @return the rating value.
+     */
+    public float getRatingForObject(){ return rating.getRating(); }
+
+    /**
+     * Gets the current number of ratings of the file.
+     * @return the number of ratings.
+     */
+    public int getNumberOfRatingsForObject(){ return rating.getNumberOfRatings(); }
+
+    /**
+     * Set's the rating object for the file.
+     * @param rating the rating object to been set.
+     */
+    public void setRating(Rating rating){ this.rating = rating; }
+
+    /**
+     * Checks if the accessing user had already rated the file.
+     * @return true if the user had already rated the file, false if not.
+     */
+    public boolean hasAccessingUserRated(){ return this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId())); }
+
+    /**
+     * Adds a category to the file, by handing over the name of the category.
+     * @param categoryName The name of the category which you want to add to the file.
      */
     public void addCategory(String categoryName){
         if (categoryName == null || categoryName.trim().isEmpty())
@@ -276,6 +298,41 @@ public class FileBean extends ResourceBean<File> {
         categories.remove(category); //TODO @kunzlio1: fragen was wir aus dem jsp heraus bekommen? (Category Obj oder name)
     }
 
+    /**
+     * Gets the rating which the accessing user gave to the file
+     * @return the rating of the user for the file
+     * @throws HttpBeanException is thrown, if there is an error while getting the rating.
+     */
+    public int getRatingForAccessingUser() throws HttpBeanException {
+        if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) throw new HttpBeanException(0, "User hadn't rated yet");
+        IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
+        try {
+            return ratingDataHandler.getRatingForUserAndObject(Long.parseLong(getAccessingUser().getId()), Long.parseLong(moduleId));
+        } catch (DataHandlerException e) {
+            throw new HttpBeanException(e);
+        }
+    }
+
+    /**
+     * Adds a ratin which a user gave to the file.
+     * @param rating the rating the user gave to the file.
+     * @param ratingUserId the id of the user which had rated
+     * @throws HttpBeanException is thrown, if there is an error while adding the rating.
+     */
+    public void addRatingForAccessingUser(int rating, long ratingUserId) throws HttpBeanException {
+        IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
+        try {
+            if (this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))){
+                ratingDataHandler.updateRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
+                this.rating.addRating(rating, ratingUserId);
+            }else {
+                ratingDataHandler.addRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
+                this.rating.addRating(rating, ratingUserId);
+            }
+        } catch (DataHandlerException e) {
+            throw new HttpBeanException(0, "Couldn't add rating"); //TODO @kunzlio1: ErrorsMessges => Constants
+        }
+    }
 
     private void checkParameterTitle(File file) throws HttpBeanException {
         checkParameterModuleId(file);
