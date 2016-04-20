@@ -123,8 +123,13 @@ public class User extends AccessIdentity {
      * @return {@code true} if the code is correct and the password changed.
      */
     public boolean resetPassword(String password, String code) {
-        PasswordResetVerification verification = getPassword().getPasswordResetVerification();
-        return verification != null && !verification.isExpired() && verification.getCode().equals(code);
+        PasswordResetVerification verification = getPassword().getResetVerification();
+        if(verification != null && !verification.isExpired() && verification.getCode().equals(code)) {
+            getPassword().setPassword(password);
+            getPassword().setResetVerification(null);
+            return true;
+        }
+        return false;
     }
 
 

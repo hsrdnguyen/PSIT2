@@ -2,12 +2,16 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <jsp:useBean id="forgottenPassword" class="ch.avocado.share.controller.ForgottenPasswordBean"/>
 <jsp:setProperty name="forgottenPassword" property="email"/>
+<%
+    request.setAttribute("ch.avocado.share.includes.header.scripts", new String[]{"https://www.google.com/recaptcha/api.js"});
+    request.setAttribute("ch.avocado.share.includes.header.title", "Passwort vergessen");
+%>
 <jsp:include page="includes/header.jsp" />
 <h2>Passwort vergessen</h2>
 <%
     boolean showFormular = true;
     if (request.getMethod().equals("POST")) {
-        if (forgottenPassword.requestNewPassword()) {
+        if (forgottenPassword.requestNewPassword(request)) {
             showFormular = false;
 %>
 <div class="alert alert-success">
@@ -40,11 +44,23 @@
             </div>
         </div>
         <div class="form-group row">
+            <div class="col-md-3">
+                Captcha
+            </div>
+            <div class="col-md-9 col-lg-6">
+                <noscript>
+                    <div class="alert alert-danger">
+                        <strong>Javascript deaktiviert.</strong> Für diesen Schritt wird Javascript benötigt.
+                    </div>
+                </noscript>
+                <div class="g-recaptcha" data-sitekey="6LeS4x0TAAAAANcSYZwdoyTFY-NjvbFkX3zU8CiU"></div>
+            </div>
+        </div>
+        <div class="form-group row">
             <div class="col-md-push-3 col-md-9 col-lg-6">
             <input class="btn btn-primary" type="submit" value="Zurücksetzten" />
             </div>
         </div>
-
     </form>
 <% } %>
 <jsp:include page="includes/footer.jsp" />

@@ -65,7 +65,7 @@ public class MailingService implements IMailingService {
 
         try {
             email =  Encoder.forUrl(user.getMail().getAddress());
-            code = Encoder.forUrl(user.getPassword().getPasswordResetVerification().getCode());
+            code = Encoder.forUrl(user.getPassword().getResetVerification().getCode());
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

@@ -79,16 +79,6 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) {
-        return false;
-    }
-
-    @Override
-    public ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) {
-        return null;
-    }
-
-    @Override
     public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
         List<User> users = new ArrayList<>(ids.size());
         for(String id: ids) {

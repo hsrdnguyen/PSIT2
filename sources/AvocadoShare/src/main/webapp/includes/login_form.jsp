@@ -41,9 +41,11 @@
                     <input required name="<%=LoginServlet.FIELD_PASSWORD %>" type="password" class="form-control"
                            id="login-form-password" placeholder="Passwort" pattern=".{9,}"
                            title="Das Passwort muss mindestens 9 Zeichen lang sein.">
+                    <a class="small" id="password-reset-link" onclick="return resetPassword(this);" href="<%=baseUrl%>/forgot.jsp"
+                       title="Hier können Sie ihr Passwort zurücksetzen">Passwort vergessen?</a>
                 </div>
             </div>
-            <!--
+            <%--
             <div class="form-group row">
                 <div class="col-sm-push-2 col-sm-10">
                     <div class="checkbox">
@@ -53,10 +55,7 @@
                     </div>
                 </div>
             </div>
-            -->
-            <div class="form-group row">
-                <a id="password-reset-link" onclick="return resetPassword(this);" href="<%=baseUrl%>/forgot.jsp" title="Hier können Sie ihr Passwort zurücksetzen">Passwort vergessen?</a>
-            </div>
+            --%>
             <div class="form-group row">
                 <div class="col-sm-offset-2 col-sm-10">
                     <button type="submit" class="btn btn-secondary">Anmelden</button>

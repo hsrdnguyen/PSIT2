@@ -15,6 +15,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.IllegalFormatCodePointException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * CAPTCHA verifier for Googles reCAPTCHA.
@@ -58,7 +60,19 @@ public class ReCaptchaVerifier implements ICaptchaVerifier {
         }
     }
 
-    private ApiResponse parseResponse(InputStream inputStream) throws IOException {
+    private boolean parseResponse(InputStream inputStream) throws IOException {
+        String response = readResponse(inputStream);
+        Pattern responsePattern = Pattern.compile("^\\s*\\{\\s*\"success\":\\s+(false|true)\\s*,", Pattern.MULTILINE |  Pattern.UNICODE_CASE);
+        Matcher matcher = responsePattern.matcher(response);
+        if(!matcher.find()) {
+            System.out.println(this.getClass().getName() + " doesn't undestand response: \n" + response);
+            return false;
+        }
+        String success = matcher.group(1);
+        return "true".equals(success);
+    }
+
+    private String readResponse(InputStream inputStream) throws IOException {
         byte[] buffer = new byte[1024];
         String response = "";
         int readLength;
@@ -68,21 +82,24 @@ public class ReCaptchaVerifier implements ICaptchaVerifier {
                 response += new String(buffer, 0, readLength, "UTF-8");
             }
         }while (readLength != -1);
-        System.out.println(response);
-        return new ApiResponse(false, new Date(), "unknown");
+        return response;
+    }
+
+    private String encodePostParameter(String name, String value) throws UnsupportedEncodingException {
+        return URLEncoder.encode(name, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8");
     }
 
     private String getPostPayload(String response, String remoteAddress) throws UnsupportedEncodingException {
         if(response == null) throw new IllegalArgumentException("response is null");
-        String payload = API_PARAM_SECRET + "=" + URLEncoder.encode(CLIENT_SECRET, "UTF-8");
+        String payload = encodePostParameter(API_PARAM_SECRET, CLIENT_SECRET) + "&";
         if(VERIFY_REMOTE_ADDRESS && remoteAddress != null) {
-            payload += API_PARAM_REMOTE_ADDRESS + "=" + URLEncoder.encode(remoteAddress, "UTF-8");
+            payload += encodePostParameter(API_PARAM_REMOTE_ADDRESS, remoteAddress) + "&";
         }
-        payload += API_PARAM_RESPONSE + "=" + URLEncoder.encode(response, "UTF-8");
+        payload += encodePostParameter(API_PARAM_RESPONSE, response);
         return payload;
     }
 
-    private ApiResponse getApiResponse(String response, String remoteAddress) throws IOException {
+    private boolean getApiResponse(String response, String remoteAddress) throws IOException {
         URL apiUrl = null;
 
         apiUrl = new URL(API_URL);
@@ -94,6 +111,7 @@ public class ReCaptchaVerifier implements ICaptchaVerifier {
         connection.setRequestProperty("Content-Length", Integer.toString(payload.length()));
         OutputStream outputStream = connection.getOutputStream();
         outputStream.write(payload.getBytes("UTF-8"));
+
         InputStream inputStream = connection.getInputStream();
         return parseResponse(inputStream);
     }
@@ -103,13 +121,13 @@ public class ReCaptchaVerifier implements ICaptchaVerifier {
         String response = request.getParameter(RESPONSE_PARAMETER_NAME);
         if(response == null) return false;
         String remoteAddress = request.getRemoteAddr();
-        ApiResponse apiResponse = null;
+        boolean apiResponse;
         try {
             apiResponse = getApiResponse(response, remoteAddress);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-        return apiResponse.isValid();
+        return apiResponse;
     }
 }

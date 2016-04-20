@@ -1,7 +1,10 @@
 package ch.avocado.share.service.Mock;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
- * Created by coffeemakr on 20.04.16.
+ * Verifies a CAPTCHA
  */
-public class ICaptchaVerifier {
+public interface ICaptchaVerifier {
+    boolean verifyRequest(HttpServletRequest request);
 }

@@ -62,26 +62,11 @@ public interface IUserDataHandler {
     boolean updateUser(User user) throws DataHandlerException;
 
     /**
-     * verifies the user in the database
+     * verifies the user's email address in the database
      * @param user user to be verified
      * @return true if verification was successful
      */
     boolean verifyUser(User user) throws DataHandlerException;
-
-    /**
-     * adds a verificationCode to the db
-     * @param pwVerification verification to be added
-     * @param userId user to use id from
-     * @return true if adding was successful
-     */
-    boolean addPasswordResetVerification(PasswordResetVerification pwVerification, String userId) throws DataHandlerException;
-
-    /**
-     * gets the password resets for a user
-     * @param userId id of the user
-     * @return all verifications of a user
-     */
-    ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) throws DataHandlerException;
 
     /**
      * loads multiple users
