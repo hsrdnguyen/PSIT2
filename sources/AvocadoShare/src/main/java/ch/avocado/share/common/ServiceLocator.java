@@ -4,6 +4,7 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Impl.*;
 import ch.avocado.share.service.Mock.FileStorageHandlerMock;
+import ch.avocado.share.service.Mock.ICaptchaVerifier;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -49,5 +50,6 @@ public class ServiceLocator {
         services.put(IGroupDataHandler.class, new GroupDataHandler());
         services.put(ICategoryDataHandler.class, new CategoryDataHandler());
         services.put(IModuleDataHandler.class, new ModuleDataHandler());
+        services.put(ICaptchaVerifier.class, new ReCaptchaVerifier());
     }
 }
