@@ -32,7 +32,9 @@ public class UserConstants {
     public static final int SELECT_EMAIL_VERIFICATION_ADDRESS_INDEX = 2;
     public static final int EMAIL_VERIFICATION_RESULT_CODE_INDEX = 2;
     public static final int EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX = 1;
-    public static final String SET_MAIL_TO_VERIFIED = "UPDATE avocado_share.email SET verified=TRUE WHERE identity_id=?";
+    public static final String SET_EMAIL_VERIFICATION = "UPDATE avocado_share.email SET verified = ? WHERE address = ?";
+    public static final int SET_EMAIL_VERIFICATION_INDEX_VALID = 1;
+    public static final int SET_EMAIL_VERIFICATION_INDEX_ADDRESS = 2;
 
     private static final String SELECT_USER_SELECTED_COLUMNS = "I.id, prename, surname, avatar, description, password, address, verified, creation_date";
     private static final String SELECT_USERS = "" +

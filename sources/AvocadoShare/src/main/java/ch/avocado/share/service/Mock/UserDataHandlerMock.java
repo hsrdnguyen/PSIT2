@@ -73,10 +73,6 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
         return update(user);
     }
 
-    @Override
-    public boolean verifyUser(User user) {
-        return false;
-    }
 
     @Override
     public List<User> getUsers(Collection<String> ids) throws DataHandlerException {

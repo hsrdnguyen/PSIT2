@@ -62,13 +62,6 @@ public interface IUserDataHandler {
     boolean updateUser(User user) throws DataHandlerException;
 
     /**
-     * verifies the user's email address in the database
-     * @param user user to be verified
-     * @return true if verification was successful
-     */
-    boolean verifyUser(User user) throws DataHandlerException;
-
-    /**
      * loads multiple users
      * @param userIdCollection list or collection of ids of the users that should be loaded from the database
      * @return List of users

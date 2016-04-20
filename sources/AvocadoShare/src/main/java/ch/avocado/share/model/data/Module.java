@@ -1,6 +1,7 @@
 package ch.avocado.share.model.data;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -57,11 +58,16 @@ public class Module extends AccessControlObjectBase {
         return fileIds;
     }
 
-    public List<File> getFiles() throws DataHandlerException, ServiceNotFoundException {
+    public List<File> getFiles() throws DataHandlerException {
         if(fileIds.isEmpty()) {
             return new ArrayList<>();
         } else {
-            IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+            IFileDataHandler fileDataHandler;
+            try {
+                fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+            } catch (ServiceNotFoundException e) {
+                throw new DataHandlerException(e);
+            }
             return fileDataHandler.getFiles(this.fileIds);
         }
     }
