@@ -42,11 +42,12 @@ public class Rating {
         return rating / ((float)ratingUserIds.size());
     }
 
-    public void addRating(int rating){
+    public void addRating(int rating, long ratingUserId){
         if(rating < RatingConstants.MIN_RATING_VALUE || rating > RatingConstants.MAX_RATING_VALUE) {
             throw new IllegalArgumentException("Rating not between " + RatingConstants.MIN_RATING_VALUE
                     + " and " + RatingConstants.MAX_RATING_VALUE);
         }
         this.rating += rating;
+        ratingUserIds.add(ratingUserId);
     }
 }
