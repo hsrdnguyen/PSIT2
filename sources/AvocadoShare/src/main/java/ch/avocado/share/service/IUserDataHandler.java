@@ -7,6 +7,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -68,4 +69,7 @@ public interface IUserDataHandler {
      * @throws DataHandlerException
      */
     List<User> getUsers(Collection<String> userIdCollection) throws DataHandlerException;
+
+
+    List<User> search(Set<String> terms) throws DataHandlerException;
 }

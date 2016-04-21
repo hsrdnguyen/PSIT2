@@ -17,12 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/member")
+@WebServlet("/members")
 public class MemberServlet extends HttpServlet {
 
     public static final String TARGET_ID = "targetId";
     public static final String OWNER_ID = "ownerId";
-    public static final String ACCESS_LEVEL = "AccessLevel";
+    public static final String ACCESS_LEVEL = "level";
+
 
     private User getAccessingUser(HttpServletRequest request) {
         return new UserSession(request).getUser();

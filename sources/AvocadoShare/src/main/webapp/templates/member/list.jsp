@@ -10,14 +10,22 @@
         <h4>Benutzer</h4>
     </div>
 </div>
-<% for (User member : members.getUsers()) {
-    String memberEditUrl = "?action=" + action_edit + "&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&" + owner_parameter + "=" + Encoder.forUrlAttribute(member.getId());
-    String memberName = Encoder.forHtml(member.getFullName());
+<% for (Map.Entry<User, AccessLevelEnum> member : members.getUsersWithAccess()) {
+    String memberEditUrl = "?action=" + action_edit + "&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&" + owner_parameter + "=" + Encoder.forUrlAttribute(member.getKey().getId());
+    String memberName = Encoder.forHtml(member.getKey().getFullName());
+    AccessLevelEnum currentLevel = member.getValue();
+    boolean isOwner = currentLevel.containsLevel(AccessLevelEnum.OWNER);
 %>
 <div class="list-group-item">
+    <% if(!isOwner && userCanEdit) { %>
     <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=memberEditUrl%>'; return false; ">
         Rechte bearbeiten
     </button>
+    <% } else if(isOwner) { %>
+        <span class="text-muted pull-xs-right">
+            Besitzer
+        </span>
+    <% } %>
     <span>
         <%=memberName %>
     </span>

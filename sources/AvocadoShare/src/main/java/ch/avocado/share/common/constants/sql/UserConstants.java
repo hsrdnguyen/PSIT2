@@ -68,4 +68,8 @@ public class UserConstants {
 
 
     public static final String DELETE_RESET_VERIFICATION = "DELETE FROM avocado_share.password_reset WHERE id = ? ";
+    public static final String SEARCH_QUERY_LIKE = " LOWER( prename ) LIKE ? OR LOWER( surname ) LIKE ? ";
+    public static final String SEARCH_QUERY_START = SELECT_USERS + " WHERE ";
+    public static final String SEARCH_QUERY_LINK = " OR ";
+    public static final int NUMBER_OF_TERMS_PER_LIKE = 2;
 }

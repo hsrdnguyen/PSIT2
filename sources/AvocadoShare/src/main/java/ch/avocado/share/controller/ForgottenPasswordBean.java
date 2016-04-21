@@ -1,6 +1,6 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.service.Mock.ICaptchaVerifier;
+import ch.avocado.share.service.ICaptchaVerifier;
 
 
 import ch.avocado.share.common.ServiceLocator;

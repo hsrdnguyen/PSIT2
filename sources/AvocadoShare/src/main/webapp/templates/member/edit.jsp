@@ -3,6 +3,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="ch.avocado.share.servlet.MemberServlet" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<jsp:useBean id="editMemberBean" class="ch.avocado.share.controller.EditMemberBean" />
 <%
     String owner = request.getParameter(owner_parameter);
     AccessIdentity identityFromParameter = null;
@@ -45,18 +46,8 @@
         <input type="hidden" name="targetId" value="<%=members.getTarget().getId()%>"/>
         <div class="form-group">
             <label for="select-level">Zugriffsrecht</label>
-            <select id="select-level" name="level" class="form-control">
-                <option <%=currentLevel == AccessLevelEnum.NONE ? "selected=\"selected\"" : "" %>
-                        value="<%=AccessLevelEnum.NONE.toString()%>">Keine Rechte
-                </option>
-
-                <option <%=currentLevel == AccessLevelEnum.READ ? "selected=\"selected\"" : "" %>
-                        value="<%=AccessLevelEnum.READ.toString()%>">Lesen
-                </option>
-
-                <option <%=currentLevel == AccessLevelEnum.WRITE ? "selected=\"selected\"" : "" %>
-                        value="<%=AccessLevelEnum.WRITE.toString()%>">Lesen und Schreiben
-                </option>
+            <select id="select-level" name="<%=MemberServlet.ACCESS_LEVEL%>" class="form-control">
+                <%=editMemberBean.getLevelOptions(currentLevel)%>
             </select>
         </div>
         <input type="hidden" name="method" value="put"/>

@@ -1,5 +1,6 @@
 package ch.avocado.share.servlet.resources.base;
 
+import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Members;
 import ch.avocado.share.model.data.Model;
 
@@ -15,18 +16,23 @@ public class DetailViewConfig extends ViewConfig {
     private Model object;
     private FormError formErrors;
     private Members members;
+    private AccessLevelEnum access;
 
     public DetailViewConfig(View view, HttpServletRequest request, HttpServletResponse response, Model object,
-                            Members members) {
+                            Members members, AccessLevelEnum access) {
         super(view, request, response);
         this.object = object;
 
         if(object != null) {
             this.formErrors = new FormError(object.getFieldErrors());
         } else {
+            if(access == null) {
+                throw new IllegalArgumentException("access is null");
+            }
             this.formErrors = new FormError(new HashMap<String, String>());
         }
         this.members = members;
+        this.access = access;
     }
 
     public Model getObject() {
@@ -44,5 +50,9 @@ public class DetailViewConfig extends ViewConfig {
 
     public Members getMembers() {
         return members;
+    }
+
+    public AccessLevelEnum getAccess() {
+        return access;
     }
 }

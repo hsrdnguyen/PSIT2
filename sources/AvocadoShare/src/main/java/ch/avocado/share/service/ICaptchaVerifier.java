@@ -1,4 +1,4 @@
-package ch.avocado.share.service.Mock;
+package ch.avocado.share.service;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Impl;
 
+import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.common.constants.sql.UserConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
@@ -10,10 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by bergm on 23/03/2016.
@@ -286,6 +284,47 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
                 users.add(user);
             }
         }
+        return users;
+    }
+
+    @Override
+    public List<User> search(Set<String> searchTerms) throws DataHandlerException {
+        User foundUser;
+        try {
+            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+
+            String query = UserConstants.SEARCH_QUERY_START + UserConstants.SEARCH_QUERY_LIKE;
+
+            for (int i = searchTerms.size() - 1; i > 0; i--) {
+                query += UserConstants.SEARCH_QUERY_LINK + UserConstants.SEARCH_QUERY_LIKE;
+            }
+
+            PreparedStatement ps = connectionHandler.getPreparedStatement(query);
+            int postition = 1;
+            for (String tmp : searchTerms) {
+                for(int i = 0; i < UserConstants.NUMBER_OF_TERMS_PER_LIKE; i++) {
+                    ps.setString(postition, "%" + tmp.toLowerCase() + "%");
+                    ++postition;
+                }
+            }
+            System.out.println(query);
+            ResultSet rs = connectionHandler.executeQuery(ps);
+            return getUsersFromResultSet(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private List<User> getUsersFromResultSet(ResultSet rs) throws DataHandlerException {
+        List<User> users = new LinkedList<>();
+        User user;
+        do {
+            user = getUserFromResultSet(rs);
+            if(user != null) {
+                users.add(user);
+            }
+        }while(user != null);
         return users;
     }
 }
