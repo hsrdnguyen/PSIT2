@@ -15,7 +15,6 @@ public abstract class AccessControlObjectBase extends Model{
     private float rating;
     private String ownerId;
     private String description;
-    private boolean dirty;
 
     /**
      * Constructor
@@ -129,14 +128,6 @@ public abstract class AccessControlObjectBase extends Model{
         if(description == null) throw new IllegalArgumentException("description is null");
         this.description = description;
         setDirty(true);
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    protected void setDirty(boolean dirty) {
-        this.dirty = dirty;
     }
 
     /**

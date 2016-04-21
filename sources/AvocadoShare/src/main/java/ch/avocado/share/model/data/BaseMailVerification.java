@@ -84,4 +84,23 @@ public abstract class BaseMailVerification {
         Date now = new Date();
         return expiry.compareTo(now) >= 0;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BaseMailVerification that = (BaseMailVerification) o;
+
+        if (!code.equals(that.code)) return false;
+        return expiry.equals(that.expiry);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = code.hashCode();
+        result = 31 * result + expiry.hashCode();
+        return result;
+    }
 }

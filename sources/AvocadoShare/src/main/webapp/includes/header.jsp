@@ -3,6 +3,16 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
+    String[] scripts = (String[]) request.getAttribute("ch.avocado.share.includes.header.scripts");
+    String title = (String) request.getAttribute("ch.avocado.share.includes.header.title");
+    if(title == null) {
+        title = "Avocado Share";
+    } else {
+        title = "Avocado Share - " + Encoder.forHtml(title);
+    }
+    if(scripts == null) {
+        scripts = new String[0];
+    }
     String baseUrl = request.getServletContext().getContextPath();
     String currentUrl = (String) request.getAttribute("javax.servlet.error.request_uri");
     if(currentUrl == null) {
@@ -23,10 +33,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Avocado Share</title>
+    <title><%=title %></title>
     <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/octicons.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
+    <% for(String script: scripts) { %>
+        <script type="application/javascript" src="<%=Encoder.forHtmlAttribute(script)%>"></script>
+    <% } %>
 </head>
 <body>
 <div id="hacky-background-container">
@@ -106,7 +119,8 @@
                                                 <span class="octicon octicon-person"></span>
                                                 <span class="sr-only">Benutzername</span>
                                             </label>
-                                            <input id="navbar-login-username" type="email" class="form-control" required
+                                            <input id="navbar-login-username" type="text" class="form-control"
+                                                   <%-- type="email" --%>
                                                    name="<%=LoginServlet.FIELD_EMAIL %>" placeholder="E-Mail"/>
                                         </div>
                                         <div class="input-group dropdown-item" style="margin-bottom: 0">
@@ -115,7 +129,7 @@
                                                 <span class="sr-only">Passwort</span>
                                             </label>
                                             <input id="navbar-login-password" type="password" class="form-control"
-                                                   required pattern=".{9,}"
+                                                   <%-- required pattern=".{9,}" --%>
                                                    title="Ihr Passwort ist mindestens 9 Zeichen lang."
                                                    name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
                                         </div>

@@ -75,7 +75,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
 
-    private void checkEmailAdressIsUnique(User user) throws HttpBeanException, DataHandlerException {
+    private void checkEmailAddressIsUnique(User user) throws HttpBeanException, DataHandlerException {
         if(getMail() == null) {
             return;
         }
@@ -128,7 +128,7 @@ public class UserBean extends ResourceBean<User> {
         checkSurname(user);
         checkPasswords(user);
         checkEmailAddress(user);
-        checkEmailAdressIsUnique(user);
+        checkEmailAddressIsUnique(user);
         if(user.hasErrors()) {
             return user;
         }

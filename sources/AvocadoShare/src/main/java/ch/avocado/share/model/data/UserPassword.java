@@ -3,6 +3,7 @@ package ch.avocado.share.model.data;
 import ch.avocado.share.common.Base64;
 import ch.avocado.share.common.BinaryTokenGenerator;
 import ch.avocado.share.common.TokenGenerator;
+import com.sun.istack.internal.Nullable;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 import java.io.Serializable;
@@ -40,7 +41,7 @@ public class UserPassword implements Serializable{
 	private static final int SCRYPT_KEY_LENGTH = 32;
 
 	private String digest;
-    private PasswordResetVerification passwordResetVerification;
+    private PasswordResetVerification resetVerification;
 
 	/**
 	 * Private constructor for fromPassword.
@@ -56,13 +57,13 @@ public class UserPassword implements Serializable{
 	 */
 	public UserPassword(String digest) {
 		setDigest(digest);
-        this.passwordResetVerification = null;
+        this.resetVerification = null;
 	}
 
 	
-    public UserPassword(String digest, PasswordResetVerification passwordResetVerification) {
+    public UserPassword(String digest, PasswordResetVerification resetVerification) {
         setDigest(digest);
-        setPasswordResetVerification(passwordResetVerification);
+        setResetVerification(resetVerification);
     }
 
 	/**
@@ -163,12 +164,11 @@ public class UserPassword implements Serializable{
 	}
 
 
-    public PasswordResetVerification getPasswordResetVerification() {
-        return passwordResetVerification;
+    public PasswordResetVerification getResetVerification() {
+        return resetVerification;
     }
 
-    public void setPasswordResetVerification(PasswordResetVerification passwordResetVerification) {
-        if(passwordResetVerification == null) throw new IllegalArgumentException("passwordResetVerification is null");
-        this.passwordResetVerification = passwordResetVerification;
+    public void setResetVerification(@Nullable PasswordResetVerification resetVerification) {
+        this.resetVerification = resetVerification;
     }
 }

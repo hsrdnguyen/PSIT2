@@ -1,13 +1,11 @@
 package ch.avocado.share.service.Impl;
 
-import ch.avocado.share.model.data.EmailAddress;
-import ch.avocado.share.model.data.EmailAddressVerification;
-import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -20,12 +18,12 @@ import static org.junit.Assert.*;
  * Created by bergm on 23/03/2016.
  */
 public class UserDataHandlerTest {
-    private UserDataHandler service;
+    private UserDataHandler userDataHandler;
 
     @Before
     public void init() throws Exception {
         DatabaseConnectionHandlerMock.use();
-        service = new UserDataHandler();
+        userDataHandler = new UserDataHandler();
     }
 
     @After
@@ -35,17 +33,17 @@ public class UserDataHandlerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddUserWithNull() throws Exception {
-        service.addUser(null);
+        userDataHandler.addUser(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetByEmailWithNull() throws Exception {
-        service.getUserByEmailAddress(null);
+        userDataHandler.getUserByEmailAddress(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetUserWithNull() throws Exception {
-        service.getUser(null);
+        userDataHandler.getUser(null);
     }
 
     public static User getTestUser() throws Exception {
@@ -60,36 +58,97 @@ public class UserDataHandlerTest {
         return user;
     }
 
+    static public void assertEqualUsers(User expected, User actual) {
+        assertFalse("They are the same object", actual == expected);
+        assertEquals("Id", expected.getId(), actual.getId());
+        assertEquals("Creation Date", actual.getCreationDate(), actual.getCreationDate());
+        assertEquals("Prename", expected.getPrename(), actual.getPrename());
+        assertEquals("Surname", expected.getSurname(), actual.getSurname());
+        assertEquals("Description", expected.getDescription(), actual.getDescription());
+        assertEquals("Password digest", expected.getPassword().getDigest(), actual.getPassword().getDigest());
+        assertEquals("Avatar", expected.getAvatar(), actual.getAvatar());
+        assertEquals("Mail", expected.getMail(), actual.getMail());
+        assertEquals("Reset verification", expected.getPassword().getResetVerification(), actual.getPassword().getResetVerification());
+    }
+
     @Test
     public void testAddUser() throws Exception {
         User user = getTestUser();
-        String id = service.addUser(user);
+        PasswordResetVerification resetVerification = new PasswordResetVerification(new Date());
+        user.getPassword().setResetVerification(resetVerification);
+        String id = userDataHandler.addUser(user);
         assertNotNull(id);
+        assertNotNull(user.getId());
+        User addedUser = userDataHandler.getUser(id);
+        try {
+            assertEqualUsers(user, addedUser);
+        } finally {
+            userDataHandler.deleteUser(addedUser);
+        }
 
-        User addedUser = service.getUser(id);
+        // Add one user without password reset verification
+        user = getTestUser();
+        id = userDataHandler.addUser(user);
+        addedUser = userDataHandler.getUser(id);
+        try {
+            assertEqualUsers(user, addedUser);
+        } finally {
+            userDataHandler.deleteUser(addedUser);
+        }
 
-        assertTrue(addedUser != user);
-        assertEquals(id, addedUser.getId());
-        assertTrue(addedUser.getCreationDate().getTime() > 0);
-        assertEquals(user.getPrename(), addedUser.getPrename());
-        assertEquals(user.getSurname(), addedUser.getSurname());
-        assertEquals(user.getDescription(), addedUser.getDescription());
-        assertEquals(user.getPassword().getDigest(), addedUser.getPassword().getDigest());
-        assertEquals(user.getAvatar(), addedUser.getAvatar());
+        // Add one user without password reset verification
+        user = getTestUser();
+        user.getMail().setVerified(true);
+        user.getMail().setVerification(null);
+        id = userDataHandler.addUser(user);
+        addedUser = userDataHandler.getUser(id);
+        try {
+            assertEqualUsers(user, addedUser);
+        } finally {
+            userDataHandler.deleteUser(addedUser);
+        }
+    }
 
-        assertTrue("Failed to delete user", service.deleteUser(addedUser));
+    @Ignore
+    @Test
+    public void testUpdateUserWithVerifiedEmail() throws Exception {
+        // Add one user without password reset verification
+        User user = getTestUser();
+        assertFalse(user.getMail().isVerified());
+        assertNotNull(user.getMail().getVerification());
+
+        String id = userDataHandler.addUser(user);
+        assertNotNull(id);
+        assertNotNull(user.getId());
+
+        try {
+            User updatedUser = userDataHandler.getUser(id);
+            assertNotNull(updatedUser);
+            updatedUser.getMail().verify();
+            assertTrue(updatedUser.getMail().isVerified());
+            assertNull(updatedUser.getMail().getVerification());
+            assertTrue(updatedUser.getMail().isDirty());
+            assertTrue(userDataHandler.updateUser(updatedUser));
+            assertFalse(updatedUser.getMail().isDirty());
+            User addedUser = userDataHandler.getUser(id);
+            assertFalse(addedUser.getMail().isDirty());
+            assertTrue(addedUser.getMail().isVerified());
+            assertNull(addedUser.getMail().getVerification());
+        }finally {
+            userDataHandler.deleteUser(user);
+        }
     }
 
     @Test
     public void testDeleteUser() throws Exception {
         User user = getTestUser();
-        assertNull(service.getUserByEmailAddress(user.getMail().getAddress()));
-        String id = service.addUser(user);
+        assertNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
+        String id = userDataHandler.addUser(user);
         assertNotNull(id);
-        assertNotNull(service.getUserByEmailAddress(user.getMail().getAddress()));
-        assertNotNull(user = service.getUser(id));
-        assertTrue(service.deleteUser(user));
-        assertNull(service.getUser(user.getId()));
-        assertNull(service.getUserByEmailAddress(user.getMail().getAddress()));
+        assertNotNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
+        assertNotNull(user = userDataHandler.getUser(id));
+        assertTrue(userDataHandler.deleteUser(user));
+        assertNull(userDataHandler.getUser(user.getId()));
+        assertNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
     }
 }

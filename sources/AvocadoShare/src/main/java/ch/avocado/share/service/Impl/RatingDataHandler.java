@@ -145,8 +145,7 @@ public class RatingDataHandler implements IRatingDataHandler{
             if (resultSet.next()){
                 rating = new Rating(resultSet.getLong(1));
                 do {
-                    rating.addRatingUserId(resultSet.getLong(2));
-                    rating.addRating(resultSet.getInt(3));
+                    rating.addRating(resultSet.getInt(3), resultSet.getLong(2));
                 }while (resultSet.next());
             }
         } catch (SQLException e) {
