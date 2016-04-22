@@ -1,7 +1,11 @@
-<%@ page import="ch.avocado.share.servlet.LoginServlet" %>
-<%@ page import="ch.avocado.share.controller.UserSession" %>
-<%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%@
+        page import="ch.avocado.share.servlet.LoginServlet" %>
+<%@
+        page import="ch.avocado.share.controller.UserSession" %>
+<%@
+        page import="ch.avocado.share.common.Encoder" %>
+<%@
+        page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     String[] scripts = (String[]) request.getAttribute("ch.avocado.share.includes.header.scripts");
     String title = (String) request.getAttribute("ch.avocado.share.includes.header.title");
@@ -92,8 +96,24 @@
 
                         <% if (userSession.isAuthenticated()) { %>
                         <li class="nav-item pull-md-right">
-                            <a href="<%=baseUrl%>/file?action=create" class="btn btn-primary-outline"><span
-                                    class="octicon octicon-plus"></span></a>
+                            <div class="dropdown">
+                                <button class="btn btn-primary-outline dropdown-toggle"
+                                        type="button" id="create-new-toggle-button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="octicon octicon-plus"></span>
+                                </button>
+                                <div class="dropdown-menu" id="create-new-dropdown" aria-labelledby="create-new-toggle-button">
+                                    <a class="dropdown-item" href="<%=baseUrl%>/file?<%=ResourceServlet.PARAMETER_ACTION%>=<%=ResourceServlet.ACTION_CREATE%>">
+                                        Neue Datei erstellen
+                                    </a>
+                                    <a class="dropdown-item" href="<%=baseUrl%>/module?<%=ResourceServlet.PARAMETER_ACTION%>=<%=ResourceServlet.ACTION_CREATE%>">
+                                        Neues Modul erstellen
+                                    </a>
+                                    <a class="dropdown-item" href="<%=baseUrl%>/group?<%=ResourceServlet.PARAMETER_ACTION%>=<%=ResourceServlet.ACTION_CREATE%>">
+                                        Neue Gruppe erstellen
+                                    </a>
+                                </div>
+                            </div>
                         </li>
                         <% } %>
                         <!-- Navbar Login formular -->
