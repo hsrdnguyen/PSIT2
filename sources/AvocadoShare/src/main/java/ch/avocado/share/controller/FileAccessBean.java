@@ -31,7 +31,7 @@ public class FileAccessBean implements Serializable {
     private String requesterUserId;
 
     /**
-     * Please make shure that {@link #setFileId(String)} and {@link #requesterUserMail}
+     * Please make sure that {@link #setFileId(String)} and {@link #requesterUserMail}
      * @return
      */
     public boolean requestAccess() {
@@ -47,6 +47,7 @@ public class FileAccessBean implements Serializable {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
             securityHandler = ServiceLocator.getService(ISecurityHandler.class);
         } catch (ServiceNotFoundException e) {
+            e.printStackTrace();
             return false;
         }
 
