@@ -40,10 +40,9 @@ public class EditMemberBean {
         for(AccessLevelEnum printedLevel: levelsInOrder) {
             result.append("<option value=\"");
             result.append(printedLevel.name());
-            /*
             if(printedLevel == currentLevel) {
                 result.append("\" selected=\"selected");
-            }*/
+            }
             result.append("\">");
             result.append(getReadableLevelName(printedLevel));
             result.append("</option>\n");

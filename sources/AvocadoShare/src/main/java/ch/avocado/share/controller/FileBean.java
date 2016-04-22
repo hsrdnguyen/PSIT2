@@ -58,6 +58,7 @@ public class FileBean extends ResourceBean<File> {
             file.setDescription(getDescription());
             file.setPath(path);
             file.setOwnerId(getAccessingUser().getId());
+            file.setModuleId(getModuleId());
             String fileId;
             fileId = fileDataHandler.addFile(file);
             file = fileDataHandler.getFile(fileId);
