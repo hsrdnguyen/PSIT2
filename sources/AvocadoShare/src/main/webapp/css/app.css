@@ -6,6 +6,11 @@ body {
 }
 
 /* Make icons bigger in the navigantion*/
+
+.btn .octicon {
+    font-size: 1.3rem;
+}
+
 nav .octicon {
     font-size: 1.4em;
 }
@@ -127,7 +132,7 @@ main {
     position: relative;
     top: 0;
     bottom: 0;
-    width:100%;
+    width: 100%;
 }
 
 /*
@@ -172,4 +177,26 @@ a.modul-link:hover .modul {
     padding-right: 0.9375rem;
     position: relative;
     width: 70%;
+}
+
+.preview iframe, .preview frame {
+    width: 100%;
+    min-height: 800px;
+    height: 100%;
+}
+
+.preview pre {
+    width: 100%;
+    line-break: auto;
+    background-color: #e7e7e7;
+    border: 1px solid #a0a0a0;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    overflow: scroll;
+    padding: 1em;
+}
+
+.preview video {
+    width: 100%;
 }

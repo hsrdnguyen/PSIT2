@@ -5,7 +5,6 @@
 <%@ page import="ch.avocado.share.common.preview.IPreviewGenerator" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
-<%@ page import="ch.avocado.share.common.constants.SQLQueryConstants" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     File file = viewConfig.getObject(File.class);
@@ -19,9 +18,12 @@
 <section class="document-show">
     <div class="list-group">
         <div class="list-group-item list-group-header">
+            <div class="pull-xs-right btn-group" role="group">
+                <a class="btn btn-secondary-outline" href="?action=edit&id=<%=id %>"><span class="octicon octicon-pencil"></span></a>
+                <%-- TODO: fix absolute link --%>
+                <a class="btn btn-primary-outline" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>
+            </div>
             <h2><%=title %></h2>
-            <a class="btn btn-primary" href="?action=edit&id=<%=id %>">Edit</a>
-            <a class="btn btn-primary" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>
         </div>
         <div class="list-group-item">
             <h3 class="list-group-item-heading">Beschreibung</h3>

@@ -138,8 +138,8 @@
                                     <form action="<%=baseUrl%>/login" method="POST">
                                         <div class="input-group dropdown-item" style="margin-bottom: 0">
                                             <label for="navbar-login-username" class="input-group-addon">
-                                                <span class="octicon octicon-person"></span>
-                                                <span class="sr-only">Benutzername</span>
+                                                <span class="octicon octicon-mail"></span>
+                                                <span class="sr-only">E-Mail-Adresse</span>
                                             </label>
                                             <input id="navbar-login-username" type="text" class="form-control"
                                                    <%-- type="email" --%>
@@ -147,7 +147,7 @@
                                         </div>
                                         <div class="input-group dropdown-item" style="margin-bottom: 0">
                                             <label for="navbar-login-password" class="input-group-addon">
-                                                <span class="octicon octicon-lock"></span>
+                                                <span class="octicon octicon-key"></span>
                                                 <span class="sr-only">Passwort</span>
                                             </label>
                                             <input id="navbar-login-password" type="password" class="form-control"

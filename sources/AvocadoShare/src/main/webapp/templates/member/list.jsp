@@ -3,7 +3,7 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <div class="list-group-item list-group-header">
-    <a class="btn btn-secondary pull-xs-right" href="?action=<%=action_create %>&id=<%=Encoder.forHtmlAttribute(members.getTarget().getId())%>">
+    <a class="btn btn-secondary-outline pull-xs-right" href="?action=<%=action_create %>&id=<%=Encoder.forHtmlAttribute(members.getTarget().getId())%>">
         <span class="octicon octicon-plus"></span>
         <span class="hidden-xs-up">Hinzufügen</span>
     </a>
@@ -11,7 +11,7 @@
 </div>
 <div class="list-group-item">
     <div class="list-group-item-heading">
-        <h4>Benutzer</h4>
+        <h4><%--<span class="octicon octicon-person"></span>--%> Benutzer</h4>
     </div>
 </div>
 <% for (Map.Entry<User, AccessLevelEnum> member : members.getUsersWithAccess()) {
@@ -38,7 +38,7 @@
 
 <div class="list-group-item">
     <div class="list-group-item-heading">
-        <h4>Gruppen</h4>
+        <h4><%--<span class="octicon octicon-organization"></span>--%> Gruppen</h4>
     </div>
 </div>
 <% for (Group member : members.getGroups()) {

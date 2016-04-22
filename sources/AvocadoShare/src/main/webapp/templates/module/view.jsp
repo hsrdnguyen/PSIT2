@@ -31,8 +31,10 @@
     <div class="col-xl-8">
         <div class="list-group">
             <div class="list-group-item list-group-header">
+                <a title="Module bearbeiten" class="btn btn-secondary-outline pull-xs-right" href="?action=edit&id=<%=id %>">
+                    <span class="octicon octicon-pencil"></span>
+                </a>
                 <h2><%=title %></h2>
-                <a class="btn btn-primary" href="?action=edit&id=<%=id %>">Edit</a>
             </div>
             <div class="list-group-item">
                 <h3 class="list-group-item-heading">Beschreibung</h3>
@@ -45,8 +47,8 @@
         <div class="list-group">
             <div class="list-group-item list-group-header">
                 <a href="<%=baseUrlInModule %>/file?action=<%=ResourceServlet.ACTION_CREATE%>&m=<%=Encoder.forHtmlAttribute(module.getId())%>"
-                   class="btn btn-sm btn-secondary pull-xs-right" title="Neue Datei hochladen">
-                    <span class="octicon octicon-plus"></span>
+                   class="btn btn-primary-outline pull-xs-right" title="Neue Datei hochladen">
+                    <span class="octicon octicon-cloud-upload"></span>
                 </a>
                 <h3>Dateien</h3>
             </div>
