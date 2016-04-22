@@ -62,9 +62,15 @@
           for (File file : results) {
 
         %>
+
             <a href="<%out.write("/file?id="+file.getId());%>" class="list-group-item">
-            <h4 class="list-group-item-heading"><%out.write(file.getTitle());%></h4>
-            <p class="list-group-item-text"><%out.write(file.getDescription());%></p>
+                <h4 class="list-group-item-heading"><%out.write(file.getTitle());%>
+                    <form id="edit-doc" method="POST" action="">
+                        <button id="requestRights" class="btn  btn-secondary btn-secondary12 " type="submit">Rechte anfordern</button>
+                        <input id="fileId" name="fileId" type="hidden" value="<%out.write(file.getId());%>">
+                    </form>
+                </h4>
+                <p class="list-group-item-text"><%out.write(file.getDescription());%></p>
             </a>
         <%
           }
