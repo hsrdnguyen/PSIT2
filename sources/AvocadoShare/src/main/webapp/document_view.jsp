@@ -1,8 +1,10 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ page import="ch.avocado.share.model.data.File"%>
 <%@ page import="java.util.List" %>
 <jsp:useBean id="searchBean" class="ch.avocado.share.controller.SearchBean"/>
 <jsp:setProperty name="searchBean" property="searchString"/>
 <%@include file="includes/header.jsp"%>
+
   <h1>Dokumentenüberblick</h1>
 
 <br>
@@ -13,7 +15,7 @@
       <div class="list-group">
         <div class="list-group-item list-group-header"><h2>Filter</h2></div>
         <!-- First Module -->
-        <div class="tags">
+        <div class="list-group-item">
         <label>
             <input type="checkbox" rel="dab" />
             Datenbank
@@ -53,17 +55,20 @@
           List<File> results = searchBean.search();
 
           for (File file : results) {
-
+              String fileUrl = baseUrl + "/file?id=" + Encoder.forHtmlAttribute(file.getId());
+              String fileTitle = Encoder.forHtml(file.getTitle());
+              String fileDescription = Encoder.forHtml(file.getDescription());
         %>
 
-            <a href="<%out.write("/file?id="+file.getId());%>" class="list-group-item">
-                <h4 class="list-group-item-heading"><%out.write(file.getTitle());%>
-                    <form id="edit-doc" method="POST" action="">
-                        <button id="requestRights" class="btn  btn-secondary btn-secondary12 " type="submit">Rechte anfordern</button>
-                        <input id="fileId" name="fileId" type="hidden" value="<%out.write(file.getId());%>">
+            <a href="<%=fileUrl %>" class="list-group-item">
+                <div class="pull-xs-right">
+                    <form id="edit-doc" method="POST" action="<%=baseUrl%>/requestAccess.jsp">
+                        <input type="submit" id="requestRights" class="btn btn-secondary btn-secondary" type="submit" value="Rechte anfordern" />
+                        <input id="fileId" name="fileId" type="hidden" value="<%=file.getId() %>" />
                     </form>
-                </h4>
-                <p class="list-group-item-text"><%out.write(file.getDescription());%></p>
+                </div>
+                <h4 class="list-group-item-heading"><%=fileTitle %></h4>
+                <p class="list-group-item-text"><%=fileDescription %></p>
             </a>
         <%
           }

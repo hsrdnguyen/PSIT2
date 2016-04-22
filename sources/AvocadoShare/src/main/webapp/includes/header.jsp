@@ -1,12 +1,8 @@
-<%@
-        page import="ch.avocado.share.servlet.LoginServlet" %>
-<%@
-        page import="ch.avocado.share.controller.UserSession" %>
-<%@
-        page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="ch.avocado.share.servlet.LoginServlet" %>
+<%@ page import="ch.avocado.share.controller.UserSession" %>
+<%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.ResourceServlet" %>
-<%@
-        page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     String[] scripts = (String[]) request.getAttribute("ch.avocado.share.includes.header.scripts");
     String title = (String) request.getAttribute("ch.avocado.share.includes.header.title");
@@ -85,7 +81,7 @@
                         <% } %>
                         <!-- Navbar Search -->
                         <li class="nav-item pull-md-right">
-                            <form method="post" action="document_view.jsp" class="form-inline">
+                            <form method="get" action="document_view.jsp" class="form-inline">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="searchString" name="searchString" placeholder="Suchen nach..."/>
                                     <span class="input-group-btn">
