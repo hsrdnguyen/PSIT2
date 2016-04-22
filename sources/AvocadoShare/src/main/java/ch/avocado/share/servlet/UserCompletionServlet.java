@@ -33,18 +33,18 @@ public class UserCompletionServlet extends HttpServlet {
         UserSession userSession = new UserSession(req);
         String query = req.getParameter(PARAM_QUERY);
         List<User> users;
-        if(!userSession.isAuthenticated() || query == null || query.isEmpty()) {
+        /*if(!userSession.isAuthenticated() || query == null || query.isEmpty()) {
             users = new ArrayList<>();
-        } else {
+        } else {*/
             users = getUsers(userSession.getUser(), query);
-        }
+        //}
         resp.setContentType("application/json; charset=UTF-8");
         OutputStream out = resp.getOutputStream();
         renderResult(users, out);
     }
 
     private void renderResult(List<User> users, OutputStream out) throws IOException {
-        out.write("{users:[".getBytes());
+        out.write("{\"users\":[".getBytes());
         for(User user: users) {
             writeUser(user, out);
         }
@@ -52,7 +52,7 @@ public class UserCompletionServlet extends HttpServlet {
     }
 
     private void writeUser(User user, OutputStream out) throws IOException {
-        String value = "{\"name\": \"%s\", \"id\": \"%s\"}";
+        String value = "{\"name\": \"%s\", \"id\": %s}";
         value = String.format(value, user.getFullName(), user.getId().toString());
         out.write(value.getBytes("UTF-8"));
     }

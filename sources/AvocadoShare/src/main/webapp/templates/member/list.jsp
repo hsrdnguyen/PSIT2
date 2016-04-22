@@ -3,6 +3,10 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <div class="list-group-item list-group-header">
+    <a class="btn btn-secondary pull-xs-right" href="?action=<%=action_create %>&id=<%=Encoder.forHtmlAttribute(members.getTarget().getId())%>">
+        <span class="octicon octicon-plus"></span>
+        <span class="hidden-xs-up">Hinzufügen</span>
+    </a>
     <h3>Mitglieder</h3>
 </div>
 <div class="list-group-item">
@@ -18,8 +22,8 @@
 %>
 <div class="list-group-item">
     <% if(!isOwner && userCanEdit) { %>
-    <button class="btn btn-link pull-xs-right" onclick="window.location.href='<%=memberEditUrl%>'; return false; ">
-        Rechte bearbeiten
+    <button class="btn btn-sm pull-xs-right" onclick="window.location.href='<%=memberEditUrl%>'; return false; ">
+        <span class="octicon octicon-pencil"></span>
     </button>
     <% } else if(isOwner) { %>
         <span class="text-muted pull-xs-right">

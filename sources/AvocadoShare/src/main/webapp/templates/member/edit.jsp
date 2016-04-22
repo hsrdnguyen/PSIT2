@@ -24,23 +24,23 @@
     <form method="post" action="<%=request.getServletContext().getContextPath() %>members">
         <div class="form-group">
             <% if (identityFromParameter != null) { %>
-            <input class="form-control" type="text" value="<%=identityFromParameter.getReadableName()%>"/>
-            <input type="hidden" name="<%=MemberServlet.OWNER_ID%>"
-                   value="<%=Encoder.forHtmlAttribute(identityFromParameter.getId())%>"/>
+                <input class="form-control" type="text" value="<%=identityFromParameter.getReadableName()%>"/>
+                <input type="hidden" name="<%=MemberServlet.OWNER_ID%>"
+                       value="<%=Encoder.forHtmlAttribute(identityFromParameter.getId())%>"/>
             <% } else { %>
-            <label for="member-select">Mitglied auswählen</label>
-            <select id="member-select" class="form-control" name="<%=MemberServlet.OWNER_ID%>">
-                <% for (AccessIdentity member : members.getUsers()) { %>
-                <option data-identity-type="user"
-                        value="<%=Encoder.forHtmlAttribute(member.getId())%>"><%=member.getReadableName()%> (Benutzer)
-                </option>
-                <% } %>
-                <% for (AccessIdentity member : members.getGroups()) { %>
-                <option data-identity-type="group"
-                        value="<%=Encoder.forHtmlAttribute(member.getId())%>"><%=member.getReadableName()%> (Gruppe)
-                </option>
-                <% } %>
-            </select>
+                <label for="member-select">Mitglied auswählen</label>
+                <select id="member-select" class="form-control" name="<%=MemberServlet.OWNER_ID%>">
+                    <% for (AccessIdentity member : members.getUsers()) { %>
+                    <option data-identity-type="user"
+                            value="<%=Encoder.forHtmlAttribute(member.getId())%>"><%=member.getReadableName()%> (Benutzer)
+                    </option>
+                    <% } %>
+                    <% for (AccessIdentity member : members.getGroups()) { %>
+                    <option data-identity-type="group"
+                            value="<%=Encoder.forHtmlAttribute(member.getId())%>"><%=member.getReadableName()%> (Gruppe)
+                    </option>
+                    <% } %>
+                </select>
             <% } %>
         </div>
         <input type="hidden" name="targetId" value="<%=members.getTarget().getId()%>"/>

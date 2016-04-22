@@ -123,6 +123,13 @@ main {
     padding: 2rem 2rem 1rem 2rem;
 }
 
+.suggestion-container {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    width:100%;
+}
+
 /*
 a.modul-link:link, a.modul-link:hover, a.modul-link {
 	text-decoration: none;

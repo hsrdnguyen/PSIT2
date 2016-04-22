@@ -37,8 +37,9 @@
     <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/octicons.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
+    <script type="application/javascript" src="<%=baseUrl%>/js/app.js"></script>
     <% for(String script: scripts) { %>
-        <script type="application/javascript" src="<%=Encoder.forHtmlAttribute(script)%>"></script>
+    <script type="application/javascript" src="<%=Encoder.forHtmlAttribute(script)%>"></script>
     <% } %>
 </head>
 <body>

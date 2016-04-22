@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URL;
 
 @WebServlet("/members")
 public class MemberServlet extends HttpServlet {
@@ -75,9 +76,20 @@ public class MemberServlet extends HttpServlet {
             setAccessLevel(accessingUser, targetId, ownerId, level);
         } catch (HttpBeanException e) {
             response.sendError(e.getStatusCode(), e.getDescription());
+            return;
         } catch (DataHandlerException e) {
             e.printStackTrace();
             response.sendError(HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(), ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+            return;
+        }
+        String referer = request.getHeader("Referer");
+        if(referer != null) {
+            String baseUrl = request.getServletContext().getContextPath();
+            if(referer.startsWith(request.getScheme() + "://" + baseUrl)) {
+                referer = referer.replace("action=edit_members", "");
+                referer = referer.replace("action=create_member", "");
+                response.sendRedirect(referer);
+            }
         }
     }
 }

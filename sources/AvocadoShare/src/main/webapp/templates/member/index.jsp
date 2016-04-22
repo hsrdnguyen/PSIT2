@@ -3,6 +3,7 @@
     final String owner_parameter = "o";
     final String action_edit = "edit_members";
     final String action_create = "create_member";
+    final String membersBaseUrl = request.getServletContext().getContextPath();
     DetailViewConfig viewConfigInMembers = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     Members members = viewConfigInMembers.getMembers();
     boolean userCanEdit = viewConfigInMembers.getAccess().containsLevel(AccessLevelEnum.MANAGE);
