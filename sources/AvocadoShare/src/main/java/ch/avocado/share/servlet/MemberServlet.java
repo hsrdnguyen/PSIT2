@@ -49,7 +49,8 @@ public class MemberServlet extends HttpServlet {
         if(accessingUser == null) {
             throw new HttpBeanException(HttpStatusCode.UNAUTHORIZED, ErrorMessageConstants.NOT_LOGGED_IN);
         }
-        if (!securityHandler.getAccessLevel(accessingUser.getId(), targetId).containsLevel(AccessLevelEnum.MANAGE)) {
+        AccessLevelEnum allowedLevel = securityHandler.getAccessLevel(accessingUser.getId(), targetId);
+        if (!allowedLevel.containsLevel(AccessLevelEnum.MANAGE)) {
             throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }
         if(!securityHandler.setAccessLevel(ownerId, targetId, accessLevel)) {
@@ -73,8 +74,9 @@ public class MemberServlet extends HttpServlet {
         String level = request.getParameter(ACCESS_LEVEL);
         User accessingUser = getAccessingUser(request);
         try {
-            setAccessLevel(accessingUser, targetId, ownerId, level);
+            setAccessLevel(accessingUser, ownerId, targetId, level);
         } catch (HttpBeanException e) {
+            e.printStackTrace();
             response.sendError(e.getStatusCode(), e.getDescription());
             return;
         } catch (DataHandlerException e) {
