@@ -54,30 +54,8 @@ public class LoginServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-
-    private void addTestCookie(HttpServletResponse response) {
-        Cookie checkCookie = new Cookie(COOKIE_CHECK_NAME, COOKIE_CHECK_VALUE);
-        response.addCookie(checkCookie);
-    }
-
-    public boolean checkTestCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            return false;
-        }
-        for (Cookie cookie : cookies) {
-            String name = cookie.getName();
-            String value = cookie.getValue();
-            if (name.equals(COOKIE_CHECK_NAME) && value.equals(COOKIE_CHECK_VALUE)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        addTestCookie(response);
         renderLogin(request, response);
     }
 
@@ -116,9 +94,6 @@ public class LoginServlet extends HttpServlet {
         } else if (password == null) {
             return ErrorMessageConstants.ERROR_NO_PASSWORD;
         } else {
-            if (!checkTestCookie(request)) {
-                return ErrorMessageConstants.ERROR_COOKIES_DISABLED;
-            }
             User user = null;
             try {
                 user = getUserWithLogin(userDataHandler, email, password);

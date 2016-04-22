@@ -7,6 +7,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by bergm on 15/03/2016.
@@ -62,26 +63,13 @@ public interface IUserDataHandler {
     boolean updateUser(User user) throws DataHandlerException;
 
     /**
-     * verifies the user in the database
-     * @param user user to be verified
-     * @return true if verification was successful
+     * loads multiple users
+     * @param userIdCollection list or collection of ids of the users that should be loaded from the database
+     * @return List of users
+     * @throws DataHandlerException
      */
-    boolean verifyUser(User user) throws DataHandlerException;
+    List<User> getUsers(Collection<String> userIdCollection) throws DataHandlerException;
 
-    /**
-     * adds a verificationCode to the db
-     * @param verification verification to be added
-     * @param userId user to use id from
-     * @return true if adding was successful
-     */
-    boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) throws DataHandlerException;
 
-    /**
-     * gets the password resets for a user
-     * @param userId id of the user
-     * @return all verifications of a user
-     */
-    ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) throws DataHandlerException;
-
-    List<User> getUsers(Collection<String> strings) throws DataHandlerException;
+    List<User> search(Set<String> terms) throws DataHandlerException;
 }

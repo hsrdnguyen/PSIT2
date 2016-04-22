@@ -22,11 +22,11 @@ public interface IGroupDataHandler {
      * Returns a list of all groups with identifiers found in the list.
      * If the list contains an identifier multiple times the group will be multiple times in the result.
      * If an identifier is not the identifier of a list there will nothing added to the list.
-     * @param ids a list of identifiers
+     * @param idCollection a list of identifiers
      * @return a list of groups
      * @throws DataHandlerException if something goes wrong this
      */
-    List<Group> getGroups(Collection<String> ids) throws DataHandlerException;
+    List<Group> getGroups(Collection<String> idCollection) throws DataHandlerException;
 
     /**
      * Add a group
@@ -51,5 +51,12 @@ public interface IGroupDataHandler {
      * @throws DataHandlerException
      */
     boolean deleteGroup(Group group) throws DataHandlerException;
+
+    /**
+     * Loads a group from the database with the given name
+     * @param name name of the group that should be loaded
+     * @return Loaded group
+     * @throws DataHandlerException
+     */
     Group getGroupByName(String name) throws DataHandlerException;
 }

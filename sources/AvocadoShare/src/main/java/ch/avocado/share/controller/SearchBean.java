@@ -7,6 +7,7 @@ import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,21 +16,23 @@ import java.util.List;
  */
 public class SearchBean implements Serializable {
 
-    private String searchString = "a";
+    private String searchString = "";
 
     public List<File> search()
     {
-        try {
-            IFileDataHandler service = ServiceLocator.getService(IFileDataHandler.class);
-            String[] parts = searchString.split(" ");
-            List<File> results = service.search(Arrays.asList(parts));
-            return results;
-        } catch (ServiceNotFoundException e) {
-            e.printStackTrace();
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
+        if (!searchString.equals("")) {
+            try {
+                IFileDataHandler service = ServiceLocator.getService(IFileDataHandler.class);
+                String[] parts = searchString.split(" ");
+                List<File> results = service.search(Arrays.asList(parts));
+                return results;
+            } catch (ServiceNotFoundException e) {
+                e.printStackTrace();
+            } catch (DataHandlerException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public String getSearchString() {

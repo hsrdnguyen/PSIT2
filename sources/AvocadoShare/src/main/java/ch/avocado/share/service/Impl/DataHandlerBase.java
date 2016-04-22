@@ -44,16 +44,20 @@ abstract class DataHandlerBase {
 
     protected boolean updateObject(AccessControlObjectBase object) throws DataHandlerException {
         if (object == null) throw new IllegalArgumentException("object is null");
-        if (!updateDescription(object.getId(), object.getDescription())) return false;
-        return setOwnership(Long.parseLong(object.getId()), Long.parseLong(object.getOwnerId()));
+        long objectId = Long.parseLong(object.getId());
+        if (!updateDescription(objectId, object.getDescription())) return false;
+        Long ownerId = null;
+        if(object.getOwnerId() != null) {
+            ownerId = Long.parseLong(object.getOwnerId());
+        }
+        return setOwnership(objectId, ownerId);
     }
 
-    private boolean updateDescription(String objectId, String description) throws DataHandlerException {
-        if (objectId == null) throw new IllegalArgumentException("objectId is null");
+    private boolean updateDescription(long objectId, String description) throws DataHandlerException {
         if (description == null) throw new IllegalArgumentException("description is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION);
-            preparedStatement.setInt(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX, Integer.parseInt(objectId));
+            preparedStatement.setLong(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX, objectId);
             preparedStatement.setString(SQLQueryConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX, description);
             return getConnectionHandler().updateDataSet(preparedStatement);
         } catch (SQLException e) {

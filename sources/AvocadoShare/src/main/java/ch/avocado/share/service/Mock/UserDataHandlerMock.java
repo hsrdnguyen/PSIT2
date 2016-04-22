@@ -5,10 +5,7 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Mock handler for user data
@@ -73,20 +70,6 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
         return update(user);
     }
 
-    @Override
-    public boolean verifyUser(User user) {
-        return false;
-    }
-
-    @Override
-    public boolean addPasswordResetVerification(PasswordResetVerification verification, String userId) {
-        return false;
-    }
-
-    @Override
-    public ArrayList<PasswordResetVerification> getPasswordVerifications(String userId) {
-        return null;
-    }
 
     @Override
     public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
@@ -98,6 +81,11 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
             }
         }
         return users;
+    }
+
+    @Override
+    public List<User> search(Set<String> terms) throws DataHandlerException {
+        return null;
     }
 
     public static void use() throws Exception {

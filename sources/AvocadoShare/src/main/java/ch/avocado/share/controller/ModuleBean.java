@@ -20,11 +20,14 @@ import java.util.List;
 public class ModuleBean extends ResourceBean<Module> {
 
     public static final String ERROR_MODULE_NOT_FOUND = "Modul konnte nicht gefunden werden.";
+    private static int NAME_MAX_LENGTH = 32;
     private String name;
 
     private void checkParameterName(Module module) {
         if (getName() == null || getName().isEmpty()) {
             module.addFieldError("name", ErrorMessageConstants.ERROR_NO_NAME);
+        } else if(getName().length() > NAME_MAX_LENGTH) {
+            module.addFieldError("name", ErrorMessageConstants.ERROR_NAME_TOO_LONG);
         }
     }
 

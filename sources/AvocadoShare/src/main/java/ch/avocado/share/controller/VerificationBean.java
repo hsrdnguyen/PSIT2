@@ -35,8 +35,9 @@ public class VerificationBean implements Serializable {
                 return false;
             }
             if (user != null) {
+                user.getMail().verify();
                 try {
-                    userDataHandler.verifyUser(user);
+                    userDataHandler.updateUser(user);
                 } catch (DataHandlerException e) {
                     e.printStackTrace();
                     return false;

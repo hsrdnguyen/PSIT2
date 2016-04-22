@@ -1,5 +1,8 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.service.ICaptchaVerifier;
+
+
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.PasswordResetVerification;
@@ -9,10 +12,9 @@ import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 
 /**
  * Bean to reset a forgotten password.
@@ -34,6 +36,7 @@ public class ForgottenPasswordBean implements Serializable {
 
     public void setEmail(String email) {
         if (email == null) throw new IllegalArgumentException("email can't be null");
+        System.out.println("New email: " + email);
         this.email = email;
     }
 
@@ -43,10 +46,9 @@ public class ForgottenPasswordBean implements Serializable {
 
 
     private boolean storeVerification(User user, IUserDataHandler userDataHandler) {
-        PasswordResetVerification verification = user.getPassword().getPasswordResetVerification();
         try {
-            if (!userDataHandler.addPasswordResetVerification(verification, user.getId())) {
-                errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            if (!userDataHandler.updateUser(user)) {
+                errorMessage = ErrorMessageConstants.UPDATE_USER_FAILED;
                 return false;
             }
         } catch (DataHandlerException e) {
@@ -83,10 +85,11 @@ public class ForgottenPasswordBean implements Serializable {
      * Make sure you call {@link #setEmail(String)} before calling this method.
      *
      * @return True if a password reset link was send to the user
+     * @param request
      */
-    public boolean requestNewPassword() {
-        if (checkParameterEmail()) return false;
-
+    public boolean requestNewPassword(HttpServletRequest request) {
+        if (!checkParameterEmail()) return false;
+        if (!validateCaptcha(request)) return false;
         IUserDataHandler userDataHandler = getUserDataHandler();
         if (userDataHandler == null) return false;
 
@@ -96,7 +99,7 @@ public class ForgottenPasswordBean implements Serializable {
             return true;
         }
 
-        user.getPassword().setPasswordResetVerification(createPasswordResetVerification());
+        user.getPassword().setResetVerification(createPasswordResetVerification());
         return storeVerification(user, userDataHandler) && sendResetMail(user);
     }
 
@@ -113,9 +116,9 @@ public class ForgottenPasswordBean implements Serializable {
     private boolean checkParameterEmail() {
         if (email == null || email.isEmpty()) {
             errorMessage = ErrorMessageConstants.ERROR_EMPTY_EMAIL;
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -157,6 +160,7 @@ public class ForgottenPasswordBean implements Serializable {
         User user;
         try {
             user = userDataHandler.getUserByEmailAddress(email);
+            System.out.println("User: " + user);
         } catch (DataHandlerException e) {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;
@@ -187,39 +191,26 @@ public class ForgottenPasswordBean implements Serializable {
         if (userDataHandler == null) return null;
 
         User user = getUserFromEmail(userDataHandler, email);
-        if (user == null) {
+        if (user == null || user.getPassword().getResetVerification() == null|| !user.getPassword().getResetVerification().getCode().equals(code)) {
             this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
             return null;
         }
-
-        ArrayList<PasswordResetVerification> verifications;
-        try {
-            verifications = userDataHandler.getPasswordVerifications(user.getId());
-        } catch (DataHandlerException e) {
-            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
-            return null;
-        }
-
-        PasswordResetVerification matchedVerification = getVerificationByCode(code, verifications);
-        if (matchedVerification == null) {
-            this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
-            return null;
-        }
-        user.getPassword().setPasswordResetVerification(matchedVerification);
         return user;
     }
 
-    private PasswordResetVerification getVerificationByCode(String code, ArrayList<PasswordResetVerification> verifications) {
-        PasswordResetVerification matchedVerification = null;
-        for (Iterator<PasswordResetVerification> iterator = verifications.iterator(); iterator.hasNext() && matchedVerification == null; ) {
-            PasswordResetVerification verification = iterator.next();
-            if (verification.getCode().equals(code)) {
-                matchedVerification = verification;
-            }
-        }
-        return matchedVerification;
-    }
 
+    private boolean validateCaptcha(HttpServletRequest request) {
+        ICaptchaVerifier captchaVerifier;
+        try {
+            captchaVerifier = ServiceLocator.getService(ICaptchaVerifier.class);
+        } catch (ServiceNotFoundException e) {
+            errorMessage = ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService();
+            e.printStackTrace();
+            return false;
+        }
+        errorMessage = ErrorMessageConstants.CAPTCHA_INCORRECT;
+        return captchaVerifier.verifyRequest(request);
+    }
 
     /**
      * Reset the password. If the change does fail you can query the error message by calling getErrorMessage().
@@ -227,6 +218,7 @@ public class ForgottenPasswordBean implements Serializable {
      * @return {@code true} if the password was changed successfully. Otherwise {@code false} is returned.
      */
     public boolean resetPassword() {
+        errorMessage = "";
         if (password == null || password.isEmpty()) {
             errorMessage = ErrorMessageConstants.ERROR_EMPTY_PASSWORD;
         } else if (passwordConfirmation == null || passwordConfirmation.isEmpty()) {

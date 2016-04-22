@@ -120,12 +120,21 @@ public class SQLQueryConstants {
         public static final String SQL_DELETE_CATEGORY_FROM_OBJECT = "DELETE FROM category WHERE name = ? AND object_id = ?";
     }
 
+    /**
+     * Rating related queries
+     */
     public static final class Rating{
         public static final String SQL_ADD_RATING = "INSERT INTO rating (object_id, identity_id, rating) VALUES (?, ?)";
 
         public static final String SQL_DELETE_RATING = "DELETE FROM rating WHERE object_id = ? AND identity_id = ?";
 
         public static final String SQL_UPDATE_RATING = "UPDATE rating SET rating = ? WHERE object_id = ? AND identity_id = ?";
+
+        public static final String SQL_SELECT_BY_USER_ID_AND_OBJECT_ID = "SELECT rating FROM rating " +
+                "WHERE identity_id = ? AND object_id = ?";
+
+        public static final String SQL_SELECT_BY_OBJECT_ID = "SELECT object_id, identity_id, rating FROM rating " +
+                "WHERE object_id = ?";
     }
 
     public static final class File {
@@ -139,6 +148,7 @@ public class SQLQueryConstants {
                 "LEFT JOIN avocado_share.ownership AS owner " +
                 "   ON owner.object_id = f.id " +
                 "WHERE o.id = ?";
+
         public static final String SELECT_BY_TITLE_QUERY_AND_MODULE = "" +
                 "SELECT o.id, title, description, last_changed, creation_date, path, module_id, owner.owner_id " +
                 "   FROM file AS f " +
@@ -149,6 +159,7 @@ public class SQLQueryConstants {
                 "LEFT JOIN avocado_share.ownership AS owner " +
                 "   ON owner.object_id = f.id " +
                 "WHERE title = ? AND module_id = ?";
+
         public static final String INSERT_QUERY = "INSERT INTO avocado_share.file (id, title, last_changed, path) VALUES (?, ?, ?, ?)";
         public static final String UPDATE_QUERY = "UPDATE file SET title=?, last_changed=?, path=? WHERE id = ?";
         public static final String SEARCH_QUERY_START = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id WHERE ";

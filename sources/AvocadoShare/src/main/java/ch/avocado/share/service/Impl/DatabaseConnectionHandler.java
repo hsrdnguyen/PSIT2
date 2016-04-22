@@ -13,6 +13,14 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "org.postgresql.Driver";
+    /*static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_share";
+
+    //  Database credentials
+    static final String USER = "avocado_tomcat";
+    static final String PASS = "77eb2c2e52824f26bd47f6d0bc6e1dcb";*/
+
+    // JDBC database URL
+    // dont modify. Use DatabaseConnectionHandlerMock instead.
     static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_share";
 
     //  Database credentials

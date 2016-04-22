@@ -4,13 +4,27 @@
         page import="ch.avocado.share.controller.UserSession" %>
 <%@
         page import="ch.avocado.share.common.Encoder" %>
-<%@ page import="ch.avocado.share.servlet.resources.base.ResourceServlet" %>
 <%@
         page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
-
+    String[] scripts = (String[]) request.getAttribute("ch.avocado.share.includes.header.scripts");
+    String title = (String) request.getAttribute("ch.avocado.share.includes.header.title");
+    if(title == null) {
+        title = "Avocado Share";
+    } else {
+        title = "Avocado Share - " + Encoder.forHtml(title);
+    }
+    if(scripts == null) {
+        scripts = new String[0];
+    }
     String baseUrl = request.getServletContext().getContextPath();
-    String currentUrl = request.getRequestURI();
+    String currentUrl = (String) request.getAttribute("javax.servlet.error.request_uri");
+    if(currentUrl == null) {
+        currentUrl = (String) request.getAttribute("javax.servlet.forward.request_uri");
+    }
+    if(currentUrl == null) {
+        currentUrl = request.getRequestURI();
+    }
     UserSession userSession = new UserSession(request);
     String name;
     if (userSession.isAuthenticated()) {
@@ -23,13 +37,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Avocado Share</title>
+    <title><%=title %></title>
     <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/octicons.css">
     <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
+    <script type="application/javascript" src="<%=baseUrl%>/js/app.js"></script>
+    <% for(String script: scripts) { %>
+    <script type="application/javascript" src="<%=Encoder.forHtmlAttribute(script)%>"></script>
+    <% } %>
 </head>
 <body>
-<div class="container" id="hacky-background"></div>
+<div id="hacky-background-container">
+    <div class="container" id="hacky-background"></div>
+</div>
 <div id="footerpusher">
     <header>
         <nav class="navbar navbar-dark bg-inverse">
@@ -64,9 +84,9 @@
                         <% } %>
                         <!-- Navbar Search -->
                         <li class="nav-item pull-md-right">
-                            <form action="#search" class="form-inline">
+                            <form method="post" action="document_view.jsp" class="form-inline">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Suchen nach..."/>
+                                    <input type="text" class="form-control" id="searchString" name="searchString" placeholder="Suchen nach..."/>
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit">Los!</button>
                                     </span>
@@ -120,7 +140,8 @@
                                                 <span class="octicon octicon-person"></span>
                                                 <span class="sr-only">Benutzername</span>
                                             </label>
-                                            <input id="navbar-login-username" type="email" class="form-control" required
+                                            <input id="navbar-login-username" type="text" class="form-control"
+                                                   <%-- type="email" --%>
                                                    name="<%=LoginServlet.FIELD_EMAIL %>" placeholder="E-Mail"/>
                                         </div>
                                         <div class="input-group dropdown-item" style="margin-bottom: 0">
@@ -129,7 +150,7 @@
                                                 <span class="sr-only">Passwort</span>
                                             </label>
                                             <input id="navbar-login-password" type="password" class="form-control"
-                                                   required pattern=".{9,}"
+                                                   <%-- required pattern=".{9,}" --%>
                                                    title="Ihr Passwort ist mindestens 9 Zeichen lang."
                                                    name="<%=LoginServlet.FIELD_PASSWORD%>" placeholder="Passwort"/>
                                         </div>
@@ -145,9 +166,9 @@
                                             <span class="dropdown-item">Anmelden</span>
                                         </a>
                                         -->
-                                        <a href="<%=baseUrl%>/user?action=create">
-                                            <span class="dropdown-item">Registrieren</span>
-                                        </a>
+                                    <a href="<%=baseUrl%>/user?action=create">
+                                        <span class="dropdown-item">Registrieren</span>
+                                    </a>
                                     <% } %>
                                 </div>
                             </div>
