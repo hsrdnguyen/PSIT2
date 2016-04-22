@@ -1,16 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ch.avocado.share.common.form.FormBuilder" %>
-<%@ page import="ch.avocado.share.model.data.Module" %>
 <%@ page import="ch.avocado.share.controller.FileBean" %>
-<%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="ch.avocado.share.controller.UserSession" %>
+<%@ page import="ch.avocado.share.model.data.File" %>
+<%@ page import="ch.avocado.share.model.data.Module" %>
 <%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
+    String parameterModuleId = request.getParameter("m");
+
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     FormBuilder formBuilder = new FormBuilder(viewConfig, File.class);
     formBuilder.setEncodingType("multipart/form-data");
@@ -26,6 +28,7 @@
     } catch (HttpBeanException e) {
         response.sendError(e.getStatusCode(), e.getDescription());
     }
+
 %>
 <h2>Dateien erstellen</h2>
 <%
@@ -45,7 +48,7 @@
         <%= formBuilder.getFormBegin("post") %>
         <div class="form-group">
             <%=formBuilder.getLabelFor("moduleId") %>
-            <%=formBuilder.getSelectFor("moduleId", userModules) %>
+            <%=formBuilder.getSelectFor("moduleId", userModules, parameterModuleId) %>
         </div>
         <div class="form-group">
             <%=formBuilder.getLabelFor("fileItem")%>
