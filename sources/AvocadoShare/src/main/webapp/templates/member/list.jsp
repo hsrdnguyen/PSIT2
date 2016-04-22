@@ -3,10 +3,12 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <div class="list-group-item list-group-header">
-    <a class="btn btn-secondary-outline pull-xs-right" href="?action=<%=action_create %>&id=<%=Encoder.forHtmlAttribute(members.getTarget().getId())%>">
-        <span class="octicon octicon-plus"></span>
-        <span class="hidden-xs-up">Hinzufügen</span>
-    </a>
+    <% if(userCanEdit) { %>
+        <a class="btn btn-secondary-outline pull-xs-right" href="?action=<%=action_create %>&id=<%=Encoder.forHtmlAttribute(members.getTarget().getId())%>">
+            <span class="octicon octicon-plus"></span>
+            <span class="hidden-xs-up">Hinzufügen</span>
+        </a>
+    <% } %>
     <h3>Mitglieder</h3>
 </div>
 <div class="list-group-item">

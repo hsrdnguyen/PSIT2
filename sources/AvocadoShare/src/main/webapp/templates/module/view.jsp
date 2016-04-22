@@ -31,9 +31,11 @@
     <div class="col-xl-8">
         <div class="list-group">
             <div class="list-group-item list-group-header">
-                <a title="Module bearbeiten" class="btn btn-secondary-outline pull-xs-right" href="?action=edit&id=<%=id %>">
-                    <span class="octicon octicon-pencil"></span>
-                </a>
+                <% if(viewConfig.getAccess().containsLevel(AccessLevelEnum.MANAGE)) { %>
+                    <a title="Module bearbeiten" class="btn btn-secondary-outline pull-xs-right" href="?action=edit&id=<%=id %>">
+                        <span class="octicon octicon-pencil"></span>
+                    </a>
+                <% } %>
                 <h2><%=title %></h2>
             </div>
             <div class="list-group-item">
@@ -46,10 +48,12 @@
     <div class="col-xl-8">
         <div class="list-group">
             <div class="list-group-item list-group-header">
-                <a href="<%=baseUrlInModule %>/file?action=<%=ResourceServlet.ACTION_CREATE%>&m=<%=Encoder.forHtmlAttribute(module.getId())%>"
-                   class="btn btn-primary-outline pull-xs-right" title="Neue Datei hochladen">
-                    <span class="octicon octicon-cloud-upload"></span>
-                </a>
+                <% if(viewConfig.getAccess().containsLevel(AccessLevelEnum.WRITE)) { %>
+                    <a href="<%=baseUrlInModule %>/file?action=<%=ResourceServlet.ACTION_CREATE%>&m=<%=Encoder.forHtmlAttribute(module.getId())%>"
+                       class="btn btn-primary-outline pull-xs-right" title="Neue Datei hochladen">
+                        <span class="octicon octicon-cloud-upload"></span>
+                    </a>
+                <% } %>
                 <h3>Dateien</h3>
             </div>
 <%
