@@ -56,6 +56,7 @@ public class SecurityHandlerTest {
         assertNotNull(owningUser.getId());
         assertNotNull(userDataHandler.getUser(owningUser.getId()));
 
+
         // Add groups
 
         groupOne = new Group(owningUser.getId(), "Group description", "Unique Group One");
@@ -300,7 +301,14 @@ public class SecurityHandlerTest {
         assertTrue(securityHandler.setAccessLevel(user, groupThree, AccessLevelEnum.READ));
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
         assertEquals(3, ids.size());
+        assertTrue(ids.contains(groupOne.getId()));
+        assertTrue(ids.contains(groupTwo.getId()));
+        assertTrue(ids.contains(groupThree.getId()));
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.WRITE);
+        assertEquals(0, ids.size());
+        ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.MANAGE);
+        assertEquals(0, ids.size());
+        ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.OWNER);
         assertEquals(0, ids.size());
 
         assertTrue(securityHandler.setAccessLevel(user, groupTwo, AccessLevelEnum.WRITE));
@@ -310,11 +318,17 @@ public class SecurityHandlerTest {
 
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
         assertEquals(3, ids.size());
+        assertTrue(ids.contains(groupOne.getId()));
+        assertTrue(ids.contains(groupTwo.getId()));
+        assertTrue(ids.contains(groupThree.getId()));
 
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.WRITE);
+        assertTrue(ids.contains(groupTwo.getId()));
+        assertTrue(ids.contains(groupThree.getId()));
         assertEquals(2, ids.size());
 
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.MANAGE);
+        assertTrue(ids.contains(groupThree.getId()));
         assertEquals(1, ids.size());
 
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.OWNER);
