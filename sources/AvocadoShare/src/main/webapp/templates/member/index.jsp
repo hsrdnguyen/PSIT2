@@ -3,19 +3,20 @@
     final String owner_parameter = "o";
     final String action_edit = "edit_members";
     final String action_create = "create_member";
+    final String membersBaseUrl = request.getServletContext().getContextPath();
     DetailViewConfig viewConfigInMembers = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     Members members = viewConfigInMembers.getMembers();
+    boolean userCanEdit = viewConfigInMembers.getAccess().containsLevel(AccessLevelEnum.MANAGE);
 %>
 <div class="col-xl-4">
     <div class="list-group">
     <%
-        String edit = request.getParameter("action");
-        if (edit != null) edit = edit.toLowerCase();
-        if (action_edit.equals(edit)) {
+        String action = request.getParameter("action");
+        if (userCanEdit && action_edit.equalsIgnoreCase(action)) {
     %>
     <%@include file="edit.jsp"%>
     <%
-        } else if (action_create.equals(edit)) {
+        } else if (userCanEdit && action_create.equalsIgnoreCase(action)) {
     %>
     <%@include file="create.jsp"%>
     <%

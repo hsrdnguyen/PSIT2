@@ -1,8 +1,6 @@
 package ch.avocado.share.service.Impl;
 
-import ch.avocado.share.common.Encoder;
-import ch.avocado.share.service.Mock.ICaptchaVerifier;
-import jdk.nashorn.internal.parser.JSONParser;
+import ch.avocado.share.service.ICaptchaVerifier;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -10,11 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
-import java.util.IllegalFormatCodePointException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

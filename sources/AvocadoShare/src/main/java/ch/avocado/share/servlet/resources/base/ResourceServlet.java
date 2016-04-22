@@ -183,9 +183,10 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
      * @param userId   The user which will execute the action
      * @param objectId The object on which the action will is executed.
      * @param action   The action to be executed.
+     * @return The granted level.
      * @throws HttpBeanException If the user has not enough access rights.
      */
-    private void ensureAccess(String userId, String objectId, Action action) throws HttpBeanException {
+    private AccessLevelEnum ensureAccess(String userId, String objectId, Action action) throws HttpBeanException {
         if (objectId == null) throw new IllegalArgumentException("objectId is null");
         if (action == null) throw new IllegalArgumentException("action is null");
         AccessLevelEnum requiredLevel = getRequiredAccessForAction(action);
@@ -197,6 +198,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (!allowedLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ERROR_ACTION_NOT_ALLOWED + action.name());
         }
+        return allowedLevel;
     }
 
     /**
@@ -397,11 +399,11 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     throw new HttpBeanException(HttpStatusCode.NOT_IMPLEMENTED, "Replace not implemented");
                 case UPDATE: {
                     object = bean.get();
-                    ensureAccess(session.getUserId(), object.getId(), Action.UPDATE);
+                    AccessLevelEnum level = ensureAccess(session.getUserId(), object.getId(), Action.UPDATE);
                     bean.update(object);
                     if (object.hasErrors()) {
                         members = bean.getMembers(object);
-                        viewConfig = new DetailViewConfig(View.EDIT, request, response, object, members);
+                        viewConfig = new DetailViewConfig(View.EDIT, request, response, object, members, level);
                     } else {
                         succeeded = true;
                     }
@@ -422,7 +424,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     }
                     object = bean.create();
                     if (object.hasErrors()) {
-                        viewConfig = new DetailViewConfig(View.CREATE, request, response, object, new Members(object));
+                        viewConfig = new DetailViewConfig(View.CREATE, request, response, object, new Members(object), AccessLevelEnum.OWNER);
                     } else {
                         succeeded = true;
                     }
@@ -643,8 +645,9 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         } else {
             E object = null;
             Members members = null;
+            AccessLevelEnum level = null;
             if (controller.hasIdentifier()) {
-                ensureAccess(session.getUserId(), controller.getId(), Action.VIEW);
+                level = ensureAccess(session.getUserId(), controller.getId(), Action.VIEW);
                 object = controller.get();
                 if (object == null) {
                     throw new HttpBeanException(HttpStatusCode.NOT_FOUND,
@@ -652,7 +655,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                 }
                 members = controller.getMembers(object);
             }
-            viewConfig = new DetailViewConfig(view, request, response, object, members);
+            viewConfig = new DetailViewConfig(view, request, response, object, members, level);
         }
         return viewConfig;
     }

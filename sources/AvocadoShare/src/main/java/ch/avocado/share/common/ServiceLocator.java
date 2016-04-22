@@ -4,7 +4,7 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Impl.*;
 import ch.avocado.share.service.Mock.FileStorageHandlerMock;
-import ch.avocado.share.service.Mock.ICaptchaVerifier;
+import ch.avocado.share.service.ICaptchaVerifier;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
