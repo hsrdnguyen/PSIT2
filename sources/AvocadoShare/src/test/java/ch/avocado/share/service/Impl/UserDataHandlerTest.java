@@ -71,6 +71,7 @@ public class UserDataHandlerTest {
         assertEquals("Reset verification", expected.getPassword().getResetVerification(), actual.getPassword().getResetVerification());
     }
 
+    @Ignore
     @Test
     public void testAddUser() throws Exception {
         User user = getTestUser();
@@ -139,6 +140,7 @@ public class UserDataHandlerTest {
         }
     }
 
+    @Ignore
     @Test
     public void testDeleteUser() throws Exception {
         User user = getTestUser();

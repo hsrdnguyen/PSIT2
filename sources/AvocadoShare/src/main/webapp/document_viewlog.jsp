@@ -77,15 +77,7 @@
 </header>
 <main class="container">
   <h1>Dokumentenüberblick</h1>
-   <form class="form-inline">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Suchwort">
-              <span class="input-group-btn">
-                <button class="btn btn-secondary" type="submit">Suchen</button>
-              </span>
-
-            </div>
-   </form><br>
+<br>
   <div class="row">
     <!-- 3 columns on extra large screen,
          2 on large and 1 on smaller screens -->
