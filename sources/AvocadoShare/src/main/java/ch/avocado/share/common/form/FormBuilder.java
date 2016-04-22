@@ -3,6 +3,7 @@ package ch.avocado.share.common.form;
 import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.model.data.AccessIdentity;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.FormBuilderException;
@@ -223,19 +224,27 @@ public class FormBuilder {
      * @return A select field
      * @throws FormBuilderException
      */
-    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects) throws FormBuilderException {
+    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects, String selectedId) throws FormBuilderException {
         if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
         SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
-        if (object != null) {
-            Method getter = getGetterMethod(fieldName);
-            String value = getValueFromGetter(getter);
-            selectField.setSelectedValue(value);
+        if(selectedId == null) {
+            if (object != null) {
+                Method getter = getGetterMethod(fieldName);
+                String value = getValueFromGetter(getter);
+                selectField.setSelectedValue(value);
+            }
+        } else {
+            selectField.setSelectedValue(selectedId);
         }
         for (AccessControlObjectBase object : objects) {
             selectField.addChoice(object.getReadableName(), object.getId());
         }
         selectField.setHtmlClass(getHtmlInputClass());
         return selectField;
+    }
+
+    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects) throws FormBuilderException {
+        return getSelectFor(fieldName, objects, null);
     }
 
     /**

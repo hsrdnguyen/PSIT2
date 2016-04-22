@@ -5,6 +5,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.service.exceptions.DataHandlerException" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.ResourceServlet" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -43,6 +44,10 @@
     <div class="col-xl-8">
         <div class="list-group">
             <div class="list-group-item list-group-header">
+                <a href="<%=baseUrlInModule %>/file?action=<%=ResourceServlet.ACTION_CREATE%>&m=<%=Encoder.forHtmlAttribute(module.getId())%>"
+                   class="btn btn-sm btn-secondary pull-xs-right" title="Neue Datei hochladen">
+                    <span class="octicon octicon-plus"></span>
+                </a>
                 <h3>Dateien</h3>
             </div>
 <%

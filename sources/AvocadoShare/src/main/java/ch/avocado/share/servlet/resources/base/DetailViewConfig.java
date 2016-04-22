@@ -25,10 +25,10 @@ public class DetailViewConfig extends ViewConfig {
 
         if(object != null) {
             this.formErrors = new FormError(object.getFieldErrors());
-        } else {
             if(access == null) {
                 throw new IllegalArgumentException("access is null");
             }
+        } else {
             this.formErrors = new FormError(new HashMap<String, String>());
         }
         this.members = members;
