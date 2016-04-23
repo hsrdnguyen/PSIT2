@@ -6,6 +6,10 @@ import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.tika.Tika;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypes;
 
 import java.io.*;
 import java.security.DigestException;
@@ -18,13 +22,21 @@ import java.security.NoSuchAlgorithmException;
 public class FileStorageHandler implements IFileStorageHandler {
 
     private final int FILE_READ_BUFFER_SIZE = 512;
+    private final Tika tika;
+
+    public FileStorageHandler() {
+        tika = new Tika();
+    }
 
     @Override
-    public String getContentType(String filepath) throws FileStorageException {
+    public String getContentType(String filepath, String name) throws FileStorageException {
+        Metadata metadata = new Metadata();
+        metadata.set(Metadata.RESOURCE_NAME_KEY, name);
+        metadata.set(Metadata.CONTENT_LENGTH, Long.toString(getFileSize(filepath)));
         InputStream inputStream = readFile(filepath);
-        Tika tika = new Tika();
+        InputStream bufferedIn = new BufferedInputStream(inputStream);
         try {
-            return tika.detect(inputStream);
+            return tika.detect(bufferedIn, metadata);
         } catch (IOException e) {
             throw new FileStorageException("Unable to determinate type: " + e.getMessage());
         }
@@ -39,8 +51,7 @@ public class FileStorageHandler implements IFileStorageHandler {
     /**
      * @param fileItem The file
      * @return The hash of the file.
-     * @throws IOException
-     * @throws DigestException
+     * @throws FileStorageException
      */
     private String createFileHashName(FileItem fileItem) throws FileStorageException {
         byte[] buffer = new byte[FILE_READ_BUFFER_SIZE];
@@ -78,6 +89,7 @@ public class FileStorageHandler implements IFileStorageHandler {
 
     @Override
     public String saveFile(FileItem tempUploadedFile) throws FileStorageException {
+        if(tempUploadedFile == null) throw new IllegalArgumentException("tempUploadedFile is null");
         if (tempUploadedFile.isFormField()) {
             throw new IllegalArgumentException("tempUploadedFile isFormField and not an unploaded file");
         }

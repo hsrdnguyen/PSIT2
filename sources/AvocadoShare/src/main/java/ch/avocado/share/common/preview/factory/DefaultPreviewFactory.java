@@ -43,6 +43,7 @@ public class DefaultPreviewFactory  extends PreviewFactory{
         registerFactory("video", new VideoPreviewerFactory());
         registerFactory("text", new TextPreviewFactory());
         registerFactory("application/pdf", new FramePreviewFactory());
+        registerFactory("image", new ImagePreviewerFactory());
     }
 
 
@@ -51,7 +52,7 @@ public class DefaultPreviewFactory  extends PreviewFactory{
         if(file == null) throw new IllegalArgumentException("file is null");
         String contentType, topLevelType;
         PreviewFactory previewFactory = null;
-        contentType = getMimeType(file);
+        contentType = file.getMimeType();
 
         if(contentType.equals("application/x-matroska")) {
             contentType = "video/webm";

@@ -38,18 +38,6 @@ public class DownloadServlet extends HttpServlet{
         return "/download?id=" + Encoder.forUrl(file.getId());
     }
 
-    static public String getExtension(String mimeTypeString) {
-        // TODO: store extension in database
-        TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
-        MimeType mimeType;
-        try {
-            mimeType = tikaConfig.getMimeRepository().getRegisteredMimeType(mimeTypeString);
-        } catch (MimeTypeException e) {
-            return ".bin";
-        }
-        return mimeType.getExtension();
-    }
-
     public static void download(FileBean fileBean, File file, HttpServletResponse response, boolean attached) throws HttpBeanException {
         byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
         InputStream stream;
@@ -59,16 +47,17 @@ public class DownloadServlet extends HttpServlet{
         } catch (ServiceNotFoundException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
         }
-        String mimeType;
+
         try {
             stream = storageHandler.readFile(file.getPath());
-            mimeType = storageHandler.getContentType(file.getPath());
         } catch (FileStorageException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
+        String filename = file.getTitle() + "." + file.getExtension();
+
         if (attached) {
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getTitle() + getExtension(mimeType) + "\"");
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
         }
         try {
             OutputStream outputStream = response.getOutputStream();

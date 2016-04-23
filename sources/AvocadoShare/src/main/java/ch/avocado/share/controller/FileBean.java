@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.Filename;
 import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
@@ -40,7 +41,6 @@ public class FileBean extends ResourceBean<File> {
     @Override
     public File create() throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
         File file = FileFactory.getDefaultFile();
         checkParameterTitle(file);
@@ -54,16 +54,10 @@ public class FileBean extends ResourceBean<File> {
                 return null;
             }
             ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
-            String path = uploadFile(getFileItem());
-            try {
-                file.setMimeType(fileStorageHandler.getContentType(file.getPath()));
-            } catch (FileStorageException e) {
-                throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Datei konnte nicht gelesen werden");
-            }
+            uploadFile(getFileItem(), file);
             file.setTitle(getTitle());
             file.setCategories(getCategories());
             file.setDescription(getDescription());
-            file.setPath(path);
             file.setOwnerId(getAccessingUser().getId());
             file.setModuleId(getModuleId());
             String fileId;
@@ -140,9 +134,8 @@ public class FileBean extends ResourceBean<File> {
 
 
     @Override
-    public void update(File object) throws HttpBeanException {
+    public void update(File file) throws HttpBeanException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        File file = object;
         boolean changed = false;
         if (getTitle() != null && !file.getTitle().equals(getTitle())) {
             checkParameterTitle(file);
@@ -169,14 +162,7 @@ public class FileBean extends ResourceBean<File> {
             }
         }
         if (getFileItem() != null && !file.hasErrors()) {
-            IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
-            String path = uploadFile(getFileItem());
-            file.setPath(path);
-            try {
-                file.setMimeType(fileStorageHandler.getContentType(path));
-            } catch (FileStorageException e) {
-                throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "File konnte nicht gelesen werden");
-            }
+            uploadFile(getFileItem(), file);
             changed = true;
         }
 
@@ -205,6 +191,7 @@ public class FileBean extends ResourceBean<File> {
         }
     }
 
+
     /**
      * Uploads the file to the server and stores it using {@link IFileStorageHandler}.
      *
@@ -212,7 +199,8 @@ public class FileBean extends ResourceBean<File> {
      * @return The reference to the file on the disk
      * @throws HttpBeanException
      */
-    public String uploadFile(FileItem fileItem) throws HttpBeanException {
+    public void uploadFile(FileItem fileItem, File file) throws HttpBeanException {
+        IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
         if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
         DiskFileItemFactory factory = new DiskFileItemFactory();
         // maximum size that will be stored in memory
@@ -225,9 +213,14 @@ public class FileBean extends ResourceBean<File> {
         // maximum file size to be uploaded.
         upload.setSizeMax(FileConstants.MAX_FILE_SIZE);
         try {
-            return getService(IFileStorageHandler.class).saveFile(fileItem);
+            String path = fileStorageHandler.saveFile(fileItem);
+            file.setPath(path);
+            String mimeType = fileStorageHandler.getContentType(path, fileItem.getName());
+            file.setMimeType(mimeType);
+            file.setExtension(Filename.getExtension(fileItem.getName()));
         } catch (FileStorageException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            e.printStackTrace();
+            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Datei konnte nicht gespeichert werden.");
         }
     }
 

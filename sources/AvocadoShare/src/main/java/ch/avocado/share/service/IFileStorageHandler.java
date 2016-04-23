@@ -34,10 +34,11 @@ public interface IFileStorageHandler {
     /**
      *Gets the contentType (type of file: pdf, jpg, docx) of the file
      * @param filepath path to the file
+     * @param name
      * @return contentType as string
      * @throws FileStorageException
      */
-    String getContentType(String filepath) throws FileStorageException;
+    String getContentType(String filepath, String name) throws FileStorageException;
 
     long getFileSize(String filepath) throws FileStorageException;
 }

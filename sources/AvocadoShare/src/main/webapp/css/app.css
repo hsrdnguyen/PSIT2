@@ -180,13 +180,11 @@ a.modul-link:hover .modul {
 }
 
 .preview iframe, .preview frame {
-    width: 100%;
     min-height: 800px;
     height: 100%;
 }
 
 .preview pre {
-    width: 100%;
     line-break: auto;
     background-color: #e7e7e7;
     border: 1px solid #a0a0a0;
@@ -197,6 +195,6 @@ a.modul-link:hover .modul {
     padding: 1em;
 }
 
-.preview video {
+.preview img, .preview video, .preview pre, .preview iframe, .preview frame  {
     width: 100%;
 }

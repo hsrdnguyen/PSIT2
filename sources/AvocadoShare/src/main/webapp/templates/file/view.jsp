@@ -15,7 +15,7 @@
     IPreviewGenerator previewGenerator = null;
     previewGenerator = defaultPreviewFactory.getInstanceAndHandleErrors(file);
 %>
-<section class="document-show">
+<div class="row">
     <div class="list-group">
         <div class="list-group-item list-group-header">
             <div class="pull-xs-right btn-group" role="group">
@@ -36,4 +36,5 @@
             </div>
         </div>
     </div>
-</section>
+    <%@include file="../member/index.jsp" %>
+</div>

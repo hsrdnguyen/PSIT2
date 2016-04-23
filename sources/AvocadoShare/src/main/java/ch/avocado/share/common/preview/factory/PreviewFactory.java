@@ -33,15 +33,6 @@ public abstract class PreviewFactory {
         }
     }
 
-    protected String getMimeType(File file) throws PreviewException {
-        if(file == null) throw new IllegalArgumentException("file is null");
-        try {
-            return getFileStorageHandler().getContentType(file.getPath());
-        } catch (FileStorageException e) {
-            throw new PreviewException(ErrorMessageConstants.ERROR_READ_FILE_FAILED);
-        }
-    }
-
     IFileStorageHandler getFileStorageHandler() throws PreviewException {
         IFileStorageHandler fileStorageHandler;
         try{
