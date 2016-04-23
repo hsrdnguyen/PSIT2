@@ -71,6 +71,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setString(2, file.getTitle());
             preparedStatement.setTimestamp(3, new Timestamp(file.getLastChanged().getTime()));
             preparedStatement.setString(4, file.getPath());
+            preparedStatement.setString(5, file.getExtension());
+            preparedStatement.setString(6, file.getMimeType());
             connectionHandler.insertDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -173,7 +175,10 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setString(1, file.getTitle());
             preparedStatement.setTimestamp(2, new Timestamp(file.getLastChanged().getTime()));
             preparedStatement.setString(3, file.getPath());
-            preparedStatement.setLong(4, Long.parseLong(file.getId()));
+            preparedStatement.setString(4, file.getExtension());
+            preparedStatement.setString(5, file.getMimeType());
+            preparedStatement.setLong(6, Long.parseLong(file.getId()));
+
             if (!getConnectionHandler().updateDataSet(preparedStatement)) {
                 return false;
             }
@@ -187,35 +192,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             return false;
         }
         return updateObject(file);
-    }
-
-    @Override
-    public boolean grantAccess(String fileId, String userId) throws DataHandlerException {
-        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-        PreparedStatement preparedStatement;
-
-        try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_READING_ACCESS_LEVEL);
-            ResultSet rs = connectionHandler.executeQuery(preparedStatement);
-
-            String accessLevel = null;
-
-            if (rs.next()) {
-                accessLevel = rs.getString(1);
-            } else {
-                return false;
-            }
-
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.INSERT_RIGHTS_QUERY);
-            preparedStatement.setInt(1, Integer.parseInt(fileId));
-            preparedStatement.setInt(2, Integer.parseInt(userId));
-            preparedStatement.setInt(3, Integer.parseInt(accessLevel));
-
-            if (!connectionHandler.updateDataSet(preparedStatement)) return false;
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
-        return true;
     }
 
     private List<Category> getFileCategoriesFromDb(String fileId) throws DataHandlerException {
@@ -275,6 +251,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setPath(resultSet.getString(6));
         file.setModuleId(resultSet.getString(7));
         file.setOwnerId(resultSet.getString(8));
+        file.setExtension(resultSet.getString(9));
+        file.setMimeType(resultSet.getString(10));
         file.setCategories(getFileCategoriesFromDb(file.getId()));
         return file;
     }

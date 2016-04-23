@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
 import ch.avocado.share.model.data.*;
@@ -39,6 +40,7 @@ public class FileBean extends ResourceBean<File> {
     @Override
     public File create() throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
+        IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
         File file = FileFactory.getDefaultFile();
         checkParameterTitle(file);
@@ -53,6 +55,11 @@ public class FileBean extends ResourceBean<File> {
             }
             ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
             String path = uploadFile(getFileItem());
+            try {
+                file.setMimeType(fileStorageHandler.getContentType(file.getPath()));
+            } catch (FileStorageException e) {
+                throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Datei konnte nicht gelesen werden");
+            }
             file.setTitle(getTitle());
             file.setCategories(getCategories());
             file.setDescription(getDescription());
@@ -60,6 +67,7 @@ public class FileBean extends ResourceBean<File> {
             file.setOwnerId(getAccessingUser().getId());
             file.setModuleId(getModuleId());
             String fileId;
+
             fileId = fileDataHandler.addFile(file);
             file = fileDataHandler.getFile(fileId);
             if (file == null) {
@@ -161,8 +169,14 @@ public class FileBean extends ResourceBean<File> {
             }
         }
         if (getFileItem() != null && !file.hasErrors()) {
+            IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
             String path = uploadFile(getFileItem());
             file.setPath(path);
+            try {
+                file.setMimeType(fileStorageHandler.getContentType(path));
+            } catch (FileStorageException e) {
+                throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "File konnte nicht gelesen werden");
+            }
             changed = true;
         }
 

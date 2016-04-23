@@ -58,14 +58,5 @@ public interface IFileDataHandler {
      * @return {@code true} if the file was found an has been updated.
      */
     boolean updateFile(File file) throws DataHandlerException;
-
-    /**
-     * Grants the given user reading access on a file with the given id
-     * @param fileId file to give access to
-     * @param userId user to give access
-     * @return {@code true} if the file was found an has been updated.
-     */
-    boolean grantAccess(String fileId, String userId) throws DataHandlerException;
-
 }
 

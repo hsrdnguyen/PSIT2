@@ -17,7 +17,7 @@ public class FileTest {
 
     @Before
     public void setUp() {
-        this.file = new File("id", new ArrayList<Category>(), new Date(), 0.0f, "", "", "", "", new Date(), "", "");
+        this.file = new File("id", new ArrayList<Category>(), new Date(), 0.0f, "", "", "", "", new Date(), "", "", "");
     }
 
     @Test(expected = IllegalArgumentException.class)

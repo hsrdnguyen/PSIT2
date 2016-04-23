@@ -48,7 +48,7 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
 
     @Override
     public List<File> search(List<String> searchTerms) throws DataHandlerException {
-        return getFiles(Arrays.asList(new String[]{"1", "2", "3"}));
+        return getFiles(Arrays.asList("1", "2", "3"));
     }
 
     @Override
@@ -66,11 +66,6 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     @Override
     public boolean updateFile(File file){
         return update(file);
-    }
-
-    @Override
-    public boolean grantAccess(String fileId, String userId) {
-        return false;
     }
 
     public static void use() throws Exception {

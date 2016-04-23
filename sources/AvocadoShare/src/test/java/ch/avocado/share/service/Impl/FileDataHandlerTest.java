@@ -120,10 +120,11 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
 
         // add file
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
         file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull("File could not be added", id);
@@ -135,17 +136,22 @@ public class FileDataHandlerTest {
         assertNotNull("Could not fetch the added file", fetchedFile);
 
         assertNotNull("Fetch by title and module failed", fetchedFile);
-        assertEquals("Id (", id, fetchedFile.getId());
-        assertEquals("ModuleID", module.getId(), fetchedFile.getModuleId());
-        assertEquals("OwnerId", user.getId(), fetchedFile.getOwnerId());
-        assertEquals("Title", title, fetchedFile.getTitle());
-        assertEquals("Description", description, fetchedFile.getDescription());
-        assertEquals("Path", path, fetchedFile.getPath());
-        assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
-        // TODO: store extension and uncomment test below
-        // assertEquals("Extension", extension, file.getExtension());
-        assertCategoriesEquals(categories, fetchedFile.getCategories());
+        assertFilesEqual(file, fetchedFile);
+    }
 
+    public static void assertFilesEqual(File expected, File actual) {
+        assertNotNull(actual);
+        assertNotNull(expected);
+        assertEquals("Id ", expected.getId(), actual.getId());
+        assertEquals("ModuleID", expected.getModuleId(), actual.getModuleId());
+        assertEquals("OwnerId", expected.getOwnerId(), actual.getOwnerId());
+        assertEquals("Title", expected.getTitle(), actual.getTitle());
+        assertEquals("Description", expected.getDescription(), actual.getDescription());
+        assertEquals("MimeType", expected.getMimeType(), actual.getMimeType());
+        assertEquals("Path", expected.getPath(), actual.getPath());
+        assertEquals("Last changed", expected.getLastChanged(), actual.getLastChanged());
+        assertEquals("Extension", expected.getExtension(), actual.getExtension());
+        assertCategoriesEquals(expected.getCategories(), actual.getCategories());
     }
 
     @Test
@@ -155,8 +161,9 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
         file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
@@ -179,8 +186,10 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        String mimeType = "image/jpeg";
+
         List<Category> categories = getTestCategories();
-        File fileOne = new File(user.getId(), description, title + "1", path, lastChanged, extension, module.getId());
+        File fileOne = new File(user.getId(), description, title + "1", path, lastChanged, extension, module.getId(), mimeType);
         fileOne.setCategories(categories);
         // Add first file
         id = fileDataHandler.addFile(fileOne);
@@ -190,7 +199,7 @@ public class FileDataHandlerTest {
         ids.add(id);
 
         // Add second file
-        File fileTwo = new File(user.getId(), description, title + "2", path, lastChanged, extension, module.getId());
+        File fileTwo = new File(user.getId(), description, title + "2", path, lastChanged, extension, module.getId(), mimeType);
         id = fileDataHandler.addFile(fileTwo);
         assertNotNull(id);
         assertNotNull(fileOne.getId());
@@ -218,9 +227,10 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
 
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
         file.setCategories(categories);
 
         id = fileDataHandler.addFile(file);
@@ -230,16 +240,7 @@ public class FileDataHandlerTest {
 
         File fetchedFile = fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId());
         assertNotNull("Fetch by title and module failed", fetchedFile);
-        assertEquals("Id (", id, fetchedFile.getId());
-        assertEquals("OwnerId", user.getId(), fetchedFile.getOwnerId());
-        assertEquals("ModuleID", module.getId(), fetchedFile.getModuleId());
-        assertEquals("Title", title, fetchedFile.getTitle());
-        assertEquals("Description", description, fetchedFile.getDescription());
-        assertEquals("Path", path, fetchedFile.getPath());
-        assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
-        // TODO: store extension and uncomment test below
-        // assertEquals("Extension", extension, file.getExtension());
-        assertCategoriesEquals(categories, fetchedFile.getCategories());
+        assertFilesEqual(file, fetchedFile);
     }
 
     @Test
@@ -249,8 +250,9 @@ public class FileDataHandlerTest {
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
+        String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId());
+        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
         file.setCategories(categories);
 
         assertNotNull(fileDataHandler.addFile(file));
@@ -262,7 +264,6 @@ public class FileDataHandlerTest {
         title = title + " new";
         path = path + " new";
         lastChanged = new Date();
-        extension = ".png";
         categories = getTestCategories();
         categories.add(new Category("Something new"));
         file.setOwnerId(userTwo.getId());
@@ -271,28 +272,14 @@ public class FileDataHandlerTest {
         file.setDescription(description);
         file.setLastChanged(lastChanged);
         file.setPath(path);
-        file.setExtension(extension);
+        file.setExtension(".png");
+        file.setMimeType("image/png");
         file.setModuleId(moduleTwo.getId());
         file.setCategories(categories);
         assertTrue(fileDataHandler.updateFile(file));
 
         File fetchedFile = fileDataHandler.getFile(file.getId());
         assertNotNull(fetchedFile);
-        assertEquals("Id", file.getId(), fetchedFile.getId());
-        assertEquals("OwnerID", userTwo.getId(), fetchedFile.getOwnerId());
-        assertEquals("ModuleID", moduleTwo.getId(), fetchedFile.getModuleId());
-        assertEquals("Title", title, fetchedFile.getTitle());
-        assertEquals("Description", description, fetchedFile.getDescription());
-        assertEquals("Path", path, fetchedFile.getPath());
-        assertEquals("Last changed", lastChanged, fetchedFile.getLastChanged());
-        // TODO: store extension and uncomment test below
-        // assertEquals("Extension", extension, file.getExtension());
-        assertCategoriesEquals(categories, fetchedFile.getCategories());
-
-    }
-
-    @Test
-    public void testGrantAccess() throws Exception {
-
+        assertFilesEqual(file, fetchedFile);
     }
 }

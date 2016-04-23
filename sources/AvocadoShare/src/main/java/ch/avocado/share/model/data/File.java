@@ -13,10 +13,11 @@ public class File extends AccessControlObjectBase {
     private String path;
     private Date lastChanged;
     private String extension;
+    private String mimeType;
     //private String version;
     private String moduleId;
 
-    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId) {
+    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId, String mimeType) {
         super(id, categories, creationDate, rating, ownerId, description);
         setLastChanged(lastChanged);
         setPath(path);
@@ -24,10 +25,11 @@ public class File extends AccessControlObjectBase {
         setExtension(extension);
         //setVersion(version);
         setModuleId(moduleId);
+        setMimeType(mimeType);
     }
 
-    public File(String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId) {
-        this(null, new ArrayList<Category>(), new Date(), 0.0f, ownerId, description, title, path, lastChanged, extension, moduleId);
+    public File(String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId, String mimeType) {
+        this(null, new ArrayList<Category>(), new Date(), 0.0f, ownerId, description, title, path, lastChanged, extension, moduleId, mimeType);
     }
 
     public String getTitle() {
@@ -94,5 +96,13 @@ public class File extends AccessControlObjectBase {
     @Override
     public String getReadableName() {
         return getTitle();
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

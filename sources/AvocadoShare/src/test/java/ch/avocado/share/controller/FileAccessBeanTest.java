@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
+import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -41,6 +42,7 @@ public class FileAccessBeanTest {
 
     @Before
     public void setUp() throws Exception {
+        DatabaseConnectionHandlerMock.use();
         IModuleDataHandler moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
@@ -59,7 +61,7 @@ public class FileAccessBeanTest {
 
         module = new Module(owner.getId(), "description",  "UNEXISTING MODULE!!!!");
         moduleDataHandler.addModule(module);
-        file = new File(owner.getId(), "description", "title", "path", new Date(), ".jpg", module.getId());
+        file = new File(owner.getId(), "description", "title", "path", new Date(), ".jpg", module.getId(), "image/jpeg");
         fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFile(file.getId()).getOwnerId());
 
@@ -93,6 +95,11 @@ public class FileAccessBeanTest {
         IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
         fileDataHandler.deleteFile(file);
         moduleDataHandler.deleteModule(module);
+    }
+
+    @After
+    public void restoreServices() throws Exception {
+        ServiceLocatorModifier.restore();
     }
 
     @Test
@@ -216,12 +223,6 @@ public class FileAccessBeanTest {
         securityHandler.setAccessLevel(userWithReadRights, file, AccessLevelEnum.WRITE);
         assertTrue(bean.grantAccess());
         assertEquals(AccessLevelEnum.WRITE, securityHandler.getAccessLevel(userWithReadRights, file));
-    }
-
-
-    @After
-    public void restoreServices() throws Exception {
-        ServiceLocatorModifier.restore();
     }
 
 }
