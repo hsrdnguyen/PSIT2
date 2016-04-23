@@ -7,7 +7,7 @@
     <div class="container text-muted">
         <ul>
             <li><a href="#about">&Uuml;ber uns</a></li>
-            <li><a href="contact.jsp">Kontakt</a></li>
+            <li><a href="#contact">Kontakt</a></li>
             <li><a href="#something">Fehler melden</a></li>
         </ul>
         <p>Sorgf&auml;lltig mit Liebe erstellt von S. Bergman, L. Kunz, C. M&uuml;ller und D. T. Nguyen.</p>
