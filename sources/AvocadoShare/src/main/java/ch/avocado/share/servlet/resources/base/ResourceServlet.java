@@ -155,6 +155,8 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                 return securityHandler.getAnonymousAccessLevel(objectId);
             }
         } catch (DataHandlerException e) {
+            // TODO: log
+            e.printStackTrace();
             throw new HttpBeanException(e);
         }
     }

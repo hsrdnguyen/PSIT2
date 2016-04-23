@@ -67,13 +67,16 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ACCESS_LEVEL_INCLUDING_INHERITED);
-            preparedStatement.setInt(1, ownerId);
-            preparedStatement.setInt(2, objectId);
-            preparedStatement.setInt(3, ownerId);
-            preparedStatement.setInt(4, objectId);
-            preparedStatement.setInt(5, ownerId);
-            preparedStatement.setInt(6, objectId);
-            preparedStatement.setInt(7, objectId);
+            preparedStatement.setLong(1, ownerId);
+            preparedStatement.setLong(2, objectId);
+            preparedStatement.setLong(3, ownerId);
+            preparedStatement.setLong(4, objectId);
+            preparedStatement.setLong(5, ownerId);
+            preparedStatement.setLong(6, objectId);
+            preparedStatement.setLong(7, objectId);
+            preparedStatement.setLong(8, objectId);
+            preparedStatement.setLong(9, ownerId);
+
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }

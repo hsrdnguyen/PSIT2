@@ -208,6 +208,17 @@ public class SQLQueryConstants {
             "  WHERE arights.object_id = ?";
 
 
+    public static final String SELECT_MODULE_RIGHTS_FOR_FILE = "" +
+            "SELECT readable, writable, manageable, FALSE FROM access_level AS level2\n" +
+            "JOIN (SELECT\n" +
+            "  rights_from_module.level\n" +
+            "FROM\n" +
+            "  rights AS rights_from_module\n" +
+            "  JOIN uploaded_into AS ui\n" +
+            "    ON ui.module_id = rights_from_module.object_id\n" +
+            "  WHERE ui.file_id = ? AND rights_from_module.owner_id = ?) AS file_rights_from_module\n" +
+            "  ON file_rights_from_module.level = level2.level\n ";
+
     public static final String SELECT_ACCESS_LEVEL_INCLUDING_INHERITED = "" +
             "SELECT " +
             "  readable, writable, manageable, false " +
@@ -232,7 +243,8 @@ public class SQLQueryConstants {
             "          WHERE x.owner_id = ? AND x.object_id = gro.id AND y.readable = TRUE" +
             "       )" +
             "       AND grights.object_id = ?" +
-            " UNION " + SELECT_ANONYMOUS_ACCESS_LEVEL;
+            " UNION " + SELECT_ANONYMOUS_ACCESS_LEVEL +
+            " UNION " + SELECT_MODULE_RIGHTS_FOR_FILE;
 
     public static final String ADD_ANONYMOUS_ACCESS_LEVEL = "" +
             "INSERT INTO avocado_share.default_access (object_id, level) " +
