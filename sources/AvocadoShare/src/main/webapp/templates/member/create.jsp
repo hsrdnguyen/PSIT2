@@ -5,10 +5,11 @@
 <noscript class="list-group-item-danger">
     Für diese Aktion wird JavaScript benötigt.
 </noscript>
+
 <div class="list-group-item">
-    <form method="post" action="/members">
+    <form method="post" action="members">
         <div class="form-group">
-            <input type="text" name="<%=MemberServlet.OWNER_ID%>" class="form-control" id="user" data-suggestion="/user_completion">
+            <input type="text" autocomplete="off" name="<%=MemberServlet.OWNER_ID%>" class="form-control" id="user" data-suggestion="/user_completion">
         </div>
         <input type="hidden" name="<%=MemberServlet.ACCESS_LEVEL%>" value="<%=Encoder.forHtmlAttribute(AccessLevelEnum.READ.name())%>" />
         <input type="hidden" name="<%=MemberServlet.TARGET_ID%>" value="<%=Encoder.forHtmlAttribute(members.getTarget().getId())%>" />

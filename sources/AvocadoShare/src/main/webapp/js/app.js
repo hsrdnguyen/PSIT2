@@ -1,25 +1,30 @@
-'use strict'
+"use strict";
 
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 
-var Autocomplete = function (input) {
+function Autocomplete(input) {
+    if(typeof input === 'undefined' || input === null) {
+        throw new TypeError("Invalid input");
+    }
     this.input = input;
     var that = this;
     input.addEventListener("keyup", function (evt) {
         that.updateSuggestions(this.value);
     });
     this.hiddenInput = document.createElement("input");
+    this.suggestionValueAttribute = "data-suggestion-id";
     this.hiddenInput.setAttribute("type", "hidden");
     this.url = input.getAttribute("data-suggestion");
+    this.input.setAttribute("autocomplete", "off");
     this.hiddenInput.name = input.name;
     input.name = "";
     this.container = document.createElement("ul");
     this.container.className = "suggestion-container dropdown-menu";
     insertAfter(this.container, input);
     insertAfter(this.hiddenInput, input);
-};
+}
 
 Autocomplete.prototype.updateSuggestions = function (query) {
     if (query.length == 0) {
@@ -35,10 +40,10 @@ Autocomplete.prototype.updateSuggestions = function (query) {
 
 Autocomplete.prototype.selectElement = function (element) {
     console.log(element);
-    this.hiddenInput.value = element.getAttribute("data-suggestion-id");
+    this.hiddenInput.value = element.getAttribute(this.suggestionValueAttribute);
     this.input.value = element.innerText;
     this.showResults([]);
-}
+};
 
 Autocomplete.prototype.showResults = function (users) {
     this.container.innerHTML = "";
@@ -49,11 +54,14 @@ Autocomplete.prototype.showResults = function (users) {
         for (var i = 0; i < users.length; i++) {
             var element = document.createElement("li");
             element.className = "dropdown-item";
-            var that = this;
-            $(element).click(function () {
-                that.selectElement(this);
-            });
-            element.setAttribute("data-suggestion-id", users[i].id);
+            element.addEventListener("click",
+                function(obj){
+                    return function () {
+                        obj.selectElement(this);
+                    }
+                }(this)
+            );
+            element.setAttribute(this.suggestionValueAttribute, users[i].id);
             element.innerText = users[i].name;
             this.container.appendChild(element);
         }

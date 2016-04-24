@@ -11,9 +11,15 @@
     <div class="col-xl-8">
         <div class="list-group">
             <div class="list-group-item list-group-header">
+                <% if (viewConfig.getAccess().containsLevel(AccessLevelEnum.MANAGE)) { %>
+                <a class="btn btn-secondary-outline pull-xs-right"
+                   href="?action=edit&id=<%=Encoder.forUrlAttribute(group.getId())%>">
+                    <span class="octicon octicon-pencil"></span>
+                    <span class="sr-only">Bearbeiten</span>
+                </a>
+                <% } %>
                 <h2><%=name %>
                 </h2>
-                <a class="btn btn-secondary" href="?action=edit&id=<%=Encoder.forUrlAttribute(group.getId())%>">Edit</a>
             </div>
             <div class="list-group-item">
                 <%=description %>

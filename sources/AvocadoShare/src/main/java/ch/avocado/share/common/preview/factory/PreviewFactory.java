@@ -26,7 +26,7 @@ public abstract class PreviewFactory {
     protected String getStreamUrl(File file) throws PreviewException {
         if(file == null) throw new IllegalArgumentException("file is null");
         try {
-            return DownloadServlet.getStreamUrl(file);
+            return DownloadServlet.getStreamUrl(file) + "&cache=" + file.getPath();
         } catch (UnsupportedEncodingException e) {
             throw new PreviewException(ErrorMessageConstants.ERROR_URLENCODE_FAILED);
         }
