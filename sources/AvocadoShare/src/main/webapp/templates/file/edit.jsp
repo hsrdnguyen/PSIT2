@@ -99,8 +99,9 @@
                 <%=form.getFormEnd()%>
             </div>
         </div>
-        <div class="col-lg-4">
-            <%@include file="info.jsp"%>
-        </div>
+    </div>
+    <div class="col-lg-4">
+        <%@include file="../member/index.jsp"%>
+        <%@include file="info.jsp"%>
     </div>
 </div>
