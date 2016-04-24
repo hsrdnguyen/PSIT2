@@ -36,7 +36,6 @@ public class ForgottenPasswordBean implements Serializable {
 
     public void setEmail(String email) {
         if (email == null) throw new IllegalArgumentException("email can't be null");
-        System.out.println("New email: " + email);
         this.email = email;
     }
 
@@ -160,7 +159,6 @@ public class ForgottenPasswordBean implements Serializable {
         User user;
         try {
             user = userDataHandler.getUserByEmailAddress(email);
-            System.out.println("User: " + user);
         } catch (DataHandlerException e) {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;

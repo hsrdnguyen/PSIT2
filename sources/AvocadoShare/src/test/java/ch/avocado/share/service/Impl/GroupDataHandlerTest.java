@@ -34,12 +34,10 @@ public class GroupDataHandlerTest {
         Group group;
         group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_1);
         if(group != null) {
-            System.out.println("Found group with name: " + UNEXISTING_GROUP_NAME_1);
             assertTrue(groupDataHandler.deleteGroup(group));
         }
         group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_2);
         if(group != null) {
-            System.out.println("Found group with name: " + UNEXISTING_GROUP_NAME_2);
             assertTrue(groupDataHandler.deleteGroup(group));
         }
 

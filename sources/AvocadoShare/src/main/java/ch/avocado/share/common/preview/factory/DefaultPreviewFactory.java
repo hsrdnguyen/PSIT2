@@ -58,7 +58,6 @@ public class DefaultPreviewFactory  extends PreviewFactory{
             contentType = "video/webm";
         }
 
-            System.out.println("Searching content-type: " + contentType);
         if(previewerFactories.containsKey(contentType)) {
             previewFactory = previewerFactories.get(contentType);
         }
@@ -66,7 +65,6 @@ public class DefaultPreviewFactory  extends PreviewFactory{
 
         if(contentType.contains("/")) {
             topLevelType = contentType.split("/",2)[0];
-            System.out.println("Searching top-level type: " + topLevelType);
             if(previewerFactories.containsKey(topLevelType)) {
                 previewFactory = previewerFactories.get(topLevelType);
             }

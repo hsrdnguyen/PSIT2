@@ -215,8 +215,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
         if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         AccessLevelEnum grantedAccessLevel;
-        // TODO: remove
-        System.out.println("Accessing user : " + getAccessingUser());
         try {
             if (getAccessingUser() == null) {
                 grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
@@ -227,8 +225,6 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
             e.printStackTrace();
             throw new HttpBeanDatabaseException();
         }
-        // TODO: remove
-        System.out.println("Level: " + grantedAccessLevel);
         if (!grantedAccessLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }

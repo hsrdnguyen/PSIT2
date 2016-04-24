@@ -30,7 +30,6 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
         Random random = new Random();
         object.setId("object_" + random.nextLong() + random.nextLong());
         objects.put(object.getId(), object);
-        System.out.println("Created object with id " + object.getId());
         return object.getId();
     }
 

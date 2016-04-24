@@ -193,10 +193,6 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (action == null) throw new IllegalArgumentException("action is null");
         AccessLevelEnum requiredLevel = getRequiredAccessForAction(action);
         AccessLevelEnum allowedLevel = getAccessOnObject(userId, objectId);
-        System.out.println("Allowd level: " + allowedLevel);
-        System.out.println("User id: " + userId);
-        System.out.println("ObjectId: " + objectId);
-        System.out.println("Required: " + requiredLevel);
         if (!allowedLevel.containsLevel(requiredLevel)) {
             throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ERROR_ACTION_NOT_ALLOWED + action.name());
         }
@@ -233,7 +229,6 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (controller == null) throw new IllegalArgumentException("controller is null");
         for (Map.Entry<String, Object> parameterEntry : parameter.entrySet()) {
             String setterName = getSetterName(parameterEntry.getKey());
-            System.out.println("Trying to invoke " + setterName);
             tryInvokeSetterOfBean(controller, setterName, parameterEntry.getValue());
         }
     }
@@ -312,7 +307,6 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         String accepted = request.getHeader("Accept");
         List<String> encodings = new ArrayList<>(1);
         for (String type : accepted.split(",")) {
-            System.out.println("Type: " + type);
             if (type.contains(";")) {
                 type = type.split(";")[0];
             }
@@ -348,9 +342,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (renderer == null) {
             throw new HttpBeanException(HttpStatusCode.NOT_ACCEPTABLE, "Kein Renderer gefunden für den Typ.");
         }
-        System.out.println("callling renderer: " + renderer);
         renderer.renderView(config);
-
     }
 
     /**
@@ -610,7 +602,6 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
                     throw new RuntimeException(e);
                 }
             } else {
-                System.out.println("Found file: " + item.getFieldName());
                 parameter.put(item.getFieldName(), item);
             }
         }
@@ -640,7 +631,6 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             List<Model> models = new ArrayList<>(objects.size());
             for (E object : objects) {
                 models.add(object);
-                System.out.println("Checking access for: " + object);
                 ensureAccess(session.getUserId(), object.getId(), Action.VIEW);
             }
             viewConfig = new ListViewConfig(view, request, response, models);

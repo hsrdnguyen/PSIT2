@@ -171,8 +171,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
                 throw new DataHandlerException("Update address failed");
             }
             emailAddress.setDirty(false);
-        }else {
-            System.out.println("not dirty");
         }
     }
 
@@ -300,14 +298,13 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             }
 
             PreparedStatement ps = connectionHandler.getPreparedStatement(query);
-            int postition = 1;
+            int position = 1;
             for (String tmp : searchTerms) {
                 for(int i = 0; i < UserConstants.NUMBER_OF_TERMS_PER_LIKE; i++) {
-                    ps.setString(postition, "%" + tmp.toLowerCase() + "%");
-                    ++postition;
+                    ps.setString(position, "%" + tmp.toLowerCase() + "%");
+                    ++position;
                 }
             }
-            System.out.println(query);
             ResultSet rs = connectionHandler.executeQuery(ps);
             return getUsersFromResultSet(rs);
         } catch (SQLException e) {
