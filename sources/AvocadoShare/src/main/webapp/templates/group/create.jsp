@@ -1,7 +1,7 @@
 <%@ page import="ch.avocado.share.common.form.FormBuilder" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
-<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
+<%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);

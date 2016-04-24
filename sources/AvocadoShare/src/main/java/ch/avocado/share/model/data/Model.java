@@ -1,10 +1,5 @@
 package ch.avocado.share.model.data;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 

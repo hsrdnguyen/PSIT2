@@ -1,6 +1,6 @@
-<%@ page import="ch.avocado.share.model.data.User" %>
-<%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="ch.avocado.share.model.data.Group" %>
+<%@ page import="ch.avocado.share.model.data.User" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <div class="list-group-item list-group-header">
     <% if(userCanEdit) { %>

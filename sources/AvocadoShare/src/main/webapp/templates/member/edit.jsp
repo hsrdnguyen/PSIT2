@@ -1,7 +1,9 @@
 <%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page import="ch.avocado.share.model.data.*" %>
-<%@ page import="java.util.Map" %>
+<%@ page import="ch.avocado.share.model.data.AccessIdentity" %>
+<%@ page import="ch.avocado.share.model.data.AccessLevelEnum" %>
+<%@ page import="ch.avocado.share.model.data.Members" %>
 <%@ page import="ch.avocado.share.servlet.MemberServlet" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <jsp:useBean id="editMemberBean" class="ch.avocado.share.controller.EditMemberBean" />
 <%

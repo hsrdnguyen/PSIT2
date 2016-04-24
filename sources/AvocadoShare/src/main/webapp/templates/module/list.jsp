@@ -1,6 +1,5 @@
-<%@ page import="ch.avocado.share.model.data.Module" %>
-<%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.common.Encoder" %>
+<%@ page import="ch.avocado.share.model.data.Module" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.ListViewConfig" %>
 <%@ page import="java.util.Collection" %>

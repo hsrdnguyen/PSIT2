@@ -2,10 +2,8 @@ package ch.avocado.share.servlet;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.controller.UserSession;
-import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
@@ -14,10 +12,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Service;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @WebServlet("/user_completion")

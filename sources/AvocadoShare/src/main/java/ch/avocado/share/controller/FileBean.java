@@ -1,7 +1,6 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.Filename;
-import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileConstants;
 import ch.avocado.share.model.data.*;

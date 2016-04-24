@@ -1,8 +1,6 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.model.data.AccessLevelEnum;
-import ch.avocado.share.model.data.Members;
-import ch.avocado.share.model.data.User;
 
 /**
  * Created by coffeemakr on 21.04.16.

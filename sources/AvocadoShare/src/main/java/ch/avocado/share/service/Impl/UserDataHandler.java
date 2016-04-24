@@ -1,6 +1,5 @@
 package ch.avocado.share.service.Impl;
 
-import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.common.constants.sql.UserConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IDatabaseConnectionHandler;

@@ -7,7 +7,6 @@ import ch.avocado.share.common.preview.PreviewException;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileStorageHandler;
-import ch.avocado.share.service.exceptions.FileStorageException;
 import ch.avocado.share.servlet.DownloadServlet;
 
 import java.io.UnsupportedEncodingException;

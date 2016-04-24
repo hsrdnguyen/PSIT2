@@ -1,5 +1,4 @@
 <%@ page import="ch.avocado.share.common.HttpStatusCode" %>
-<%@ page import="ch.avocado.share.common.Encoder" %>
 <%@ page contentType="text/html;charset=UTF-8"
          pageEncoding="UTF-8"
          language="java"

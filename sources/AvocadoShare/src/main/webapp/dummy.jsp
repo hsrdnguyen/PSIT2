@@ -1,7 +1,7 @@
-<%@ page import="ch.avocado.share.controller.UserSession" %>
-<%@ page import="ch.avocado.share.service.ISecurityHandler" %>
 <%@ page import="ch.avocado.share.common.ServiceLocator" %>
+<%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="ch.avocado.share.model.data.AccessLevelEnum" %>
+<%@ page import="ch.avocado.share.service.ISecurityHandler" %>
 <%@ page import="ch.avocado.share.service.Mock.*" %><%--
 
 Installs all dummy handlers

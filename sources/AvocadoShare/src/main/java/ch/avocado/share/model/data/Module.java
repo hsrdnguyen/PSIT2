@@ -1,7 +1,6 @@
 package ch.avocado.share.model.data;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;

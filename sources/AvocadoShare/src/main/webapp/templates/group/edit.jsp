@@ -1,4 +1,3 @@
-<%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.common.form.FormBuilder" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>

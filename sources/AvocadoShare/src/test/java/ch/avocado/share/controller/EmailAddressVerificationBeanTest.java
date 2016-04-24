@@ -1,12 +1,10 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import org.junit.After;
 import org.junit.Before;

@@ -3,7 +3,6 @@ package ch.avocado.share.common.form;
 import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.data.AccessIdentity;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.FormBuilderException;

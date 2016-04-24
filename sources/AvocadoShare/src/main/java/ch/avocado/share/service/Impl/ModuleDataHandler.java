@@ -9,7 +9,6 @@ import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import org.bouncycastle.asn1.icao.ICAOObjectIdentifiers;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;

@@ -1,10 +1,8 @@
 package ch.avocado.share.service;
 
-import ch.avocado.share.model.data.PasswordResetVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;

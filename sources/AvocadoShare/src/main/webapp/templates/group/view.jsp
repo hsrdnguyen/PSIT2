@@ -1,5 +1,3 @@
-<%@ page import="ch.avocado.share.common.Encoder" %>
-<%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
