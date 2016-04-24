@@ -22,5 +22,7 @@
             </div>
         </div>
     </div>
-    <%@include file="../member/index.jsp"%>
+    <div class="col-xl-4">
+        <%@include file="../member/index.jsp" %>
+    </div>
 </div>

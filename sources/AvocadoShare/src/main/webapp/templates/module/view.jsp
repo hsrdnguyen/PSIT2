@@ -43,48 +43,49 @@
                 <p><%=description%></p>
             </div>
         </div>
-    </div>
-    <%@include file="../member/index.jsp"%>
-    <div class="col-xl-8">
+
         <div class="list-group">
             <div class="list-group-item list-group-header">
                 <% if(viewConfig.getAccess().containsLevel(AccessLevelEnum.WRITE)) { %>
-                    <a href="<%=baseUrlInModule %>/file?action=<%=ResourceServlet.ACTION_CREATE%>&m=<%=Encoder.forHtmlAttribute(module.getId())%>"
-                       class="btn btn-primary-outline pull-xs-right" title="Neue Datei hochladen">
-                        <span class="octicon octicon-cloud-upload"></span>
-                    </a>
+                <a href="<%=baseUrlInModule %>/file?action=<%=ResourceServlet.ACTION_CREATE%>&m=<%=Encoder.forHtmlAttribute(module.getId())%>"
+                   class="btn btn-primary-outline pull-xs-right" title="Neue Datei hochladen">
+                    <span class="octicon octicon-cloud-upload"></span>
+                </a>
                 <% } %>
                 <h3>Dateien</h3>
             </div>
-<%
+            <%
                 if(fetchFilesFailed) {
-%>
-                    <div class="list-group-item list-group-item-warning">
-                        Die Dateien konnten leider nicht geladen werden.
-                        Bitte versuchen Sie es später noch einmal oder kontaktieren Sie ihren Administrator.
-                    </div>
-<%
-                } else if(files.isEmpty()) { %>
-                    <div class="list-group-item">
-                        Es existieren noch keine Dateien in diesem Modul.
-                    </div>
-<%
-                } else {
-                    for(File file: files) {
-                        String moduleFileName = Encoder.forHtml(file.getTitle());
-                        String moduleFileLink = baseUrlInModule + "/file?id=" + Encoder.forHtmlAttribute(file.getId());
-                        String moduleFileDescription = Encoder.forHtml(file.getDescription());
-%>
-                    <a class="list-group-item" href="<%=moduleFileLink %>">
-                        <div class="list-group-item-heading">
-                            <%=moduleFileName%>
-                        </div>
-                        <%=moduleFileDescription %>
-                    </a>
-<%
+            %>
+            <div class="list-group-item list-group-item-warning">
+                Die Dateien konnten leider nicht geladen werden.
+                Bitte versuchen Sie es später noch einmal oder kontaktieren Sie ihren Administrator.
+            </div>
+            <%
+            } else if(files.isEmpty()) { %>
+            <div class="list-group-item">
+                Es existieren noch keine Dateien in diesem Modul.
+            </div>
+            <%
+            } else {
+                for(File file: files) {
+                    String moduleFileName = Encoder.forHtml(file.getTitle());
+                    String moduleFileLink = baseUrlInModule + "/file?id=" + Encoder.forHtmlAttribute(file.getId());
+                    String moduleFileDescription = Encoder.forHtml(file.getDescription());
+            %>
+            <a class="list-group-item" href="<%=moduleFileLink %>">
+                <div class="list-group-item-heading">
+                    <%=moduleFileName%>
+                </div>
+                <%=moduleFileDescription %>
+            </a>
+            <%
                     }
                 }
-%>
+            %>
         </div>
+    </div>
+    <div class="col-xl-4">
+        <%@include file="../member/index.jsp"%>
     </div>
 </div>

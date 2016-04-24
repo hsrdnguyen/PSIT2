@@ -9,27 +9,34 @@
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("name", "Name");
 %>
-<h2>Gruppe bearbeiten</h2>
-<%=formBuilder.getFormErrors()%>
-<%=formBuilder.getFormBegin("PATCH") %>
-<div class="form-group">
-    <%=formBuilder.getLabelFor("name") %>
-    <%=formBuilder.getInputFor("name") %>
-</div>
-<div class="form-group">
-<%=formBuilder.getLabelFor("description") %>
-<%=formBuilder.getInputFor("description", "textarea") %>
-</div>
-<div class="form-group">
-<%=formBuilder.getSubmit("Gruppe speichern")%>
-</div>
-<%=formBuilder.getFormEnd() %>
+<div class="row">
+    <div class="col-xl-8">
+        <h2>Gruppe bearbeiten</h2>
+        <%=formBuilder.getFormErrors()%>
+        <%=formBuilder.getFormBegin("PATCH") %>
+        <div class="form-group">
+            <%=formBuilder.getLabelFor("name") %>
+            <%=formBuilder.getInputFor("name") %>
+        </div>
+        <div class="form-group">
+            <%=formBuilder.getLabelFor("description") %>
+            <%=formBuilder.getInputFor("description", "textarea") %>
+        </div>
+        <div class="form-group">
+            <%=formBuilder.getSubmit("Gruppe speichern")%>
+        </div>
+        <%=formBuilder.getFormEnd() %>
 
-<h3>Gruppe löschen</h3>
-<div class="alert alert-danger">
-    Eine gelöschte Gruppe kann nicht wiederhergestellt werden.<br/>
-    Sowohl Sie als auch alle Mitglieder verlieren die Rechte die Sie durch diese Gruppe erworben haben.
+        <h3>Gruppe löschen</h3>
+        <div class="alert alert-danger">
+            Eine gelöschte Gruppe kann nicht wiederhergestellt werden.<br/>
+            Sowohl Sie als auch alle Mitglieder verlieren die Rechte die Sie durch diese Gruppe erworben haben.
+        </div>
+        <%=formBuilder.getFormBegin("delete")%>
+        <%=formBuilder.getSubmit("Gruppe löschen", "btn-danger")%>
+        <%=formBuilder.getFormEnd()%>
+    </div>
+    <div class="col-xl-4">
+        <%@include file="../member/index.jsp" %>
+    </div>
 </div>
-<%=formBuilder.getFormBegin("delete")%>
-<%=formBuilder.getSubmit("Gruppe löschen", "btn-danger")%>
-<%=formBuilder.getFormEnd()%>

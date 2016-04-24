@@ -12,8 +12,8 @@
         </ul>
         <p>Sorgf&auml;lltig mit Liebe erstellt von S. Bergman, L. Kunz, C. M&uuml;ller und D. T. Nguyen.</p>
         <p>&copy; 2016, All rights reserved.
-            Ein Dankeschön an <a href="https://twitter.com/eatingsausages" title="@eatingsausages">John Pugsley</a> für das tolle
-            <a title="'yellow white and blue' auf Flickr" href="https://https://flic.kr/p/76GCDs">Hintergundbild</a>.</p>
+            Ein Dankeschön an John Pugsley für das tolle
+            <a title="'yellow white and blue' auf Flickr" href="https://flic.kr/p/76GCDs">Hintergundbild</a>.</p>
     </div>
 </footer>
 <script type="application/javascript" src="<%=baseUrlFooter%>/components/jquery/dist/jquery.min.js"></script>

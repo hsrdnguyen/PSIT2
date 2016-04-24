@@ -16,25 +16,33 @@
     previewGenerator = defaultPreviewFactory.getInstanceAndHandleErrors(file);
 %>
 <div class="row">
-    <div class="list-group">
-        <div class="list-group-item list-group-header">
-            <div class="pull-xs-right btn-group" role="group">
-                <a class="btn btn-secondary-outline" href="?action=edit&id=<%=id %>"><span class="octicon octicon-pencil"></span></a>
-                <%-- TODO: fix absolute link --%>
-                <a class="btn btn-primary-outline" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>
+    <div class="col-lg-8">
+        <div class="list-group">
+            <div class="list-group-item list-group-header">
+                <div class="pull-xs-right btn-group" role="group">
+                    <a class="btn btn-secondary-outline" href="?action=edit&id=<%=id %>"><span
+                            class="octicon octicon-pencil"></span></a>
+                    <%-- TODO: fix absolute link --%>
+                    <a class="btn btn-primary-outline" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>
+                </div>
+                <h2><%=title %>
+                </h2>
             </div>
-            <h2><%=title %></h2>
-        </div>
-        <div class="list-group-item">
-            <h3 class="list-group-item-heading">Beschreibung</h3>
-            <p><%=description%></p>
-        </div>
-        <div class="list-group-item">
-            <h3 class="list-group-item-heading">Vorschau</h3>
-            <div class="preview">
-                <%=previewGenerator.getPreview() %>
+            <div class="list-group-item">
+                <h3 class="list-group-item-heading">Beschreibung</h3>
+                <p><%=description%>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <h3 class="list-group-item-heading">Vorschau</h3>
+                <div class="preview">
+                    <%=previewGenerator.getPreview() %>
+                </div>
             </div>
         </div>
     </div>
-    <%@include file="../member/index.jsp" %>
+    <div class="col-lg-4">
+        <%@include file="../member/index.jsp" %>
+        <%@include file="info.jsp"%>
+    </div>
 </div>

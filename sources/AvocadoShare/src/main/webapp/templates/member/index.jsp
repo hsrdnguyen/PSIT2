@@ -8,8 +8,7 @@
     Members members = viewConfigInMembers.getMembers();
     boolean userCanEdit = viewConfigInMembers.getAccess().containsLevel(AccessLevelEnum.MANAGE);
 %>
-<div class="col-xl-4">
-    <div class="list-group">
+<div class="list-group">
     <%
         String action = request.getParameter("action");
         if (userCanEdit && action_edit.equalsIgnoreCase(action)) {
@@ -26,5 +25,4 @@
     <%
         }
     %>
-    </div>
 </div>

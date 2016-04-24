@@ -34,5 +34,7 @@
         <%=form.getSubmit("Modul löschen", "btn-danger")%>
         <%=form.getFormEnd() %>
     </div>
-    <%@include file="../member/index.jsp" %>
+    <div class="col-xl-4">
+        <%@include file="../member/index.jsp" %>
+    </div>
 </div>
