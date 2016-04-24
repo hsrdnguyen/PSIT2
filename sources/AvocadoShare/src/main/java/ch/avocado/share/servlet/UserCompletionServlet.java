@@ -18,10 +18,7 @@ import javax.xml.ws.Service;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @WebServlet("/user_completion")
 public class UserCompletionServlet extends HttpServlet {
@@ -45,8 +42,12 @@ public class UserCompletionServlet extends HttpServlet {
 
     private void renderResult(List<User> users, OutputStream out) throws IOException {
         out.write("{\"users\":[".getBytes());
-        for(User user: users) {
-            writeUser(user, out);
+        Iterator<User> i = users.iterator();
+        while(i.hasNext()) {
+            writeUser(i.next(), out);
+            if(i.hasNext()) {
+                out.write(",".getBytes());
+            }
         }
         out.write("]}".getBytes());
     }
