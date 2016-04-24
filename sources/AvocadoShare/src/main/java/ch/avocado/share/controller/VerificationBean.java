@@ -27,33 +27,26 @@ public class VerificationBean implements Serializable {
         }
         if (email != null && code != null) {
             User user = null;
-            System.out.println("email: " + email);
             try {
                 user = userDataHandler.getUserByEmailAddress(email);
             } catch (DataHandlerException e) {
                 e.printStackTrace();
                 return false;
             }
-            if (user != null) {
-                user.getMail().verify();
-                try {
-                    userDataHandler.updateUser(user);
-                } catch (DataHandlerException e) {
-                    e.printStackTrace();
-                    return false;
+            if (user != null && !user.getMail().isVerified() && user.getMail().getVerification() != null) {
+                if(user.getMail().getVerification().getCode().equals(code) && !user.getMail().getVerification().isExpired()) {
+                    user.getMail().verify();
+                    try {
+                        isVerified = userDataHandler.updateUser(user);
+                    } catch (DataHandlerException e) {
+                        isVerified = false;
+                    }
                 }
-                isVerified = true;
             } else {
                 System.out.println("User not found.");
             }
         }
         return isVerified;
-    }
-
-
-    public boolean verifyPasswordReset() {
-        //todo implement password reset
-        return true;
     }
 
     public String getCode() {

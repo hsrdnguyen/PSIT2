@@ -82,7 +82,7 @@ public abstract class BaseMailVerification {
      */
     public boolean isExpired() {
         Date now = new Date();
-        return expiry.compareTo(now) >= 0;
+        return expiry.before(now);
     }
 
     @Override
