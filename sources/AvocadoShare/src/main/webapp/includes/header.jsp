@@ -35,10 +35,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%=title %></title>
-    <link rel="stylesheet" href="<%=baseUrl%>/components/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="<%=baseUrl%>/css/octicons.css">
-    <link rel="stylesheet" href="<%=baseUrl%>/css/app.css">
-    <script type="application/javascript" src="<%=baseUrl%>/js/app.js"></script>
+    <link rel="stylesheet" href="<%=baseUrl%>/static/components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="<%=baseUrl%>/static/css/octicons.css">
+    <link rel="stylesheet" href="<%=baseUrl%>/static/css/app.css">
+    <script type="application/javascript" src="<%=baseUrl%>/static/js/app.js"></script>
     <% for(String script: scripts) { %>
     <script type="application/javascript" src="<%=Encoder.forHtmlAttribute(script)%>"></script>
     <% } %>

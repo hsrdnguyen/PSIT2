@@ -15,12 +15,23 @@
         <filter-name>HiddenFilesFilter</filter-name>
         <url-pattern>/includes/*</url-pattern>
     </filter-mapping>
-
     <filter-mapping>
         <filter-name>HiddenFilesFilter</filter-name>
         <url-pattern>/templates/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>ch.avocado.share.common.AuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>exclude</param-name>
+            <param-value>(?:/user?action=create)|(?:/login.*)|(?:/forgot.*)|(?:/static.*)|/|(?:/index\.jsp)</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <session-config>
         <session-timeout>10</session-timeout>
         <cookie-config>
@@ -32,5 +43,4 @@
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
-
 </web-app>
