@@ -36,7 +36,7 @@ public class DownloadServlet extends HttpServlet{
 
     static public String getStreamUrl(File file) throws UnsupportedEncodingException {
         if(file == null) throw new IllegalArgumentException("file is null");
-        return "/download?" + PARAMETER_ID + Encoder.forUrl(file.getId());
+        return "/download?" + PARAMETER_ID + "=" + Encoder.forUrl(file.getId());
     }
 
     static public String getDownloadUrl(File file) throws UnsupportedEncodingException {

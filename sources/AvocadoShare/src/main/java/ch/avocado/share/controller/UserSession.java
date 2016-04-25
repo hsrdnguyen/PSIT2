@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 public class UserSession {
 	
 	static final String SESSION_UID = "uid";
+	private String userId = null;
 	private User user;
 	private HttpSession session;
 
@@ -44,9 +45,8 @@ public class UserSession {
 	private UserSession(HttpSession session) {
 		if(session == null) throw new IllegalArgumentException("session can't be null");
 		this.session = session;
-        String userId = (String) this.session.getAttribute(SESSION_UID);
+        userId = (String) this.session.getAttribute(SESSION_UID);
         user = null;
-        loadUser(userId);
     }
 
     private void loadUser(String userId) {
@@ -64,7 +64,10 @@ public class UserSession {
 	 * @return {@code True} is the user is authenticated
      */
 	public boolean isAuthenticated() {
-		return getUser() != null;
+		if (userId == null) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -74,11 +77,13 @@ public class UserSession {
 	public void authenticate(User user) {
         if(user == null) throw new IllegalArgumentException("user is null");
         this.user = user;
+		this.userId = user.getId();
 		session.setAttribute(SESSION_UID, user.getId());
 	}
 
 	public void clearAuthentication() {
         user = null;
+		userId = null;
 		session.removeAttribute(SESSION_UID);
 	}
 	
@@ -86,13 +91,16 @@ public class UserSession {
 	 * @return The user id of the session owner
 	 */
 	public User getUser() {
-        return user;
-    }
-
-	public String getUserId() {
-		if(user == null) {
+        if(userId == null) {
 			return null;
 		}
-		return user.getId();
+		if(user == null) {
+			loadUser(userId);
+		}
+		return user;
+	}
+
+	public String getUserId() {
+		return userId;
 	}
 }

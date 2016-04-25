@@ -1,9 +1,14 @@
-<%@include file="includes/header.jsp"%>
+<%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-<div style="height: 100vh;">
-  <h1>Avocado Share</h1>
-</div>
-<div style="height: 100%;">
-  <h2>Login</h2>
-</div>
-<%@include file="includes/footer.jsp"%>
+<%
+  UserSession userSession = new UserSession(request);
+  if(userSession.isAuthenticated()) {
+%>
+<jsp:include page="includes/portfolio.jsp" />
+<%
+  } else {
+%>
+<jsp:include page="includes/login_form.jsp" />
+<%
+  }
+%>
