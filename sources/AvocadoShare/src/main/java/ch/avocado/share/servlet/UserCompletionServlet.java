@@ -26,17 +26,20 @@ public class UserCompletionServlet extends HttpServlet {
         UserSession userSession = new UserSession(req);
         String query = req.getParameter(PARAM_QUERY);
         List<User> users;
-        /*if(!userSession.isAuthenticated() || query == null || query.isEmpty()) {
+        if(!userSession.isAuthenticated() || query == null || query.isEmpty()) {
             users = new ArrayList<>();
-        } else {*/
+        } else {
             users = getUsers(userSession.getUser(), query);
-        //}
+        }
         resp.setContentType("application/json; charset=UTF-8");
         OutputStream out = resp.getOutputStream();
         renderResult(users, out);
     }
 
     private void renderResult(List<User> users, OutputStream out) throws IOException {
+        if(users == null) throw new IllegalArgumentException("users is null");
+        if(out == null) throw new IllegalArgumentException("out is null");
+
         out.write("{\"users\":[".getBytes());
         Iterator<User> i = users.iterator();
         while(i.hasNext()) {
@@ -59,7 +62,9 @@ public class UserCompletionServlet extends HttpServlet {
             IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
             Set<String> terms = new HashSet<>();
             for(String term: query.split(" ")) {
-                terms.add(term);
+                if(!term.isEmpty()) {
+                    terms.add(term);
+                }
             }
             return userDataHandler.search(terms);
         } catch (DataHandlerException | ServiceNotFoundException e) {

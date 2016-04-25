@@ -5,7 +5,7 @@ function insertAfter(newNode, referenceNode) {
 }
 
 function Autocomplete(input) {
-    if(typeof input === 'undefined' || input === null) {
+    if (typeof input === 'undefined' || input === null) {
         throw new TypeError("Invalid input");
     }
     this.input = input;
@@ -16,6 +16,7 @@ function Autocomplete(input) {
     this.hiddenInput = document.createElement("input");
     this.suggestionValueAttribute = "data-suggestion-id";
     this.hiddenInput.setAttribute("type", "hidden");
+    this.cachedSuggestions = null;
     this.url = input.getAttribute("data-suggestion");
     this.input.setAttribute("autocomplete", "off");
     this.hiddenInput.name = input.name;
@@ -27,14 +28,21 @@ function Autocomplete(input) {
 }
 
 Autocomplete.prototype.updateSuggestions = function (query) {
-    if (query.length == 0) {
-        this.showResults([]);
+    query = query.trim();
+    if (query === this.cachedSuggestions) {
+        this.showCachedResult();
     } else {
-        var that = this;
-        $.getJSON(this.url + "?q=" + encodeURIComponent(query), function (data) {
-            console.log(data.users);
-            that.showResults(data.users);
-        });
+        if (query.length == 0) {
+            this.hideResults();
+        } else {
+            $.getJSON(this.url + "?q=" + encodeURIComponent(query),
+                function (query, obj) {
+                    return function (data) {
+                        obj.showResults(query, data["users"]);
+                    };
+                }(query, this)
+            );
+        }
     }
 };
 
@@ -42,20 +50,29 @@ Autocomplete.prototype.selectElement = function (element) {
     console.log(element);
     this.hiddenInput.value = element.getAttribute(this.suggestionValueAttribute);
     this.input.value = element.innerText;
-    this.showResults([]);
+    this.hideResults();
 };
 
-Autocomplete.prototype.showResults = function (users) {
-    this.container.innerHTML = "";
+Autocomplete.prototype.hideResults = function () {
+    this.container.style.display = "none";
+};
+
+Autocomplete.prototype.showCachedResult = function () {
+    this.container.style.display = "block";
+};
+
+Autocomplete.prototype.showResults = function (query, users) {
     if (users.length == 0) {
-        this.container.style.display = "none";
+        this.hideResults();
     } else {
+        this.container.innerHTML = "";
+        this.cachedSuggestions = "";
         this.container.style.display = "block";
         for (var i = 0; i < users.length; i++) {
             var element = document.createElement("li");
             element.className = "dropdown-item";
             element.addEventListener("click",
-                function(obj){
+                function (obj) {
                     return function () {
                         obj.selectElement(this);
                     }
@@ -65,5 +82,6 @@ Autocomplete.prototype.showResults = function (users) {
             element.innerText = users[i].name;
             this.container.appendChild(element);
         }
+        this.cachedSuggestions = query;
     }
 };

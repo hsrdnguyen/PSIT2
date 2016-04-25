@@ -286,16 +286,19 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public List<User> search(Set<String> searchTerms) throws DataHandlerException {
-        User foundUser;
+        if(searchTerms == null) throw new IllegalArgumentException("searchTerms is null");
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        searchTerms.remove("");
+        if(searchTerms.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String query = UserConstants.SEARCH_QUERY_START + UserConstants.SEARCH_QUERY_LIKE;
+
+        for (int i = searchTerms.size() - 1; i > 0; i--) {
+            query += UserConstants.SEARCH_QUERY_LINK + UserConstants.SEARCH_QUERY_LIKE;
+        }
+
         try {
-            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-
-            String query = UserConstants.SEARCH_QUERY_START + UserConstants.SEARCH_QUERY_LIKE;
-
-            for (int i = searchTerms.size() - 1; i > 0; i--) {
-                query += UserConstants.SEARCH_QUERY_LINK + UserConstants.SEARCH_QUERY_LIKE;
-            }
-
             PreparedStatement ps = connectionHandler.getPreparedStatement(query);
             int position = 1;
             for (String tmp : searchTerms) {
@@ -308,8 +311,8 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             return getUsersFromResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new DataHandlerException(e);
         }
-        return null;
     }
 
     private List<User> getUsersFromResultSet(ResultSet rs) throws DataHandlerException {
