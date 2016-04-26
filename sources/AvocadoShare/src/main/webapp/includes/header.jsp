@@ -2,6 +2,7 @@
 <%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="ch.avocado.share.servlet.LoginServlet" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.ResourceServlet" %>
+<%@ page import="ch.avocado.share.common.UrlHelper" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     String[] scripts = (String[]) request.getAttribute("ch.avocado.share.includes.header.scripts");
@@ -14,14 +15,9 @@
     if(scripts == null) {
         scripts = new String[0];
     }
-    String baseUrl = request.getServletContext().getContextPath();
-    String currentUrl = (String) request.getAttribute("javax.servlet.error.request_uri");
-    if(currentUrl == null) {
-        currentUrl = (String) request.getAttribute("javax.servlet.forward.request_uri");
-    }
-    if(currentUrl == null) {
-        currentUrl = request.getRequestURI();
-    }
+    UrlHelper urlHelper = new UrlHelper(request);
+    String baseUrl = urlHelper.getBase();
+    String currentUrl = urlHelper.getCurrentUrl();
     UserSession userSession = new UserSession(request);
     String name;
     if (userSession.isAuthenticated()) {

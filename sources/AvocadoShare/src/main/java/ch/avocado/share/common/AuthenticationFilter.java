@@ -9,9 +9,17 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ *
+ * Use the confiuration name {@value CONFIG_EXCLUDE} to specify
+ * a pattern of exluded urls.
+ */
 public class AuthenticationFilter implements Filter{
 
-    private final String CONFIG_EXCLUDE = "exclude";
+    /**
+     * The configuration entry for this filter.
+     */
+    private static final String CONFIG_EXCLUDE = "exclude";
 
     private Pattern excludePattern = null;
 
@@ -23,25 +31,17 @@ public class AuthenticationFilter implements Filter{
         }
     }
 
-    private String getPathAndQuery(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        String query = request.getQueryString();
-        if(query != null) {
-            path += "?" + query;
-        }
-        return path;
-    }
-
-    private boolean isExluded(HttpServletRequest request) {
+    private boolean isExcluded(UrlHelper urlHelper) {
         if(excludePattern == null) {
             return false;
         }
-        if(request == null) {
-            throw new IllegalArgumentException("request is null");
-        }
-        Matcher matcher = excludePattern.matcher(getPathAndQuery(request));
-        System.out.println(getPathAndQuery(request));
+        Matcher matcher = excludePattern.matcher(urlHelper.getPathAndQuery());
         return matcher.matches();
+    }
+
+    private void redirectToLogin(UrlHelper urlHelper, HttpServletResponse response) throws IOException {
+        String url = urlHelper.getLoginUrlWithRedirect();
+        response.sendRedirect(url);
     }
 
     @Override
@@ -52,20 +52,18 @@ public class AuthenticationFilter implements Filter{
         }
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-
-        if(!isExluded(httpServletRequest)) {
+        UrlHelper urlHelper = new UrlHelper(httpServletRequest);
+        if(!isExcluded(urlHelper)) {
             UserSession userSession = new UserSession(httpServletRequest);
             if(!userSession.isAuthenticated()) {
-                httpServletResponse.sendError(HttpStatusCode.UNAUTHORIZED.getCode(), "Sie müssen sich anmelden");
                 blocked = true;
             }
-        }else {
-            System.out.println("Excluded.");
         }
         if(!blocked) {
             chain.doFilter(request, response);
+        }else {
+            redirectToLogin(urlHelper, httpServletResponse);
         }
-
     }
 
     @Override

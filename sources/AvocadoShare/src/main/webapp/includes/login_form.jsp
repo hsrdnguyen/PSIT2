@@ -28,7 +28,7 @@
 <div class="row">
     <div class="center-login">
         <h2>Anmelden</h2>
-        <form name="login_form" action="login" method="POST">
+        <form name="login_form" method="POST">
             <div class="form-group row">
                 <label for="login-form-email" class="col-sm-2 form-control-label">E-Mail</label>
                 <div class="col-sm-10">

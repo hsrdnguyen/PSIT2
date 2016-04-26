@@ -34,12 +34,12 @@ public class DownloadServlet extends HttpServlet{
     private static final String IF_NONE_MATCH = "If-None-Match";
     private static final int DOWNLOAD_BUFFER_SIZE = 512;
 
-    static public String getStreamUrl(File file) throws UnsupportedEncodingException {
+    static public String getStreamUrl(File file) {
         if(file == null) throw new IllegalArgumentException("file is null");
         return "/download?" + PARAMETER_ID + "=" + Encoder.forUrl(file.getId());
     }
 
-    static public String getDownloadUrl(File file) throws UnsupportedEncodingException {
+    static public String getDownloadUrl(File file) {
         return getStreamUrl(file)  + "&" + PARAMETER_ATTACHMENT + "=" + "d";
     }
 

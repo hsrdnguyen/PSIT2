@@ -815,19 +815,25 @@ public class Encoder {
      * of the href attribute of a link.
      * @param value The value to be encoded.
      * @return The encoded value
-     * @throws UnsupportedEncodingException If "UTF-8" is not supported.
      */
-    public static String forUrlAttribute(String value) throws UnsupportedEncodingException {
-        return htmlEntities(URLEncoder.encode(value, "UTF-8"));
+    public static String forUrlAttribute(String value) {
+        try {
+            return htmlEntities(URLEncoder.encode(value, "UTF-8"));
+        }catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not supported: " + e.getMessage());
+        }
     }
 
     /**
      * Encodes a value for use inside a url.
      * @param value The value to encode
      * @return The encoded value.
-     * @throws UnsupportedEncodingException If "UTF-8" is not supported.
      */
-    public static String forUrl(String value) throws UnsupportedEncodingException {
-        return URLEncoder.encode(value, "UTF-8");
+    public static String forUrl(String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        }catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("UTF-8 not supported: " + e.getMessage());
+        }
     }
 }

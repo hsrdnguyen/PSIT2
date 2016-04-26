@@ -24,12 +24,10 @@ public class MailingService implements IMailingService {
 
         Session session = prepareMessage();
         String email, code;
-        try {
-            email =  Encoder.forUrl(user.getMail().getAddress());
-            code = Encoder.forUrl(user.getMail().getVerification().getCode());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+
+        email =  Encoder.forUrl(user.getMail().getAddress());
+        code = Encoder.forUrl(user.getMail().getVerification().getCode());
+
         try {
             sendEmail(user, session, MailingConstants.VERIFICATION_SUBJECT, String.format(MailingConstants.VERIFICATION_MESSAGE,
                                     String.format(MailingConstants.VERIFICTAION_URL, code, email)));
@@ -65,12 +63,8 @@ public class MailingService implements IMailingService {
         String code, email;
         Session session = prepareMessage();
 
-        try {
-            email =  Encoder.forUrl(user.getMail().getAddress());
-            code = Encoder.forUrl(user.getPassword().getResetVerification().getCode());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        email =  Encoder.forUrl(user.getMail().getAddress());
+        code = Encoder.forUrl(user.getPassword().getResetVerification().getCode());
 
         try {
             sendEmail(user, session, MailingConstants.PASSWORD_RESET_SUBJECT, String.format(MailingConstants.PASSWORD_RESET_MESSAGE, code, email));
