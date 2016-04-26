@@ -4,7 +4,7 @@
 <jsp:setProperty name="forgottenPassword" property="code"/>
 <jsp:setProperty name="forgottenPassword" property="password"/>
 <jsp:setProperty name="forgottenPassword" property="passwordConfirmation"/>
-<%@include file="includes/header.jsp" %>
+<%@include file="../includes/header.jsp" %>
 <h2>Passwort zurücksetzen</h2>
 <%
     boolean showForm = true;
@@ -44,5 +44,6 @@
     versuchen Sie es erneut.
 </div>
 <% }
-}%>
-<%@include file="includes/footer.jsp" %>
+}
+%>
+<%@include file="../includes/footer.jsp" %>

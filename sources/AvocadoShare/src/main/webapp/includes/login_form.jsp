@@ -42,7 +42,7 @@
                     <input required name="<%=LoginServlet.FIELD_PASSWORD %>" type="password" class="form-control"
                            id="login-form-password" placeholder="Passwort" pattern=".{9,}"
                            title="Das Passwort muss mindestens 9 Zeichen lang sein.">
-                    <a class="small" id="password-reset-link" onclick="return resetPassword(this);" href="<%=baseUrl%>/forgot.jsp"
+                    <a class="small" id="password-reset-link" onclick="return resetPassword(this);" href="<%=baseUrl%>/noauth/forgot.jsp"
                        title="Hier können Sie ihr Passwort zurücksetzen">Passwort vergessen?</a>
                 </div>
             </div>

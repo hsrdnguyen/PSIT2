@@ -15,7 +15,7 @@ public class MailingConstants {
     public static final String PASSWORD = "Gruppe13";
 
     // For Verification
-    public static final String VERIFICTAION_URL = "http://127.0.0.1:8080/verify.jsp?code=%s&email=%s";
+    public static final String VERIFICTAION_URL = "http://127.0.0.1:8080/noauth/verify.jsp?code=%s&email=%s";
     public static final String VERIFICATION_SUBJECT = "E-Mail Verifikation";
     public static final String VERIFICATION_MESSAGE = "Guten Tag\n\n Um ihr Konto zu aktivieren und Ihre E-Mail-Addresse zu verifizieren, rufen Sie bitte folgenden Link auf: \n\n %s";
 
@@ -26,5 +26,5 @@ public class MailingConstants {
 
     // For password reset request
     public static final String PASSWORD_RESET_SUBJECT = "Password zurücksetzten";
-    public static final String PASSWORD_RESET_MESSAGE = "Klicken Sie auf folgenden Link um das Passwort zurückzusetzen: http://localhost:8080/reset.jsp?code=%s&email=%s";
+    public static final String PASSWORD_RESET_MESSAGE = "Klicken Sie auf folgenden Link um das Passwort zurückzusetzen: http://localhost:8080/noauth/reset.jsp?code=%s&email=%s";
 }

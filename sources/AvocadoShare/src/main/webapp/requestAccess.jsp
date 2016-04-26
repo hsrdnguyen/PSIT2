@@ -1,4 +1,3 @@
-<%@ page import="ch.avocado.share.common.HttpStatusCode" %>
 <%@ page import="ch.avocado.share.model.data.User" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <jsp:useBean id="accessBean" class="ch.avocado.share.controller.FileAccessBean" />
@@ -11,10 +10,7 @@
     }
 
     User user = userSession.getUser();
-    if(user == null) {
-        response.sendError(HttpStatusCode.UNAUTHORIZED.getCode(), "Sie müssen angemeldet sein, um Zugriff beantragen zu können.");
-        return;
-    }
+    assert user != null;
 
     accessBean.setRequesterUserMail(user.getMail().getAddress());
 

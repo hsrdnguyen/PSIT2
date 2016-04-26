@@ -8,7 +8,7 @@
 <%
   } else {
 %>
-<jsp:include page="includes/login_form.jsp" />
+<jsp:include page="includes/welcome.jsp" />
 <%
   }
 %>

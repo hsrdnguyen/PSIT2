@@ -32,7 +32,7 @@ public class DownloadServlet extends HttpServlet{
     private static final String PARAMETER_ID = "id";
     private static final String PARAMETER_ATTACHMENT = "download";
     private static final String IF_NONE_MATCH = "If-None-Match";
-    private static int DOWNLOAD_BUFFER_SIZE = 512;
+    private static int DOWNLOAD_BUFFER_SIZE = 1024;
 
     static public String getStreamUrl(File file) throws UnsupportedEncodingException {
         if(file == null) throw new IllegalArgumentException("file is null");
