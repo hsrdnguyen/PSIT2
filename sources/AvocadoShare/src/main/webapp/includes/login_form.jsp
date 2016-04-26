@@ -1,6 +1,7 @@
 <%@include file="header.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
+    String redirectTo = (String) request.getParameter(LoginServlet.FIELD_REDIRECT_TO);
     String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
     String email = (String) request.getAttribute(LoginServlet.ATTRIBUTE_EMAIL);
     if(email == null) {
@@ -28,7 +29,7 @@
 <div class="row">
     <div class="center-login">
         <h2>Anmelden</h2>
-        <form name="login_form" method="POST">
+        <form name="login_form" action="<%=Encoder.forHtmlAttribute(urlHelper.getLoginUrl())%>" method="POST">
             <div class="form-group row">
                 <label for="login-form-email" class="col-sm-2 form-control-label">E-Mail</label>
                 <div class="col-sm-10">
@@ -62,6 +63,9 @@
                     <button type="submit" class="btn btn-secondary">Anmelden</button>
                 </div>
             </div>
+            <% if(redirectTo != null) { %>
+            <input type="hidden" name="<%=Encoder.forHtmlAttribute(LoginServlet.FIELD_REDIRECT_TO)%>" value="<%=Encoder.forHtml(redirectTo)%>" />
+            <% } %>
         </form>
     </div>
 </div>
