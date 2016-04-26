@@ -1,0 +1,52 @@
+@import "button-group";
+
+@mixin box-variant($background, $border) {
+  background-color: $background;
+  border-color: $border;
+}
+
+@mixin box-outline-variant($color) {
+  background-color: transparent;
+  border-color: $color;
+}
+
+
+.row {
+  @include make-row();
+}
+
+.content-main {
+  @include make-col();
+  @include media-breakpoint-up("md") {
+    @include make-col-span(8);
+  }
+}
+
+.content-right {
+  @include make-col();
+  @include media-breakpoint-up("md") {
+    @include make-col-span(4);
+  }
+}
+
+.center-login {
+  @include make-col();
+
+  @include make-col-span(12);
+
+  @include media-breakpoint-up("md") {
+    @include make-col-offset(1);
+    @include make-col-span(10);
+  }
+
+  @include media-breakpoint-up("lg") {
+    @include make-col-offset(2);
+    @include make-col-span(8);
+  }
+
+  @include media-breakpoint-up("xl") {
+    @include make-col-offset(3);
+    @include make-col-span(6);
+  }
+}
+

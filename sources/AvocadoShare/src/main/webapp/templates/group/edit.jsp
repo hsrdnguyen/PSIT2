@@ -9,33 +9,40 @@
     formBuilder.setReadableFieldName("name", "Name");
 %>
 <div class="row">
-    <div class="col-xl-8">
-        <h2>Gruppe bearbeiten</h2>
-        <%=formBuilder.getFormErrors()%>
-        <%=formBuilder.getFormBegin("PATCH") %>
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("name") %>
-            <%=formBuilder.getInputFor("name") %>
+    <div class="content-main">
+        <div class="list-group">
+            <div class="list-group-item list-group-header">
+                <h2>Gruppe bearbeiten</h2>
+            </div>
+            <div class="list-group-item">
+                <%=formBuilder.getFormErrors()%>
+                <%=formBuilder.getFormBegin("PATCH") %>
+                <div class="form-group">
+                    <%=formBuilder.getLabelFor("name") %>
+                    <%=formBuilder.getInputFor("name") %>
+                </div>
+                <div class="form-group">
+                    <%=formBuilder.getLabelFor("description") %>
+                    <%=formBuilder.getInputFor("description", "textarea") %>
+                </div>
+                <div class="form-group">
+                    <%=formBuilder.getSubmit("Gruppe speichern")%>
+                </div>
+                <%=formBuilder.getFormEnd() %>
+            </div>
+            <div class="list-group-item">
+                <h4>Gruppe löschen</h4>
+                <div class="alert alert-danger">
+                    Eine gelöschte Gruppe kann nicht wiederhergestellt werden.<br/>
+                    Sowohl Sie als auch alle Mitglieder verlieren die Rechte die Sie durch diese Gruppe erworben haben.
+                </div>
+                <%=formBuilder.getFormBegin("delete")%>
+                <%=formBuilder.getSubmit("Gruppe löschen", "btn-danger")%>
+                <%=formBuilder.getFormEnd()%>
+            </div>
         </div>
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("description") %>
-            <%=formBuilder.getInputFor("description", "textarea") %>
-        </div>
-        <div class="form-group">
-            <%=formBuilder.getSubmit("Gruppe speichern")%>
-        </div>
-        <%=formBuilder.getFormEnd() %>
-
-        <h3>Gruppe löschen</h3>
-        <div class="alert alert-danger">
-            Eine gelöschte Gruppe kann nicht wiederhergestellt werden.<br/>
-            Sowohl Sie als auch alle Mitglieder verlieren die Rechte die Sie durch diese Gruppe erworben haben.
-        </div>
-        <%=formBuilder.getFormBegin("delete")%>
-        <%=formBuilder.getSubmit("Gruppe löschen", "btn-danger")%>
-        <%=formBuilder.getFormEnd()%>
     </div>
-    <div class="col-xl-4">
+    <div class="content-right">
         <%@include file="../member/index.jsp" %>
     </div>
 </div>

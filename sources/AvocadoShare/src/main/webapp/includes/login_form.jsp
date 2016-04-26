@@ -26,7 +26,7 @@
     }
 </script>
 <div class="row">
-    <div class="col-xl-offset-3 col-xl-6 col-lg-offset-2 col-lg-8 col-md-offset-1 col-md-10">
+    <div class="center-login">
         <h2>Anmelden</h2>
         <form name="login_form" action="login" method="POST">
             <div class="form-group row">

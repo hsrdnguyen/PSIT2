@@ -21,7 +21,7 @@
     List<Module> userModules = FileBean.getModulesToUpload(userSession.getUser());
 %>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="content-main">
         <div class="list-group">
             <div class="list-group-item list-group-header">
                 <h2>Dateien bearbeiten</h2>
@@ -100,7 +100,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="content-right">
         <%@include file="../member/index.jsp"%>
         <%@include file="info.jsp"%>
     </div>

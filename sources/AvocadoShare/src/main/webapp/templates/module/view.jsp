@@ -27,7 +27,7 @@
 %>
 
 <div class="row">
-    <div class="col-xl-8">
+    <div class="content-main">
         <div class="list-group">
             <div class="list-group-item list-group-header">
                 <% if(viewConfig.getAccess().containsLevel(AccessLevelEnum.MANAGE)) { %>
@@ -84,7 +84,7 @@
             %>
         </div>
     </div>
-    <div class="col-xl-4">
+    <div class="content-right">
         <%@include file="../member/index.jsp"%>
     </div>
 </div>

@@ -30,44 +30,62 @@
     }
 
 %>
-<h2>Dateien erstellen</h2>
-<%
-    if(userModules.isEmpty()) { %>
-    <div class="alert alert-info">
-        <strong>Sie sind in keinem Modul.</strong>
-        Bevor Sie eine Datei hochladen können, müssen Sie Mitglied eines Modules sein.
+<div class="row">
+    <div class="content-main">
+        <div class="list-group">
+            <div class="list-group-item list-group-header">
+                <h2>Dateien erstellen</h2>
+            </div>
+            <div class="list-group-item">
+                <%
+                    if (userModules.isEmpty()) { %>
+                <div class="alert alert-info">
+                    <strong>Sie sind in keinem Modul.</strong>
+                    Bevor Sie eine Datei hochladen können, müssen Sie Mitglied eines Modules sein.
+                </div>
+
+                <%
+                } else {
+                %>
+                <%=formBuilder.getFormErrors() %>
+                <div>
+                    <p class="text-block">Es müssen alle Felder ausfüllt werden.</p>
+                    <div>
+                        <%= formBuilder.getFormBegin("post") %>
+                        <div class="form-group">
+                            <%=formBuilder.getLabelFor("moduleId") %>
+                            <%=formBuilder.getSelectFor("moduleId", userModules, parameterModuleId) %>
+                        </div>
+                        <div class="form-group">
+                            <%=formBuilder.getLabelFor("fileItem")%>
+                            <input class="form-control" type="file" name="fileItem" size="50"/>
+                        </div>
+                        <div class="form-group">
+                            <%=formBuilder.getLabelFor("title") %>
+                            <%=formBuilder.getInputFor("title") %>
+                        </div>
+
+                        <div class="form-group">
+                            <%=formBuilder.getLabelFor("description") %>
+                            <%=formBuilder.getInputFor("description", "textarea") %>
+                        </div>
+                        <%=formBuilder.getSubmit("Speichern")%>
+                        <%=formBuilder.getFormEnd() %>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-<%
-    } else {
-%>
-<%=formBuilder.getFormErrors() %>
-<div>
-    <p class="text-block">Es müssen alle Felder ausfüllt werden.</p>
-    <div>
-        <%= formBuilder.getFormBegin("post") %>
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("moduleId") %>
-            <%=formBuilder.getSelectFor("moduleId", userModules, parameterModuleId) %>
+    <div class="content-right">
+        <div class="list-group-item list-group-header">
+            <h3><span class="mega-octicon octicon-info"></span> Informationen</h3>
         </div>
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("fileItem")%>
-            <input class="form-control" type="file" name="fileItem" size="50"/>
+        <div class="list-group-item">
+            <p>Die Datei ist für alle Mitglieder im Modul ersichtlich.</p>
+            <p>Alle Mitglieder, die Schreibrecht am Modul besitzen können die Datei bearbeiten.</p>
         </div>
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("title") %>
-            <%=formBuilder.getInputFor("title") %>
-        </div>
-
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("description") %>
-            <%=formBuilder.getInputFor("description", "textarea") %>
-        </div>
-        <%=formBuilder.getSubmit("Speichern")%>
-        <%=formBuilder.getFormEnd() %>
     </div>
 </div>
-
 <%
     }
 %>

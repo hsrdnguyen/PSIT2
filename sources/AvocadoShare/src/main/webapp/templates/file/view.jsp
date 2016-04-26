@@ -15,7 +15,7 @@
     previewGenerator = defaultPreviewFactory.getInstanceAndHandleErrors(file);
 %>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="content-main">
         <div class="list-group">
             <div class="list-group-item list-group-header">
                 <div class="pull-xs-right btn-group" role="group">
@@ -40,7 +40,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="content-right">
         <%@include file="../member/index.jsp" %>
         <%@include file="info.jsp"%>
     </div>

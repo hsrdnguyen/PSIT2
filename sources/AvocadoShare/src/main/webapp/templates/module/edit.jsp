@@ -10,7 +10,7 @@
     form.setReadableFieldName("description", "Beschreibung");
 %>
 <div class="row">
-    <div class="col-xl-8">
+    <div class="content-main">
         <h2>Modul ändern</h2>
         <%=form.getFormErrors() %>
         <%=form.getFormBegin("PATCH")%>
@@ -34,7 +34,7 @@
         <%=form.getSubmit("Modul löschen", "btn-danger")%>
         <%=form.getFormEnd() %>
     </div>
-    <div class="col-xl-4">
+    <div class="content-right">
         <%@include file="../member/index.jsp" %>
     </div>
 </div>

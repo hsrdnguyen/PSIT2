@@ -9,22 +9,37 @@
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("name", "Name");
 %>
-<h1>Neue Gruppe erstellen</h1>
 <%=formBuilder.getFormErrors()%>
 <%=formBuilder.getFormBegin("POST") %>
 <div class="row">
-    <div class="col-md-6">
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("name") %>
-            <%=formBuilder.getInputFor("name") %>
+    <div class="content-main">
+        <div class="list-group-item list-group-header">
+            <h2>Neue Gruppe erstellen</h2>
         </div>
-        <div class="form-group">
-            <%=formBuilder.getLabelFor("description") %>
-            <%=formBuilder.getInputFor("description", "textarea") %>
+        <div class="list-group-item">
+            <div class="form-group">
+                <%=formBuilder.getLabelFor("name") %>
+                <%=formBuilder.getInputFor("name") %>
+            </div>
+            <div class="form-group">
+                <%=formBuilder.getLabelFor("description") %>
+                <%=formBuilder.getInputFor("description", "textarea") %>
+            </div>
+            <div class="form-group">
+                <%=formBuilder.getSubmit("Gruppe erstellen")%>
+                <%=formBuilder.getFormEnd() %>
+            </div>
         </div>
-        <div class="form-group">
-            <%=formBuilder.getSubmit("Gruppe erstellen")%>
-            <%=formBuilder.getFormEnd() %>
+    </div>
+    <div class="content-right">
+        <div class="list-group-item list-group-header">
+            <h3><span class="mega-octicon octicon-info"></span> Informationen</h3>
+        </div>
+        <div class="list-group-item">
+            Erstellen Sie eine Gruppe, um mit KollegenInnen sich eifacher
+            zu organisieren.<br/>
+            Sie können Sich als Gruppe in ein Modul einschreiben und alle
+            MitgliederInnen erhalten sofort dasselbe Zugriffsrecht.
         </div>
     </div>
 </div>

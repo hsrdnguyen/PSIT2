@@ -147,9 +147,6 @@ a.modul-link:hover .modul {
 }
 */
 
-.list-group-header {
-    background-color: rgb(240, 240, 240);
-}
 
 .main-section {
     width: 100%;
@@ -177,6 +174,15 @@ a.modul-link:hover .modul {
     padding-right: 0.9375rem;
     position: relative;
     width: 70%;
+}
+
+
+.list-group-header {
+    background-color: rgb(240,240,240);
+}
+
+.content-main .list-group, .content-right .list-group  {
+    margin-bottom: 2em;
 }
 
 .preview iframe, .preview frame {

@@ -9,16 +9,32 @@
     form.setReadableFieldName("name", "Name");
     form.setReadableFieldName("description", "Beschreibung");
 %>
-<h2>Neues Modul erstellen</h2>
-<%=form.getFormErrors() %>
-<%=form.getFormBegin("POST")%>
-<div class="form-group">
-    <%=form.getLabelFor("name") %>
-    <%=form.getInputFor("name") %>
+<div class="row">
+    <div class="content-main">
+        <div class="list-group-item list-group-header">
+            <h2>Neues Modul erstellen</h2>
+        </div>
+        <div class="list-group-item">
+            <%=form.getFormErrors() %>
+            <%=form.getFormBegin("POST")%>
+            <div class="form-group">
+                <%=form.getLabelFor("name") %>
+                <%=form.getInputFor("name") %>
+            </div>
+            <div class="form-group">
+                <%=form.getLabelFor("description") %>
+                <%=form.getInputFor("description") %>
+            </div>
+            <%=form.getSubmit("Modul erstellen")%>
+            <%=form.getFormEnd()%>
+        </div>
+    </div>
+    <div class="content-right">
+        <div class="list-group-item list-group-header">
+            <h3><span class="mega-octicon octicon-info"></span> Informationen</h3>
+        </div>
+        <div class="list-group-item">
+            !TODO!
+        </div>
+    </div>
 </div>
-<div class="form-group">
-    <%=form.getLabelFor("description") %>
-    <%=form.getInputFor("description") %>
-</div>
-<%=form.getSubmit("Modul erstellen")%>
-<%=form.getFormEnd()%>

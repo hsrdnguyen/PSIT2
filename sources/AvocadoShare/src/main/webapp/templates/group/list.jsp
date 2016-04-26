@@ -8,7 +8,8 @@
     ListViewConfig listViewConfig = (ListViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_LIST_VIEW_CONFIG);
     Collection<Group> groups = listViewConfig.getObjects(Group.class);
 %>
-<section class="document-show">
+<div class="row">
+<div class="content-main">
     <div class="list-group">
         <div class="list-group-item list-group-header">
             <h2>Meine Gruppen</h2>
@@ -43,4 +44,5 @@
             } // group.length != 0
         %>
     </div>
-</section>
+</div>
+</div>

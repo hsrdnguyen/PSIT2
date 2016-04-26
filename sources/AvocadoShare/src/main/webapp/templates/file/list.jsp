@@ -9,7 +9,7 @@
     Collection<File> files = viewConfig.getObjects(File.class);
 %>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="content-main">
         <div class="list-group">
             <div class="list-group-item list-group-header"><h2>Dokumente</h2></div>
             <%

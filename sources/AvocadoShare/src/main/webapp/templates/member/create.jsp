@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <div class="list-group-item list-group-header">
-    <h2>Benutzer hinzufügen</h2>
+    <h3>Benutzer hinzufügen</h3>
 </div>
 <noscript class="list-group-item-danger">
     Für diese Aktion wird JavaScript benötigt.
 </noscript>
-
 <div class="list-group-item">
     <form method="post" action="members">
         <div class="form-group">
