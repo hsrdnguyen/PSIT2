@@ -24,6 +24,7 @@ public class FileBean extends ResourceBean<File> {
     private FileItem fileItem;
     private String moduleId;
     private Rating rating;
+    private List<Category> categories = new ArrayList<>();
 
     @Override
     protected boolean hasMembers() {
