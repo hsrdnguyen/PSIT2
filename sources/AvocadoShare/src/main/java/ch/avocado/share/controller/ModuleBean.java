@@ -20,7 +20,7 @@ import java.util.List;
 public class ModuleBean extends ResourceBean<Module> {
 
     public static final String ERROR_MODULE_NOT_FOUND = "Modul konnte nicht gefunden werden.";
-    private static int NAME_MAX_LENGTH = 32;
+    private static final int NAME_MAX_LENGTH = 32;
     private String name;
 
     private void checkParameterName(Module module) {

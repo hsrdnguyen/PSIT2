@@ -4,7 +4,7 @@ import ch.avocado.share.common.preview.IPreviewGenerator;
 
 public class ImagePreviewer implements IPreviewGenerator {
 
-    private String streamUrl;
+    private final String streamUrl;
 
     public ImagePreviewer(String streamUrl) {
         this.streamUrl = streamUrl;

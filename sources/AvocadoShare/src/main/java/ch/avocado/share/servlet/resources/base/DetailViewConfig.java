@@ -13,8 +13,8 @@ import java.util.HashMap;
  */
 public class DetailViewConfig extends ViewConfig {
 
-    private Model object;
-    private FormError formErrors;
+    private final Model object;
+    private final FormError formErrors;
     private Members members;
     private AccessLevelEnum access;
 

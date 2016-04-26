@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class UserDataHandler extends DataHandlerBase implements IUserDataHandler {
 
-    public static final int DELETE_USER_QUERY_ID_INDEX = 1;
+    private static final int DELETE_USER_QUERY_ID_INDEX = 1;
 
     @Override
     public String addUser(User user) throws DataHandlerException {

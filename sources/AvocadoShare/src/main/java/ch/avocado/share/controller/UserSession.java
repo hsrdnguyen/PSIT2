@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public class UserSession {
-	
-	static final String SESSION_UID = "uid";
+
+	private static final String SESSION_UID = "uid";
 	private String userId = null;
 	private User user;
 	private HttpSession session;

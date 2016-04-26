@@ -15,11 +15,11 @@ import java.sql.Statement;
 public class DatabaseConnectionHandlerMock extends DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     // JDBC database URL
-    static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_test";
+    private static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_test";
 
     //  Database credentials
-    static final String USER = "avocado_tomcat";
-    static final String PASS = "77eb2c2e52824f26bd47f6d0bc6e1dcb";
+    private static final String USER = "avocado_tomcat";
+    private static final String PASS = "77eb2c2e52824f26bd47f6d0bc6e1dcb";
 
     @Override
     protected void ensureConnection() throws SQLException {

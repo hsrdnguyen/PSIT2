@@ -98,10 +98,10 @@ abstract class DataHandlerBase {
         return getConnectionHandler().updateDataSet(statement);
     }
 
-    private boolean deleteOwnership(long objectId) throws SQLException, DataHandlerException {
+    private void deleteOwnership(long objectId) throws SQLException, DataHandlerException {
         PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.DELETE_OWNERSHIP);
         statement.setLong(SQLQueryConstants.DELETE_OWNERSHIP_INDEX_OBJECT, objectId);
-        return getConnectionHandler().deleteDataSet(statement);
+        getConnectionHandler().deleteDataSet(statement);
     }
 
     /**

@@ -21,7 +21,6 @@ import java.util.List;
 public class FileBean extends ResourceBean<File> {
 
     private String title;
-    private List<Category> categories;
     private FileItem fileItem;
     private String moduleId;
     private Rating rating;
@@ -198,7 +197,7 @@ public class FileBean extends ResourceBean<File> {
      * @return The reference to the file on the disk
      * @throws HttpBeanException
      */
-    public void uploadFile(FileItem fileItem, File file) throws HttpBeanException {
+    private void uploadFile(FileItem fileItem, File file) throws HttpBeanException {
         IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
         if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
         DiskFileItemFactory factory = new DiskFileItemFactory();

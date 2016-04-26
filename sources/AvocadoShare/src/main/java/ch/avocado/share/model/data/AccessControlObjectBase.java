@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by bergm on 15/03/2016.
+ * Base class for all access control objects.
  */
 public abstract class AccessControlObjectBase extends Model{
 

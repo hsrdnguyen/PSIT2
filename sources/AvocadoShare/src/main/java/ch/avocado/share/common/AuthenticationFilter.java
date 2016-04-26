@@ -1,7 +1,6 @@
 package ch.avocado.share.common;
 
 import ch.avocado.share.controller.UserSession;
-import ch.avocado.share.service.Impl.MailingService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -12,9 +11,9 @@ import java.util.regex.Pattern;
 
 public class AuthenticationFilter implements Filter{
 
-    public final String CONFIG_EXCLUDE = "exclude";
+    private final String CONFIG_EXCLUDE = "exclude";
 
-    Pattern excludePattern = null;
+    private Pattern excludePattern = null;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

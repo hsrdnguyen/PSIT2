@@ -37,7 +37,7 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     /**
      * Reset all mock groups to initial state.
      */
-    public void reset() {
+    private void reset() {
         objects.clear();
         for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
             String id = "group" + i;

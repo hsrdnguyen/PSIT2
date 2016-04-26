@@ -11,7 +11,7 @@ import java.util.Map;
 public class SelectField extends FieldBase {
     private String selectedValue = null;
 
-    private Map<String, String> valuesWithName;
+    private final Map<String, String> valuesWithName;
 
 
     SelectField(String name, String id) {

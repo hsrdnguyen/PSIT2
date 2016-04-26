@@ -23,14 +23,14 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     /**
      * Save some precious time while testing :)
      */
-    public static final UserPassword DEFAULT_PASSWORD = UserPassword.fromPassword("1234");
+    private static final UserPassword DEFAULT_PASSWORD = UserPassword.fromPassword("1234");
 
     public UserDataHandlerMock() {
         super();
         reset();
     }
 
-    public void reset() {
+    private void reset() {
         objects.clear();
         for (int i = 0; i < 100; i++) {
             String id = String.format("1%06d", i);

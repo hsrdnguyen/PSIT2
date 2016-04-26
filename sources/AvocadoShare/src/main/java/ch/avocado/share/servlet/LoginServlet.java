@@ -26,7 +26,7 @@ import java.io.IOException;
 @WebServlet(value = "/login", name = "Login")
 public class LoginServlet extends HttpServlet {
 
-    static final String LOGIN_FORM_URL = "/includes/login_form.jsp";
+    static final private String LOGIN_FORM_URL = "/includes/login_form.jsp";
 
     static final public String LOGIN_ERROR = "login_error";
     static final public String FIELD_EMAIL = "email";

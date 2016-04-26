@@ -1,7 +1,7 @@
 package ch.avocado.share.servlet.resources.base;
 
 /**
- * Created by coffeemakr on 14.04.16.
+ * An action performed on a object
  */
 public enum Action {
     VIEW, UPDATE, DELETE, REPLACE, CREATE

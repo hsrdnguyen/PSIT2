@@ -2,7 +2,7 @@ package ch.avocado.share.model.data;
 import java.util.Date;
 
 /**
- * Created by bergm on 15/03/2016.
+ * The verification for an email address.
  */
 public class EmailAddressVerification extends BaseMailVerification{
 

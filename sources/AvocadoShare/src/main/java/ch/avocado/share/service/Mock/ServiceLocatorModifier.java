@@ -16,9 +16,9 @@ public class ServiceLocatorModifier {
     public static <T> void setService(Class<T> clazz,  T locater) throws IllegalAccessException {
         final Field fields[] =  ServiceLocator.class.getDeclaredFields();
         Field servicesField = null;
-        for (int i = 0; i < fields.length; ++i) {
-            if ("services".equals(fields[i].getName())) {
-                servicesField = fields[i];
+        for (Field field : fields) {
+            if ("services".equals(field.getName())) {
+                servicesField = field;
                 break;
             }
         }

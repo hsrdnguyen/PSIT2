@@ -5,27 +5,22 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import java.sql.*;
 
 /**
- * Created by bergm on 19/03/2016.
+ * Database connection handler.
  */
 public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     protected static Connection conn;
 
     // JDBC driver name and database URL
-    static final String JDBC_DRIVER = "org.postgresql.Driver";
-    /*static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_share";
-
-    //  Database credentials
-    static final String USER = "avocado_tomcat";
-    static final String PASS = "77eb2c2e52824f26bd47f6d0bc6e1dcb";*/
+    private static final String JDBC_DRIVER = "org.postgresql.Driver";
 
     // JDBC database URL
     // dont modify. Use DatabaseConnectionHandlerMock instead.
-    static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_share";
+    private static final String DB_URL = "jdbc:postgresql://srv-lab-t-944:5432/avocado_share";
 
     //  Database credentials
-    static final String USER = "avocado_tomcat";
-    static final String PASS = "77eb2c2e52824f26bd47f6d0bc6e1dcb";
+    private static final String USER = "avocado_tomcat";
+    private static final String PASS = "77eb2c2e52824f26bd47f6d0bc6e1dcb";
 
     public DatabaseConnectionHandler() {
         try {
@@ -38,9 +33,7 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
     @Override
     public PreparedStatement getPreparedStatement(String query) throws SQLException {
         ensureConnection();
-        PreparedStatement ps = conn.prepareStatement(query);
-
-        return ps;
+        return conn.prepareStatement(query);
     }
 
     @Override

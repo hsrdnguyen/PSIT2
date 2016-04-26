@@ -26,9 +26,7 @@ public class SearchBean implements Serializable {
                 String[] parts = searchString.split(" ");
                 List<File> results = service.search(Arrays.asList(parts));
                 return results;
-            } catch (ServiceNotFoundException e) {
-                e.printStackTrace();
-            } catch (DataHandlerException e) {
+            } catch (ServiceNotFoundException | DataHandlerException e) {
                 e.printStackTrace();
             }
         }

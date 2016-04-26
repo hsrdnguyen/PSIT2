@@ -1,11 +1,11 @@
 package ch.avocado.share.common.form;
 
 /**
- * Created by coffeemakr on 29.03.16.
+ * Base class for form fields.
  */
 abstract class FieldBase {
 
-    protected String error;
+    private String error;
     private String name;
     private String id;
     private String htmlClass;

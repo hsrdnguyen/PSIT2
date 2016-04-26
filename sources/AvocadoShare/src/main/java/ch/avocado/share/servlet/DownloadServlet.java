@@ -32,7 +32,7 @@ public class DownloadServlet extends HttpServlet{
     private static final String PARAMETER_ID = "id";
     private static final String PARAMETER_ATTACHMENT = "download";
     private static final String IF_NONE_MATCH = "If-None-Match";
-    private static int DOWNLOAD_BUFFER_SIZE = 512;
+    private static final int DOWNLOAD_BUFFER_SIZE = 512;
 
     static public String getStreamUrl(File file) throws UnsupportedEncodingException {
         if(file == null) throw new IllegalArgumentException("file is null");
@@ -47,7 +47,7 @@ public class DownloadServlet extends HttpServlet{
         return file.getPath();
     }
 
-    public static void download(File file, HttpServletRequest request, HttpServletResponse response, boolean attached) throws HttpBeanException, IOException, ServiceNotFoundException, FileStorageException {
+    private static void download(File file, HttpServletRequest request, HttpServletResponse response, boolean attached) throws IOException, ServiceNotFoundException, FileStorageException {
         byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
         InputStream stream;
         String etag = getEtag(file);
@@ -125,8 +125,6 @@ public class DownloadServlet extends HttpServlet{
 
         try {
             download(file, request, response, attached);
-        } catch (HttpBeanException e) {
-            response.sendError(e.getStatusCode(), e.getDescription());
         } catch (ServiceNotFoundException | FileStorageException e) {
             e.printStackTrace();
             response.sendError(INTERNAL_SERVER_ERROR.getCode(), e.getMessage());

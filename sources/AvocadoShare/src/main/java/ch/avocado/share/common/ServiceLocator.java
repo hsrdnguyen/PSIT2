@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class ServiceLocator {
 
-    private static Map<Type, Object> services;
+    private static final Map<Type, Object> services;
 
     static {
         services = new HashMap<>();

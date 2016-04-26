@@ -30,7 +30,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     private String description;
 
-    private static int DESCRIPTION_MAX_LENGTH = 512;
+    private static final int DESCRIPTION_MAX_LENGTH = 512;
 
     /**
      * This method returns true if the bean is supplied with an identifier

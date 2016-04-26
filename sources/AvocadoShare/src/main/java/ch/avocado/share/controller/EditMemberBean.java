@@ -3,7 +3,7 @@ package ch.avocado.share.controller;
 import ch.avocado.share.model.data.AccessLevelEnum;
 
 /**
- * Created by coffeemakr on 21.04.16.
+ * Bean to make editing of a bean easier.
  */
 public class EditMemberBean {
     private String getReadableLevelName(AccessLevelEnum level) {

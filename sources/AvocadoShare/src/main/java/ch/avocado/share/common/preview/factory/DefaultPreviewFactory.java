@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class DefaultPreviewFactory  extends PreviewFactory{
 
-    static Map<String, PreviewFactory> previewerFactories;
+    private static final Map<String, PreviewFactory> previewerFactories;
 
     static {
         previewerFactories = new HashMap<>();

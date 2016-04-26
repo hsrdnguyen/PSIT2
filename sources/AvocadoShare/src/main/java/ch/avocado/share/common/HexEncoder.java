@@ -4,7 +4,7 @@ package ch.avocado.share.common;
  * Encode a value as hexadecimal.
  */
 public class HexEncoder {
-    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
+    final private static char[] hexArray = "0123456789abcdef".toCharArray();
 
     /**
      * Converts a byte array to a hexadecimal string.

@@ -22,7 +22,7 @@ public class ReCaptchaVerifier implements ICaptchaVerifier {
     private static final String CLIENT_SECRET = "6LeS4x0TAAAAAIPJ082G58EFpA9A6ejG1qfZ0ua4";
     private static final String SITE_KEY = "6LeS4x0TAAAAANcSYZwdoyTFY-NjvbFkX3zU8CiU";
     private static final String RESPONSE_PARAMETER_NAME = "g-recaptcha-response";
-    private static boolean VERIFY_REMOTE_ADDRESS = false;
+    private static final boolean VERIFY_REMOTE_ADDRESS = false;
     private static final String API_URL = "https://www.google.com/recaptcha/api/siteverify";
 
     private static final String API_PARAM_SECRET = "secret";

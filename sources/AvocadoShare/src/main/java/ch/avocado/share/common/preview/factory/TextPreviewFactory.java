@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class TextPreviewFactory extends PreviewFactory{
 
-    private static int MAX_FILE_SIZE = 1024 * 1024;
+    private static final int MAX_FILE_SIZE = 1024 * 1024;
 
     private String readStream(InputStream stream) throws PreviewException {
         if(stream == null) throw new IllegalArgumentException("stream is null");

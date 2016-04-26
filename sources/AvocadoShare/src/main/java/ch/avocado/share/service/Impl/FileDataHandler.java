@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class FileDataHandler extends DataHandlerBase implements IFileDataHandler {
 
-    public void addFileToModule(File file) throws DataHandlerException {
+    private void addFileToModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -38,7 +38,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         }
     }
 
-    public boolean changeFileAssociatedModule(File file) throws DataHandlerException {
+    private boolean changeFileAssociatedModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();

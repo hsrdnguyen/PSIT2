@@ -34,7 +34,8 @@ public class MailingService implements IMailingService {
             sendEmail(user, session, MailingConstants.VERIFICATION_SUBJECT, String.format(MailingConstants.VERIFICATION_MESSAGE,
                                     String.format(MailingConstants.VERIFICTAION_URL, code, email)));
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
         return true;
     }
@@ -52,7 +53,8 @@ public class MailingService implements IMailingService {
             String link = String.format(MailingConstants.REQUEST_RESPONSE_URL, file.getId(), requestingUser.getId(), owningUser.getId());
             sendEmail(owningUser, session, MailingConstants.REQUEST_SUBJECT, String.format(MailingConstants.REQUEST_MESSAGE, requestingUser.getFullName(), file.getTitle(), link));
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
         return true;
     }
@@ -73,7 +75,8 @@ public class MailingService implements IMailingService {
         try {
             sendEmail(user, session, MailingConstants.PASSWORD_RESET_SUBJECT, String.format(MailingConstants.PASSWORD_RESET_MESSAGE, code, email));
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
         return true;
     }

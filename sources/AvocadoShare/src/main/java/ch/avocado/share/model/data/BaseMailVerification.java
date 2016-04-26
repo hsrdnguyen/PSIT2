@@ -16,12 +16,12 @@ public abstract class BaseMailVerification {
     private Date expiry;
 
 
-    public BaseMailVerification(Date expiry) {
+    protected BaseMailVerification(Date expiry) {
         setExpiry(expiry);
         code = generateCode();
     }
 
-    public BaseMailVerification(Date expiry, String code) {
+    protected BaseMailVerification(Date expiry, String code) {
         setCode(code);
         setExpiry(expiry);
     }

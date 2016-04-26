@@ -39,7 +39,7 @@ public class FileStorageHandler implements IFileStorageHandler {
     }
 
     @Override
-    public long getFileSize(String reference) throws FileStorageException {
+    public long getFileSize(String reference) {
         File file = getFileByReference(reference);
         return file.length();
     }
@@ -128,7 +128,7 @@ public class FileStorageHandler implements IFileStorageHandler {
     }
 
     @Override
-    public boolean fileExists(String reference) throws FileStorageException {
+    public boolean fileExists(String reference) {
         File file = getFileByReference(reference);
         return file.exists();
     }

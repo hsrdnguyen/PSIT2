@@ -105,15 +105,13 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         return statement;
     }
 
-    private String executeInsertStatement(PreparedStatement statement) throws DataHandlerException {
+    private void executeInsertStatement(PreparedStatement statement) throws DataHandlerException {
         if (statement == null) throw new IllegalArgumentException("statement is null");
-        String identifier;
         try {
-            identifier = getConnectionHandler().insertDataSet(statement);
+            getConnectionHandler().insertDataSet(statement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return identifier;
     }
 
     @Override

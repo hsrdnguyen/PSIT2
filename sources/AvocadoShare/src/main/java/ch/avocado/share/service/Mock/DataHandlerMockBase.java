@@ -1,8 +1,6 @@
 package ch.avocado.share.service.Mock;
 
-/**
- * Created by coffeemakr on 23.03.16.
- */
+
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
 
@@ -11,8 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Base class for MockDataHandler
+ * @param <E> The class to handle
+ */
 public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
-    protected Map<String, E> objects;
+    protected final Map<String, E> objects;
 
 
     public DataHandlerMockBase() {

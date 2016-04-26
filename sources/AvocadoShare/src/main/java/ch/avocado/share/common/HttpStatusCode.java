@@ -289,7 +289,7 @@ public enum HttpStatusCode {
      * Translator for HTTP messages.
      */
     static class HttpStatusCodeTranslator {
-        Map<String, String> translations;
+        final Map<String, String> translations;
 
         public HttpStatusCodeTranslator() {
             translations = new HashMap<>();
@@ -334,7 +334,7 @@ public enum HttpStatusCode {
     /**
      * The translator which can be used to translate the name.
      */
-    private static HttpStatusCodeTranslator translator = new HttpStatusCodeTranslator();
+    private static final HttpStatusCodeTranslator translator = new HttpStatusCodeTranslator();
 
     /**
      * Constructor for a new status.

@@ -3,7 +3,6 @@ package ch.avocado.share.common.constants;
 public final class ErrorMessageConstants {
     public static final String ERROR_NO_EMAIL = "Kein Passwort eingegeben.";
     public static final String ERROR_NO_PASSWORD = "Kein Passwort eingegeben.";
-    public static final String ERROR_COOKIES_DISABLED = "Cookies scheinen deaktiviert zu sein. Bitte überprüfen Sie das.";
     public static final String ERROR_WRONG_PASSWORD = "Passwort oder E-Mail-Adresse stimmt nicht.";
     public static final String ERROR_SECURITY_HANDLER = "Interner Fehler";
     public static final String ERROR_INDEX_FAILED = "Index konnte nicht geladen werden.";

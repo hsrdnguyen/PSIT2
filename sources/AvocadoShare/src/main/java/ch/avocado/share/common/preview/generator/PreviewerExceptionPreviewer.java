@@ -9,8 +9,8 @@ import ch.avocado.share.common.preview.PreviewException;
  */
 public class PreviewerExceptionPreviewer implements IPreviewGenerator {
 
-    public static final String HEAD = "<div class=\"alert alert-danger\">";
-    public static final String TAIL = "</div>";
+    private static final String HEAD = "<div class=\"alert alert-danger\">";
+    private static final String TAIL = "</div>";
     private final PreviewException exception;
 
     public PreviewerExceptionPreviewer(PreviewException exception) {

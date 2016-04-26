@@ -15,14 +15,14 @@ import java.util.List;
 
 public class UserBean extends ResourceBean<User> {
 
-    public static final String ERROR_EMPTY_PRENAME = "Vorname darf nicht leer sein.";
-    public static final String ERROR_EMPTY_SURNAME = "Nachname darf nicht leer sein.";
-    public static final String ERROR_PASSWORD_TOO_SHORT = "Das Passwort muss mindestens 8 Zeichen lang sein.";
+    private static final String ERROR_EMPTY_PRENAME = "Vorname darf nicht leer sein.";
+    private static final String ERROR_EMPTY_SURNAME = "Nachname darf nicht leer sein.";
+    private static final String ERROR_PASSWORD_TOO_SHORT = "Das Passwort muss mindestens 8 Zeichen lang sein.";
     private static final String ERROR_EMPTY_EMAIL = "E-Mail-Adresse darf nicht leer sein.";
     private static final String ERROR_INVALID_EMAIL = "Die E-Mail-Adresse ist ungültig oder leider nicht erlaubt.";
-    public static final String ERROR_EMPTY_PASSWORD = "Das Password darf nicht leer sein.";
-    public static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Die Passwort-Bestätigung darf nicht leer sein.";
-    public static final String ERROR_PASSWORD_CONFIRMATION_INCORRECT = "Die Passwörter stimmen nicht überein.";
+    private static final String ERROR_EMPTY_PASSWORD = "Das Password darf nicht leer sein.";
+    private static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Die Passwort-Bestätigung darf nicht leer sein.";
+    private static final String ERROR_PASSWORD_CONFIRMATION_INCORRECT = "Die Passwörter stimmen nicht überein.";
     private static final String PRENAME_TOO_LONG = "Der Vorname ist zu lang.";
     private static final String SURNAME_TOO_LONG = "Der Nachname ist zu lang.";
     private static final String ERROR_EMAIL_NOT_ZHAW = "Zurzeit sind nur E-Mail-Adressen der Zürcher Hochschule für Angewandte Wissenschaften (zhaw.ch) erlaubt.";
