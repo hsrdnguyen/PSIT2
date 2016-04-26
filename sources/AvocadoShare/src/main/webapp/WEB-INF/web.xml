@@ -7,21 +7,6 @@
     <error-page>
         <location>/error.jsp</location>
     </error-page>
-    <env-entry>
-        <env-entry-name>HOSTNAME</env-entry-name>
-        <env-entry-value>srv-lab-t-944.zhaw.ch</env-entry-value>
-        <env-entry-type>java.lang.String</env-entry-type>
-    </env-entry>
-    <env-entry>
-        <env-entry-name>PORT</env-entry-name>
-        <env-entry-value>80</env-entry-value>
-        <env-entry-type>java.lang.Integer</env-entry-type>
-    </env-entry>
-    <env-entry>
-        <env-entry-name>STORAGE</env-entry-name>
-        <env-entry-value>/tmp/AvocadoShare</env-entry-value>
-        <env-entry-type>java.lang.String</env-entry-type>
-    </env-entry>
     <filter>
         <filter-name>HiddenFilesFilter</filter-name>
         <filter-class>ch.avocado.share.common.HiddenFilesFilter</filter-class>
