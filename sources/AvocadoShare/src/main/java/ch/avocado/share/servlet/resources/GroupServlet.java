@@ -9,7 +9,7 @@ import ch.avocado.share.servlet.resources.base.ViewRenderer;
 
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet("/group")
+@WebServlet(value = "/group", name = "Group")
 public class GroupServlet extends ResourceServlet<Group> {
     @Override
     protected ResourceBean<Group> getBean() {

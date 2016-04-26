@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/members")
+@WebServlet(value = "/members", name = "Members")
 public class MemberServlet extends HttpServlet {
 
     public static final String TARGET_ID = "targetId";

@@ -9,7 +9,7 @@ import ch.avocado.share.servlet.resources.base.ViewRenderer;
 
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet("/file")
+@WebServlet(value = "/file", name = "File")
 public class FileServlet extends ResourceServlet<File> {
     @Override
     protected ResourceBean<File> getBean() {

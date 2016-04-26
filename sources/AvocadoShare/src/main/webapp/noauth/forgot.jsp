@@ -6,7 +6,7 @@
     request.setAttribute("ch.avocado.share.includes.header.scripts", new String[]{"https://www.google.com/recaptcha/api.js"});
     request.setAttribute("ch.avocado.share.includes.header.title", "Passwort vergessen");
 %>
-<jsp:include page="includes/header.jsp" />
+<jsp:include page="../includes/header.jsp" />
 <h2>Passwort vergessen</h2>
 <%
     boolean showFormular = true;
@@ -63,4 +63,4 @@
         </div>
     </form>
 <% } %>
-<jsp:include page="includes/footer.jsp" />
+<jsp:include page="../includes/footer.jsp" />

@@ -23,7 +23,7 @@ import java.io.IOException;
  * @author coffeemakr
  */
 
-@WebServlet("/login")
+@WebServlet(value = "/login", name = "Login")
 public class LoginServlet extends HttpServlet {
 
     static final String LOGIN_FORM_URL = "/includes/login_form.jsp";

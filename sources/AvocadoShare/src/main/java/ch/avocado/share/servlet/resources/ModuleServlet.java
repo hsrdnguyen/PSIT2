@@ -9,7 +9,7 @@ import ch.avocado.share.servlet.resources.base.ViewRenderer;
 
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet("/module")
+@WebServlet(value = "/module", name = "Module")
 public class ModuleServlet extends ResourceServlet<Module> {
 
     @Override

@@ -26,7 +26,7 @@ import java.io.UnsupportedEncodingException;
 
 import static ch.avocado.share.common.HttpStatusCode.*;
 
-@WebServlet("/download")
+@WebServlet(value = "/download", name = "Download")
 public class DownloadServlet extends HttpServlet{
 
     private static final String PARAMETER_ID = "id";

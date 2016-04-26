@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
-@WebServlet("/user_completion")
+@WebServlet(value = "/user_completion", name = "User Completion")
 public class UserCompletionServlet extends HttpServlet {
 
     public static final String PARAM_QUERY = "q";
