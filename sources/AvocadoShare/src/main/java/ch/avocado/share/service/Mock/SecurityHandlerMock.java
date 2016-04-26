@@ -152,7 +152,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         try{
             groupDataHandler = (GroupDataHandlerMock) ServiceLocator.getService(IGroupDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            return null;
+            throw new RuntimeException(e);
         }
         return groupDataHandler.getAllGroups();
     }
@@ -162,7 +162,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         try{
             userDataHandler = (UserDataHandlerMock) ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            return null;
+            throw new RuntimeException(e);
         }
         return userDataHandler.getAllUsers();
     }
@@ -172,7 +172,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         try {
             moduleDataHandler = (ModuleDataHandlerMock) ServiceLocator.getService(IModuleDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            return null;
+            throw new RuntimeException(e);
         }
         return moduleDataHandler.getAllModules();
     }
@@ -182,7 +182,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
         try {
             fileDataHandler = (FileDataHandlerMock) ServiceLocator.getService(IFileDataHandler.class);
         } catch (ServiceNotFoundException e) {
-            return null;
+            throw new RuntimeException(e);
         }
         return fileDataHandler.getAll(File.class);
     }
