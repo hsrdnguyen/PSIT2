@@ -5,7 +5,6 @@ import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.model.factory.CategoryFactory;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kunzlio1 on 23.03.2016.
+ * Handler for categories
  */
 public class CategoryDataHandler implements ICategoryDataHandler {
     //TODO @kunzlio1: Tests schreiben...
@@ -139,10 +138,12 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     }
 
     private Category createCategoryFromResultSet(ResultSet resultSet) throws DataHandlerException {
-        Category category = CategoryFactory.getDefaultCategory();
+        String name;
+        Category category = null;
         try {
             if(resultSet.next()) {
-                category.setName(resultSet.getString(2));
+                name = resultSet.getString(2);
+                category = new Category(name);
                 do {
                     category.addObjectId(resultSet.getString(1));
                 }while (resultSet.next());
