@@ -6,7 +6,7 @@ import ch.avocado.share.model.data.AccessLevelEnum;
  * Bean to make editing of a bean easier.
  */
 public class EditMemberBean {
-    private String getReadableLevelName(AccessLevelEnum level) {
+    public static String getReadableLevelName(AccessLevelEnum level) {
         if(level == null) throw new IllegalArgumentException("level is null");
         switch (level) {
             case NONE:
@@ -18,7 +18,7 @@ public class EditMemberBean {
             case MANAGE:
                 return "Verwaltungsrecht";
             case OWNER:
-                return "Besitzer";
+                return "Besitzrecht";
         }
         throw new RuntimeException("Unknwon level");
     }

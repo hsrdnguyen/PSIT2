@@ -16,7 +16,11 @@
             <a title="'yellow white and blue' auf Flickr" href="https://flic.kr/p/76GCDs">Hintergundbild</a>.</p>
     </div>
 </footer>
-<script type="application/javascript" src="<%=baseUrlFooter%>/static/components/jquery/dist/jquery.min.js"></script>
-<script type="application/javascript" src="<%=baseUrlFooter%>/static/components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script type="application/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+</script>
 </body>
 </html>

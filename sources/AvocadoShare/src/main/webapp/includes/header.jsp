@@ -34,6 +34,9 @@
     <link rel="stylesheet" href="<%=baseUrl%>/static/components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="<%=baseUrl%>/static/css/octicons.css">
     <link rel="stylesheet" href="<%=baseUrl%>/static/css/app.css">
+    <script type="application/javascript" src="<%=baseUrl%>/static/components/jquery/dist/jquery.min.js"></script>
+    <script type="application/javascript" src="<%=baseUrl%>/static/components/tether/dist/js/tether.min.js"></script>
+    <script type="application/javascript" src="<%=baseUrl%>/static/components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="application/javascript" src="<%=baseUrl%>/static/js/app.js"></script>
     <% for(String script: scripts) { %>
     <script type="application/javascript" src="<%=Encoder.forHtmlAttribute(script)%>"></script>
