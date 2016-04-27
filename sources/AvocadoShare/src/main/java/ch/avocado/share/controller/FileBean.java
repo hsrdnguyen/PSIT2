@@ -89,7 +89,7 @@ public class FileBean extends ResourceBean<File> {
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
         List<Module> modules = null;
         try {
-            modules = moduleDataHandler.getModules(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ));
+            modules = moduleDataHandler.getModules(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.WRITE));
         } catch (DataHandlerException e) {
             throw new HttpBeanDatabaseException();
         }
