@@ -18,8 +18,8 @@ import java.util.Arrays;
 public class AvatarStorageHandler implements IAvatarStorageHandler {
 
     public static final int MAX_IMAGE_SIZE = 1024 * 3;
-    public static final int AVATAR_WIDTH = 32;
-    public static final int AVATAR_HEIGHT = 32;
+    public static final int AVATAR_WIDTH = 128;
+    public static final int AVATAR_HEIGHT = 128;
 
     @Override
     public String storeAvatar(InputStream imageStream) {
@@ -40,8 +40,10 @@ public class AvatarStorageHandler implements IAvatarStorageHandler {
             e.printStackTrace();
             throw new RuntimeException("Couldn't read image");
         }
-        outputImage = ImageHelper.resizeFilling(uploadedImage, 32, 32);
-        System.out.println(Arrays.toString(ImageIO.getWriterFormatNames()));
+        if(uploadedImage == null) {
+            throw new RuntimeException("Not an image");
+        }
+        outputImage = ImageHelper.resizeFilling(uploadedImage, AVATAR_WIDTH, AVATAR_HEIGHT);
         File tempFile = null;
         try {
             tempFile = File.createTempFile("ashare-avatar", ".png");
