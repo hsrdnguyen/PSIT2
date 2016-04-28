@@ -50,5 +50,6 @@ public class ServiceLocator {
         services.put(ICategoryDataHandler.class, new CategoryDataHandler());
         services.put(IModuleDataHandler.class, new ModuleDataHandler());
         services.put(ICaptchaVerifier.class, new ReCaptchaVerifier());
+        services.put(IAvatarStorageHandler.class, new AvatarStorageHandler());
     }
 }

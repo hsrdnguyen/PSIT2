@@ -13,53 +13,70 @@
     form.setReadableFieldName("passwordConfirmation", "Passwort wiederholen");
     form.setReadableFieldName("mail", "E-Mail-Adresse");
 %>
-<h1>Benutzer bearbeiten</h1>
-<% if(!form.getFormErrors().isEmpty()) { %>
-<div class="alert alert-danger">
-    <%=form.getFormErrors()%>
-</div>
-<% } %>
-<h2>Informationen</h2>
+<div class="list-group">
+    <div class="list-group-item list-group-header">
+        <h1>Benutzer bearbeiten</h1>
+    </div>
+    <div class="list-group-item">
+        <% if (!form.getFormErrors().isEmpty()) { %>
 
-    <%=form.getFormBegin("patch") %>
-    <div class="form-group" id="formular-prename">
-        <%=form.getLabelFor("prename")%>
-        <%=form.getInputFor("prename")%>
-    </div>
-    <div class="form-group" id="formular-surname">
-        <%=form.getLabelFor("surname")%>
-        <%=form.getInputFor("surname")%>
-    </div>
-    <div class="form-group" id="formular-email">
-        <%=form.getLabelFor("mail")%>
-        <%=form.getInputFor("mail")%>
-    </div>
-    <%=form.getSubmit("Speichern") %>
-    <%=form.getFormEnd()%>
+        <div class="alert alert-danger">
+            <%=form.getFormErrors()%>
+        </div>
+        <% } %>
+        <h2>Informationen</h2>
 
-<h3>Passwort</h3>
-    <%=form.getFormBegin("patch") %>
-    <div class="form-group" id="formular-betreff">
-        <%=form.getLabelFor("password")%>
-        <%=form.getInputFor("password")%>
-    </div>
-    <div class="form-group" id="formular-betreff">
-        <%=form.getLabelFor("passwordConfirmation") %>
-        <%=form.getInputFor("passwordConfirmation", "password", "") %>
-    </div>
-    <%=form.getSubmit("Ändern")%>
-    <%=form.getFormEnd() %>
+        <%=form.getFormBegin("patch") %>
+        <div class="form-group">
+            <%=form.getLabelFor("prename")%>
+            <%=form.getInputFor("prename")%>
+        </div>
+        <div class="form-group">
+            <%=form.getLabelFor("surname")%>
+            <%=form.getInputFor("surname")%>
+        </div>
+        <div class="form-group">
+            <%=form.getLabelFor("mail")%>
+            <%=form.getInputFor("mail")%>
+        </div>
+        <%=form.getSubmit("Speichern") %>
+        <%=form.getFormEnd()%>
 
-<h3>Anderes</h3>
-<h4>Benutzer löschen</h4>
-<p>
-    Sie können Ihrer Benutzer mit der folgenden Schaltfläche löschen.
-</p>
-<div class="alert alert-danger">
-    Wenn Sie Ihren Benutzer löschen werden alle Gruppen, Module und Dateien, die Sie erstellt haben unwiderruflich
-    gelöscht!
+        <h3>Passwort</h3>
+        <%=form.getFormBegin("patch") %>
+        <div class="form-group">
+            <%=form.getLabelFor("password")%>
+            <%=form.getInputFor("password")%>
+        </div>
+        <div class="form-group">
+            <%=form.getLabelFor("passwordConfirmation") %>
+            <%=form.getInputFor("passwordConfirmation", "password", "") %>
+        </div>
+        <%=form.getSubmit("Ändern")%>
+        <%=form.getFormEnd() %>
+
+        <h3>Profilbild</h3>
+        <% form.setEncodingType("multipart/form-data"); %>
+        <%=form.getFormBegin("patch") %>
+        <div class="form-group">
+            <input type="file" name="avatar"/>
+        </div>
+        <%=form.getSubmit("Hochladen") %>
+        <%=form.getFormEnd() %>
+
+        <h3>Anderes</h3>
+        <h4>Benutzer löschen</h4>
+        <p>
+            Sie können Ihrer Benutzer mit der folgenden Schaltfläche löschen.
+        </p>
+        <div class="alert alert-danger">
+            Wenn Sie Ihren Benutzer löschen werden alle Gruppen, Module und Dateien, die Sie erstellt haben
+            unwiderruflich
+            gelöscht!
+        </div>
+    </div>
 </div>
 <%=form.getFormBegin("delete") %>
-    <%=form.getSubmit("Benutzer löschen")%>
+<%=form.getSubmit("Benutzer löschen")%>
 <%=form.getFormEnd()%>
 <%@include file="../../includes/footer.jsp" %>

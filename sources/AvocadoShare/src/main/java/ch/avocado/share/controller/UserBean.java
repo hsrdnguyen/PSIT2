@@ -1,14 +1,19 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.EmailAddressVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.service.IAvatarStorageHandler;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import org.apache.commons.fileupload.FileItem;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +37,7 @@ public class UserBean extends ResourceBean<User> {
     private String mail;
     private String password;
     private String passwordConfirmation;
-    private String avatar = null;
+    private FileItem avatar = null;
 
     private static final int MAX_LENGTH_PRENAME = 50;
     private static final int MAX_LENGTH_SURNAME = 50;
@@ -132,6 +137,9 @@ public class UserBean extends ResourceBean<User> {
         if(user.hasErrors()) {
             return user;
         }
+        if(getAvatar() != null) {
+            storeAvatar(user, getAvatar());
+        }
         user.setPrename(getPrename());
         user.setSurname(getSurname());
         user.setPassword(password);
@@ -149,6 +157,19 @@ public class UserBean extends ResourceBean<User> {
     @Override
     public List<User> index() {
         return new ArrayList<>();
+    }
+
+
+    private void storeAvatar(User user, FileItem avatar) throws HttpBeanException {
+        IAvatarStorageHandler avatarStorageHandler = getService(IAvatarStorageHandler.class);
+        InputStream inputStream = null;
+        try {
+            inputStream = avatar.getInputStream();
+        } catch (IOException e) {
+            throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Avatar konnte nicht gelesen werden");
+        }
+        String reference = avatarStorageHandler.storeAvatar(inputStream);
+        user.setAvatar(reference);
     }
 
     @Override
@@ -174,9 +195,18 @@ public class UserBean extends ResourceBean<User> {
             }
         }
         if(mail != null) {
+            // TODO: check implentation
             checkEmailAddress(user);
             if (!user.hasErrors() && !user.getMail().getAddress().equals(mail)) {
                 storeNewEmailAddress(user, mail);
+
+            }
+        }
+
+        if(avatar != null) {
+            if(getAvatar() != null) {
+                storeAvatar(user, getAvatar());
+                userChanged = true;
             }
         }
 
@@ -229,13 +259,11 @@ public class UserBean extends ResourceBean<User> {
         this.passwordConfirmation = passwordConfirmation;
     }
 
-    public String getAvatar() {
-        // TODO: fix
-        if(avatar == null) return "1234.jpg";
+    public FileItem getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(FileItem avatar) {
         this.avatar = avatar;
     }
 }

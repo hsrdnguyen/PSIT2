@@ -4,7 +4,9 @@ import ch.avocado.share.common.HexEncoder;
 import ch.avocado.share.common.constants.FileConstants;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.exceptions.FileStorageException;
+import com.sun.corba.se.spi.orbutil.fsm.Input;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 
@@ -45,11 +47,11 @@ public class FileStorageHandler implements IFileStorageHandler {
     }
 
     /**
-     * @param fileItem The file
+     * @param inputStream The input stream to the file. The input stream will be closed after calling this method.
      * @return The hash of the file.
      * @throws FileStorageException
      */
-    private String createFileHashName(FileItem fileItem) throws FileStorageException {
+    private String createFileHashName(InputStream inputStream) throws FileStorageException {
         byte[] buffer = new byte[FILE_READ_BUFFER_SIZE];
         int readBytes = 0;
         MessageDigest messageDigest;
@@ -58,9 +60,7 @@ public class FileStorageHandler implements IFileStorageHandler {
         } catch (NoSuchAlgorithmException e) {
             throw new FileStorageException("SHA-256 digest doesn't exist");
         }
-        InputStream inputStream = null;
         try {
-            inputStream = fileItem.getInputStream();
             while (readBytes >= 0) {
                 readBytes = inputStream.read(buffer);
                 if (readBytes >= 0) {
@@ -69,9 +69,15 @@ public class FileStorageHandler implements IFileStorageHandler {
             }
         } catch (IOException e) {
             throw new FileStorageException("Unable to hash file: " + e.getMessage());
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ignored) {
+            }
         }
         // finalize digest (padding etc.)
         byte[] digest = messageDigest.digest();
+        // Convert to string
         return HexEncoder.bytesToHex(digest);
     }
 
@@ -85,14 +91,15 @@ public class FileStorageHandler implements IFileStorageHandler {
 
     @Override
     public String saveFile(FileItem tempUploadedFile) throws FileStorageException {
-        if(tempUploadedFile == null) throw new IllegalArgumentException("tempUploadedFile is null");
+        if (tempUploadedFile == null) throw new IllegalArgumentException("tempUploadedFile is null");
         if (tempUploadedFile.isFormField()) {
             throw new IllegalArgumentException("tempUploadedFile isFormField and not an unploaded file");
         }
         File storedFile;
         String filename;
-        filename = createFileHashName(tempUploadedFile);
         try {
+            InputStream inputStream = tempUploadedFile.getInputStream();
+            filename = createFileHashName(inputStream);
             storedFile = new File(getStoreDirectory(), filename);
             if (!storedFile.exists()) {
                 tempUploadedFile.write(storedFile);
@@ -102,6 +109,32 @@ public class FileStorageHandler implements IFileStorageHandler {
         }
         return filename;
     }
+
+    @Override
+    public String saveFile(File fileToSave) throws FileStorageException {
+        String filename;
+        try {
+            InputStream inputStream = new FileInputStream(fileToSave);
+            filename = createFileHashName(inputStream);
+            inputStream = new FileInputStream(fileToSave);
+            File outputFile = new File(getStoreDirectory(), filename);
+            if (!outputFile.exists()) {
+                try {
+                    try (OutputStream outputStream = new FileOutputStream(outputFile)) {
+                        IOUtils.copy(inputStream, outputStream);
+                    }
+                } catch (Exception e){
+                    //noinspection ResultOfMethodCallIgnored
+                    outputFile.delete();
+                    throw e;
+                }
+            }
+        } catch (IOException e) {
+            throw new FileStorageException(e.getMessage());
+        }
+        return filename;
+    }
+
 
     /**
      * @param reference Reference to the file
