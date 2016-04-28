@@ -2,6 +2,7 @@ package ch.avocado.share.common;
 
 
 import ch.avocado.share.model.data.File;
+import ch.avocado.share.servlet.AvatarServlet;
 import ch.avocado.share.servlet.DownloadServlet;
 import ch.avocado.share.servlet.LoginServlet;
 
@@ -63,5 +64,9 @@ public class UrlHelper {
     public String getLoginUrlWithRedirect() {
         String currentUrl = getPathAndQuery();
         return getLoginUrl() + "?" + encodeUrlParameter(LoginServlet.FIELD_REDIRECT_TO, currentUrl);
+    }
+
+    public String getAvatarUrl(String avatarId) {
+        return getBase() + "/avatar?" + encodeUrlParameter(AvatarServlet.PARAMETER_AVATAR, avatarId);
     }
 }

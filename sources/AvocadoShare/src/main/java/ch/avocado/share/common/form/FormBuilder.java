@@ -8,6 +8,7 @@ import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.model.exceptions.FormBuilderException;
 import ch.avocado.share.servlet.resources.base.DetailViewConfig;
 import ch.avocado.share.servlet.resources.base.FormError;
+import org.apache.commons.fileupload.FileItem;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,7 +21,7 @@ import java.util.Random;
 public class FormBuilder {
     private FormError formErrors;
     private String action;
-    private String encodingType = null;
+    private FormEncoding encodingType = null;
     private AccessControlObjectBase object;
     private Class<? extends AccessControlObjectBase> objectClass;
     private String htmlInputClass = "form-control";
@@ -102,11 +103,11 @@ public class FormBuilder {
             case DELETE:
             default:
                 formMethod = HttpMethod.POST.name();
-                formContent = getInputFor("method", "hidden", method).toString();
+                formContent = getInputFor("method", InputType.HIDDEN, method).toString();
         }
 
         if (object != null) {
-            formContent += getInputFor("id", "hidden");
+            formContent += getInputFor("id", InputType.HIDDEN);
         }
         if (getAction() != null) {
             form += formatAttribute("action", getAction());
@@ -114,7 +115,7 @@ public class FormBuilder {
         form += formatAttribute("method", formMethod);
         form += formatAttribute("accept-charset", "UTF-8");
         if (getEncodingType() != null) {
-            form += formatAttribute("enctype", getEncodingType());
+            form += formatAttribute("enctype", getEncodingType().getContentType());
         }
         form += ">\n" + formContent;
         return form;
@@ -136,6 +137,8 @@ public class FormBuilder {
             type = InputType.NUMBER;
         } else if (fieldType == EmailAddress.class) {
             type = InputType.EMAIL;
+        } else if (fieldType == FileItem.class) {
+            type = InputType.FILE;
         } else {
             throw new FormBuilderException("unknown type " + fieldType);
         }
@@ -156,7 +159,7 @@ public class FormBuilder {
         return getInputFor(fieldName, null, null);
     }
 
-    public InputField getInputFor(String fieldName, String type) throws FormBuilderException {
+    public InputField getInputFor(String fieldName, InputType type) throws FormBuilderException {
         return getInputFor(fieldName, type, null);
     }
 
@@ -249,24 +252,25 @@ public class FormBuilder {
     /**
      * @param fieldName The name of the field
      * @param type      null or the type of the element.
-     * @param @Override value     null or the value of the element.
+     * @param value     null or the value of the element.
      * @return The input field.
      * @throws FormBuilderException
      */
-    public InputField getInputFor(String fieldName, String type, String value) throws FormBuilderException {
+    public InputField getInputFor(String fieldName, InputType type, String value) throws FormBuilderException {
         if (fieldName == null) throw new IllegalArgumentException("field is null");
         if (type == null || value == null) {
-            Method getter = getGetterMethod(fieldName);
+            Method getter = null;
             if (type == null) {
-                type = getTypeFromGetter(getter).toString().toLowerCase();
+                getter = getGetterMethod(fieldName);
+                type = getTypeFromGetter(getter);
             }
-            if (value == null) {
-                if (object != null && getter != null && !type.equals("password")) {
-                    value = getValueFromGetter(getter);
+            if (value == null && object != null && type.canHaveValue()) {
+                if(getter == null) {
+                    getter = getGetterMethod(fieldName);
                 }
+                value = getValueFromGetter(getter);
             }
         }
-
         InputField inputField = new InputField(fieldName, getIdForFieldName(fieldName), type);
         inputField.setHtmlClass(getHtmlInputClass());
         if (value != null) {
@@ -290,11 +294,11 @@ public class FormBuilder {
         return value;
     }
 
-    public String getEncodingType() {
+    public FormEncoding getEncodingType() {
         return encodingType;
     }
 
-    public void setEncodingType(String encodingType) {
+    public void setEncodingType(FormEncoding encodingType) {
         this.encodingType = encodingType;
     }
 

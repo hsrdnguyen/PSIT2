@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  */
 public class InputFieldTest {
 
-    public static final String DEFAULT_TYPE = "text";
+    public static final InputType DEFAULT_TYPE = InputType.TEXT;
     private InputField field;
 
     @Before
@@ -26,18 +26,18 @@ public class InputFieldTest {
     @Test
     public void testSetType() throws Exception {
         assertEquals(DEFAULT_TYPE, field.getType());
-        field.setType("new_type");
-        assertEquals("new_type", field.getType());
+        field.setType(InputType.EMAIL);
+        assertEquals(InputType.EMAIL, field.getType());
     }
 
     @Test
     public void testToString() throws Exception {
         String html = field.toString();
         assertTrue(html.contains("id=\"id\""));
-        assertTrue(html.contains("type=\""+ DEFAULT_TYPE + "\""));
+        assertTrue(html.contains("type=\""+ DEFAULT_TYPE.name().toLowerCase() + "\""));
         assertTrue(html.contains("input"));
         assertFalse(html.contains("textarea"));
-        field.setType("textarea");
+        field.setType(InputType.TEXTAREA);
         html = field.toString();
         assertFalse(html.contains("input"));
         assertTrue(html.contains("textarea"));
