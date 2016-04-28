@@ -2,6 +2,7 @@
 <%@ page import="ch.avocado.share.model.data.Group" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.common.form.InputType" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -23,7 +24,7 @@
             </div>
             <div class="form-group">
                 <%=formBuilder.getLabelFor("description") %>
-                <%=formBuilder.getInputFor("description", "textarea") %>
+                <%=formBuilder.getInputFor("description", InputType.TEXTAREA) %>
             </div>
             <div class="form-group">
                 <%=formBuilder.getSubmit("Gruppe erstellen")%>

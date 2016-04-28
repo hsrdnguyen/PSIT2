@@ -4,9 +4,9 @@ import ch.avocado.share.common.Encoder;
 
 public class InputField extends FieldBase {
     private String value = "";
-    private String type;
+    private InputType type;
 
-    public InputField(String name, String id, String type) {
+    public InputField(String name, String id, InputType type) {
         super(name, id);
         setType(type);
     }
@@ -14,14 +14,14 @@ public class InputField extends FieldBase {
     /**
      * @return type input type
      */
-    public String getType() {
+    public InputType getType() {
         return type;
     }
 
     /**
      * @param type the input type
      */
-    public void setType(String type) {
+    public void setType(InputType type) {
         if (type == null) throw new IllegalArgumentException("type is null");
         this.type = type;
     }
@@ -29,10 +29,10 @@ public class InputField extends FieldBase {
     @Override
     public String toHtml() {
         String attributes = getHtmlAttributes();
-        if (InputType.fromString(type) == InputType.TEXTAREA) {
+        if (type == InputType.TEXTAREA) {
             return "<textarea " + attributes + ">" + Encoder.forHtml(getValue()) + "</textarea>\n";
         } else {
-            attributes += FormBuilder.formatAttribute("type", type.toLowerCase());
+            attributes += FormBuilder.formatAttribute("type", type.name().toLowerCase());
             attributes += FormBuilder.formatAttribute("value", getValue());
             return "<input " + attributes + "/>";
         }
