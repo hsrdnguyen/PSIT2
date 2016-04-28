@@ -28,12 +28,12 @@ public class ImageHelper {
         float imageHeightToWidthRatio = ((float) image.getHeight()) / image.getWidth();
         if (outputHeightToWidthRatio < imageHeightToWidthRatio) {
             // original image height has to be cropped
-            int drawnImageHeight =(int)((float) width) / image.getWidth() * image.getHeight());
+            int drawnImageHeight =(int) (((float) width) / image.getWidth() * image.getHeight());
             System.out.println("drawnImageHeight: " + drawnImageHeight);
             graphics2D.drawImage(image, 0, 0, width, drawnImageHeight, null);
         } else {
             // original image width has to be cropped
-            int drawnImageWidth = (int) ((float) width) / image.getHeight() * image.getWidth());
+            int drawnImageWidth = (int) (((float) width) / image.getHeight() * image.getWidth());
             System.out.println("drawnImageWidth: " + drawnImageWidth);
             graphics2D.drawImage(image, 0, 0, drawnImageWidth, height, null);
         }
