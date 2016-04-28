@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 
-public class AvatarStorageHandler implements IAvatarStorageHandler {
+public class AvatarFileStorageHandler implements IAvatarStorageHandler {
 
     public static final int MAX_IMAGE_SIZE = 1024 * 3;
     public static final int AVATAR_WIDTH = 128;

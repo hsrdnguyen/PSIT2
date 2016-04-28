@@ -29,7 +29,6 @@ public class ImageHelperTest {
         croppedAndScaledImage = ImageIO.read(Thread.currentThread().getContextClassLoader().getResource("ch/avocado/share/common/1024x200_cropped_and_scaled_to_100x100.png"));
     }
 
-
     static private void assertImageEquals(BufferedImage expected, BufferedImage actual, int[] allowedDeltas) {
         if (allowedDeltas.length != 3) throw new IllegalArgumentException("allowedDeltas has to be {r,g,b}");
         assertEquals(expected.getWidth(), actual.getWidth());
