@@ -318,12 +318,14 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         }
         int level = getAccessLevelInt(accessLevelEnum);
         List<String> ids = new LinkedList<>();
-        int ownerId = Integer.parseInt(identity.getId());
+        long ownerId = Long.parseLong(identity.getId());
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS);
             preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX, level);
-            preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX, ownerId);
-            preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_2, ownerId);
+            preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX_2, level);
+            preparedStatement.setLong(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX, ownerId);
+            preparedStatement.setLong(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_2, ownerId);
+            preparedStatement.setLong(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_3, ownerId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 ids.add(Integer.toString(resultSet.getInt(1)));

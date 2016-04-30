@@ -2,8 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.service.IGroupDataHandler;
-import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.*;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
@@ -11,7 +10,10 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.omg.PortableServer.ServantRetentionPolicy;
 
+import java.security.Provider;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +28,11 @@ public class SecurityHandlerTest {
     private Group groupOne;
     private Group groupTwo;
     private Group groupThree;
-
+    private Module module;
+    private File fileInModule;
     private User user;
     private User owningUser;
+    private User moduleOwner;
 
     private User getUser(String prename, String surname, String email) {
         return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, new EmailAddressVerification(EmailAddressVerification.getDateFromExpiryInHours(24))));
@@ -43,14 +47,21 @@ public class SecurityHandlerTest {
 
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+        IModuleDataHandler moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
+        IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
 
         // Add users
         user = getUser("Prename", "Surname", "user2@zhaw.ch");
         owningUser = getUser("Prename", "Surname", "user1@zhaw.ch");
+        moduleOwner = getUser("Module Owner", "Surname", "user3@zhaw.ch");
 
         assertNotNull(userDataHandler.addUser(user));
         assertNotNull(user.getId());
         assertNotNull(userDataHandler.getUser(user.getId()));
+
+        assertNotNull(userDataHandler.addUser(moduleOwner));
+        assertNotNull(moduleOwner.getId());
+        assertNotNull(userDataHandler.getUser(moduleOwner.getId()));
 
         assertNotNull(userDataHandler.addUser(owningUser));
         assertNotNull(owningUser.getId());
@@ -75,6 +86,13 @@ public class SecurityHandlerTest {
         assertNotNull(groupThree.getId());
         assertNotNull(groupDataHandler.getGroup(groupThree.getId()));
 
+        // Add module
+        module = new Module(moduleOwner.getId(), "Module description", "Unique Module One");
+
+        assertNotNull(moduleDataHandler.addModule(module));
+
+        fileInModule = new File(owningUser.getId(), "description", "title", "path", new Date(), ".ext", module.getId(), "image/png");
+        assertNotNull(fileDataHandler.addFile(fileInModule));
     }
 
     @After
@@ -82,11 +100,20 @@ public class SecurityHandlerTest {
         try {
             IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
             IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
+            IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+            IModuleDataHandler moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
+
             userDataHandler.deleteUser(user);
             userDataHandler.deleteUser(owningUser);
+            userDataHandler.deleteUser(moduleOwner);
             groupDataHandler.deleteGroup(groupOne);
             groupDataHandler.deleteGroup(groupTwo);
             groupDataHandler.deleteGroup(groupThree);
+
+            moduleDataHandler.deleteModule(module);
+
+            fileDataHandler.deleteFile(fileInModule);
+
         } finally {
             ServiceLocatorModifier.restore();
         }
@@ -244,6 +271,41 @@ public class SecurityHandlerTest {
         assertEquals(AccessLevelEnum.WRITE, securityHandler.getAccessLevel(groupTwo, groupOne));
     }
 
+    @Test
+    public void testGetAccessLevelWithAccessFromModule() throws Exception {
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(user, fileInModule));
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(user, module));
+
+        // If the user has READ rights on the module he has READ rights on the file.
+        assertTrue(securityHandler.setAccessLevel(user, module, AccessLevelEnum.READ));
+        assertEquals(AccessLevelEnum.READ, securityHandler.getAccessLevel(user, fileInModule));
+        assertEquals(AccessLevelEnum.READ, securityHandler.getAccessLevel(user, module));
+
+        // If the user has WRITE rights on the module he has WRITE rights on the file.
+        assertTrue(securityHandler.setAccessLevel(user, module, AccessLevelEnum.WRITE));
+        assertEquals(AccessLevelEnum.WRITE, securityHandler.getAccessLevel(user, fileInModule));
+        assertEquals(AccessLevelEnum.WRITE, securityHandler.getAccessLevel(user, module));
+
+        // If the user has MANAGE rights on the module he has MANAGE rights on the file.
+        assertTrue(securityHandler.setAccessLevel(user, module, AccessLevelEnum.MANAGE));
+        assertEquals(AccessLevelEnum.MANAGE, securityHandler.getAccessLevel(user, fileInModule));
+        assertEquals(AccessLevelEnum.MANAGE, securityHandler.getAccessLevel(user, module));
+
+        // Check if the rights can be revoked
+        assertTrue(securityHandler.setAccessLevel(user, module, AccessLevelEnum.NONE));
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(user, fileInModule));
+        assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(user, module));
+    }
+
+    @Test
+    public void testModuleOwnerHasManageRightsForFiles() throws Exception {
+        // Check if the user is really  the owner
+        assertEquals(AccessLevelEnum.OWNER, securityHandler.getAccessLevel(moduleOwner, module));
+        assertEquals(AccessLevelEnum.OWNER, securityHandler.getAccessLevel(moduleOwner.getId(), module.getId()));
+        // Should have manage rights
+        assertEquals(AccessLevelEnum.MANAGE, securityHandler.getAccessLevel(moduleOwner, fileInModule));
+    }
+
 
     @Test
     public void testGetGroupsWithAccess() throws Exception {
@@ -283,27 +345,45 @@ public class SecurityHandlerTest {
     }
 
     @Test
-    public void testGetObjectsOnWhichIdentityHasAccessLevel() throws Exception {
-        List<String> ids;
-        ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(owningUser, AccessLevelEnum.READ);
+    public void testGetObjectOnWhichIdentityHasAccessLevelForOwningUser() throws Exception {
+        List<String> ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(owningUser, AccessLevelEnum.READ);
+
         // The owning user has access on all its groups.
         assertTrue(ids.contains(groupOne.getId()));
         assertTrue(ids.contains(groupTwo.getId()));
         assertTrue(ids.contains(groupThree.getId()));
-        assertEquals(3, ids.size());
+        assertTrue(ids.contains(fileInModule.getId()));
+        assertEquals(4, ids.size());
+    }
 
-        ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
+    @Test
+    public void testGetObjectsOnWhichIdentityHasAccessLevelForModuleOwner() throws Exception {
+        // The module owner should have access to its module
+        List<String> ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(moduleOwner, AccessLevelEnum.READ);
+        assertTrue(ids.contains(module.getId()));
+        assertEquals(1, ids.size());
+    }
+
+    @Test
+    public void testGetObjectsOnWhichIdentityHasAccessLevel() throws Exception {
+        // the user has no access at all
+        List<String> ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
         assertTrue(ids.isEmpty());
 
         // now we add rights for the user so the lists should appear
         assertTrue(securityHandler.setAccessLevel(user, groupOne, AccessLevelEnum.READ));
         assertTrue(securityHandler.setAccessLevel(user, groupTwo, AccessLevelEnum.READ));
         assertTrue(securityHandler.setAccessLevel(user, groupThree, AccessLevelEnum.READ));
+        assertTrue(securityHandler.setAccessLevel(user, module, AccessLevelEnum.READ));
+
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
-        assertEquals(3, ids.size());
         assertTrue(ids.contains(groupOne.getId()));
         assertTrue(ids.contains(groupTwo.getId()));
         assertTrue(ids.contains(groupThree.getId()));
+        assertTrue(ids.contains(module.getId()));
+        assertTrue(ids.contains(fileInModule.getId()));
+        assertEquals(5, ids.size());
+
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.WRITE);
         assertEquals(0, ids.size());
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.MANAGE);
@@ -311,13 +391,27 @@ public class SecurityHandlerTest {
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.OWNER);
         assertEquals(0, ids.size());
 
+        assertTrue(securityHandler.setAccessLevel(user, module, AccessLevelEnum.NONE));
+        assertTrue(securityHandler.setAccessLevel(user, fileInModule, AccessLevelEnum.READ));
+
+        ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
+
+        assertTrue(ids.contains(groupOne.getId()));
+        assertTrue(ids.contains(groupTwo.getId()));
+        assertTrue(ids.contains(groupThree.getId()));
+        assertFalse(ids.contains(module.getId()));
+        assertTrue(ids.contains(fileInModule.getId()));
+        assertEquals(4, ids.size());
+
+
         assertTrue(securityHandler.setAccessLevel(user, groupTwo, AccessLevelEnum.WRITE));
         assertTrue(securityHandler.setAccessLevel(user, groupThree, AccessLevelEnum.MANAGE));
         assertEquals(AccessLevelEnum.MANAGE, securityHandler.getAccessLevel(user, groupThree));
         assertEquals(AccessLevelEnum.WRITE, securityHandler.getAccessLevel(user, groupTwo));
 
         ids = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.READ);
-        assertEquals(3, ids.size());
+        assertEquals(4, ids.size());
+        assertTrue(ids.contains(fileInModule.getId()));
         assertTrue(ids.contains(groupOne.getId()));
         assertTrue(ids.contains(groupTwo.getId()));
         assertTrue(ids.contains(groupThree.getId()));

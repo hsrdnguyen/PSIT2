@@ -325,9 +325,17 @@ public class SQLQueryConstants {
             "       WHERE r.owner_id = ? " +
             "       AND r.level >= ? " +
             "UNION SELECT object_id  FROM avocado_share.ownership AS o" +
-            "   WHERE o.owner_id = ?";
+            "   WHERE o.owner_id = ? " +
+            "UNION SELECT file_id FROM avocado_share.uploaded_into AS u " +
+            "   JOIN avocado_share.rights AS ur" +
+            "   ON ur.object_id = u.module_id " +
+            "       WHERE ur.owner_id = ? " +
+            "       AND ur.level >= ? ";
 
     public static final int SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX = 1;
     public static final int SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_2 = 3;
+    public static final int SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_3 = 4;
     public static final int SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX = 2;
+    public static final int SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX_2 = 5;
+
 }
