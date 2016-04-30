@@ -53,7 +53,7 @@ public class UserServlet extends ResourceServlet<User> {
     protected void redirectAfterSuccess(HttpServletRequest request, HttpServletResponse response, Action action, User object) throws IOException {
         if (action == Action.CREATE) {
             String baseUrl = request.getServletContext().getContextPath();
-            response.sendRedirect(baseUrl + "/register_success.jsp");
+            response.sendRedirect(baseUrl + "/noauth/register_success.jsp");
         } else {
             super.redirectAfterSuccess(request, response, action, object);
         }
