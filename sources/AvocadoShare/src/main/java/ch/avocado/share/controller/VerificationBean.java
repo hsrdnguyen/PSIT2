@@ -23,6 +23,7 @@ public class VerificationBean implements Serializable {
         try {
             userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         } catch (ServiceNotFoundException e) {
+            e.printStackTrace();
             return false;
         }
         if (email != null && code != null) {
@@ -42,8 +43,6 @@ public class VerificationBean implements Serializable {
                         isVerified = false;
                     }
                 }
-            } else {
-                System.out.println("User not found.");
             }
         }
         return isVerified;
