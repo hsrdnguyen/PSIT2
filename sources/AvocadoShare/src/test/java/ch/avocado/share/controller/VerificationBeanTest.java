@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
-public class EmailAddressVerificationBeanTest {
+public class VerificationBeanTest {
     private VerificationBean bean;
     private User user;
     private IUserDataHandler userDataHandler;
@@ -25,13 +25,14 @@ public class EmailAddressVerificationBeanTest {
 
     @Before
     public void setUp() throws Exception {
-        bean = new VerificationBean();
         addressVerification = new EmailAddressVerification(new Date(System.currentTimeMillis() + 10000));
         email = spy(new EmailAddress(false, "email@zhaw.ch", addressVerification));
         user = spy(new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "1234.jpg", email));
         userDataHandler = mock(IUserDataHandler.class);
         when(userDataHandler.getUserByEmailAddress(email.getAddress())).thenReturn(user);
+        when(userDataHandler.updateUser(any(User.class))).thenReturn(true);
         ServiceLocatorModifier.setService(IUserDataHandler.class, userDataHandler);
+        bean = new VerificationBean();
     }
 
     @After
@@ -43,11 +44,19 @@ public class EmailAddressVerificationBeanTest {
     public void testVerify() throws Exception {
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());
-        assertTrue(bean.verifyEmailCode());
+        assertTrue("verifyEmailCode failed", bean.verifyEmailCode());
 
         verify(email, times(1)).verify();
         verify(userDataHandler, times(1)).updateUser(user);
         assertNull(email.getVerification());
+    }
+
+    @Test
+    public void testVerifyFailsWhenUpdateFails() throws Exception {
+        when(userDataHandler.updateUser(any(User.class))).thenReturn(false);
+        bean.setEmail(email.getAddress());
+        bean.setCode(addressVerification.getCode());
+        assertFalse("verifyEmailCode succeeded", bean.verifyEmailCode());
     }
 
     @Test
