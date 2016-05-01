@@ -8,6 +8,7 @@ import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.test.Asserts;
+import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,25 +40,15 @@ public class FileDataHandlerTest {
 
 
         userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        String emailOne = "unexisting_email@zhaw.ch";
-        String emailTwo = "unexsiting_email2@zhaw.ch";
-        user = userDataHandler.getUserByEmailAddress(emailOne);
-        userTwo = userDataHandler.getUserByEmailAddress(emailTwo);
-        if (user != null) {
-            userDataHandler.deleteUser(user);
-        }
-        if (userTwo != null) {
-            userDataHandler.deleteUser(userTwo);
-        }
 
-        user = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "Description", new EmailAddress(false, emailOne, new EmailAddressVerification(new Date())));
-        userTwo = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "Description", new EmailAddress(false, emailTwo, new EmailAddressVerification(new Date())));
+        user = DummyFactory.newUser(1);
+        userTwo = DummyFactory.newUser(2);
 
         assertNotNull(userDataHandler.addUser(user));
         assertNotNull(userDataHandler.addUser(userTwo));
 
-
         String module_name = "Unexisting Module!!!";
+
         module = new Module(user.getId(), "Description", module_name);
         moduleTwo = new Module(user.getId(), "Description", module_name + "TWO!");
         moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);

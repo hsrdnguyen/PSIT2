@@ -20,7 +20,6 @@ import static ch.avocado.share.common.constants.sql.CategoryConstants.*;
  * Handler for categories
  */
 public class CategoryDataHandler implements ICategoryDataHandler {
-    //TODO @kunzlio1: Tests schreiben...
     /**
      * adds all categories from new created AccessControlObject to the database
      * @param accessObject the new created AccessControlObject

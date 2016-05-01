@@ -7,6 +7,7 @@ import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +51,8 @@ public class GroupDataHandlerTest {
 
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
 
-        user = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "1234.jpg", new EmailAddress(false, "unexisting_email@zhaw.ch", new EmailAddressVerification(new Date(0))));
-        userTwo = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "1234.jpg", new EmailAddress(false, "unexisting_email2@zhaw.ch", new EmailAddressVerification(new Date(0))));
+        user = DummyFactory.newUser(1);
+        userTwo = DummyFactory.newUser(2);
 
         assertNotNull(userDataHandler.addUser(user));
         assertNotNull(userDataHandler.addUser(userTwo));

@@ -7,6 +7,7 @@ import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +35,8 @@ public class ModuleDataHandlerTest {
     @Before
     public void setUp() throws Exception {
         DatabaseConnectionHandlerMock.use();
-        owner = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "12345.jpg", new EmailAddress(false, "someone@zhaw.ch", new EmailAddressVerification(new Date())));
-        ownerTwo = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "12345.jpg", new EmailAddress(false, "someone_other@zhaw.ch", new EmailAddressVerification(new Date())));
+        owner = DummyFactory.newUser(1);
+        ownerTwo = DummyFactory.newUser(2);
 
         assertNotNull(userDataHandler.addUser(owner));
         assertNotNull(userDataHandler.addUser(ownerTwo));
