@@ -1,6 +1,7 @@
 package ch.avocado.share.servlet;
 
 import ch.avocado.share.controller.UserSession;
+import ch.avocado.share.test.DummyFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,6 +24,8 @@ public class LogoutServletTest {
         servlet = new LogoutServlet();
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
+		new UserSession(request).authenticate(DummyFactory.newUser(1));
+
     }
 
     private void assertIsRedirect(HttpServletResponse response) {
@@ -33,11 +36,17 @@ public class LogoutServletTest {
 
 	private void assertIsLoggedOut(MockHttpServletRequest request) {
 		UserSession session = new UserSession(request);
-		assertFalse(session.isAuthenticated());
+		assertFalse("Not logged out", session.isAuthenticated());
+	}
+
+	private void assertIsLoggedIn(MockHttpServletRequest request) {
+		UserSession session = new UserSession(request);
+		assertTrue("Not logged in", session.isAuthenticated());
 	}
 
 	@Test
 	public void testDoPostHttpServletRequestHttpServletResponse() throws ServletException, IOException {
+		assertIsLoggedIn(request);
 		servlet.doPost(request, response);
 		assertIsRedirect(response);
 		assertIsLoggedOut(request);
@@ -45,6 +54,7 @@ public class LogoutServletTest {
 
 	@Test
 	public void testDoGetHttpServletRequestHttpServletResponse() throws ServletException, IOException {
+		assertIsLoggedIn(request);
 		servlet.doGet(request, response);
 		assertIsRedirect(response);
 		assertIsLoggedOut(request);
