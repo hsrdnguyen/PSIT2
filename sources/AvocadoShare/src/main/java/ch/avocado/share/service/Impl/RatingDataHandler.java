@@ -1,7 +1,6 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.common.constants.sql.RatingConstants;
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
@@ -30,7 +29,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_SELECT_BY_OBJECT_ID);
+            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_SELECT_BY_OBJECT_ID);
             preparedStatement.setLong(1, ratedObjectId);
             resultSet = preparedStatement.executeQuery();
             return getRatingFromResultSet(resultSet);
@@ -52,7 +51,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_SELECT_BY_USER_ID_AND_OBJECT_ID);
+            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_SELECT_BY_USER_ID_AND_OBJECT_ID);
             preparedStatement.setLong(1, ratingUserId);
             preparedStatement.setLong(2, ratedObjectId);
             resultSet = preparedStatement.executeQuery();
@@ -92,7 +91,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_DELETE_RATING);
+            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_DELETE_RATING);
             preparedStatement.setLong(1, ratedAccessObjectId);
             preparedStatement.setLong(2, ratingUserId);
             return connectionHandler.deleteDataSet(preparedStatement);
@@ -114,7 +113,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_UPDATE_RATING);
+            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_UPDATE_RATING);
             preparedStatement.setInt(1, rating);
             preparedStatement.setLong(2, ratedAccessObjectId);
             preparedStatement.setLong(3, ratingUserId);
@@ -129,7 +128,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(SQLQueryConstants.Rating.SQL_ADD_RATING);
+            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_ADD_RATING);
             preparedStatement.setLong(1, ratedAccessObjectId);
             preparedStatement.setLong(2, ratingUserId);
             preparedStatement.setInt(3, rating);

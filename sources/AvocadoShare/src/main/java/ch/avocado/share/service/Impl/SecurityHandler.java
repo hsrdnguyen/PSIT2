@@ -1,6 +1,7 @@
 package ch.avocado.share.service.Impl;
 
-import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.common.constants.sql.AccessControlObjectConstants;
+import ch.avocado.share.common.constants.sql.SecurityConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessIdentity;
 import ch.avocado.share.model.data.AccessLevelEnum;
@@ -24,7 +25,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         boolean manageable = level.containsLevel(AccessLevelEnum.MANAGE);
 
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ACCESS_LEVEL_QUERY);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.SELECT_ACCESS_LEVEL_QUERY);
             preparedStatement.setBoolean(1, readable);
             preparedStatement.setBoolean(2, writable);
             preparedStatement.setBoolean(3, manageable);
@@ -42,10 +43,10 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     private AccessLevelEnum getAccessLevelForResultSet(ResultSet rs) throws SQLException {
         boolean read, write, manage, owner;
-        read = rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_READ_INDEX);
-        write = rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_WRITE_INDEX);
-        manage = rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_MANAGE_INDEX);
-        owner = rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_OWNER_INDEX);
+        read = rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_READ_INDEX);
+        write = rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_WRITE_INDEX);
+        manage = rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_MANAGE_INDEX);
+        owner = rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_OWNER_INDEX);
         return getAccessLevelForRights(read, write, manage, owner);
     }
 
@@ -66,7 +67,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     private PreparedStatement getSelectAccessLevelIncludingInheritedStatement(int ownerId, int objectId) throws DataHandlerException {
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ACCESS_LEVEL_INCLUDING_INHERITED);
+            preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.SELECT_ACCESS_LEVEL_INCLUDING_INHERITED);
             preparedStatement.setLong(1, ownerId);
             preparedStatement.setLong(2, objectId);
             preparedStatement.setLong(3, ownerId);
@@ -101,10 +102,10 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         try {
             ResultSet rs = connectionHandler.executeQuery(preparedStatement);
             while (rs.next()) {
-                read |= rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_READ_INDEX);
-                write |= rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_WRITE_INDEX);
-                manage |= rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_MANAGE_INDEX);
-                owner |= rs.getBoolean(SQLQueryConstants.SELECT_ACCESS_LEVEL_OWNER_INDEX);
+                read |= rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_READ_INDEX);
+                write |= rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_WRITE_INDEX);
+                manage |= rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_MANAGE_INDEX);
+                owner |= rs.getBoolean(SecurityConstants.SELECT_ACCESS_LEVEL_OWNER_INDEX);
             }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -126,10 +127,10 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     private PreparedStatement getAddAccessLevelStatement(long ownerId, long objectId, int level) throws DataHandlerException {
         try {
-            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY);
-            statement.setLong(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_OBJECT, objectId);
-            statement.setLong(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_OWNER, ownerId);
-            statement.setInt(SQLQueryConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_LEVEL, level);
+            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SecurityConstants.ADD_ACCESS_LEVEL_QUERY);
+            statement.setLong(SecurityConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_OBJECT, objectId);
+            statement.setLong(SecurityConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_OWNER, ownerId);
+            statement.setInt(SecurityConstants.ADD_ACCESS_LEVEL_QUERY_INDEX_LEVEL, level);
             return statement;
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -138,7 +139,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     private PreparedStatement getSetAccessLevelStatement(long ownerId, long objectId, int level) throws DataHandlerException {
         try {
-            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SET_ACCESS_LEVEL_QUERY);
+            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SecurityConstants.SET_ACCESS_LEVEL_QUERY);
             statement.setLong(1, level);
             statement.setLong(2, objectId);
             statement.setLong(3, ownerId);
@@ -192,9 +193,9 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     private boolean deleteAccess(long ownerId, long objectId) throws DataHandlerException {
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.DELETE_ACCESS_LEVEL_QUERY);
-            preparedStatement.setLong(SQLQueryConstants.DELETE_ACCESS_LEVEL_QUERY_INDEX_OWNER_ID, ownerId);
-            preparedStatement.setLong(SQLQueryConstants.DELETE_ACCESS_LEVEL_QUERY_INDEX_OBJECT_ID, objectId);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.DELETE_ACCESS_LEVEL_QUERY);
+            preparedStatement.setLong(SecurityConstants.DELETE_ACCESS_LEVEL_QUERY_INDEX_OWNER_ID, ownerId);
+            preparedStatement.setLong(SecurityConstants.DELETE_ACCESS_LEVEL_QUERY_INDEX_OBJECT_ID, objectId);
             return getConnectionHandler().deleteDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -206,7 +207,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         if (targetId == null) throw new IllegalArgumentException("targetId is null");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_ANONYMOUS_ACCESS_LEVEL);
+            preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.SELECT_ANONYMOUS_ACCESS_LEVEL);
             preparedStatement.setInt(1, Integer.parseInt(targetId));
             ResultSet resultSet = preparedStatement.executeQuery();
             if (!resultSet.next()) {
@@ -232,13 +233,13 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         int objectId = Integer.parseInt(object.getId());
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL);
-            preparedStatement.setInt(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL_LEVEL_INDEX, level);
-            preparedStatement.setInt(SQLQueryConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL_OBJECT_ID_INDEX, objectId);
+            preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL);
+            preparedStatement.setInt(SecurityConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL_LEVEL_INDEX, level);
+            preparedStatement.setInt(SecurityConstants.UPDATE_ANONYMOUS_ACCESS_LEVEL_OBJECT_ID_INDEX, objectId);
             if (!getConnectionHandler().updateDataSet(preparedStatement)) {
-                preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.ADD_ANONYMOUS_ACCESS_LEVEL);
-                preparedStatement.setInt(SQLQueryConstants.ADD_ANONYMOUS_ACCESS_LEVEL_LEVEL_INDEX, level);
-                preparedStatement.setInt(SQLQueryConstants.ADD_ANONYMOUS_ACCESS_LEVEL_OBJECT_ID_INDEX, objectId);
+                preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.ADD_ANONYMOUS_ACCESS_LEVEL);
+                preparedStatement.setInt(SecurityConstants.ADD_ANONYMOUS_ACCESS_LEVEL_LEVEL_INDEX, level);
+                preparedStatement.setInt(SecurityConstants.ADD_ANONYMOUS_ACCESS_LEVEL_OBJECT_ID_INDEX, objectId);
                 return null != getConnectionHandler().insertDataSet(preparedStatement);
             }
             return true;
@@ -267,7 +268,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     @Override
     public Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_GROUPS_WITH_ACCESS_ON_OBJECT);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.SELECT_GROUPS_WITH_ACCESS_ON_OBJECT);
             long groupId = Long.parseLong(target.getId());
             preparedStatement.setLong(1, groupId);
             preparedStatement.setLong(2, groupId);
@@ -285,7 +286,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
         long objectId = Long.parseLong(target.getId());
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.SELECT_USER_WITH_ACCESS_ON_OBJECT);
             preparedStatement.setLong(1, objectId);
             preparedStatement.setLong(2, objectId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -299,8 +300,8 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         List<String> ids = new LinkedList<>();
         try {
-            PreparedStatement statement = connectionHandler.getPreparedStatement(SQLQueryConstants.SELECT_OWNED_IDS);
-            statement.setLong(SQLQueryConstants.SELECT_OWNED_IDS_OWNER_INDEX, Long.parseLong(owner.getId()));
+            PreparedStatement statement = connectionHandler.getPreparedStatement(AccessControlObjectConstants.SELECT_OWNED_IDS);
+            statement.setLong(AccessControlObjectConstants.SELECT_OWNED_IDS_OWNER_INDEX, Long.parseLong(owner.getId()));
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 ids.add(resultSet.getString(1));
@@ -320,12 +321,12 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         List<String> ids = new LinkedList<>();
         long ownerId = Long.parseLong(identity.getId());
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS);
-            preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX, level);
-            preparedStatement.setInt(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX_2, level);
-            preparedStatement.setLong(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX, ownerId);
-            preparedStatement.setLong(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_2, ownerId);
-            preparedStatement.setLong(SQLQueryConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_3, ownerId);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SecurityConstants.SELECT_TARGETS_WITH_ACCESS);
+            preparedStatement.setInt(SecurityConstants.SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX, level);
+            preparedStatement.setInt(SecurityConstants.SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX_2, level);
+            preparedStatement.setLong(SecurityConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX, ownerId);
+            preparedStatement.setLong(SecurityConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_2, ownerId);
+            preparedStatement.setLong(SecurityConstants.SELECT_TARGETS_WITH_ACCESS_OWNER_ID_INDEX_3, ownerId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 ids.add(Integer.toString(resultSet.getInt(1)));

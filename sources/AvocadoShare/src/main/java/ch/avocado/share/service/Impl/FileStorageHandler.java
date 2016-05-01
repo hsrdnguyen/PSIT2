@@ -1,10 +1,9 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.HexEncoder;
-import ch.avocado.share.common.constants.FileConstants;
+import ch.avocado.share.common.constants.FileStorageConstants;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.exceptions.FileStorageException;
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
@@ -86,7 +85,7 @@ public class FileStorageHandler implements IFileStorageHandler {
      * @return The directory in which files can be stored.
      */
     protected String getStoreDirectory() {
-        return FileConstants.FILE_DESTINATION_ON_SERVER;
+        return FileStorageConstants.FILE_DESTINATION_ON_SERVER;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package ch.avocado.share.service.Impl;
 
-import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.common.constants.sql.GroupConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
@@ -26,8 +26,8 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         PreparedStatement statement;
 
         try {
-            statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.SELECT_BY_ID_QUERY);
-            statement.setInt(SQLQueryConstants.Group.GET_BY_ID_ID_INDEX, Integer.parseInt(id));
+            statement = getConnectionHandler().getPreparedStatement(GroupConstants.SELECT_BY_ID_QUERY);
+            statement.setInt(GroupConstants.GET_BY_ID_ID_INDEX, Integer.parseInt(id));
         } catch (SQLException e) {
             return null;
         }
@@ -55,11 +55,11 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         // TODO: @muellcy1 fetch categories and rating
         try {
             if (!resultSet.next()) return null;
-            id = resultSet.getString(SQLQueryConstants.Group.RESULT_ID_INDEX);
-            name = resultSet.getString(SQLQueryConstants.Group.RESULT_NAME_INDEX);
-            description = resultSet.getString(SQLQueryConstants.Group.RESULT_DESCRIPTION_INDEX);
-            creationDate = resultSet.getTimestamp(SQLQueryConstants.Group.RESULT_CREATION_DATE);
-            ownerId = resultSet.getString(SQLQueryConstants.Group.RESULT_OWNER_ID);
+            id = resultSet.getString(GroupConstants.RESULT_ID_INDEX);
+            name = resultSet.getString(GroupConstants.RESULT_NAME_INDEX);
+            description = resultSet.getString(GroupConstants.RESULT_DESCRIPTION_INDEX);
+            creationDate = resultSet.getTimestamp(GroupConstants.RESULT_CREATION_DATE);
+            ownerId = resultSet.getString(GroupConstants.RESULT_OWNER_ID);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -96,9 +96,9 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         if (id == null) throw new IllegalArgumentException("id is null");
         PreparedStatement statement;
         try {
-            statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.INSERT_QUERY);
-            statement.setInt(SQLQueryConstants.Group.INSERT_QUERY_ID_INDEX, Integer.parseInt(id));
-            statement.setString(SQLQueryConstants.Group.INSERT_QUERY_NAME_INDEX, name);
+            statement = getConnectionHandler().getPreparedStatement(GroupConstants.INSERT_QUERY);
+            statement.setInt(GroupConstants.INSERT_QUERY_ID_INDEX, Integer.parseInt(id));
+            statement.setString(GroupConstants.INSERT_QUERY_NAME_INDEX, name);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -129,9 +129,9 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         if (group == null) throw new IllegalArgumentException("group is null");
         PreparedStatement statement;
         try {
-            statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.UPDATE);
-            statement.setInt(SQLQueryConstants.Group.UPDATE_INDEX_ID, Integer.parseInt(group.getId()));
-            statement.setString(SQLQueryConstants.Group.UPDATE_INDEX_NAME, group.getName());
+            statement = getConnectionHandler().getPreparedStatement(GroupConstants.UPDATE);
+            statement.setInt(GroupConstants.UPDATE_INDEX_ID, Integer.parseInt(group.getId()));
+            statement.setString(GroupConstants.UPDATE_INDEX_NAME, group.getName());
             if (!getConnectionHandler().updateDataSet(statement)) {
                 return false;
             }
@@ -150,8 +150,8 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     private PreparedStatement getGetByNameStatement(String name) throws DataHandlerException {
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Group.SELECT_BY_NAME_QUERY);
-            preparedStatement.setString(SQLQueryConstants.Group.GET_BY_NAME_NAME_INDEX, name);
+            preparedStatement = getConnectionHandler().getPreparedStatement(GroupConstants.SELECT_BY_NAME_QUERY);
+            preparedStatement.setString(GroupConstants.GET_BY_NAME_NAME_INDEX, name);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }

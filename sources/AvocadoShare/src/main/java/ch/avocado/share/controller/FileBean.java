@@ -2,7 +2,7 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.Filename;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
-import ch.avocado.share.common.constants.FileConstants;
+import ch.avocado.share.common.constants.FileStorageConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
@@ -203,14 +203,14 @@ public class FileBean extends ResourceBean<File> {
         if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
         DiskFileItemFactory factory = new DiskFileItemFactory();
         // maximum size that will be stored in memory
-        factory.setSizeThreshold(FileConstants.MAX_MEM_SIZE);
+        factory.setSizeThreshold(FileStorageConstants.MAX_MEM_SIZE);
         // Location to save data that is larger than maxMemSize.
-        factory.setRepository(new java.io.File(FileConstants.FILE_TEMP_DESTINATION_ON_SERVER));
+        factory.setRepository(new java.io.File(FileStorageConstants.FILE_TEMP_DESTINATION_ON_SERVER));
 
         // Create a new file upload handler
         ServletFileUpload upload = new ServletFileUpload(factory);
         // maximum file size to be uploaded.
-        upload.setSizeMax(FileConstants.MAX_FILE_SIZE);
+        upload.setSizeMax(FileStorageConstants.MAX_FILE_SIZE);
         try {
             String path = fileStorageHandler.saveFile(fileItem);
             file.setPath(path);
