@@ -4,8 +4,14 @@ package ch.avocado.share.common.constants.sql;
  * Table names.
  */
 public class Tables {
+    /**
+     * The schema name including a dot at the end
+     */
     static final String SCHEMA = "avocado_share.";
 
+    /**
+     * Table name for file data
+     */
     static final String FILE_TABLE =  SCHEMA + "file";
 
     static final String UPLOADED_TABLE = SCHEMA + "uploaded_into";
