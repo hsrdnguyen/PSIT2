@@ -9,21 +9,22 @@ import java.util.Date;
  * Base class for all mail-based verifcations.
  */
 public abstract class BaseMailVerification {
-    private final static int DEFAULT_EXPIRY_IN_HOURS = 24;
+
     private final static int TOKEN_LENGTH = 32;
     private final static byte[] TOKEN_CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".getBytes();
-    private String code;
-    private Date expiry;
+    private final String code;
+    private final Date expiry;
 
 
     protected BaseMailVerification(Date expiry) {
-        setExpiry(expiry);
-        code = generateCode();
+        this(expiry, generateCode());
     }
 
     protected BaseMailVerification(Date expiry, String code) {
-        setCode(code);
-        setExpiry(expiry);
+        if (code == null) throw new IllegalArgumentException("code is null");
+        if (expiry == null) throw new IllegalArgumentException("expiry is null");
+        this.code = code;
+        this.expiry = expiry;
     }
 
     /**
@@ -54,27 +55,10 @@ public abstract class BaseMailVerification {
     }
 
     /**
-     * @param code The verification code
-     */
-    public void setCode(String code) {
-        if (code == null) throw new IllegalArgumentException("code is null");
-
-        this.code = code;
-    }
-
-    /**
      * @return The expiry
      */
     public Date getExpiry() {
         return expiry;
-    }
-
-    /**
-     * @param expiry The expiry
-     */
-    public void setExpiry(Date expiry) {
-        if (expiry == null) throw new IllegalArgumentException("expiry is null");
-        this.expiry = expiry;
     }
 
     /**

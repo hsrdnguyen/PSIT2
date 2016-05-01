@@ -76,7 +76,7 @@ public class VerificationBeanTest {
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());
 
-        addressVerification.setExpiry(new Date(0));
+        addressVerification = new EmailAddressVerification(new Date(0));
         assertTrue(addressVerification.isExpired());
         assertFalse(bean.verifyEmailCode());
 
