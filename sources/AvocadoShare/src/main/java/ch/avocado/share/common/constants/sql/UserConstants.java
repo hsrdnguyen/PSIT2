@@ -6,8 +6,7 @@ package ch.avocado.share.common.constants.sql;
 public class UserConstants {
     //USER DATA QUERIES
 
-    private static final String TABLE = "avocado_share.identity";
-    public static final String INSERT_USER_QUERY = "INSERT INTO " + TABLE + " (id, prename, surname, avatar, password) VALUES (?, ?, ?, ?, ?)";
+    public static final String INSERT_USER_QUERY = "INSERT INTO " + Tables.USER_TABLE + " (id, prename, surname, avatar, password) VALUES (?, ?, ?, ?, ?)";
     public static final String INSERT_PASSWORD_VERIFICATION_QUERY = "INSERT INTO avocado_share.password_reset(id, expiry, code) VALUES (?, ?, ?)";
     public static final String DELETE_USER_QUERY = "DELETE FROM access_control WHERE id = ?";
     public static final int USER_RESULT_ID_INDEX = 1;
@@ -23,7 +22,7 @@ public class UserConstants {
     public static final int USER_RESULT_RESET_EXPIRY_INDEX = 11;
 
     public static final String SELECT_PASSWORD_VERIFICATION_QUERY = "SELECT id, expiry, code FROM avocado_share.password_reset WHERE id=?";
-    public static final String UPDATE_USER_QUERY = "UPDATE " + TABLE + "  SET prename=?, surname=?, avatar=?, password=? WHERE id=?";
+    public static final String UPDATE_USER_QUERY = "UPDATE " + Tables.USER_TABLE + "  SET prename=?, surname=?, avatar=?, password=? WHERE id=?";
     public static final String INSERT_MAIL_QUERY = "INSERT INTO avocado_share.email(identity_id, address, verified)VALUES (?, ?, FALSE)";
     public static final String SELECT_MAIL_QUERY = "SELECT identity_id, address, verified FROM avocado_share.email WHERE identity_id=?";
     public static final String INSERT_MAIL_VERIFICATION_QUERY = "INSERT INTO avocado_share.email_verification(identity_id, address, expiry, verification_code) VALUES (?, ?, ?, ?)";
@@ -50,7 +49,7 @@ public class UserConstants {
             "  creation_date, " +
             "  r.code, " +
             "  r.expiry " +
-            "FROM " + TABLE + "  AS I " +
+            "FROM " + Tables.USER_TABLE + "  AS I " +
             "  JOIN avocado_share.email AS E " +
             "    ON E.identity_id = I.id " +
             "  JOIN avocado_share.access_control AS O " +

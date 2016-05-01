@@ -1,5 +1,7 @@
 package ch.avocado.share.common.constants.sql;
 
+import static ch.avocado.share.common.constants.sql.Tables.OWNERSHIP_TABLE;
+
 /**
  * Created by coffeemakr on 01.05.16.
  */
@@ -20,7 +22,7 @@ public final class ModuleConstants {
             "SELECT " + SELECT_COLUMNS + " FROM " + table + " AS m " +
             "   JOIN avocado_share.access_control as a " +
             "       ON m.id = a.id " +
-            "   LEFT JOIN avocado_share.ownership AS owner " +
+            "   LEFT JOIN " + OWNERSHIP_TABLE + " AS owner " +
             "       ON a.id = owner.object_id " +
             "   WHERE a.id = ? ";
 
