@@ -41,6 +41,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
 
     @Override
     public boolean deleteModule(Module module) throws DataHandlerException {
+        if(module == null) throw new IllegalArgumentException("module is null");
         return deleteAccessControlObject(module.getId());
     }
 
