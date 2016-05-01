@@ -76,7 +76,8 @@ public class UserSession {
      */
 	public void authenticate(User user) {
         if(user == null) throw new IllegalArgumentException("user is null");
-        this.user = user;
+        if(user.getId() == null) throw new IllegalArgumentException("user's id is null");
+		this.user = user;
 		this.userId = user.getId();
 		session.setAttribute(SESSION_UID, user.getId());
 	}
