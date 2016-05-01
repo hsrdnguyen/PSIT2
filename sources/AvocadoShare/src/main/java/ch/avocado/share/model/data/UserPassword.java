@@ -3,7 +3,6 @@ package ch.avocado.share.model.data;
 import ch.avocado.share.common.Base64;
 import ch.avocado.share.common.BinaryTokenGenerator;
 import ch.avocado.share.common.TokenGenerator;
-import com.sun.istack.internal.Nullable;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 import java.io.Serializable;
@@ -19,8 +18,6 @@ import java.io.Serializable;
  * @author muellcy1
  */
 public class UserPassword implements Serializable{
-
-	public static  final UserPassword EMPTY_PASSWORD = UserPassword.fromPassword("");
 
 	private static final long serialVersionUID = 3245810310373510720L;
 
@@ -168,7 +165,7 @@ public class UserPassword implements Serializable{
         return resetVerification;
     }
 
-    public void setResetVerification(@Nullable PasswordResetVerification resetVerification) {
+    public void setResetVerification(PasswordResetVerification resetVerification) {
         this.resetVerification = resetVerification;
     }
 }

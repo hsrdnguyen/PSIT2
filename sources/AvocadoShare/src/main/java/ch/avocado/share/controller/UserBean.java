@@ -127,7 +127,7 @@ public class UserBean extends ResourceBean<User> {
 
     @Override
     public User create() throws HttpBeanException, DataHandlerException {
-        User user = new User(UserPassword.EMPTY_PASSWORD, "", "", "", new EmailAddress(false, "", null));
+        User user = new User(UserPassword.fromPassword(""), "", "", "", new EmailAddress(false, "", null));
 
         checkPrename(user);
         checkSurname(user);

@@ -1,7 +1,5 @@
 package ch.avocado.share.model.data;
 
-import com.sun.istack.internal.Nullable;
-
 import java.util.Objects;
 
 /**
@@ -49,7 +47,7 @@ public class EmailAddress extends Model {
         return verification;
     }
 
-    public void setVerification(@Nullable EmailAddressVerification verification) {
+    public void setVerification(EmailAddressVerification verification) {
         if(Objects.equals(this.verification, verification)) {
             setDirty(true);
         }

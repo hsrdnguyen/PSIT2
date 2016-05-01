@@ -27,7 +27,7 @@ public class VerificationBeanTest {
     public void setUp() throws Exception {
         addressVerification = new EmailAddressVerification(new Date(System.currentTimeMillis() + 10000));
         email = spy(new EmailAddress(false, "email@zhaw.ch", addressVerification));
-        user = spy(new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "1234.jpg", email));
+        user = spy(new User(UserPassword.fromPassword(""), "Prename", "Surname", "1234.jpg", email));
         userDataHandler = mock(IUserDataHandler.class);
         when(userDataHandler.getUserByEmailAddress(email.getAddress())).thenReturn(user);
         when(userDataHandler.updateUser(any(User.class))).thenReturn(true);

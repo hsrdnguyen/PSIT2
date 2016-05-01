@@ -8,7 +8,7 @@ public class DummyFactory {
     public static User newUser(int identifier) {
         EmailAddressVerification verification = new EmailAddressVerification(new Date(System.currentTimeMillis() + 24*60*1000));
         EmailAddress email = new EmailAddress(false, "user"+ identifier + "@nowhere.nothing", verification);
-        return new User(UserPassword.EMPTY_PASSWORD, "Prename " + identifier, "Surname " + identifier, "avatar " + identifier, email);
+        return new User(UserPassword.fromPassword(""), "Prename " + identifier, "Surname " + identifier, "avatar " + identifier, email);
     }
 
     public static File newFile(int i, User owner, Module module) {
