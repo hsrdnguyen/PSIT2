@@ -13,6 +13,8 @@ public class EmailAddress extends Model {
 
     public EmailAddress(boolean verified, String address, MailVerification verification) {
         if(address == null) throw new IllegalArgumentException("address is null");
+        address = address.trim();
+        if(address.isEmpty()) throw new IllegalArgumentException("address is empty");
         this.verified = verified;
         this.address = address;
         this.verification = verification;
@@ -48,7 +50,7 @@ public class EmailAddress extends Model {
     }
 
     public void setVerification(MailVerification verification) {
-        if(Objects.equals(this.verification, verification)) {
+        if(!Objects.equals(this.verification, verification)) {
             setDirty(true);
         }
         this.verification = verification;
