@@ -70,6 +70,11 @@ public class ModuleDataHandlerTest {
         return categories;
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddNull() throws Exception {
+        moduleDataHandler.addModule(null);
+    }
+
     @Test
     public void testAddAndGetModule() throws Exception {
         String description, name;
@@ -103,6 +108,21 @@ public class ModuleDataHandlerTest {
         fileDataHandler.deleteFile(fileOne);
         fileDataHandler.deleteFile(fileTwo);
 
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteNull() throws Exception {
+        moduleDataHandler.deleteModule(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteModuleWithIdNull() throws Exception {
+        String description, name;
+        description = "Description";
+        name = "testAddAndGetModule.module";
+        Module module = new Module(owner.getId(), description, name);
+        moduleDataHandler.deleteModule(module);
     }
 
     @Test

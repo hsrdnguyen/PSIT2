@@ -103,6 +103,11 @@ public class FileDataHandlerTest {
         return categories;
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddNull() throws Exception {
+        fileDataHandler.addFile(null);
+    }
+
     @Test
     public void testAddAndGetFile() throws Exception {
         // String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId
@@ -144,6 +149,12 @@ public class FileDataHandlerTest {
         assertEquals("Extension", expected.getExtension(), actual.getExtension());
         assertCategoriesEquals(expected.getCategories(), actual.getCategories());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteNull() throws Exception {
+        fileDataHandler.deleteFile(null);
+    }
+
 
     @Test
     public void testDeleteFile() throws Exception {

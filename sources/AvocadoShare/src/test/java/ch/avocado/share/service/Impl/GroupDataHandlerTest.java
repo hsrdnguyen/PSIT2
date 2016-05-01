@@ -98,6 +98,11 @@ public class GroupDataHandlerTest {
         }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddNull() throws Exception {
+        groupDataHandler.addGroup(null);
+    }
+
     @Test
     public void testAddGroup() throws Exception {
         String name = UNEXISTING_GROUP_NAME_1;
@@ -148,6 +153,20 @@ public class GroupDataHandlerTest {
         assertTrue(groupDataHandler.deleteGroup(queriedGroup));
 
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteNull() throws Exception {
+        groupDataHandler.deleteGroup(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteObjectWithIdNull() throws Exception {
+        String name = UNEXISTING_GROUP_NAME_1;
+        String description = "A description with \n new line";
+        Group group = new Group(user.getId(), description, name);
+        groupDataHandler.deleteGroup(group);
+    }
+
 
     @Test
     public void testDeleteGroup() throws Exception {

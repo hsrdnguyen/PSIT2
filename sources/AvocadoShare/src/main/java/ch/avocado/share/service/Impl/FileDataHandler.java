@@ -83,6 +83,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     @Override
     public boolean deleteFile(File file) throws DataHandlerException {
         if(file == null) throw new IllegalArgumentException("file is null");
+        if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
         return deleteAccessControlObject(file.getId());
     }
 

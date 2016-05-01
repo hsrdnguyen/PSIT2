@@ -71,7 +71,12 @@ public class UserDataHandlerTest {
         assertEquals("Reset verification", expected.getPassword().getResetVerification(), actual.getPassword().getResetVerification());
     }
 
-    @Ignore
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddNull() throws Exception {
+        userDataHandler.addUser(null);
+    }
+
     @Test
     public void testAddUser() throws Exception {
         User user = getTestUser();
@@ -110,7 +115,6 @@ public class UserDataHandlerTest {
         }
     }
 
-    @Ignore
     @Test
     public void testUpdateUserWithVerifiedEmail() throws Exception {
         // Add one user without password reset verification
@@ -140,7 +144,21 @@ public class UserDataHandlerTest {
         }
     }
 
-    @Ignore
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteNull() throws Exception {
+        userDataHandler.deleteUser(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteUserWithIdNull() throws Exception {
+        User user = getTestUser();
+        assertNull(user.getId());
+        userDataHandler.deleteUser(user);
+    }
+
+
+
     @Test
     public void testDeleteUser() throws Exception {
         User user = getTestUser();
