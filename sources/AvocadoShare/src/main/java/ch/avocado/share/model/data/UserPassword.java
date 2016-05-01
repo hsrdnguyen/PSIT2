@@ -38,7 +38,7 @@ public class UserPassword implements Serializable{
 	private static final int SCRYPT_KEY_LENGTH = 32;
 
 	private String digest;
-    private PasswordResetVerification resetVerification;
+    private MailVerification resetVerification;
 
 	/**
 	 * Private constructor for fromPassword.
@@ -58,7 +58,7 @@ public class UserPassword implements Serializable{
 	}
 
 	
-    public UserPassword(String digest, PasswordResetVerification resetVerification) {
+    public UserPassword(String digest, MailVerification resetVerification) {
         setDigest(digest);
         setResetVerification(resetVerification);
     }
@@ -161,11 +161,11 @@ public class UserPassword implements Serializable{
 	}
 
 
-    public PasswordResetVerification getResetVerification() {
+    public MailVerification getResetVerification() {
         return resetVerification;
     }
 
-    public void setResetVerification(PasswordResetVerification resetVerification) {
+    public void setResetVerification(MailVerification resetVerification) {
         this.resetVerification = resetVerification;
     }
 }

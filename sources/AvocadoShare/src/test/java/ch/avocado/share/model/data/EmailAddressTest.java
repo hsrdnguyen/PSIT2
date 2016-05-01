@@ -1,6 +1,5 @@
 package ch.avocado.share.model.data;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
@@ -51,7 +50,8 @@ public class EmailAddressTest {
         EmailAddress emailAddress = new EmailAddress(false, address, null);
         assertNull(emailAddress.getVerification());
 
-        EmailAddressVerification verification = new EmailAddressVerification(new Date());
+        final Date expiry = new Date();
+        MailVerification verification = new MailVerification(expiry);
         emailAddress.setVerification(verification);
         assertEquals(verification, emailAddress.getVerification());
         assertNotSame(verification, emailAddress.getVerification());

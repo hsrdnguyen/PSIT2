@@ -5,10 +5,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class BaseMailVerificationTest {
+public class MailVerificationTest {
 	@Test
 	public void testCodeGeneration() {
-		String code = BaseMailVerification.generateCode();
+		String code = MailVerification.generateCode();
 		assertNotNull(code);
 		assertTrue(code.length() == 32);
 		for(char codeCharacter : code.toCharArray()) {

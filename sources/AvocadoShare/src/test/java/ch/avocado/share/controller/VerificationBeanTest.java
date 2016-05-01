@@ -1,9 +1,6 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.model.data.EmailAddress;
-import ch.avocado.share.model.data.EmailAddressVerification;
-import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import org.junit.After;
@@ -20,12 +17,13 @@ public class VerificationBeanTest {
     private VerificationBean bean;
     private User user;
     private IUserDataHandler userDataHandler;
-    private EmailAddressVerification addressVerification;
+    private MailVerification addressVerification;
     private EmailAddress email;
 
     @Before
     public void setUp() throws Exception {
-        addressVerification = new EmailAddressVerification(new Date(System.currentTimeMillis() + 10000));
+        final Date expiry = new Date(System.currentTimeMillis() + 10000);
+        addressVerification = new MailVerification(expiry);
         email = spy(new EmailAddress(false, "email@zhaw.ch", addressVerification));
         user = spy(new User(UserPassword.fromPassword(""), "Prename", "Surname", "1234.jpg", email));
         userDataHandler = mock(IUserDataHandler.class);
@@ -76,7 +74,8 @@ public class VerificationBeanTest {
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());
 
-        addressVerification = new EmailAddressVerification(new Date(0));
+        final Date expiry = new Date(0);
+        addressVerification = new MailVerification(expiry);
         assertTrue(addressVerification.isExpired());
         assertFalse(bean.verifyEmailCode());
 

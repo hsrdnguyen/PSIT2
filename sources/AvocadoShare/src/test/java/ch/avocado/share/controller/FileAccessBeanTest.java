@@ -37,7 +37,8 @@ public class FileAccessBeanTest {
     private String email2 = "unexisting_user2@zhaw.ch";
 
     private User userFromEmail(String email) {
-        return new User(UserPassword.fromPassword(""), "Prename", "Surname", "1234.jpg", new EmailAddress(false, email, new EmailAddressVerification(new Date())));
+        final Date expiry = new Date();
+        return new User(UserPassword.fromPassword(""), "Prename", "Surname", "1234.jpg", new EmailAddress(false, email, new MailVerification(expiry)));
     }
 
     @Before

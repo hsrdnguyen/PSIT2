@@ -65,7 +65,8 @@ public class UserDataHandlerTest {
         String string_date = "12-December-2030";
         SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yyyy");
         Date d = f.parse(string_date);
-        EmailAddressVerification verification = new EmailAddressVerification(d, "123456789");
+        final Date expiry = d;
+        MailVerification verification = new MailVerification(expiry, "123456789");
         EmailAddress emailAddress = new EmailAddress(false, "test@test.com", verification);
         UserPassword pwd = UserPassword.fromPassword("123456789");
         User user = new User(null, null, new Date(), 0.0f, "", pwd, "Max", "Muster", "123456789.jpg", emailAddress);
@@ -82,7 +83,8 @@ public class UserDataHandlerTest {
     @Test
     public void testAddUser() throws Exception {
         User user = DummyFactory.newUser(1);
-        PasswordResetVerification resetVerification = new PasswordResetVerification(new Date());
+        final Date expiry = new Date();
+        MailVerification resetVerification = new MailVerification(expiry);
         user.getPassword().setResetVerification(resetVerification);
         String id = userDataHandler.addUser(user);
         assertNotNull(id);

@@ -10,9 +10,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.PortableServer.ServantRetentionPolicy;
 
-import java.security.Provider;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +33,8 @@ public class SecurityHandlerTest {
     private User moduleOwner;
 
     private User getUser(String prename, String surname, String email) {
-        return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, new EmailAddressVerification(EmailAddressVerification.getDateFromExpiryInHours(24))));
+        final Date expiry = MailVerification.getDateFromExpiryInHours(24);
+        return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, new MailVerification(expiry)));
     }
 
     @Before

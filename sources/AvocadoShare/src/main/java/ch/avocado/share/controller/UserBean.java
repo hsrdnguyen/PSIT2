@@ -1,10 +1,7 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.HttpStatusCode;
-import ch.avocado.share.model.data.EmailAddress;
-import ch.avocado.share.model.data.EmailAddressVerification;
-import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IAvatarStorageHandler;
 import ch.avocado.share.service.IMailingService;
@@ -114,7 +111,8 @@ public class UserBean extends ResourceBean<User> {
     private void addEmailToUser(User user, String emailaddress) {
         long theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
         Date nextWeek = new Date(theFuture);
-        EmailAddressVerification verification = new EmailAddressVerification(nextWeek);
+        final Date expiry = nextWeek;
+        MailVerification verification = new MailVerification(expiry);
         EmailAddress mail = new EmailAddress(false, emailaddress, verification);
         user.setMail(mail);
     }

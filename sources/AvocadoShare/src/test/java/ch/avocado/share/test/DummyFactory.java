@@ -6,7 +6,8 @@ import java.util.Date;
 
 public class DummyFactory {
     public static User newUser(int identifier) {
-        EmailAddressVerification verification = new EmailAddressVerification(new Date(System.currentTimeMillis() + 24*60*1000));
+        final Date expiry = new Date(System.currentTimeMillis() + 24 * 60 * 1000);
+        MailVerification verification = new MailVerification(expiry);
         EmailAddress email = new EmailAddress(false, "user"+ identifier + "@nowhere.nothing", verification);
         return new User(UserPassword.fromPassword(""), "Prename " + identifier, "Surname " + identifier, "avatar " + identifier, email);
     }

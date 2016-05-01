@@ -9,9 +9,9 @@ public class EmailAddress extends Model {
 
     private boolean verified;
     private final String address;
-    private EmailAddressVerification verification;
+    private MailVerification verification;
 
-    public EmailAddress(boolean verified, String address, EmailAddressVerification verification) {
+    public EmailAddress(boolean verified, String address, MailVerification verification) {
         if(address == null) throw new IllegalArgumentException("address is null");
         this.verified = verified;
         this.address = address;
@@ -43,11 +43,11 @@ public class EmailAddress extends Model {
     }
 
 
-    public EmailAddressVerification getVerification() {
+    public MailVerification getVerification() {
         return verification;
     }
 
-    public void setVerification(EmailAddressVerification verification) {
+    public void setVerification(MailVerification verification) {
         if(Objects.equals(this.verification, verification)) {
             setDirty(true);
         }

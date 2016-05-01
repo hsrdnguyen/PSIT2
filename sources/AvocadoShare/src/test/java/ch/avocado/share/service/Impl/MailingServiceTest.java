@@ -35,7 +35,8 @@ public class MailingServiceTest {
     @Test
     public void test_requestSendMail()
     {
-        User user = new User("123", new ArrayList<Category>(), new Date(0), 0, "", UserPassword.fromPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new EmailAddressVerification( new Date(0), "123456" )));
+        final Date expiry = new Date(0);
+        User user = new User("123", new ArrayList<Category>(), new Date(0), 0, "", UserPassword.fromPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new MailVerification(expiry, "123456")));
         File file = new File("123", new ArrayList<Category>(), new Date(0), 0, "", "", "", "",  new Date(0), "", "", "");
 
         assertTrue(service.sendRequestAccessEmail(user, user, file));
@@ -44,7 +45,8 @@ public class MailingServiceTest {
     @Test
     public void test_verificationSendMail()
     {
-        User user = new User("123", new ArrayList<Category>(), new Date(0), 0, "", UserPassword.fromPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new EmailAddressVerification( new Date(0), "123456" )));
+        final Date expiry = new Date(0);
+        User user = new User("123", new ArrayList<Category>(), new Date(0), 0, "", UserPassword.fromPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new MailVerification(expiry, "123456")));
 
         assertTrue(service.sendVerificationEmail(user));
     }

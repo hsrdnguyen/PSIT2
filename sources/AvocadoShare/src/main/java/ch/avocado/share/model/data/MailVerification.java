@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Base class for all mail-based verifcations.
  */
-public abstract class BaseMailVerification {
+public class MailVerification {
 
     private final static int TOKEN_LENGTH = 32;
     private final static byte[] TOKEN_CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".getBytes();
@@ -16,11 +16,11 @@ public abstract class BaseMailVerification {
     private final Date expiry;
 
 
-    protected BaseMailVerification(Date expiry) {
+    public MailVerification(Date expiry) {
         this(expiry, generateCode());
     }
 
-    protected BaseMailVerification(Date expiry, String code) {
+    public MailVerification(Date expiry, String code) {
         if (code == null) throw new IllegalArgumentException("code is null");
         if (expiry == null) throw new IllegalArgumentException("expiry is null");
         this.code = code;
@@ -74,7 +74,7 @@ public abstract class BaseMailVerification {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BaseMailVerification that = (BaseMailVerification) o;
+        MailVerification that = (MailVerification) o;
 
         if (!code.equals(that.code)) return false;
         return expiry.equals(that.expiry);
