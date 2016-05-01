@@ -1,7 +1,13 @@
 package ch.avocado.share.servlet;
 
+import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.controller.UserSession;
+import ch.avocado.share.model.data.User;
+import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
+import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.test.DummyFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -18,15 +24,25 @@ public class LogoutServletTest {
     private LogoutServlet servlet;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
+	private User user;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+		DatabaseConnectionHandlerMock.use();
         servlet = new LogoutServlet();
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
-		new UserSession(request).authenticate(DummyFactory.newUser(1));
+		user = DummyFactory.newUser(1);
+		ServiceLocator.getService(IUserDataHandler.class).addUser(user);
+		new UserSession(request).authenticate(user);
 
     }
+
+	@After
+	public void tearDown() throws Exception {
+		ServiceLocator.getService(IUserDataHandler.class).deleteUser(user);
+		ServiceLocatorModifier.restore();
+	}
 
     private void assertIsRedirect(HttpServletResponse response) {
 		String redirectUrl = response.getHeader("location");
