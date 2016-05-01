@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static ch.avocado.share.common.constants.sql.AccessControlObjectConstants.*;
+
 
 /**
  * DataHandler for all AccessControlObject subclasses.
@@ -35,9 +37,9 @@ abstract class DataHandlerBase {
     }
 
     private boolean addOwnership(long ownerId, long objectId) throws DataHandlerException, SQLException {
-        PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(AccessControlObjectConstants.INSERT_OWNERSHIP);
-        preparedStatement.setLong(AccessControlObjectConstants.INSERT_OWNERSHIP_INDEX_OWNER, ownerId);
-        preparedStatement.setLong(AccessControlObjectConstants.INSERT_OWNERSHIP_INDEX_OBJECT, objectId);
+        PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(INSERT_OWNERSHIP);
+        preparedStatement.setLong(INSERT_OWNERSHIP_INDEX_OWNER, ownerId);
+        preparedStatement.setLong(INSERT_OWNERSHIP_INDEX_OBJECT, objectId);
         getConnectionHandler().insertDataSet(preparedStatement); // TODO: check result?
         return true;
     }
@@ -56,9 +58,9 @@ abstract class DataHandlerBase {
     private boolean updateDescription(long objectId, String description) throws DataHandlerException {
         if (description == null) throw new IllegalArgumentException("description is null");
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(AccessControlObjectConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION);
-            preparedStatement.setLong(AccessControlObjectConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX, objectId);
-            preparedStatement.setString(AccessControlObjectConstants.UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX, description);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UPDATE_ACCESS_CONTROL_DESCRIPTION);
+            preparedStatement.setLong(UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX, objectId);
+            preparedStatement.setString(UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX, description);
             return getConnectionHandler().updateDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -92,15 +94,15 @@ abstract class DataHandlerBase {
     }
 
     private boolean updateOwnership(long objectId, Long ownerId) throws DataHandlerException, SQLException {
-        PreparedStatement statement = getConnectionHandler().getPreparedStatement(AccessControlObjectConstants.UPDATE_OWNERSHIP);
-        statement.setLong(AccessControlObjectConstants.UPDATE_OWNERSHIP_INDEX_OBJECT, objectId);
-        statement.setLong(AccessControlObjectConstants.UPDATE_OWNERSHIP_INDEX_OWNER, ownerId);
+        PreparedStatement statement = getConnectionHandler().getPreparedStatement(UPDATE_OWNERSHIP);
+        statement.setLong(UPDATE_OWNERSHIP_INDEX_OBJECT, objectId);
+        statement.setLong(UPDATE_OWNERSHIP_INDEX_OWNER, ownerId);
         return getConnectionHandler().updateDataSet(statement);
     }
 
     private void deleteOwnership(long objectId) throws SQLException, DataHandlerException {
-        PreparedStatement statement = getConnectionHandler().getPreparedStatement(AccessControlObjectConstants.DELETE_OWNERSHIP);
-        statement.setLong(AccessControlObjectConstants.DELETE_OWNERSHIP_INDEX_OBJECT, objectId);
+        PreparedStatement statement = getConnectionHandler().getPreparedStatement(DELETE_OWNERSHIP);
+        statement.setLong(DELETE_OWNERSHIP_INDEX_OBJECT, objectId);
         getConnectionHandler().deleteDataSet(statement);
     }
 
@@ -114,7 +116,7 @@ abstract class DataHandlerBase {
     protected boolean deleteAccessControlObject(String objectId) throws DataHandlerException {
         if (objectId == null) throw new IllegalArgumentException("objectId is null");
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(AccessControlObjectConstants.DELETE_ACCESS_CONTROL_QUERY);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(DELETE_ACCESS_CONTROL_QUERY);
             preparedStatement.setLong(1, Long.parseLong(objectId));
             return getConnectionHandler().deleteDataSet(preparedStatement);
         } catch (SQLException e) {
@@ -140,8 +142,8 @@ abstract class DataHandlerBase {
             ownerId = Long.parseLong(object.getOwnerId());
         }
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(AccessControlObjectConstants.INSERT_ACCESS_CONTROL_QUERY);
-            preparedStatement.setString(AccessControlObjectConstants.INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX, object.getDescription());
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(INSERT_ACCESS_CONTROL_QUERY);
+            preparedStatement.setString(INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX, object.getDescription());
             id = getConnectionHandler().insertDataSet(preparedStatement);
             if (id != null && ownerId != null) {
                 addOwnership(ownerId, Long.parseLong(id));
@@ -157,7 +159,7 @@ abstract class DataHandlerBase {
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(AccessControlObjectConstants.SELECT_OWNER_OF_OBJECT);
+            preparedStatement = connectionHandler.getPreparedStatement(SELECT_OWNER_OF_OBJECT);
             preparedStatement.setLong(1, objectId);
             resultSet = connectionHandler.executeQuery(preparedStatement);
             if (resultSet.next()) {

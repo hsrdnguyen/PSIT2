@@ -1,7 +1,6 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.sql.RatingConstants;
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
@@ -11,6 +10,8 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static ch.avocado.share.common.constants.sql.RatingConstants.*;
 
 /**
  * Created by kunzlio1 on 17.04.2016.
@@ -29,7 +30,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_SELECT_BY_OBJECT_ID);
+            preparedStatement = connectionHandler.getPreparedStatement(SQL_SELECT_BY_OBJECT_ID);
             preparedStatement.setLong(1, ratedObjectId);
             resultSet = preparedStatement.executeQuery();
             return getRatingFromResultSet(resultSet);
@@ -51,7 +52,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_SELECT_BY_USER_ID_AND_OBJECT_ID);
+            preparedStatement = connectionHandler.getPreparedStatement(SQL_SELECT_BY_USER_ID_AND_OBJECT_ID);
             preparedStatement.setLong(1, ratingUserId);
             preparedStatement.setLong(2, ratedObjectId);
             resultSet = preparedStatement.executeQuery();
@@ -71,9 +72,9 @@ public class RatingDataHandler implements IRatingDataHandler{
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
     public long addRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
-        if(rating < RatingConstants.MIN_RATING_VALUE || rating > RatingConstants.MAX_RATING_VALUE) {
-            throw new DataHandlerException("Rating not between " + RatingConstants.MIN_RATING_VALUE
-                    + " and " + RatingConstants.MAX_RATING_VALUE);
+        if(rating < MIN_RATING_VALUE || rating > MAX_RATING_VALUE) {
+            throw new DataHandlerException("Rating not between " + MIN_RATING_VALUE
+                    + " and " + MAX_RATING_VALUE);
         }
 
         return insertRating(ratedAccessObjectId, ratingUserId, rating);
@@ -91,7 +92,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_DELETE_RATING);
+            preparedStatement = connectionHandler.getPreparedStatement(SQL_DELETE_RATING);
             preparedStatement.setLong(1, ratedAccessObjectId);
             preparedStatement.setLong(2, ratingUserId);
             return connectionHandler.deleteDataSet(preparedStatement);
@@ -113,7 +114,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_UPDATE_RATING);
+            preparedStatement = connectionHandler.getPreparedStatement(SQL_UPDATE_RATING);
             preparedStatement.setInt(1, rating);
             preparedStatement.setLong(2, ratedAccessObjectId);
             preparedStatement.setLong(3, ratingUserId);
@@ -128,7 +129,7 @@ public class RatingDataHandler implements IRatingDataHandler{
         if(connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(RatingConstants.SQL_ADD_RATING);
+            preparedStatement = connectionHandler.getPreparedStatement(SQL_ADD_RATING);
             preparedStatement.setLong(1, ratedAccessObjectId);
             preparedStatement.setLong(2, ratingUserId);
             preparedStatement.setInt(3, rating);

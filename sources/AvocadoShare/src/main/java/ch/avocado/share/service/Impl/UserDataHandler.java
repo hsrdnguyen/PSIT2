@@ -1,6 +1,5 @@
 package ch.avocado.share.service.Impl;
 
-import ch.avocado.share.common.constants.sql.UserConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IUserDataHandler;
@@ -11,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
+
+import static ch.avocado.share.common.constants.sql.UserConstants.*;
 
 /**
  * Created by bergm on 23/03/2016.
@@ -26,7 +27,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         try {
             user.setId(addAccessControlObject(user));
             long userId = Long.parseLong(user.getId());
-            PreparedStatement stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_USER_QUERY);
+            PreparedStatement stmt = connectionHandler.getPreparedStatement(INSERT_USER_QUERY);
             stmt.setLong(1, Long.parseLong(user.getId()));
             stmt.setString(2, user.getPrename());
             stmt.setString(3, user.getSurname());
@@ -49,7 +50,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if (user == null) throw new IllegalArgumentException("user is null");
         if (user.getId() == null) return false;
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.DELETE_USER_QUERY);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(DELETE_USER_QUERY);
             preparedStatement.setInt(DELETE_USER_QUERY_ID_INDEX, Integer.parseInt(user.getId()));
             return getConnectionHandler().deleteDataSet(preparedStatement);
         } catch (SQLException e) {
@@ -71,17 +72,17 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             if (!resultSet.next()) {
                 return null;
             }
-            id = "" + resultSet.getLong(UserConstants.USER_RESULT_ID_INDEX);
-            description = resultSet.getString(UserConstants.USER_RESULT_DESCRIPTION_INDEX);
-            emailVerified = resultSet.getBoolean(UserConstants.USER_RESULT_VERIFIED_INDEX);
-            emailAddress = resultSet.getString(UserConstants.USER_RESULT_ADDRESS_INDEX);
-            password = new UserPassword(resultSet.getString(UserConstants.USER_RESULT_PASSWORD_INDEX));
-            prename = resultSet.getString(UserConstants.USER_RESULT_PRENAME_INDEX);
-            surname = resultSet.getString(UserConstants.USER_RESULT_SURNAME_INDEX);
-            avatar = resultSet.getString(UserConstants.USER_RESULT_AVATAR_INDEX);
-            creationDate = resultSet.getTimestamp(UserConstants.USER_RESULT_CREATION_DATE_INDEX);
-            resetCode = resultSet.getString(UserConstants.USER_RESULT_RESET_CODE_INDEX);
-            resetExpiry = resultSet.getTimestamp(UserConstants.USER_RESULT_RESET_EXPIRY_INDEX);
+            id = "" + resultSet.getLong(USER_RESULT_ID_INDEX);
+            description = resultSet.getString(USER_RESULT_DESCRIPTION_INDEX);
+            emailVerified = resultSet.getBoolean(USER_RESULT_VERIFIED_INDEX);
+            emailAddress = resultSet.getString(USER_RESULT_ADDRESS_INDEX);
+            password = new UserPassword(resultSet.getString(USER_RESULT_PASSWORD_INDEX));
+            prename = resultSet.getString(USER_RESULT_PRENAME_INDEX);
+            surname = resultSet.getString(USER_RESULT_SURNAME_INDEX);
+            avatar = resultSet.getString(USER_RESULT_AVATAR_INDEX);
+            creationDate = resultSet.getTimestamp(USER_RESULT_CREATION_DATE_INDEX);
+            resetCode = resultSet.getString(USER_RESULT_RESET_CODE_INDEX);
+            resetExpiry = resultSet.getTimestamp(USER_RESULT_RESET_EXPIRY_INDEX);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -111,7 +112,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     public User getUser(String userId) throws DataHandlerException {
         if (userId == null) throw new IllegalArgumentException("userId is null");
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_USER_QUERY);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_USER_QUERY);
             preparedStatement.setLong(1, Long.parseLong(userId));
             return getUserFromPreparedStatement(preparedStatement);
         } catch (Exception e) {
@@ -127,7 +128,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if (connectionHandler == null) return null;
         User user;
         try {
-            PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(UserConstants.SELECT_USER_BY_MAIL_QUERY);
+            PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(SELECT_USER_BY_MAIL_QUERY);
             preparedStatement.setString(1, emailAddress);
             user = getUserFromPreparedStatement(preparedStatement);
         } catch (SQLException e) {
@@ -142,15 +143,15 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         Date expiry;
         String code;
         try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UserConstants.SELECT_EMAIL_VERIFICATION);
-            preparedStatement.setInt(UserConstants.SELECT_EMAIL_VERIFICATION_USER_ID_INDEX, Integer.parseInt(userId));
-            preparedStatement.setString(UserConstants.SELECT_EMAIL_VERIFICATION_ADDRESS_INDEX, address);
+            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_EMAIL_VERIFICATION);
+            preparedStatement.setInt(SELECT_EMAIL_VERIFICATION_USER_ID_INDEX, Integer.parseInt(userId));
+            preparedStatement.setString(SELECT_EMAIL_VERIFICATION_ADDRESS_INDEX, address);
             ResultSet resultSet = getConnectionHandler().executeQuery(preparedStatement);
             if (!resultSet.next()) {
                 return null;
             }
-            code = resultSet.getString(UserConstants.EMAIL_VERIFICATION_RESULT_CODE_INDEX);
-            expiry = resultSet.getDate(UserConstants.EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX);
+            code = resultSet.getString(EMAIL_VERIFICATION_RESULT_CODE_INDEX);
+            expiry = resultSet.getDate(EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -163,9 +164,9 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         }
         if(emailAddress.isDirty()) {
             IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-            PreparedStatement statement = connectionHandler.getPreparedStatement(UserConstants.SET_EMAIL_VERIFICATION);
-            statement.setBoolean(UserConstants.SET_EMAIL_VERIFICATION_INDEX_VALID, emailAddress.isValid());
-            statement.setString(UserConstants.SET_EMAIL_VERIFICATION_INDEX_ADDRESS, emailAddress.getAddress());
+            PreparedStatement statement = connectionHandler.getPreparedStatement(SET_EMAIL_VERIFICATION);
+            statement.setBoolean(SET_EMAIL_VERIFICATION_INDEX_VALID, emailAddress.isValid());
+            statement.setString(SET_EMAIL_VERIFICATION_INDEX_ADDRESS, emailAddress.getAddress());
             if(1 != statement.executeUpdate()) {
                 throw new DataHandlerException("Update address failed");
             }
@@ -185,12 +186,12 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         connectionHandler = getConnectionHandler();
         long userId = Long.parseLong(user.getId());
         try {
-            stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_MAIL_QUERY);
+            stmt = connectionHandler.getPreparedStatement(INSERT_MAIL_QUERY);
             stmt.setLong(1, userId);
             stmt.setString(2, user.getMail().getAddress());
             connectionHandler.insertDataSet(stmt);
 
-            stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_MAIL_VERIFICATION_QUERY);
+            stmt = connectionHandler.getPreparedStatement(INSERT_MAIL_VERIFICATION_QUERY);
             stmt.setLong(1, userId);
             EmailAddress mail = user.getMail();
             stmt.setString(2, mail.getAddress());
@@ -210,10 +211,10 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
                 deleteResetVerification(userId);
             } else {
                 IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-                PreparedStatement statement = connectionHandler.getPreparedStatement(UserConstants.UPDATE_PASSWORD_RESET);
-                statement.setTimestamp(UserConstants.UPDATE_PASSWORD_RESET_EXPIRY_INDEX, new Timestamp(verification.getExpiry().getTime()));
-                statement.setString(UserConstants.UPDATE_PASSWORD_RESET_CODE_INDEX, verification.getCode());
-                statement.setLong(UserConstants.UPDATE_PASSWORD_RESET_USER_INDEX, userId);
+                PreparedStatement statement = connectionHandler.getPreparedStatement(UPDATE_PASSWORD_RESET);
+                statement.setTimestamp(UPDATE_PASSWORD_RESET_EXPIRY_INDEX, new Timestamp(verification.getExpiry().getTime()));
+                statement.setString(UPDATE_PASSWORD_RESET_CODE_INDEX, verification.getCode());
+                statement.setLong(UPDATE_PASSWORD_RESET_USER_INDEX, userId);
                 if (statement.executeUpdate() == 0) {
                     addPasswordResetVerification(userId, verification);
                 }
@@ -236,7 +237,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
         PreparedStatement stmt = null;
         try {
-            stmt = connectionHandler.getPreparedStatement(UserConstants.UPDATE_USER_QUERY);
+            stmt = connectionHandler.getPreparedStatement(UPDATE_USER_QUERY);
             stmt.setString(1, user.getPrename());
             stmt.setString(2, user.getSurname());
             stmt.setString(3, user.getAvatar());
@@ -258,7 +259,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement stmt;
 
-        stmt = connectionHandler.getPreparedStatement(UserConstants.INSERT_PASSWORD_VERIFICATION_QUERY);
+        stmt = connectionHandler.getPreparedStatement(INSERT_PASSWORD_VERIFICATION_QUERY);
         stmt.setLong(1, userId);
         stmt.setTimestamp(2, new Timestamp(verification.getExpiry().getTime()));
         stmt.setString(3, verification.getCode());
@@ -267,7 +268,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     private void deleteResetVerification(long userId) throws DataHandlerException, SQLException {
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-        PreparedStatement statement = connectionHandler.getPreparedStatement(UserConstants.DELETE_RESET_VERIFICATION);
+        PreparedStatement statement = connectionHandler.getPreparedStatement(DELETE_RESET_VERIFICATION);
         statement.setLong(1, userId);
         connectionHandler.deleteDataSet(statement);
     }
@@ -292,17 +293,17 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if(searchTerms.isEmpty()) {
             return new ArrayList<>();
         }
-        String query = UserConstants.SEARCH_QUERY_START + UserConstants.SEARCH_QUERY_LIKE;
+        String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
 
         for (int i = searchTerms.size() - 1; i > 0; i--) {
-            query += UserConstants.SEARCH_QUERY_LINK + UserConstants.SEARCH_QUERY_LIKE;
+            query += SEARCH_QUERY_LINK + SEARCH_QUERY_LIKE;
         }
 
         try {
             PreparedStatement ps = connectionHandler.getPreparedStatement(query);
             int position = 1;
             for (String tmp : searchTerms) {
-                for(int i = 0; i < UserConstants.NUMBER_OF_TERMS_PER_LIKE; i++) {
+                for(int i = 0; i < NUMBER_OF_TERMS_PER_LIKE; i++) {
                     ps.setString(position, "%" + tmp.toLowerCase() + "%");
                     ++position;
                 }

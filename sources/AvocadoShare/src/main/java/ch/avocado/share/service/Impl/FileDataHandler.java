@@ -1,7 +1,6 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.sql.FileConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static ch.avocado.share.common.constants.sql.FileConstants.*;
+
 /**
  * File Data handler.
  */
@@ -29,9 +30,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         try {
-            PreparedStatement statement = connectionHandler.getPreparedStatement(FileConstants.INSERT_UPLOADED_QUERY);
-            statement.setLong(FileConstants.INSERT_UPLOADED_QUERY_INDEX_FILE, fileId);
-            statement.setLong(FileConstants.INSERT_UPLOADED_QUERY_INDEX_MODULE, moduleId);
+            PreparedStatement statement = connectionHandler.getPreparedStatement(INSERT_UPLOADED_QUERY);
+            statement.setLong(INSERT_UPLOADED_QUERY_INDEX_FILE, fileId);
+            statement.setLong(INSERT_UPLOADED_QUERY_INDEX_MODULE, moduleId);
             statement.execute();
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -43,9 +44,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         try {
-            PreparedStatement statement = connectionHandler.getPreparedStatement(FileConstants.UPDATE_UPLOADED);
-            statement.setLong(FileConstants.UPDATE_UPLOADED_INDEX_FILE, fileId);
-            statement.setLong(FileConstants.UPDATE_UPLOADED_INDEX_MODULE, moduleId);
+            PreparedStatement statement = connectionHandler.getPreparedStatement(UPDATE_UPLOADED);
+            statement.setLong(UPDATE_UPLOADED_INDEX_FILE, fileId);
+            statement.setLong(UPDATE_UPLOADED_INDEX_MODULE, moduleId);
             return connectionHandler.updateDataSet(statement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -66,7 +67,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         PreparedStatement preparedStatement;
         long fileId = Long.parseLong(file.getId());
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(FileConstants.INSERT_QUERY);
+            preparedStatement = connectionHandler.getPreparedStatement(INSERT_QUERY);
             preparedStatement.setLong(1, fileId);
             preparedStatement.setString(2, file.getTitle());
             preparedStatement.setTimestamp(3, new Timestamp(file.getLastChanged().getTime()));
@@ -91,7 +92,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(FileConstants.SELECT_BY_ID_QUERY);
+            preparedStatement = connectionHandler.getPreparedStatement(SELECT_BY_ID_QUERY);
             preparedStatement.setLong(1, Long.parseLong(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             return getFileFromSelectResultSet(resultSet);
@@ -118,12 +119,12 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         try {
             IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
 
-            String query = FileConstants.SEARCH_QUERY_START + FileConstants.SEARCH_QUERY_LIKE;
+            String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
 
             for (String tmp : searchTerms) {
                 // TODO @bergmsas: equals verwenden?
                 if (!tmp.equals(searchTerms.get(0))) {
-                    query += FileConstants.SEARCH_QUERY_LINK + FileConstants.SEARCH_QUERY_LIKE;
+                    query += SEARCH_QUERY_LINK + SEARCH_QUERY_LIKE;
                 }
             }
             PreparedStatement ps = connectionHandler.getPreparedStatement(query);
@@ -153,7 +154,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         if (connectionHandler == null) return null;
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = connectionHandler.getPreparedStatement(FileConstants.SELECT_BY_TITLE_QUERY_AND_MODULE);
+            preparedStatement = connectionHandler.getPreparedStatement(SELECT_BY_TITLE_QUERY_AND_MODULE);
             preparedStatement.setString(1, fileTitle);
             preparedStatement.setLong(2, parsedModuleId);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
@@ -171,7 +172,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         if (oldFileOnDb == null) throw new IllegalArgumentException("there's no such file on db");
         PreparedStatement preparedStatement;
         try {
-            preparedStatement = getConnectionHandler().getPreparedStatement(FileConstants.UPDATE_QUERY);
+            preparedStatement = getConnectionHandler().getPreparedStatement(UPDATE_QUERY);
             preparedStatement.setString(1, file.getTitle());
             preparedStatement.setTimestamp(2, new Timestamp(file.getLastChanged().getTime()));
             preparedStatement.setString(3, file.getPath());
