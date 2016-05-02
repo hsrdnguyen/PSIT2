@@ -91,8 +91,8 @@ public class ModuleDataHandlerTest {
 
 
         IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-        File fileOne = new File(owner.getId(), "File from ModulDataHandlerTest (1/2)", "title", "path", new Date(), ".jpg", module.getId(), "image/jpeg");
-        File fileTwo = new File(owner.getId(), "File from ModulDataHandlerTest (2/2)", "title2", "path", new Date(), ".jpg", module.getId(), "image/jpeg");
+        File fileOne = DummyFactory.newFile(1, owner, module);
+        File fileTwo = DummyFactory.newFile(2, owner, module);
         assertNotNull(fileDataHandler.addFile(fileOne));
         assertNotNull(fileDataHandler.addFile(fileTwo));
 

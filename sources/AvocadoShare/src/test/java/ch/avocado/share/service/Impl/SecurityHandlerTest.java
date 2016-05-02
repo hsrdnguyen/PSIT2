@@ -7,6 +7,7 @@ import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,8 +34,7 @@ public class SecurityHandlerTest {
     private User moduleOwner;
 
     private User getUser(String prename, String surname, String email) {
-        final Date expiry = MailVerification.getDateFromExpiryInHours(24);
-        return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, new MailVerification(expiry)));
+        return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, MailVerification.fromExpiryInHours(24)));
     }
 
     @Before
@@ -90,7 +90,7 @@ public class SecurityHandlerTest {
 
         assertNotNull(moduleDataHandler.addModule(module));
 
-        fileInModule = new File(owningUser.getId(), "description", "title", "path", new Date(), ".ext", module.getId(), "image/png");
+        fileInModule = DummyFactory.newFile(1, owningUser, module);
         assertNotNull(fileDataHandler.addFile(fileInModule));
     }
 

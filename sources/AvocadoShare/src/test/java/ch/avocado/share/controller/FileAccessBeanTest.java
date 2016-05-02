@@ -8,6 +8,7 @@ import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.test.DummyFactory;
 import ch.avocado.share.test.FileArgumentMatcher;
 import ch.avocado.share.test.UserArgumentMatcher;
 import org.junit.After;
@@ -62,7 +63,7 @@ public class FileAccessBeanTest {
 
         module = new Module(owner.getId(), "description",  "UNEXISTING MODULE!!!!");
         moduleDataHandler.addModule(module);
-        file = new File(owner.getId(), "description", "title", "path", new Date(), ".jpg", module.getId(), "image/jpeg");
+        file = DummyFactory.newFile(1, owner, module);
         fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFile(file.getId()).getOwnerId());
 

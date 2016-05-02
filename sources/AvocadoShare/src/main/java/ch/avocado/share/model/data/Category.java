@@ -1,21 +1,26 @@
 package ch.avocado.share.model.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Representation of a single category.
+ *
+ * Category objects are immutable.
  */
 public class Category {
-    private String name;
-    private List<String> objectIds;
+
+    private final String name;
+    private final List<String> objectIds;
 
     public Category(String name, List<String> objectIds) {
         if(name == null ) throw new IllegalArgumentException("name in category");
         if(objectIds == null ) throw new IllegalArgumentException("objectIds in category");
 
         this.name = name;
-        this.objectIds = objectIds;
+        this.objectIds = new ArrayList<>(objectIds.size());
+        this.objectIds.addAll(objectIds);
     }
 
     public Category(String name) {
@@ -28,18 +33,10 @@ public class Category {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String[] getObjectIds() {
-        String[] idArray = new String[objectIds.size()];
-        return objectIds.toArray(idArray);
-    }
-
-    public void addObjectId(String objectId) {
-        if(objectId == null ) throw new IllegalArgumentException("objectId in category addObjectId");
-        objectIds.add(objectId);
+    public Collection<String> getObjectIds() {
+        ArrayList<String> ids = new ArrayList<>(objectIds.size());
+        ids.addAll(objectIds);
+        return ids;
     }
 
     @Override

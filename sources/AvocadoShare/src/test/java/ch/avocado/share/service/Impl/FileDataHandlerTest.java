@@ -120,7 +120,7 @@ public class FileDataHandlerTest {
         List<Category> categories = getTestCategories();
 
         // add file
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull("File could not be added", id);
@@ -165,7 +165,7 @@ public class FileDataHandlerTest {
         String extension = ".jpg";
         String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
@@ -191,7 +191,7 @@ public class FileDataHandlerTest {
         String mimeType = "image/jpeg";
 
         List<Category> categories = getTestCategories();
-        File fileOne = new File(user.getId(), description, title + "1", path, lastChanged, extension, module.getId(), mimeType);
+        File fileOne = new File(user.getId(), description, title + "1", lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         fileOne.setCategories(categories);
         // Add first file
         id = fileDataHandler.addFile(fileOne);
@@ -201,7 +201,7 @@ public class FileDataHandlerTest {
         ids.add(id);
 
         // Add second file
-        File fileTwo = new File(user.getId(), description, title + "2", path, lastChanged, extension, module.getId(), mimeType);
+        File fileTwo = new File(user.getId(), description, title + "2", lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         id = fileDataHandler.addFile(fileTwo);
         assertNotNull(id);
         assertNotNull(fileOne.getId());
@@ -232,7 +232,7 @@ public class FileDataHandlerTest {
         String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
 
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
 
         id = fileDataHandler.addFile(file);
@@ -254,7 +254,7 @@ public class FileDataHandlerTest {
         String extension = ".jpg";
         String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
 
         assertNotNull(fileDataHandler.addFile(file));
@@ -269,13 +269,10 @@ public class FileDataHandlerTest {
         categories = getTestCategories();
         categories.add(new Category("Something new"));
         file.setOwnerId(userTwo.getId());
-        file.setPath(path);
         file.setTitle(title);
         file.setDescription(description);
         file.setLastChanged(lastChanged);
-        file.setPath(path);
-        file.setExtension(".png");
-        file.setMimeType("image/png");
+        file.setDiskFile(new DiskFile(path, "image/png", ".png"));
         file.setModuleId(moduleTwo.getId());
         file.setCategories(categories);
         assertTrue(fileDataHandler.updateFile(file));

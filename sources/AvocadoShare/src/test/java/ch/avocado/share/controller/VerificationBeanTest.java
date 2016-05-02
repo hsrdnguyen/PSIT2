@@ -76,8 +76,9 @@ public class VerificationBeanTest {
 
         final Date expiry = new Date(0);
         addressVerification = new MailVerification(expiry);
+        user.getMail().setVerification(addressVerification);
         assertTrue(addressVerification.isExpired());
-        assertFalse(bean.verifyEmailCode());
+        assertFalse("Should fail but didn't", bean.verifyEmailCode());
 
         verify(email, never()).verify();
         verify(userDataHandler, never()).updateUser(any(User.class));

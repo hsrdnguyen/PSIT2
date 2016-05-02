@@ -10,10 +10,11 @@ import java.util.Date;
  */
 public class MailVerification {
 
-    private final static int TOKEN_LENGTH = 32;
+    final static int TOKEN_LENGTH = 32;
     private final static byte[] TOKEN_CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".getBytes();
     private final String code;
     private final Date expiry;
+    private static TokenGenerator generator = new CharsetTokenGenerator(TOKEN_CHARSET);
 
 
     public MailVerification(Date expiry) {
@@ -23,19 +24,17 @@ public class MailVerification {
     public MailVerification(Date expiry, String code) {
         if (code == null) throw new IllegalArgumentException("code is null");
         if (expiry == null) throw new IllegalArgumentException("expiry is null");
+        if (code.isEmpty()) throw new IllegalArgumentException("code is empty");
         this.code = code;
-        this.expiry = expiry;
+        this.expiry = (Date) expiry.clone();
     }
 
-    /**
-     * Convert a expiry time (delta) into an actual date.
-     * @param expiresInHours The number of hours
-     * @return The date on which the hours will expire
-     */
-    public static Date getDateFromExpiryInHours(int expiresInHours) {
-        long expiryMillis = System.currentTimeMillis() % 1000;
+    public static MailVerification fromExpiryInHours(int expiresInHours) {
+        if(expiresInHours < 0) throw new IllegalArgumentException("expiresInHours is negative");
+        long expiryMillis = System.currentTimeMillis();
         expiryMillis += expiresInHours * (60 * 60 * 1000);
-        return new Date(expiryMillis);
+        Date expiry = new Date(expiryMillis);
+        return new MailVerification(expiry);
     }
 
     /**
@@ -43,7 +42,6 @@ public class MailVerification {
      * @return The verification code.
      */
     protected static String generateCode(){
-    	TokenGenerator generator = new CharsetTokenGenerator(TOKEN_CHARSET);
     	return new String(generator.generateToken(TOKEN_LENGTH));
     }
 
