@@ -23,8 +23,7 @@ public class UserPasswordTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void test_from_digest_with_null(){
-		@SuppressWarnings("unused")
-		UserPassword pass = new UserPassword(null);
+		new UserPassword(null);
 	}
 	
 	/**
@@ -32,8 +31,7 @@ public class UserPasswordTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void test_from_password_with_null(){
-		@SuppressWarnings("unused")
-		UserPassword pass = UserPassword.fromPassword(null);
+		UserPassword.fromPassword(null);
 	}
 	
 	@Test

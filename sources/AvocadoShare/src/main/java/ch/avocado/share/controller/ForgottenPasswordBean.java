@@ -2,7 +2,7 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
-import ch.avocado.share.model.data.PasswordResetVerification;
+import ch.avocado.share.model.data.MailVerification;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICaptchaVerifier;
@@ -100,9 +100,8 @@ public class ForgottenPasswordBean implements Serializable {
         return storeVerification(user, userDataHandler) && sendResetMail(user);
     }
 
-    private PasswordResetVerification createPasswordResetVerification() {
-        Date expiry = PasswordResetVerification.getDateFromExpiryInHours(24 * 2);
-        return new PasswordResetVerification(expiry);
+    private MailVerification createPasswordResetVerification() {
+        return MailVerification.fromExpiryInHours(24*2);
     }
 
     /**

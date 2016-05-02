@@ -8,6 +8,7 @@ import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.test.DummyFactory;
 import ch.avocado.share.test.FileArgumentMatcher;
 import ch.avocado.share.test.UserArgumentMatcher;
 import org.junit.After;
@@ -37,7 +38,8 @@ public class FileAccessBeanTest {
     private String email2 = "unexisting_user2@zhaw.ch";
 
     private User userFromEmail(String email) {
-        return new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "1234.jpg", new EmailAddress(false, email, new EmailAddressVerification(new Date())));
+        final Date expiry = new Date();
+        return new User(UserPassword.fromPassword(""), "Prename", "Surname", "1234.jpg", new EmailAddress(false, email, new MailVerification(expiry)));
     }
 
     @Before
@@ -61,7 +63,7 @@ public class FileAccessBeanTest {
 
         module = new Module(owner.getId(), "description",  "UNEXISTING MODULE!!!!");
         moduleDataHandler.addModule(module);
-        file = new File(owner.getId(), "description", "title", "path", new Date(), ".jpg", module.getId(), "image/jpeg");
+        file = DummyFactory.newFile(1, owner, module);
         fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFile(file.getId()).getOwnerId());
 

@@ -1,13 +1,14 @@
 package ch.avocado.share.test;
 
 import ch.avocado.share.model.data.Category;
+import ch.avocado.share.model.data.User;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Created by coffeemakr on 18.04.16.
@@ -37,5 +38,23 @@ public class Asserts {
             names.add(category.getName());
         }
         return names;
+    }
+
+    static public void assertEqualUsers(User expected, User actual) {
+        assertFalse("They are the same object", actual == expected);
+        assertEquals("Id", expected.getId(), actual.getId());
+        assertEquals("Creation Date", actual.getCreationDate(), actual.getCreationDate());
+        assertEquals("Prename", expected.getPrename(), actual.getPrename());
+        assertEquals("Surname", expected.getSurname(), actual.getSurname());
+        assertEquals("Description", expected.getDescription(), actual.getDescription());
+        assertEquals("Password digest", expected.getPassword().getDigest(), actual.getPassword().getDigest());
+        assertEquals("Avatar", expected.getAvatar(), actual.getAvatar());
+        if(expected.getMail() != null && actual.getMail() != null) {
+            assertEquals("Email address verification", expected.getMail().getVerification(), actual.getMail().getVerification());
+            assertEquals("Email verified", expected.getMail().isVerified(), actual.getMail().isVerified());
+            assertEquals("Email address", expected.getMail().getAddress(), actual.getMail().getAddress());
+        }
+        assertEquals("Mail", expected.getMail(), actual.getMail());
+        assertEquals("Reset verification", expected.getPassword().getResetVerification(), actual.getPassword().getResetVerification());
     }
 }

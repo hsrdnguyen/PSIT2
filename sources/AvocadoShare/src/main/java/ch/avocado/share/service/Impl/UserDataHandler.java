@@ -14,11 +14,9 @@ import java.util.*;
 import static ch.avocado.share.common.constants.sql.UserConstants.*;
 
 /**
- * Created by bergm on 23/03/2016.
+ *
  */
 public class UserDataHandler extends DataHandlerBase implements IUserDataHandler {
-
-    private static final int DELETE_USER_QUERY_ID_INDEX = 1;
 
     @Override
     public String addUser(User user) throws DataHandlerException {
@@ -48,7 +46,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     @Override
     public boolean deleteUser(User user) throws DataHandlerException {
         if (user == null) throw new IllegalArgumentException("user is null");
-        if (user.getId() == null) return false;
+        if (user.getId() == null) throw new IllegalArgumentException("user.id is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(DELETE_USER_QUERY);
             preparedStatement.setInt(DELETE_USER_QUERY_ID_INDEX, Integer.parseInt(user.getId()));
@@ -88,7 +86,9 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         }
         email = new EmailAddress(emailVerified, emailAddress, null);
         if (resetCode != null && resetExpiry != null) {
-            PasswordResetVerification verification = new PasswordResetVerification(resetExpiry, resetCode);
+            final Date expiry = resetExpiry;
+            final String code = resetCode;
+            MailVerification verification = new MailVerification(expiry, code);
             password.setResetVerification(verification);
         }
         return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);
@@ -99,7 +99,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         ResultSet resultSet = getConnectionHandler().executeQuery(preparedStatement);
         User user = getUserFromResultSet(resultSet);
         if (user != null && !user.getMail().isVerified()) {
-            EmailAddressVerification emailAddressVerification = getEmailAddressVerification(user.getId(), user.getMail().getAddress());
+            MailVerification emailAddressVerification = getEmailAddressVerification(user.getId(), user.getMail().getAddress());
             if (emailAddressVerification != null) {
                 user.getMail().setVerification(emailAddressVerification);
                 user.getMail().setDirty(false);
@@ -138,7 +138,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
 
-    private EmailAddressVerification getEmailAddressVerification(String userId, String address) throws DataHandlerException {
+    private MailVerification getEmailAddressVerification(String userId, String address) throws DataHandlerException {
         if (userId == null) throw new IllegalArgumentException("userId is null");
         Date expiry;
         String code;
@@ -151,11 +151,13 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
                 return null;
             }
             code = resultSet.getString(EMAIL_VERIFICATION_RESULT_CODE_INDEX);
-            expiry = resultSet.getDate(EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX);
+            expiry = resultSet.getTimestamp(EMAIL_VERIFICATION_RESULT_EXPIRY_INDEX);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new EmailAddressVerification(expiry, code);
+        final Date expiry1 = expiry;
+        final String code1 = code;
+        return new MailVerification(expiry1, code1);
     }
 
     private void updateEmailAddress(EmailAddress emailAddress) throws SQLException, DataHandlerException {
@@ -185,27 +187,38 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         IDatabaseConnectionHandler connectionHandler;
         connectionHandler = getConnectionHandler();
         long userId = Long.parseLong(user.getId());
+        String address = user.getMail().getAddress();
         try {
             stmt = connectionHandler.getPreparedStatement(INSERT_MAIL_QUERY);
-            stmt.setLong(1, userId);
-            stmt.setString(2, user.getMail().getAddress());
+            stmt.setLong(INSERT_MAIL_INDEX_USER, userId);
+            stmt.setString(INSERT_MAIL_INDEX_ADDRESS, address);
+            stmt.setBoolean(INSERT_MAIL_INDEX_VERIFIED, user.getMail().isVerified());
             connectionHandler.insertDataSet(stmt);
-
-            stmt = connectionHandler.getPreparedStatement(INSERT_MAIL_VERIFICATION_QUERY);
-            stmt.setLong(1, userId);
-            EmailAddress mail = user.getMail();
-            stmt.setString(2, mail.getAddress());
-            EmailAddressVerification verification = mail.getVerification();
-            stmt.setDate(3, new java.sql.Date(verification.getExpiry().getTime()));
-            stmt.setString(4, user.getMail().getVerification().getCode());
-            connectionHandler.insertDataSet(stmt);
+            if(!user.getMail().isVerified()) {
+                MailVerification verification = user.getMail().getVerification();
+                if(verification != null) {
+                    addEmailAddressVerification(userId, address, verification);
+                }
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
         return true;
     }
 
-    private boolean updatePasswordResetVerification(long userId, PasswordResetVerification verification) throws DataHandlerException {
+    private void addEmailAddressVerification(long userId, String address, MailVerification verification) throws SQLException, DataHandlerException {
+        if(address == null) throw new IllegalArgumentException("address is null");
+        if(verification == null) throw new IllegalArgumentException("verification is null");
+        IDatabaseConnectionHandler handler = getConnectionHandler();
+        PreparedStatement stmt = handler.getPreparedStatement(INSERT_MAIL_VERIFICATION);
+        stmt.setLong(INSERT_MAIL_VERIFICATION_INDEX_USER, userId);
+        stmt.setString(INSERT_MAIL_VERIFICATION_INDEX_ADDRESS, address);
+        stmt.setTimestamp(INSERT_MAIL_VERIFICATION_INDEX_EXPIRY, new Timestamp(verification.getExpiry().getTime()));
+        stmt.setString(INSERT_MAIL_VERIFICATION_INDEX_CODE, verification.getCode());
+        handler.insertDataSet(stmt);
+    }
+
+    private boolean updatePasswordResetVerification(long userId, MailVerification verification) throws DataHandlerException {
         try {
             if (verification == null) {
                 deleteResetVerification(userId);
@@ -254,7 +267,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         return true;
     }
 
-    private boolean addPasswordResetVerification(long userId, PasswordResetVerification verification) throws DataHandlerException, SQLException {
+    private boolean addPasswordResetVerification(long userId, MailVerification verification) throws DataHandlerException, SQLException {
         if (verification == null) throw new IllegalArgumentException("verification is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement stmt;

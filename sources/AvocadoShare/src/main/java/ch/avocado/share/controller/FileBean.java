@@ -6,7 +6,6 @@ import ch.avocado.share.common.constants.FileStorageConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.factory.FileFactory;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
@@ -16,6 +15,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FileBean extends ResourceBean<File> {
@@ -37,41 +37,40 @@ public class FileBean extends ResourceBean<File> {
     }
 
 
+    private File newFile() {
+        return new File(getAccessingUser().getId(),
+                getDescription(),
+                getTitle(),
+                new Date() /* last changed */,
+                getModuleId(),
+                null /* disk file */);
+    }
+
     @Override
     public File create() throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
-        File file = FileFactory.getDefaultFile();
+        File file = newFile();
         checkParameterTitle(file);
         checkParameterDescription(file);
         checkParameterModuleId(file);
         checkUploadedFile(file);
         if (!file.hasErrors()) {
             Module module = moduleDataHandler.getModule(getModuleId());
-            if(module == null) {
+            if (module == null) {
                 file.addFieldError("module", "Modul existiert nicht.");
                 return null;
             }
             ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
-            uploadFile(getFileItem(), file);
-            file.setTitle(getTitle());
-            file.setCategories(getCategories());
-            file.setDescription(getDescription());
-            file.setOwnerId(getAccessingUser().getId());
-            file.setModuleId(getModuleId());
-            String fileId;
-
-            fileId = fileDataHandler.addFile(file);
-            file = fileDataHandler.getFile(fileId);
-            if (file == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
-            }
+            DiskFile diskFile = uploadFile(getFileItem());
+            file.setDiskFile(diskFile);
+            fileDataHandler.addFile(file);
         }
         return file;
     }
 
     private void checkUploadedFile(File file) {
-        if(getFileItem() == null) {
+        if (getFileItem() == null) {
             file.addFieldError("fileItem", "Keine Datei ausgewählt.");
         }
     }
@@ -104,7 +103,7 @@ public class FileBean extends ResourceBean<File> {
     public List<File> index() throws HttpBeanException {
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        if(getAccessingUser() != null) {
+        if (getAccessingUser() != null) {
             try {
                 List<String> fileIds = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ);
                 return fileDataHandler.getFiles(fileIds);
@@ -161,13 +160,14 @@ public class FileBean extends ResourceBean<File> {
             }
         }
         if (getFileItem() != null && !file.hasErrors()) {
-            uploadFile(getFileItem(), file);
+            DiskFile diskFile = uploadFile(getFileItem());
+            file.setDiskFile(diskFile);
             changed = true;
         }
 
         if (!file.hasErrors() && changed) {
-            try{
-                if(!fileDataHandler.updateFile(file)) {
+            try {
+                if (!fileDataHandler.updateFile(file)) {
                     throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
                 }
             } catch (DataHandlerException e) {
@@ -198,9 +198,10 @@ public class FileBean extends ResourceBean<File> {
      * @return The reference to the file on the disk
      * @throws HttpBeanException
      */
-    private void uploadFile(FileItem fileItem, File file) throws HttpBeanException {
-        IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
+    private DiskFile uploadFile(FileItem fileItem) throws HttpBeanException {
         if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
+        IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
+        String mimeType, path, extension;
         DiskFileItemFactory factory = new DiskFileItemFactory();
         // maximum size that will be stored in memory
         factory.setSizeThreshold(FileStorageConstants.MAX_MEM_SIZE);
@@ -212,15 +213,14 @@ public class FileBean extends ResourceBean<File> {
         // maximum file size to be uploaded.
         upload.setSizeMax(FileStorageConstants.MAX_FILE_SIZE);
         try {
-            String path = fileStorageHandler.saveFile(fileItem);
-            file.setPath(path);
-            String mimeType = fileStorageHandler.getContentType(path, fileItem.getName());
-            file.setMimeType(mimeType);
-            file.setExtension(Filename.getExtension(fileItem.getName()));
+            path = fileStorageHandler.saveFile(fileItem);
+            mimeType = fileStorageHandler.getContentType(path, fileItem.getName());
         } catch (FileStorageException e) {
             e.printStackTrace();
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Datei konnte nicht gespeichert werden.");
         }
+        extension = Filename.getExtension(fileItem.getName());
+        return new DiskFile(path, mimeType, extension);
     }
 
     /**
@@ -260,33 +260,46 @@ public class FileBean extends ResourceBean<File> {
 
     /**
      * Gets the current rating value of the file.
+     *
      * @return the rating value.
      */
-    public float getRatingForObject(){ return rating.getRating(); }
+    public float getRatingForObject() {
+        return rating.getRating();
+    }
 
     /**
      * Gets the current number of ratings of the file.
+     *
      * @return the number of ratings.
      */
-    public int getNumberOfRatingsForObject(){ return rating.getNumberOfRatings(); }
+    public int getNumberOfRatingsForObject() {
+        return rating.getNumberOfRatings();
+    }
 
     /**
      * Set's the rating object for the file.
+     *
      * @param rating the rating object to been set.
      */
-    public void setRating(Rating rating){ this.rating = rating; }
+    public void setRating(Rating rating) {
+        this.rating = rating;
+    }
 
     /**
      * Checks if the accessing user had already rated the file.
+     *
      * @return true if the user had already rated the file, false if not.
      */
-    public boolean hasAccessingUserRated(){ return this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId())); }
+    public boolean hasAccessingUserRated() {
+        return this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()));
+    }
 
     /**
      * Adds a category to the file, by handing over the name of the category.
+     *
      * @param categoryName The name of the category which you want to add to the file.
      */
-    public void addCategory(String categoryName){
+    public void addCategory(String categoryName) {
         if (categoryName == null || categoryName.trim().isEmpty())
             throw new IllegalArgumentException("categoryName is null or emty");
         Category category = new Category(categoryName.trim());
@@ -298,20 +311,23 @@ public class FileBean extends ResourceBean<File> {
 
     /**
      * Remove a category from the file
+     *
      * @param category The category which you want to remove from the file
      */
-    public void removeCategory(Category category){
+    public void removeCategory(Category category) {
         if (category == null) throw new IllegalArgumentException("category is null");
         categories.remove(category); //TODO @kunzlio1: fragen was wir aus dem jsp heraus bekommen? (Category Obj oder name)
     }
 
     /**
      * Gets the rating which the accessing user gave to the file
+     *
      * @return the rating of the user for the file
      * @throws HttpBeanException is thrown, if there is an error while getting the rating.
      */
     public int getRatingForAccessingUser() throws HttpBeanException {
-        if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) throw new HttpBeanException(0, "User hadn't rated yet");
+        if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId())))
+            throw new HttpBeanException(0, "User hadn't rated yet");
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
         try {
             return ratingDataHandler.getRatingForUserAndObject(Long.parseLong(getAccessingUser().getId()), Long.parseLong(moduleId));
@@ -322,17 +338,18 @@ public class FileBean extends ResourceBean<File> {
 
     /**
      * Adds a ratin which a user gave to the file.
-     * @param rating the rating the user gave to the file.
+     *
+     * @param rating       the rating the user gave to the file.
      * @param ratingUserId the id of the user which had rated
      * @throws HttpBeanException is thrown, if there is an error while adding the rating.
      */
     public void addRatingForAccessingUser(int rating, long ratingUserId) throws HttpBeanException {
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
         try {
-            if (this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))){
+            if (this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
                 ratingDataHandler.updateRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
                 this.rating.addRating(rating, ratingUserId);
-            }else {
+            } else {
                 ratingDataHandler.addRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
                 this.rating.addRating(rating, ratingUserId);
             }

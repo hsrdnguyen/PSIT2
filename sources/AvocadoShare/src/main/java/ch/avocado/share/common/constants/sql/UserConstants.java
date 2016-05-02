@@ -21,11 +21,18 @@ public class UserConstants {
     public static final int USER_RESULT_RESET_CODE_INDEX = 10;
     public static final int USER_RESULT_RESET_EXPIRY_INDEX = 11;
 
-    public static final String SELECT_PASSWORD_VERIFICATION_QUERY = "SELECT id, expiry, code FROM avocado_share.password_reset WHERE id=?";
     public static final String UPDATE_USER_QUERY = "UPDATE " + Tables.USER_TABLE + "  SET prename=?, surname=?, avatar=?, password=? WHERE id=?";
-    public static final String INSERT_MAIL_QUERY = "INSERT INTO avocado_share.email(identity_id, address, verified)VALUES (?, ?, FALSE)";
-    public static final String SELECT_MAIL_QUERY = "SELECT identity_id, address, verified FROM avocado_share.email WHERE identity_id=?";
-    public static final String INSERT_MAIL_VERIFICATION_QUERY = "INSERT INTO avocado_share.email_verification(identity_id, address, expiry, verification_code) VALUES (?, ?, ?, ?)";
+    public static final String INSERT_MAIL_QUERY = "INSERT INTO avocado_share.email(identity_id, address, verified)VALUES (?, ?, ?)";
+    public static final int INSERT_MAIL_INDEX_USER = 1;
+    public static final int INSERT_MAIL_INDEX_ADDRESS = 2;
+    public static final int INSERT_MAIL_INDEX_VERIFIED = 3;
+
+    public static final String INSERT_MAIL_VERIFICATION = "INSERT INTO avocado_share.email_verification(identity_id, address, expiry, verification_code) VALUES (?, ?, ?, ?)";
+    public static final int INSERT_MAIL_VERIFICATION_INDEX_CODE = 4;
+    public static final int INSERT_MAIL_VERIFICATION_INDEX_USER = 1;
+    public static final int INSERT_MAIL_VERIFICATION_INDEX_ADDRESS = 2;
+    public static final int INSERT_MAIL_VERIFICATION_INDEX_EXPIRY = 3;
+
     public static final String SELECT_EMAIL_VERIFICATION  = "SELECT expiry, verification_code FROM avocado_share.email_verification WHERE identity_id=? AND address=?";
     public static final int SELECT_EMAIL_VERIFICATION_USER_ID_INDEX = 1;
     public static final int SELECT_EMAIL_VERIFICATION_ADDRESS_INDEX = 2;
@@ -35,7 +42,7 @@ public class UserConstants {
     public static final int SET_EMAIL_VERIFICATION_INDEX_VALID = 1;
     public static final int SET_EMAIL_VERIFICATION_INDEX_ADDRESS = 2;
 
-    private static final String SELECT_USER_SELECTED_COLUMNS = "I.id, prename, surname, avatar, description, password, address, verified, creation_date";
+
     private static final String SELECT_USERS = "" +
             "SELECT " +
             "  I.id, " +
@@ -71,4 +78,5 @@ public class UserConstants {
     public static final String SEARCH_QUERY_START = SELECT_USERS + " WHERE ";
     public static final String SEARCH_QUERY_LINK = " OR ";
     public static final int NUMBER_OF_TERMS_PER_LIKE = 2;
+    public static final int DELETE_USER_QUERY_ID_INDEX = 1;
 }

@@ -1,7 +1,5 @@
 package ch.avocado.share.model.data;
 
-import com.sun.istack.internal.Nullable;
-
 import java.util.Objects;
 
 /**
@@ -11,10 +9,12 @@ public class EmailAddress extends Model {
 
     private boolean verified;
     private final String address;
-    private EmailAddressVerification verification;
+    private MailVerification verification;
 
-    public EmailAddress(boolean verified, String address, EmailAddressVerification verification) {
+    public EmailAddress(boolean verified, String address, MailVerification verification) {
         if(address == null) throw new IllegalArgumentException("address is null");
+        address = address.trim();
+        if(address.isEmpty()) throw new IllegalArgumentException("address is empty");
         this.verified = verified;
         this.address = address;
         this.verification = verification;
@@ -45,12 +45,12 @@ public class EmailAddress extends Model {
     }
 
 
-    public EmailAddressVerification getVerification() {
+    public MailVerification getVerification() {
         return verification;
     }
 
-    public void setVerification(@Nullable EmailAddressVerification verification) {
-        if(Objects.equals(this.verification, verification)) {
+    public void setVerification(MailVerification verification) {
+        if(!Objects.equals(this.verification, verification)) {
             setDirty(true);
         }
         this.verification = verification;
