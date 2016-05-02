@@ -2,6 +2,7 @@ package ch.avocado.share.model.data;
 
 /**
  * This class describes a "real" disk file.
+ * Objects of this class are immutable.
  */
 public class DiskFile {
     private final String extension;
