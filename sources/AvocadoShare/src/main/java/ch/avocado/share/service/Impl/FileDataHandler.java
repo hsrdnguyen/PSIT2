@@ -24,6 +24,7 @@ import static ch.avocado.share.common.constants.sql.FileConstants.*;
  */
 public class FileDataHandler extends DataHandlerBase implements IFileDataHandler {
 
+
     private void addFileToModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
@@ -97,30 +98,31 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
             return getFileFromSelectResultSet(resultSet);
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
     @Override
     public List<File> getFiles(List<String> idList) throws DataHandlerException {
         if(idList == null) throw new IllegalArgumentException("idList is null");
-        List<File> files = new ArrayList<>(idList.size());
-        for (String id : idList) {
-            File file = getFile(id);
-            if (file != null) {
-                files.add(file);
-            }
+        if(idList.isEmpty()) return new ArrayList<>();
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        ResultSet result = null;
+        String query = SELECT_BY_ID_LIST + getIdList(idList);
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(query);
+            result = connectionHandler.executeQuery(statement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
-        return files;
+        return getMultipleFilesFromResultSet(result);
     }
 
     @Override
     public List<File> search(List<String> searchTerms) throws DataHandlerException {
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
         try {
-            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-
-            String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
-
             for (String tmp : searchTerms) {
                 // TODO @bergmsas: equals verwenden?
                 if (!tmp.equals(searchTerms.get(0))) {
@@ -140,9 +142,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
             return getMultipleFilesFromResultSet(rs);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DataHandlerException(e);
         }
-        return null;
     }
 
     @Override

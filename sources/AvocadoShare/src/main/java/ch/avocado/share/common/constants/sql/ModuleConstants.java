@@ -18,13 +18,16 @@ public final class ModuleConstants {
     public static final int RESULT_INDEX_CREATION_DATE = 4;
     public static final int RESULT_INDEX_OWNER = 5;
 
-    public static final String SELECT_QUERY = "" +
+    public static final String SELECT_WITHOUT_WHERE = "" +
             "SELECT " + SELECT_COLUMNS + " FROM " + table + " AS m " +
             "   JOIN avocado_share.access_control as a " +
             "       ON m.id = a.id " +
             "   LEFT JOIN " + OWNERSHIP_TABLE + " AS owner " +
-            "       ON a.id = owner.object_id " +
-            "   WHERE a.id = ? ";
+            "       ON a.id = owner.object_id ";
+
+
+    public static final String SELECT_QUERY = SELECT_WITHOUT_WHERE + " WHERE a.id = ? ";
+    public static final String SELECT_BY_ID_LIST = SELECT_WITHOUT_WHERE  + " WHERE a.id IN ";
 
     public static final int SELECT_QUERY_INDEX_ID = 1;
 

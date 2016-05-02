@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,7 @@ import static ch.avocado.share.common.constants.sql.GroupConstants.*;
  * the database by using {@link IDatabaseConnectionHandler}
  */
 public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandler {
+
 
     private PreparedStatement getGetStatement(String id) throws DataHandlerException {
         if (id == null) throw new IllegalArgumentException("id is null");
@@ -55,7 +57,6 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         Date creationDate;
         // TODO: @muellcy1 fetch categories and rating
         try {
-            if (!resultSet.next()) return null;
             id = resultSet.getString(RESULT_ID_INDEX);
             name = resultSet.getString(RESULT_NAME_INDEX);
             description = resultSet.getString(RESULT_DESCRIPTION_INDEX);
@@ -71,22 +72,33 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     }
 
     @Override
-    public Group getGroup(String id) throws DataHandlerException {
+    public Group getGroup(String id) throws DataHandlerException, ObjectNotFoundException {
         if (id == null) throw new IllegalArgumentException("id is null");
         PreparedStatement statement = getGetStatement(id);
-        return getGroupFromResultSet(executeGetStatement(statement));
+        ResultSet resultSet = executeGetStatement(statement);
+        try {
+            if (!resultSet.next()) throw new ObjectNotFoundException(Group.class, id);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return getGroupFromResultSet(resultSet);
     }
 
     @Override
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
+        if (ids == null) throw new IllegalArgumentException("ids is null");
+        if (ids.size() == 0) return new ArrayList<>();
         ArrayList<Group> groups = new ArrayList<>(ids.size());
-        for (String id : ids) {
-            if (id != null) {
-                Group group = getGroup(id);
-                if (group != null) {
-                    groups.add(group);
-                }
+        String query = SELECT_BY_ID_LIST + getIdList(ids);
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(query);
+            ResultSet result = connectionHandler.executeQuery(statement);
+            while (result.next()) {
+                groups.add(getGroupFromResultSet(result));
             }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
         groups.trimToSize();
         return groups;
@@ -160,8 +172,14 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     }
 
     @Override
-    public Group getGroupByName(String name) throws DataHandlerException {
+    public Group getGroupByName(String name) throws DataHandlerException, ObjectNotFoundException {
         if (name == null) throw new IllegalArgumentException("name is null");
-        return getGroupFromResultSet(executeGetStatement(getGetByNameStatement(name)));
+        ResultSet resultSet = executeGetStatement(getGetByNameStatement(name));
+        try {
+            if (!resultSet.next()) throw new ObjectNotFoundException(Group.class, name);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return getGroupFromResultSet(resultSet);
     }
 }

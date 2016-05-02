@@ -12,6 +12,7 @@ import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
@@ -56,7 +57,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @return The object (never null)
      * @throws HttpBeanException
      */
-    public abstract E get() throws HttpBeanException, DataHandlerException;
+    public abstract E get() throws HttpBeanException, DataHandlerException, ObjectNotFoundException;
 
     /**
      * Returns a list filtered by the given parameters
@@ -73,7 +74,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @param object
      * @throws HttpBeanException
      */
-    public abstract void update(E object) throws HttpBeanException, DataHandlerException;
+    public abstract void update(E object) throws HttpBeanException, DataHandlerException, ObjectNotFoundException;
 
     /**
      * Update the descriptipon of the object
@@ -102,7 +103,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      *
      * @throws HttpBeanException
      */
-    public abstract void destroy(E object) throws HttpBeanException, DataHandlerException;
+    public abstract void destroy(E object) throws HttpBeanException, DataHandlerException, ObjectNotFoundException;
 
     /**
      * Replace the object

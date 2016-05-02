@@ -10,6 +10,7 @@ import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.io.Serializable;
 
@@ -60,8 +61,9 @@ public class FileAccessBean implements Serializable {
             if (user == null) {
                 return false;
             }
-            file = fileDataHandler.getFile(fileId);
-            if (file == null) {
+            try {
+                file = fileDataHandler.getFile(fileId);
+            } catch (ObjectNotFoundException e) {
                 return false;
             }
             if (file.getOwnerId() == null) {
@@ -87,10 +89,13 @@ public class FileAccessBean implements Serializable {
 
         IFileDataHandler fileDataHandler;
         ISecurityHandler securityHandler;
+        IUserDataHandler userDataHandler;
 
+        User fileOwner;
         File file;
 
         try {
+            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
             fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
             securityHandler = ServiceLocator.getService(ISecurityHandler.class);
         } catch (ServiceNotFoundException e) {
@@ -98,10 +103,14 @@ public class FileAccessBean implements Serializable {
             return false;
         }
         try {
-            file = fileDataHandler.getFile(fileId);
-            if (file == null) return false;
+            try {
+                file = fileDataHandler.getFile(fileId);
+                fileOwner = userDataHandler.getUser(ownerUserId);
+            } catch (ObjectNotFoundException e) {
+                return false;
+            }
             AccessLevelEnum requestingUserCurrentLevel = securityHandler.getAccessLevel(requesterUserId, fileId);
-            AccessLevelEnum ownerUserLevel = securityHandler.getAccessLevel(ownerUserId, fileId);
+            AccessLevelEnum ownerUserLevel = securityHandler.getAccessLevel(fileOwner, file);
             // check if the owner has manage rights.
             if (ownerUserLevel.containsLevel(AccessLevelEnum.MANAGE)) {
                 // check if the requester doesn't have rights already
@@ -119,32 +128,16 @@ public class FileAccessBean implements Serializable {
         return false;
     }
 
-    public String getOwnerUserId() {
-        return ownerUserId;
-    }
-
     public void setOwnerUserId(String ownerUserId) {
         this.ownerUserId = ownerUserId;
-    }
-
-    public String getRequesterUserId() {
-        return requesterUserId;
     }
 
     public void setRequesterUserId(String requesterUserId) {
         this.requesterUserId = requesterUserId;
     }
 
-    public String getRequesterUserMail() {
-        return requesterUserMail;
-    }
-
     public void setRequesterUserMail(String requesterUserMail) {
         this.requesterUserMail = requesterUserMail;
-    }
-
-    public String getFileId() {
-        return fileId;
     }
 
     public void setFileId(String fileId) {

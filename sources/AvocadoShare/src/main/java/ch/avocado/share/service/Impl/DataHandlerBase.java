@@ -10,6 +10,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 
 import static ch.avocado.share.common.constants.sql.AccessControlObjectConstants.*;
 
@@ -181,5 +182,26 @@ abstract class DataHandlerBase {
         Long ownerId = getOwnerIdInternal(Long.parseLong(objectId));
         if (ownerId == null) return null;
         return Long.toString(ownerId);
+    }
+
+    protected String getIdList(Collection<String> ids) {
+        String idListForQuery = "( ";
+        boolean addComma = false;
+        for (String id : ids) {
+            long parsedId;
+            try {
+                parsedId = Long.parseLong(id);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("ids contain invalid value");
+            }
+            if (!addComma) {
+                addComma = true;
+            } else {
+                idListForQuery += " , ";
+            }
+            idListForQuery += parsedId;
+        }
+        idListForQuery += " )";
+        return idListForQuery;
     }
 }

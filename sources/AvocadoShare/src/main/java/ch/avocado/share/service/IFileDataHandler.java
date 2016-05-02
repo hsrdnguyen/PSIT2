@@ -51,13 +51,13 @@ public interface IFileDataHandler {
      * @param moduleId module id in which it was uploaded
      * @return The file object
      */
-    File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException;
+    File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * updates a file on the server and database and creates a new version number
      * @param file file with updated data
      * @return {@code true} if the file was found an has been updated.
      */
-    boolean updateFile(File file) throws DataHandlerException;
+    boolean updateFile(File file) throws DataHandlerException, ObjectNotFoundException;
 }
 

@@ -5,6 +5,7 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
+import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import static ch.avocado.share.common.constants.sql.UserConstants.*;
  *
  */
 public class UserDataHandler extends DataHandlerBase implements IUserDataHandler {
+
 
     @Override
     public String addUser(User user) throws DataHandlerException {
@@ -288,22 +290,24 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
-        List<User> users = new ArrayList<>(ids.size());
-        for (String id : ids) {
-            User user = getUser(id);
-            if (user != null) {
-                users.add(user);
-            }
+        String query = SELECT_USERS_BY_ID_LIST + getIdList(ids);
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        ResultSet result;
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(query);
+            result = connectionHandler.executeQuery(statement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
-        return users;
+        return getUsersFromResultSet(result);
     }
 
     @Override
     public List<User> search(Set<String> searchTerms) throws DataHandlerException {
-        if(searchTerms == null) throw new IllegalArgumentException("searchTerms is null");
+        if (searchTerms == null) throw new IllegalArgumentException("searchTerms is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         searchTerms.remove("");
-        if(searchTerms.isEmpty()) {
+        if (searchTerms.isEmpty()) {
             return new ArrayList<>();
         }
         String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
@@ -312,21 +316,22 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             query += SEARCH_QUERY_LINK + SEARCH_QUERY_LIKE;
         }
 
+        ResultSet rs;
         try {
             PreparedStatement ps = connectionHandler.getPreparedStatement(query);
             int position = 1;
             for (String tmp : searchTerms) {
-                for(int i = 0; i < NUMBER_OF_TERMS_PER_LIKE; i++) {
+                for (int i = 0; i < NUMBER_OF_TERMS_PER_LIKE; i++) {
                     ps.setString(position, "%" + tmp.toLowerCase() + "%");
                     ++position;
                 }
             }
-            ResultSet rs = connectionHandler.executeQuery(ps);
-            return getUsersFromResultSet(rs);
+            rs = connectionHandler.executeQuery(ps);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DataHandlerException(e);
         }
+        return getUsersFromResultSet(rs);
     }
 
     private List<User> getUsersFromResultSet(ResultSet rs) throws DataHandlerException {

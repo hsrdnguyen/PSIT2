@@ -7,6 +7,7 @@ import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class GroupDataHandlerTest {
     private String UNEXISTING_GROUP_NAME_2 = "Unexisting Group name 2";
 
 
-    private void deleteExistingTestGroups() throws DataHandlerException {
+    private void deleteExistingTestGroups() throws DataHandlerException, ObjectNotFoundException {
         Group group;
         group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_1);
         if(group != null) {

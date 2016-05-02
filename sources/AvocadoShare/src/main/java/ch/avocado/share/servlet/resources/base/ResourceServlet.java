@@ -11,6 +11,7 @@ import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -347,10 +348,10 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
     }
 
     /**
-     * @param request The request
+     * @param request  The request
      * @param response The response
-     * @param action The succeeded action
-     * @param object The object or null
+     * @param action   The succeeded action
+     * @param object   The object or null
      * @throws IOException
      */
     protected void redirectAfterSuccess(HttpServletRequest request, HttpServletResponse response, Action action, E object) throws IOException {
@@ -372,7 +373,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         response.sendRedirect(getUrlForView(request, view, object));
     }
 
-    private void executeBeanAndRenderResult(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException, ServletException {
+    private void executeBeanAndRenderResult(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException, ServletException, ObjectNotFoundException, DataHandlerException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
         Map<String, Object> parameter = getParameter(request);
@@ -384,54 +385,51 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         E object = null;
         Members members;
         UserSession session = new UserSession(request);
-        try {
-            switch (action) {
-                case VIEW: {
-                    viewConfig = getConfigForActionView(bean, session, request, response);
-                    break;
-                }
-                case REPLACE:
-                    throw new HttpBeanException(HttpStatusCode.NOT_IMPLEMENTED, "Replace not implemented");
-                case UPDATE: {
-                    object = bean.get();
-                    AccessLevelEnum level = ensureAccess(session.getUserId(), object.getId(), Action.UPDATE);
-                    bean.update(object);
-                    if (object.hasErrors()) {
-                        members = bean.getMembers(object);
-                        viewConfig = new DetailViewConfig(View.EDIT, request, response, object, members, level);
-                    } else {
-                        succeeded = true;
-                    }
-                    break;
-                }
-                case DELETE: {
-                    object = bean.get();
-                    ensureAccess(session.getUserId(), object.getId(), Action.DELETE);
-                    bean.destroy(object);
-                    succeeded = true;
-                    break;
-                }
-                case CREATE: {
-                    if (getRequiredAccessForAction(Action.CREATE) != null) {
-                        if(!session.isAuthenticated()) {
-                            throw new HttpBeanException(HttpStatusCode.UNAUTHORIZED, ErrorMessageConstants.NOT_LOGGED_IN);
-                        }
-                    }
-                    object = bean.create();
-                    if (object.hasErrors()) {
-                        viewConfig = new DetailViewConfig(View.CREATE, request, response, object, new Members(object), AccessLevelEnum.OWNER);
-                    } else {
-                        succeeded = true;
-                    }
-                    break;
-                }
-                default:
-                    throw new RuntimeException("Action not implemented");
+
+        switch (action) {
+            case VIEW: {
+                viewConfig = getConfigForActionView(bean, session, request, response);
+                break;
             }
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanException(e);
+            case REPLACE:
+                throw new HttpBeanException(HttpStatusCode.NOT_IMPLEMENTED, "Replace not implemented");
+            case UPDATE: {
+                object = bean.get();
+                AccessLevelEnum level = ensureAccess(session.getUserId(), object.getId(), Action.UPDATE);
+                bean.update(object);
+                if (object.hasErrors()) {
+                    members = bean.getMembers(object);
+                    viewConfig = new DetailViewConfig(View.EDIT, request, response, object, members, level);
+                } else {
+                    succeeded = true;
+                }
+                break;
+            }
+            case DELETE: {
+                object = bean.get();
+                ensureAccess(session.getUserId(), object.getId(), Action.DELETE);
+                bean.destroy(object);
+                succeeded = true;
+                break;
+            }
+            case CREATE: {
+                if (getRequiredAccessForAction(Action.CREATE) != null) {
+                    if (!session.isAuthenticated()) {
+                        throw new HttpBeanException(HttpStatusCode.UNAUTHORIZED, ErrorMessageConstants.NOT_LOGGED_IN);
+                    }
+                }
+                object = bean.create();
+                if (object.hasErrors()) {
+                    viewConfig = new DetailViewConfig(View.CREATE, request, response, object, new Members(object), AccessLevelEnum.OWNER);
+                } else {
+                    succeeded = true;
+                }
+                break;
+            }
+            default:
+                throw new RuntimeException("Action not implemented");
         }
+
         if (succeeded) {
             redirectAfterSuccess(request, response, action, object);
         } else if (viewConfig != null) {
@@ -470,17 +468,44 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
      * @throws IOException
      * @throws ServletException
      */
-    public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request == null) throw new IllegalArgumentException("request is null");
         if (response == null) throw new IllegalArgumentException("response is null");
+        boolean hasError = false;
+        String errorMessage = null;
+        int errorCode = 0;
         try {
             executeBeanAndRenderResult(request, response);
         } catch (HttpBeanException e) {
+            hasError = true;
+            errorMessage = e.getMessage();
+            errorCode = e.getStatusCode();
             e.printStackTrace();
+        } catch (ObjectNotFoundException e) {
+            hasError = true;
+            errorMessage = ErrorMessageConstants.OBJECT_NOT_FOUND;
+            errorCode = HttpStatusCode.NOT_FOUND.getCode();
+            e.printStackTrace();
+        } catch (DataHandlerException e) {
+            hasError = true;
+            errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            errorCode = HttpStatusCode.INTERNAL_SERVER_ERROR.getCode();
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            hasError = true;
+            errorCode = HttpStatusCode.INTERNAL_SERVER_ERROR.getCode();
+            errorMessage = ErrorMessageConstants.RESPONSE_NOT_WRITEABLE;
+        }
+        if(hasError) {
             if (!response.isCommitted()) {
-                response.sendError(e.getStatusCode(), e.getMessage());
+                try {
+                    response.sendError(errorCode, errorMessage);
+                }catch (IOException e)  {
+                    throw new ServletException(errorMessage);
+                }
             } else {
-                throw new ServletException(e.getMessage());
+                throw new ServletException(errorMessage);
             }
         }
     }
@@ -619,7 +644,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
      * @throws HttpBeanException
      * @throws DataHandlerException
      */
-    protected ViewConfig getConfigForActionView(ResourceBean<E> controller, UserSession session, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException {
+    protected ViewConfig getConfigForActionView(ResourceBean<E> controller, UserSession session, HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
         if (request == null) throw new IllegalArgumentException("request is null");
         ViewConfig viewConfig;
         View view = getViewForActionView(controller, request);
@@ -659,7 +684,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
      * {@link ResourceServlet#renderViewConfig(HttpServletRequest, HttpServletResponse, ViewConfig) renderViewConfig}.
      */
     private HashMap<String, ViewRenderer> getContentRenderer() {
-        if(contentRenderer == null) {
+        if (contentRenderer == null) {
             contentRenderer = new HashMap<>();
             ViewRenderer renderer = getHtmlRenderer();
             registerRenderer("text/html", renderer);

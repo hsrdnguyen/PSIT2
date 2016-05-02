@@ -9,6 +9,7 @@ import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -56,10 +57,12 @@ public class FileBean extends ResourceBean<File> {
         checkParameterModuleId(file);
         checkUploadedFile(file);
         if (!file.hasErrors()) {
-            Module module = moduleDataHandler.getModule(getModuleId());
-            if (module == null) {
+            Module module;
+            try {
+                module = moduleDataHandler.getModule(getModuleId());
+            } catch (ObjectNotFoundException e) {
                 file.addFieldError("module", "Modul existiert nicht.");
-                return null;
+                return file;
             }
             ensureAccessingUserHasAccess(module, AccessLevelEnum.WRITE);
             DiskFile diskFile = uploadFile(getFileItem());
@@ -115,24 +118,21 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public File get() throws HttpBeanException, DataHandlerException {
+    public File get() throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
         if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        File file = null;
+        File file;
         if (getId() != null) {
             file = fileDataHandler.getFile(getId());
         } else if (getTitle() != null && getModuleId() != null) {
             file = fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId());
-        }
-        if (file == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
-        }
+        } else throw new RuntimeException("Unknown identifier");
         return file;
     }
 
 
     @Override
-    public void update(File file) throws HttpBeanException {
+    public void update(File file) throws HttpBeanException, ObjectNotFoundException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         boolean changed = false;
         if (getTitle() != null && !file.getTitle().equals(getTitle())) {
@@ -178,7 +178,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public void destroy(File object) throws HttpBeanException {
+    public void destroy(File object) throws HttpBeanException, ObjectNotFoundException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         try {
             if (!fileDataHandler.deleteFile(object)) {
@@ -370,8 +370,10 @@ public class FileBean extends ResourceBean<File> {
             IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
 
             try {
-                if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
+                try {
+                    fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId());
                     file.addFieldError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
+                } catch (ObjectNotFoundException ignored) {
                 }
             } catch (DataHandlerException e) {
                 file.addFieldError("title", ErrorMessageConstants.DATAHANDLER_EXPCEPTION);

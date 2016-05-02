@@ -62,4 +62,5 @@ public final class ErrorMessageConstants {
     public static final String DESCRIPTION_TOO_LONG = "Die Beschreibung ist zu lang.";
     public static final String UPDATE_USER_FAILED = "Der Benutzer konnte nicht aktualisiert werden.";
     public static final String CAPTCHA_INCORRECT = "Das CAPTCHA konnte nicht verfiziert werden.";
+    public static final String RESPONSE_NOT_WRITEABLE = "Antwort konnte nicht geschrieben werden.";
 }

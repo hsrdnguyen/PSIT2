@@ -2,6 +2,7 @@ package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +17,7 @@ public interface IGroupDataHandler {
      * @return The group or null if the group could not be found.
      * @throws DataHandlerException If an error occurs while querying the group.
      */
-    Group getGroup(String Id) throws DataHandlerException;
+    Group getGroup(String Id) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Returns a list of all groups with identifiers found in the list.
@@ -58,5 +59,5 @@ public interface IGroupDataHandler {
      * @return Loaded group
      * @throws DataHandlerException
      */
-    Group getGroupByName(String name) throws DataHandlerException;
+    Group getGroupByName(String name) throws DataHandlerException, ObjectNotFoundException;
 }

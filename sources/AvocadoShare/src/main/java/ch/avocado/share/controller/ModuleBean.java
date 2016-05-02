@@ -8,6 +8,7 @@ import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
-    public Module get() throws HttpBeanException, DataHandlerException {
+    public Module get() throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
         return getService(IModuleDataHandler.class).getModule(getId());
     }
 
@@ -66,7 +67,7 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
-    public void update(Module module) throws HttpBeanException, DataHandlerException {
+    public void update(Module module) throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
         boolean updated = false;
         if (getName() != null && !getName().equals(module.getName())) {
             checkParameterName(module);

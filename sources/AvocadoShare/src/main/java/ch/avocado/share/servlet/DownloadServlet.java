@@ -13,6 +13,7 @@ import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -110,6 +111,9 @@ public class DownloadServlet extends HttpServlet{
             allowedLevel = securityHandler.getAccessLevel(userSession.getUser(), file);
         } catch (ServiceNotFoundException | DataHandlerException e) {
             response.sendError(INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
+            return;
+        } catch (ObjectNotFoundException e) {
+            response.sendError(NOT_FOUND.getCode(), "Datei existiert nicht.");
             return;
         }
 

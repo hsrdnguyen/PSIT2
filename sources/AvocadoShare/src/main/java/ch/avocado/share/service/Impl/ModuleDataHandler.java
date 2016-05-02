@@ -8,6 +8,7 @@ import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -49,7 +50,6 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         String id, name, description, ownerId;
         Date creationDate;
         try {
-            if (!resultSet.next()) return null;
             id = Long.toString(resultSet.getLong(RESULT_INDEX_ID));
             name = resultSet.getString(RESULT_INDEX_NAME);
             description = resultSet.getString(RESULT_INDEX_DESCRIPTION);
@@ -72,7 +72,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         module.setCategories(categories);
     }
 
-    private void updateCategories(Module module) throws DataHandlerException {
+    private void updateCategories(Module module) throws DataHandlerException, ObjectNotFoundException {
         ICategoryDataHandler categoryDataHandler;
         try {
             categoryDataHandler = ServiceLocator.getService(ICategoryDataHandler.class);
@@ -96,7 +96,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     }
 
     @Override
-    public Module getModule(String moduleId) throws DataHandlerException {
+    public Module getModule(String moduleId) throws DataHandlerException, ObjectNotFoundException {
         // TODO: categoeries, rating and ownerId
         ResultSet resultSet;
         long moduleIdAsLong = Long.parseLong(moduleId);
@@ -104,6 +104,11 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(SELECT_QUERY);
             statement.setLong(SELECT_QUERY_INDEX_ID, moduleIdAsLong);
             resultSet = getConnectionHandler().executeQuery(statement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        try {
+            if(!resultSet.next()) throw new ObjectNotFoundException(Module.class, moduleId);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -132,23 +137,36 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         return fileIds;
     }
 
-    @Override
-    public List<Module> getModules(Collection<String> ids) throws DataHandlerException {
-        List<Module> modules = new ArrayList<>(ids.size());
-        for (String id : ids) {
-            if(id == null) {
-                continue;
+    private List<Module> getMultipleModulesFromResult(ResultSet resultSet) throws DataHandlerException {
+        List<Module> modules = new LinkedList<>();
+        try {
+            while (resultSet.next()) {
+                modules.add(getModuleFromResult(resultSet));
             }
-            Module module = getModule(id);
-            if (module != null) {
-                modules.add(module);
-            }
+        }catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
         return modules;
     }
 
     @Override
-    public boolean updateModule(Module module) throws DataHandlerException {
+    public List<Module> getModules(Collection<String> ids) throws DataHandlerException {
+        if (ids == null) throw new IllegalArgumentException("ids is null");
+        if (ids.isEmpty()) return new ArrayList<>();
+        String query = SELECT_BY_ID_LIST + getIdList(ids);
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        ResultSet result;
+        try {
+            PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(query);
+            result = connectionHandler.executeQuery(preparedStatement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return getMultipleModulesFromResult(result);
+    }
+
+    @Override
+    public boolean updateModule(Module module) throws DataHandlerException, ObjectNotFoundException {
         boolean success;
         try {
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(UPDATE_QUERY);

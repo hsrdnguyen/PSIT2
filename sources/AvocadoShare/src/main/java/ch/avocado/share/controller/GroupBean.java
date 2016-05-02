@@ -8,6 +8,7 @@ import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -37,9 +38,12 @@ public class GroupBean extends ResourceBean<Group> {
 
     private void checkNameIsUnique(Group group) throws HttpBeanException {
         try {
-            if (getService(IGroupDataHandler.class).getGroupByName(name) != null) {
+            try {
+                getService(IGroupDataHandler.class).getGroupByName(name);
                 group.setName(name);
                 group.addFieldError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
+            } catch (ObjectNotFoundException ignored) {
+                // The name is unique
             }
         } catch (DataHandlerException e) {
             throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -68,7 +72,7 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public Group get() throws HttpBeanException, DataHandlerException {
+    public Group get() throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
         if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         Group group = null;
@@ -77,9 +81,7 @@ public class GroupBean extends ResourceBean<Group> {
         } else if (name != null) {
             group = groupDataHandler.getGroupByName(name);
         }
-        if (group == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
-        }
+        assert group != null;
         return group;
     }
 

@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,9 +98,14 @@ public class SecurityHandlerMock implements ISecurityHandler {
         }
         for (Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue().containsLevel(accessLevelEnum)) {
-                AccessIdentity identity = groupDataHandler.getGroup(entry.getKey());
-                if(identity != null && !identity.getId().equals(target.getId())) {
-                    identityList.put(identity.getId(), entry.getValue());
+                AccessIdentity identity = null;
+                try {
+                    identity = groupDataHandler.getGroup(entry.getKey());
+                    if(identity != null && !identity.getId().equals(target.getId())) {
+                        identityList.put(identity.getId(), entry.getValue());
+                    }
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -192,12 +198,13 @@ public class SecurityHandlerMock implements ISecurityHandler {
      * @return A group object which the required access level to all objects.
      * @throws ServiceNotFoundException
      */
-    public Group getGroupWithAccess(AccessLevelEnum level) throws ServiceNotFoundException, DataHandlerException {
+    public Group getGroupWithAccess(AccessLevelEnum level) throws ServiceNotFoundException, DataHandlerException, ObjectNotFoundException {
         if(level == null) throw new IllegalArgumentException("level is null");
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         for(Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue() == level) {
-                Group group = groupDataHandler.getGroup(entry.getKey());
+                Group group = null;
+                group = groupDataHandler.getGroup(entry.getKey());
                 if(group != null) {
                     return group;
                 }
