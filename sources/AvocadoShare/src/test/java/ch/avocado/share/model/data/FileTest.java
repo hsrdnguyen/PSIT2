@@ -31,23 +31,13 @@ public class FileTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetPathToEmptyString() throws Exception {
-        file.setPath("");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetPathNull() throws Exception {
-        file.setPath(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void testSetLastChangedNull() throws Exception {
         file.setLastChanged(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetTypeNull() throws Exception {
-        file.setExtension(null);
+    public void testSetDiskFileNull() throws Exception {
+        file.setDiskFile(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -74,30 +64,12 @@ public class FileTest {
         assertEquals(title, file.getTitle());
     }
 
-    @Test
-    public void testSetPath() throws Exception {
-        assertFalse(file.isDirty());
-        file.setPath(file.getPath());
-        assertFalse(file.isDirty());
-        String path = "RandomPath";
-        assertNotEquals(path, file.getPath());
-        file.setPath(path);
-        assertTrue(file.isDirty());
-        assertEquals(path, file.getPath());
-    }
 
     @Test
     public void testSetLastChanged() throws Exception {
         Date lastChanged = new Date(System.currentTimeMillis());
         file.setLastChanged(lastChanged);
         assertEquals(lastChanged, file.getLastChanged());
-    }
-
-    @Test
-    public void testSetType() throws Exception {
-        String type="Type";
-        file.setExtension(type);
-        assertEquals(type, file.getExtension());
     }
 
     @Test
@@ -115,15 +87,6 @@ public class FileTest {
         file.setCategories(categoryList);
         // make sure we cannot modify its inner list.
         assertNotSame(categoryList, file.getCategories());
-    }
-
-
-    @Test
-    public void testSetMimeType() throws Exception {
-        String newMimeType = "image/jpeg";
-        assertNotEquals(newMimeType, file.getMimeType());
-        file.setMimeType(newMimeType);
-        assertEquals(newMimeType, file.getMimeType());
     }
 
 }

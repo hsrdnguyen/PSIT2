@@ -13,7 +13,7 @@ public class DummyFactory {
     }
 
     public static File newFile(int i, User owner, Module module) {
-        return new File(owner.getId(), "description " + i, "title " + i, "123456789123456789", new Date(), ".png", module.getId(), "image/png");
+        return new File(owner.getId(), "description " + i, "title " + i, new Date(), module.getId(), new DiskFile("123456789123456789", "image/png", ".png"));
     }
 
     public static Module newModule(int i, User owner) {

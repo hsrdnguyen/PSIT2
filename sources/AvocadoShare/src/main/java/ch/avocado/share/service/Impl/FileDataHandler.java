@@ -4,7 +4,6 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.model.factory.FileFactory;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
@@ -228,13 +227,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         try {
             List<File> files = new ArrayList<>();
             while (resultSet.next()) {
-                File file = FileFactory.getDefaultFile();
-                file.setId(resultSet.getString(1));
-                file.setTitle(resultSet.getString(2));
-                file.setDescription(resultSet.getString(3));
-                file.setLastChanged(new Date(resultSet.getTimestamp(4).getTime()));
-                file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
-                file.setPath(resultSet.getString(6));
+                File file = createFileFromResultSet(resultSet);
+                assert file != null;
                 files.add(file);
             }
             return files;
@@ -244,7 +238,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     private File createFileFromResultSet(ResultSet resultSet) throws SQLException, DataHandlerException {
-
         String id = resultSet.getString(1);
         String title = resultSet.getString(2);
         String description = resultSet.getString(3);
