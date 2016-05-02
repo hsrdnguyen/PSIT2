@@ -3,6 +3,7 @@ package ch.avocado.share.model.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Base class for all access control objects.
@@ -18,12 +19,12 @@ public abstract class AccessControlObjectBase extends Model{
 
     /**
      * Constructor
-     * @param id
+     * @param id The identifier of the object.
      * @param categories A list of categories or null if there are no categories.
-     * @param creationDate
-     * @param rating
-     * @param ownerId
-     * @param description
+     * @param creationDate The date of the object creation
+     * @param rating The average of all ratings
+     * @param ownerId The identifier of the owner
+     * @param description Description of the object
      */
     public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
         this.id = id;
@@ -32,6 +33,7 @@ public abstract class AccessControlObjectBase extends Model{
         this.rating = rating;
         setOwnerId(ownerId);
         setDescription(description);
+        setDirty(false);
     }
 
     /**
@@ -47,6 +49,7 @@ public abstract class AccessControlObjectBase extends Model{
      */
     public void setId(String id) {
         if (id == null) throw new IllegalArgumentException("id is null");
+        if (id.isEmpty()) throw new IllegalArgumentException("id is empty");
         this.id = id;
     }
 
@@ -61,10 +64,12 @@ public abstract class AccessControlObjectBase extends Model{
      * @param categories The categories assigned to this object
      */
     public void setCategories(List<Category> categories) {
-        if(categories == null) {
-            categories = new ArrayList<>();
+        if(categories == null || categories.isEmpty()) {
+            this.categories = new ArrayList<>();
+        } else {
+            this.categories = new ArrayList<>(categories.size());
+            this.categories.addAll(categories);
         }
-        this.categories = categories;
         setDirty(true);
     }
 
@@ -80,8 +85,10 @@ public abstract class AccessControlObjectBase extends Model{
      */
     public void setCreationDate(Date creationDate) {
         if(creationDate == null) throw new IllegalArgumentException("creationDate is null");
-        this.creationDate = creationDate;
-        setDirty(true);
+        if(!creationDate.equals(this.creationDate)) {
+            this.creationDate = new Date(creationDate.getTime());
+            setDirty(true);
+        }
     }
 
     /**
@@ -89,13 +96,6 @@ public abstract class AccessControlObjectBase extends Model{
      */
     public float getRating() {
         return rating;
-    }
-
-    /**
-     * @param rating The average rating
-     */
-    public void setRating(float rating) {
-        this.rating = rating;
     }
 
     /**
@@ -110,8 +110,11 @@ public abstract class AccessControlObjectBase extends Model{
      */
     public void setOwnerId(String ownerId) {
         // if(ownerId == null) throw new IllegalArgumentException("ownerId is null");
-        this.ownerId = ownerId;
-        setDirty(true);
+        if(ownerId != null && ownerId.isEmpty()) throw new IllegalArgumentException("ownerId is empty");
+        if(!Objects.equals(this.ownerId, ownerId)) {
+            this.ownerId = ownerId;
+            setDirty(true);
+        }
     }
 
     /**

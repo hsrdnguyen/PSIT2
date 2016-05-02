@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by coffeemakr on 31.03.16.
@@ -17,12 +17,22 @@ public class FileTest {
 
     @Before
     public void setUp() {
-        this.file = new File("id", new ArrayList<Category>(), new Date(), 0.0f, "", "", "", "", new Date(), "", "", "");
+        this.file = new File("id", new ArrayList<Category>(), new Date(), 0.0f, "1234", "description", "title", "path", new Date(), "", "4123321", "image/png");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetTitleNull() throws Exception {
         file.setTitle(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetEmptyTitle() throws Exception {
+        file.setTitle("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetPathToEmptyString() throws Exception {
+        file.setPath("");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -41,8 +51,20 @@ public class FileTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetModuleIdNull() throws Exception {
+    public void testSetModuleIdToEmptyString() throws Exception {
+        file.setModuleId("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetModuleIdToNull() throws Exception {
         file.setModuleId(null);
+    }
+
+    @Test
+    public void testSetCategoriesToNull() throws Exception {
+        file.setCategories(null);
+        assertNotNull(file.getCategories());
+        assertTrue(file.getCategories().isEmpty());
     }
 
     @Test
@@ -54,8 +76,13 @@ public class FileTest {
 
     @Test
     public void testSetPath() throws Exception {
+        assertFalse(file.isDirty());
+        file.setPath(file.getPath());
+        assertFalse(file.isDirty());
         String path = "RandomPath";
+        assertNotEquals(path, file.getPath());
         file.setPath(path);
+        assertTrue(file.isDirty());
         assertEquals(path, file.getPath());
     }
 
@@ -78,6 +105,25 @@ public class FileTest {
         String moduleId = "1234";
         file.setModuleId(moduleId);
         assertEquals(moduleId, file.getModuleId());
+    }
+
+
+    @Test
+    public void testSetCategories() throws Exception {
+        ArrayList<Category> categoryList = new ArrayList<>();
+        categoryList.add(new Category("hi"));
+        file.setCategories(categoryList);
+        // make sure we cannot modify its inner list.
+        assertNotSame(categoryList, file.getCategories());
+    }
+
+
+    @Test
+    public void testSetMimeType() throws Exception {
+        String newMimeType = "image/jpeg";
+        assertNotEquals(newMimeType, file.getMimeType());
+        file.setMimeType(newMimeType);
+        assertEquals(newMimeType, file.getMimeType());
     }
 
 }

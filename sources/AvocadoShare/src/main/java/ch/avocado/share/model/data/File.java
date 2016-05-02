@@ -17,7 +17,9 @@ public class File extends AccessControlObjectBase {
     //private String version;
     private String moduleId;
 
-    public File(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId, String mimeType) {
+    public File(String id, List<Category> categories, Date creationDate, float rating,
+                String ownerId, String description, String title, String path, Date lastChanged,
+                String extension, String moduleId, String mimeType) {
         super(id, categories, creationDate, rating, ownerId, description);
         setLastChanged(lastChanged);
         setPath(path);
@@ -26,6 +28,7 @@ public class File extends AccessControlObjectBase {
         //setVersion(version);
         setModuleId(moduleId);
         setMimeType(mimeType);
+        setDirty(false);
     }
 
     public File(String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId, String mimeType) {
@@ -38,6 +41,7 @@ public class File extends AccessControlObjectBase {
 
     public void setTitle(String title) {
         if (title == null) throw new IllegalArgumentException("title is null");
+        if (title.isEmpty()) throw new IllegalArgumentException("title is empty");
         this.title = title;
     }
 
@@ -52,7 +56,11 @@ public class File extends AccessControlObjectBase {
 
     public void setPath(String path) {
         if (path == null) throw new IllegalArgumentException("path is null");
-        this.path = path;
+        if (path.isEmpty()) throw new IllegalArgumentException("path is empty");
+        if(!path.equals(this.path)) {
+            setDirty(true);
+            this.path = path;
+        }
     }
 
     public Date getLastChanged() {
@@ -87,9 +95,8 @@ public class File extends AccessControlObjectBase {
     }
 
     public void setModuleId(String moduleId) {
-        if(moduleId == null) {
-            throw new IllegalArgumentException("moduleId is null");
-        }
+        if(moduleId == null) throw new IllegalArgumentException("moduleId is null");
+        if(moduleId.isEmpty()) throw new IllegalArgumentException("moduleId is empty");
         this.moduleId = moduleId;
     }
 

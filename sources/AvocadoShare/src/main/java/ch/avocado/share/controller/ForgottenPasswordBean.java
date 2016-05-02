@@ -101,9 +101,7 @@ public class ForgottenPasswordBean implements Serializable {
     }
 
     private MailVerification createPasswordResetVerification() {
-        Date expiry = MailVerification.getDateFromExpiryInHours(24 * 2);
-        final Date expiry1 = expiry;
-        return new MailVerification(expiry1);
+        return MailVerification.fromExpiryInHours(24*2);
     }
 
     /**

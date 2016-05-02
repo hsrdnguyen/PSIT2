@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static ch.avocado.share.common.constants.sql.CategoryConstants.*;
@@ -142,11 +143,14 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         Category category = null;
         try {
             if(resultSet.next()) {
+                List<String> objectIds = new LinkedList<>();
                 name = resultSet.getString(2);
-                category = new Category(name);
                 do {
-                    category.addObjectId(resultSet.getString(1));
+                    String id = resultSet.getString(1);
+                    assert id != null;
+                    objectIds.add(id);
                 }while (resultSet.next());
+                category = new Category(name, objectIds);
             }
         }catch (SQLException e) {
             throw new DataHandlerException(e);

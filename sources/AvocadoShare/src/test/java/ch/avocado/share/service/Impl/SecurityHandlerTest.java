@@ -33,8 +33,7 @@ public class SecurityHandlerTest {
     private User moduleOwner;
 
     private User getUser(String prename, String surname, String email) {
-        final Date expiry = MailVerification.getDateFromExpiryInHours(24);
-        return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, new MailVerification(expiry)));
+        return new User(UserPassword.fromPassword("12345"), prename, surname, "1234.jpg", new EmailAddress(false, email, MailVerification.fromExpiryInHours(24)));
     }
 
     @Before

@@ -244,19 +244,21 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     private File createFileFromResultSet(ResultSet resultSet) throws SQLException, DataHandlerException {
-        File file = FileFactory.getDefaultFile();
-        file.setId(resultSet.getString(1));
-        file.setTitle(resultSet.getString(2));
-        file.setDescription(resultSet.getString(3));
-        file.setLastChanged(new Date(resultSet.getTimestamp(4).getTime()));
-        file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
-        file.setPath(resultSet.getString(6));
-        file.setModuleId(resultSet.getString(7));
-        file.setOwnerId(resultSet.getString(8));
-        file.setExtension(resultSet.getString(9));
-        file.setMimeType(resultSet.getString(10));
-        file.setCategories(getFileCategoriesFromDb(file.getId()));
-        return file;
+
+        String id = resultSet.getString(1);
+        String title = resultSet.getString(2);
+        String description = resultSet.getString(3);
+        Date lastChanged = resultSet.getTimestamp(4);
+        Date creation = resultSet.getTimestamp(5);
+        String path = resultSet.getString(6);
+        String moduleId = resultSet.getString(7);
+        String ownerId = resultSet.getString(8);
+        String extension = resultSet.getString(9);
+        String mimeType = resultSet.getString(10);
+        List<Category> categories = getFileCategoriesFromDb(id);
+        return new File(id, categories, creation, 0.0f, ownerId, description,
+                        title, path, lastChanged, extension, moduleId, mimeType);
+
     }
 
     private ICategoryDataHandler getCategoryDataHandler() throws DataHandlerException {
