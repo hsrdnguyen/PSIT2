@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static ch.avocado.share.common.constants.sql.CategoryConstants.*;
 
@@ -38,38 +39,22 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     /**
      * updates the categories from a AccessControlObjectBase object,
      * by passing the old Object on the database and the "new"/"changed" Object.
-     * @param oldAccessObject       the AccessControlObject on the database
      * @param changedAccessObject   the "new"/"changed" AccessControlObject
      * @return true if updated successfully
      */
     @Override
-    public boolean updateAccessObjectCategories(AccessControlObjectBase oldAccessObject,
-                                                AccessControlObjectBase changedAccessObject) throws DataHandlerException {
-        List<Category> delCategories = new ArrayList<>();
-        List<Category> newCategories = new ArrayList<>();
-
-        for (Category changedCategory : changedAccessObject.getCategoryList()) {
-            if (!oldAccessObject.getCategoryList().contains(changedCategory)){
-                newCategories.add(changedCategory);
-            }
-        }
-
-        for (Category oldCategory : oldAccessObject.getCategoryList()) {
-            if (!changedAccessObject.getCategoryList().contains(oldCategory)){
-                delCategories.add(oldCategory);
-            }
-        }
-
-        for (Category newCategory : newCategories) {
+    public boolean updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException {
+        Set<Category> categories = changedAccessObject.getCategoryList().getNewCategories();
+        for (Category newCategory : categories) {
             if (!addCategory(newCategory.getName(), changedAccessObject.getId()))
                 return false;
         }
 
-        for (Category delCategory : delCategories) {
-            if (!deleteCategoryAssignedObject(delCategory.getName(), oldAccessObject.getId()))
+        categories = changedAccessObject.getCategoryList().getRemovedCategories();
+        for (Category delCategory : categories) {
+            if (!deleteCategoryAssignedObject(delCategory.getName(), changedAccessObject.getId()))
                 return false;
         }
-
         return true;
     }
 

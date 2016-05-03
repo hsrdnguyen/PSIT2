@@ -56,7 +56,7 @@ public abstract class AccessControlObjectBase extends Model{
     /**
      * @return The categories assigned to this object.
      */
-    public Collection<Category> getCategoryList() {
+    public CategoryList getCategoryList() {
         return categoryList;
     }
 
