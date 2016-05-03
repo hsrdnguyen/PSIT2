@@ -53,8 +53,8 @@ public class FileTest {
     @Test
     public void testSetCategoriesToNull() throws Exception {
         file.setCategories(null);
-        assertNotNull(file.getCategories());
-        assertTrue(file.getCategories().isEmpty());
+        assertNotNull(file.getCategoryList());
+        assertTrue(file.getCategoryList().isEmpty());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class FileTest {
         categoryList.add(new Category("hi"));
         file.setCategories(categoryList);
         // make sure we cannot modify its inner list.
-        assertNotSame(categoryList, file.getCategories());
+        assertNotSame(categoryList, file.getCategoryList());
     }
 
 }

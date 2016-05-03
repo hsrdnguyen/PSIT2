@@ -7,7 +7,6 @@ import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import ch.avocado.share.test.Asserts;
 import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -147,7 +146,7 @@ public class FileDataHandlerTest {
         assertEquals("Path", expected.getPath(), actual.getPath());
         assertEquals("Last changed", expected.getLastChanged(), actual.getLastChanged());
         assertEquals("Extension", expected.getExtension(), actual.getExtension());
-        assertCategoriesEquals(expected.getCategories(), actual.getCategories());
+        assertCategoriesEquals(expected.getCategoryList(), actual.getCategoryList());
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -6,6 +6,7 @@ import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Module extends AccessControlObjectBase {
     private String name;
     private List<String> fileIds;
 
-    public Module(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description, String name, List<String> fileIds) {
+    public Module(String id, Collection<Category> categories, Date creationDate, float rating, String ownerId, String description, String name, List<String> fileIds) {
         super(id, categories, creationDate, rating, ownerId, description);
         setName(name);
         setFileIds(fileIds);

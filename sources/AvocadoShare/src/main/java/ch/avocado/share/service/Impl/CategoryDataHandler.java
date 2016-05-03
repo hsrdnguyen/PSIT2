@@ -28,7 +28,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
      */
     @Override
     public boolean addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException {
-        for (Category category : accessObject.getCategories()) {
+        for (Category category : accessObject.getCategoryList()) {
             if (!addCategory(category.getName(), accessObject.getId()))
                 return false;
         }
@@ -48,14 +48,14 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         List<Category> delCategories = new ArrayList<>();
         List<Category> newCategories = new ArrayList<>();
 
-        for (Category changedCategory : changedAccessObject.getCategories()) {
-            if (!oldAccessObject.getCategories().contains(changedCategory)){
+        for (Category changedCategory : changedAccessObject.getCategoryList()) {
+            if (!oldAccessObject.getCategoryList().contains(changedCategory)){
                 newCategories.add(changedCategory);
             }
         }
 
-        for (Category oldCategory : oldAccessObject.getCategories()) {
-            if (!changedAccessObject.getCategories().contains(oldCategory)){
+        for (Category oldCategory : oldAccessObject.getCategoryList()) {
+            if (!changedAccessObject.getCategoryList().contains(oldCategory)){
                 delCategories.add(oldCategory);
             }
         }

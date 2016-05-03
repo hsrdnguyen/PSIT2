@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
@@ -103,7 +102,7 @@ public class ModuleDataHandlerTest {
         assertEquals(2, fetchedModule.getFileIds().size());
         assertTrue(fetchedModule.getFileIds().contains(fileOne.getId()));
         assertTrue(fetchedModule.getFileIds().contains(fileTwo.getId()));
-        assertCategoriesEquals(categories, fetchedModule.getCategories());
+        assertCategoriesEquals(categories, fetchedModule.getCategoryList());
 
         fileDataHandler.deleteFile(fileOne);
         fileDataHandler.deleteFile(fileTwo);
@@ -200,6 +199,6 @@ public class ModuleDataHandlerTest {
         assertEquals("Fetched name doesn't match", name, fetchedModule.getName());
         assertEquals("Fetched description doesn't match", description, fetchedModule.getDescription());
         assertEquals("Fetched ownerId doesn't match", ownerTwo.getId(), fetchedModule.getOwnerId());
-        assertCategoriesEquals(categories, fetchedModule.getCategories());
+        assertCategoriesEquals(categories, fetchedModule.getCategoryList());
     }
 }

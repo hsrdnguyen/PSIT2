@@ -47,4 +47,16 @@ public class Category {
         if (!name.equals(((Category)other).getName())) return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }
