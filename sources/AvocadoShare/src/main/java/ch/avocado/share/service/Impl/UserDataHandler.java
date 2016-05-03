@@ -5,7 +5,6 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,9 +87,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         }
         email = new EmailAddress(emailVerified, emailAddress, null);
         if (resetCode != null && resetExpiry != null) {
-            final Date expiry = resetExpiry;
-            final String code = resetCode;
-            MailVerification verification = new MailVerification(expiry, code);
+            MailVerification verification = new MailVerification(resetExpiry, resetCode);
             password.setResetVerification(verification);
         }
         return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);

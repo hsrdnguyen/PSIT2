@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 
 public class AvatarFileStorageHandler implements IAvatarStorageHandler {
@@ -23,7 +22,7 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
 
     @Override
     public String storeAvatar(InputStream imageStream) {
-        IFileStorageHandler fileStorageHandler = null;
+        IFileStorageHandler fileStorageHandler;
         String reference;
         BufferedImage uploadedImage, outputImage;
 
@@ -54,7 +53,9 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
             throw new RuntimeException(e.getMessage());
         } finally {
             if(tempFile != null) {
-                tempFile.delete();
+                if(!tempFile.delete()) {
+                    System.out.println("File couldn't be deleted: " + tempFile);
+                }
             }
         }
         return reference;
