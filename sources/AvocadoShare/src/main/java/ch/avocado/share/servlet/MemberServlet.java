@@ -2,6 +2,7 @@ package ch.avocado.share.servlet;
 
 import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.UrlHelper;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.AccessLevelEnum;
@@ -83,7 +84,8 @@ public class MemberServlet extends HttpServlet {
             response.sendError(HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(), ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
             return;
         }
-        String referer = request.getHeader("Referer");
+        UrlHelper urlHelper = new UrlHelper(request);
+        String referer = urlHelper.getReferrer();
         if(referer != null) {
             String baseUrl = request.getServletContext().getContextPath();
             if(referer.startsWith(request.getScheme() + "://" + baseUrl)) {
