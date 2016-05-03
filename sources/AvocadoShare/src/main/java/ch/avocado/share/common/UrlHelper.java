@@ -3,6 +3,7 @@ package ch.avocado.share.common;
 
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.servlet.AvatarServlet;
+import ch.avocado.share.servlet.CategoryServlet;
 import ch.avocado.share.servlet.DownloadServlet;
 import ch.avocado.share.servlet.LoginServlet;
 
@@ -83,5 +84,9 @@ public class UrlHelper {
 
     public String getNoRefererPage() {
         return getBase() + "/noreferer.jsp";
+    }
+
+    public String getCategoryServletUrl() {
+        return getBase() + "/category";
     }
 }

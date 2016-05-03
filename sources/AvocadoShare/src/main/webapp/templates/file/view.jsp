@@ -31,6 +31,9 @@
                 </h2>
             </div>
             <div class="list-group-item">
+                <%@include file="categories.jsp"%>
+            </div>
+            <div class="list-group-item">
                 <h3 class="list-group-item-heading">Beschreibung</h3>
                 <p><%=description%>
                 </p>

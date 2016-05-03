@@ -60,6 +60,7 @@ public class CategoryServlet extends HttpServlet {
     private File getFileFromRequestParameter(HttpServletRequest request) throws HttpBeanException{
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         String identifier = request.getParameter("id");
+        if(identifier == null) throw new HttpBeanException(BAD_REQUEST, MISSING_PARAMETER);
         File file;
         try {
             file = fileDataHandler.getFile(identifier);
@@ -97,8 +98,9 @@ public class CategoryServlet extends HttpServlet {
         updateFile(file);
     }
 
-    private Category getCategoryFromRequestPrameter(HttpServletRequest req) {
+    private Category getCategoryFromRequestPrameter(HttpServletRequest req) throws HttpBeanException {
         String categoryName = req.getParameter("category");
+        if(categoryName == null) throw new HttpBeanException(BAD_REQUEST, MISSING_PARAMETER);
         return new Category(categoryName);
     }
 
@@ -116,6 +118,10 @@ public class CategoryServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if("DELETE".equalsIgnoreCase(req.getParameter("method"))) {
+            doDelete(req, resp);
+            return;
+        }
         try {
             addNewCategory(req);
             ResponseHelper.redirectToOrigin(req, resp);

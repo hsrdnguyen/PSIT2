@@ -18,8 +18,10 @@ public class ResponseHelper {
     public static void redirectToOrigin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         UrlHelper urlHelper = new UrlHelper(req);
         String referer = urlHelper.getReferrer();
-        if(referer != null) {
+        if(referer == null) {
             resp.sendRedirect(urlHelper.getNoRefererPage());
+        } else {
+            resp.sendRedirect(referer);
         }
     }
 }

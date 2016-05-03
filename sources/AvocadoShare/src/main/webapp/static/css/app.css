@@ -204,3 +204,16 @@ a.modul-link:hover .modul {
 .preview img, .preview video, .preview pre, .preview iframe, .preview frame  {
     width: 100%;
 }
+
+
+.category {
+
+}
+
+.category .delete-category {
+    display: none;
+}
+
+.category:hover .delete-category, .category:focus .delete-category  {
+    display: inline-block;
+}
