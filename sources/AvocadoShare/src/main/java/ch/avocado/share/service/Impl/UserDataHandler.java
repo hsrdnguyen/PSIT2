@@ -78,7 +78,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             password.setResetVerification(verification);
         }
 
-        MailVerification emailAddressVerification = null
+        MailVerification emailAddressVerification = null;
         if (!emailVerified) {
             emailAddressVerification = getEmailAddressVerification(id, emailAddress);
         }

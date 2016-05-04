@@ -12,11 +12,11 @@ public final class CategoryConstants {
 
     public static final String SQL_SELECT_CATEGORIES_BY_OBJECT_ID = "" +
             "SELECT object_id, name FROM " + CATEGORY_TABLE  +
-            " WHERE name in (" +
+            "   WHERE name in (" +
             "   SELECT name FROM " + CATEGORY_TABLE +
-            "       WHERE object_id = ?" +
-            " )" +
-            " ODER BY name";
+            "       WHERE object_id = ? " +
+            " ) " +
+            " ORDER BY name ";
 
     public static final String SQL_ADD_CATEGORY = "INSERT INTO " + CATEGORY_TABLE + " (object_id, name) VALUES (?, ?)";
 

@@ -94,7 +94,7 @@ public class FileDataHandlerTest {
                         System.out.println("Deleting file: " + file);
                         fileDataHandler.deleteFile(file);
                     }
-                } catch (DataHandlerException e) {
+                } catch (ObjectNotFoundException | DataHandlerException e) {
                     e.printStackTrace();
                 }
             }
