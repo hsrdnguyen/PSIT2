@@ -35,6 +35,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      * Simulated request parameter.
      */
     public static final String PARAMETER_METHOD = "method";
+    public static final String EXCEPTION_ATTRIBUTE = "ch.avocado.share.servlet.resources.base.ExtendedHttpServlet.excpetion";
 
     private void throwMethodNotAllowed(String method) throws HttpBeanException {
         if (method == null) throw new IllegalArgumentException("method is null");
@@ -161,7 +162,9 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         } catch (HttpBeanException e) {
             e.printStackTrace();
             if (!response.isCommitted()) {
-                response.sendError(e.getStatusCode(), e.getMessage());
+                System.out.println("Sending HttpBeanException: " + e.getDescription() + " - " + e.getStatusCode());
+                request.setAttribute(EXCEPTION_ATTRIBUTE, e);
+                response.sendError(e.getStatusCode(), e.getDescription());
             } else {
                 throw new ServletException(e.getMessage());
             }
