@@ -27,7 +27,8 @@ import static ch.avocado.share.common.constants.ErrorMessageConstants.*;
 @WebServlet("/category")
 public class CategoryServlet extends ExtendedHttpServlet {
 
-    protected static final String PARAMETER_ID = "id";
+    public static final String PARAMETER_ID = "id";
+    public static final String PARAMETER_CATEGORY = "category";
 
     private void ensureHasWriteAccess(User user, File file) throws HttpBeanException {
         if(user == null) throw new IllegalArgumentException("user is null");
@@ -54,17 +55,14 @@ public class CategoryServlet extends ExtendedHttpServlet {
         ensureHasWriteAccess(session.getUser(), file);
     }
 
-    private File getFileFromRequestParameter(Parameter parameter) throws HttpBeanException{
+    private File getFileFromRequestParameter(Parameter parameter) throws HttpBeanException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         String identifier = parameter.getRequiredParameter(PARAMETER_ID);
-        File file;
         try {
-            file = fileDataHandler.getFile(identifier);
+            return fileDataHandler.getFile(identifier);
         } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanException(INTERNAL_SERVER_ERROR, DATAHANDLER_EXPCEPTION);
+            throw new HttpBeanException(e);
         }
-        return file;
     }
 
     private <E> E getService(Class<E> clazz) throws HttpBeanException {
@@ -79,12 +77,12 @@ public class CategoryServlet extends ExtendedHttpServlet {
         try {
             getService(IFileDataHandler.class).updateFile(file);
         }catch (DataHandlerException e) {
-            throw new HttpBeanException(INTERNAL_SERVER_ERROR, DATAHANDLER_EXPCEPTION);
+            throw new HttpBeanException(e);
         }
     }
 
     private Category getCategoryFromRequestParameter(Parameter parameter) throws HttpBeanException {
-        String categoryName = parameter.getRequiredParameter("category");
+        String categoryName = parameter.getRequiredParameter(PARAMETER_CATEGORY);
         if(categoryName == null) throw new HttpBeanException(BAD_REQUEST, MISSING_PARAMETER);
         return new Category(categoryName);
     }
