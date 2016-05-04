@@ -124,7 +124,12 @@ public class SecurityHandlerMock implements ISecurityHandler {
         }
         for (Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue().containsLevel(accessLevelEnum)) {
-                AccessIdentity identity = userDataHandler.getUser(entry.getKey());
+                AccessIdentity identity = null;
+                try {
+                    identity = userDataHandler.getUser(entry.getKey());
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
                 if(identity != null && !identity.getId().equals(target.getId())) {
                     identityList.put(identity.getId(), entry.getValue());
                 }
@@ -223,7 +228,12 @@ public class SecurityHandlerMock implements ISecurityHandler {
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         for(Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue() == level) {
-                User user = userDataHandler.getUser(entry.getKey());
+                User user = null;
+                try {
+                    user = userDataHandler.getUser(entry.getKey());
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
                 if(user != null) {
                     return user;
                 }

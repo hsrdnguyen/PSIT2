@@ -27,7 +27,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     @Override
     public void addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException {
-        for (Category category : accessObject.getCategoryList().getNewCategories()) {
+        for (Category category : accessObject.getCategoryList()) {
             addCategory(category.getName(), accessObject.getId());
         }
     }
@@ -45,11 +45,12 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     /**
      * return the Category by passing the Category name
+     *
      * @param name the Category name
      * @return the Category object
      */
     @Override
-    public Category getCategoryByName(String name) throws DataHandlerException {
+    public Category getCategoryByName(String name) throws DataHandlerException, ObjectNotFoundException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         ResultSet resultSet;
@@ -57,6 +58,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             preparedStatement = connectionHandler.getPreparedStatement(SELECT_BY_NAME);
             preparedStatement.setString(1, name);
             resultSet = preparedStatement.executeQuery();
+            if(!resultSet.next()) throw new ObjectNotFoundException(Category.class, name);
             return createCategoryFromResultSet(resultSet);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -65,14 +67,15 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     /**
      * checks if a Category is already added to a AccessControlObject
-     * @param name                      the name of the Category
-     * @param accessObjectReferenceId   the id of the AccessControlObject
+     *
+     * @param name                    the name of the Category
+     * @param accessObjectReferenceId the id of the AccessControlObject
      * @return true if the Category is already added to the AccessControlObject
      */
     @Override
     public boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return false;
+        if (connectionHandler == null) return false;
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
@@ -88,6 +91,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     /**
      * Returns all categories, which are assigned to AccessControlObject.
+     *
      * @param accessControlObjectId the accessObjectId, for which the categories should be returned.
      * @return the accessObject assigned categories.
      */
@@ -110,17 +114,15 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         String name;
         Category category = null;
         try {
-            if(resultSet.next()) {
-                List<String> objectIds = new LinkedList<>();
-                name = resultSet.getString(2);
-                do {
-                    String id = resultSet.getString(1);
-                    assert id != null;
-                    objectIds.add(id);
-                }while (resultSet.next());
-                category = new Category(name, objectIds);
-            }
-        }catch (SQLException e) {
+            List<String> objectIds = new LinkedList<>();
+            name = resultSet.getString(2);
+            do {
+                String id = resultSet.getString(1);
+                assert id != null;
+                objectIds.add(id);
+            } while (resultSet.next());
+            category = new Category(name, objectIds);
+        } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
         return category;
@@ -129,8 +131,13 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     private List<Category> createAccessObjectAssignedCategories(ResultSet resultSet) throws DataHandlerException {
         List<Category> categories = new ArrayList<>();
         try {
-            while(resultSet.next()) {
-                Category category = getCategoryByName(resultSet.getString(1));
+            while (resultSet.next()) {
+                Category category = null;
+                try {
+                    category = getCategoryByName(resultSet.getString(1));
+                } catch (ObjectNotFoundException e) {
+                    continue;
+                }
                 categories.add(category);
             }
         } catch (SQLException e) {
@@ -145,6 +152,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_ADD_CATEGORY);
             preparedStatement.setLong(1, Long.parseLong(accessObjectReferenceId));
+            System.out.println("name: " + name);
             preparedStatement.setString(2, name);
             preparedStatement.execute();
         } catch (SQLException e) {

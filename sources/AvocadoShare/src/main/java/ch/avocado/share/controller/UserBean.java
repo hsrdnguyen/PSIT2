@@ -81,9 +81,11 @@ public class UserBean extends ResourceBean<User> {
         if(getMail() == null) {
             return;
         }
-        if(getService(IUserDataHandler.class).getUserByEmailAddress(getMail()) != null) {
+        try {
+            getService(IUserDataHandler.class).getUserByEmailAddress(getMail());
             // email already taken
             user.addFieldError("mail", "E-Mail-Adresse existiert bereits");
+        } catch (ObjectNotFoundException ignored) {
         }
     }
 
@@ -148,7 +150,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
     @Override
-    public User get() throws DataHandlerException, ServiceNotFoundException {
+    public User get() throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
         return getService(IUserDataHandler.class).getUser(getId());
     }
 

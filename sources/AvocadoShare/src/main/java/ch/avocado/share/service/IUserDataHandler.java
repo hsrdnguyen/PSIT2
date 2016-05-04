@@ -35,7 +35,7 @@ public interface IUserDataHandler {
      * @return user from database or null if the user with the given id doesn't exist.
      * @throws DataHandlerException if an unexpected error occurs.
      */
-    User getUser(String userId) throws DataHandlerException;
+    User getUser(String userId) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Returns the user from the database selected by its
@@ -44,7 +44,7 @@ public interface IUserDataHandler {
      * @return user if there is a user with this email address
      *              or otherwise null.
      */
-    User getUserByEmailAddress(String emailAddress) throws DataHandlerException;
+    User getUserByEmailAddress(String emailAddress) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Adds a new mail address to the database

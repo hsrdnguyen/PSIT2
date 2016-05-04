@@ -2,7 +2,9 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +52,7 @@ public class VerificationBeanTest {
 
     @Test
     public void testVerifyFailsWhenUpdateFails() throws Exception {
+        when(userDataHandler.getUserByEmailAddress(any(String.class))).thenThrow(new ObjectNotFoundException(User.class, ""));
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());
         assertFalse("verifyEmailCode succeeded", bean.verifyEmailCode());

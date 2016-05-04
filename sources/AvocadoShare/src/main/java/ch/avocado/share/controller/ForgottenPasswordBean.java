@@ -161,6 +161,8 @@ public class ForgottenPasswordBean implements Serializable {
         } catch (DataHandlerException e) {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return null;
+        } catch (ObjectNotFoundException e) {
+            return null;
         }
         return user;
     }

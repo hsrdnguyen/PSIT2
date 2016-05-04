@@ -34,8 +34,11 @@ public class VerificationBean implements Serializable {
             } catch (DataHandlerException e) {
                 e.printStackTrace();
                 return false;
+            } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
+                return false;
             }
-            if (user != null && !user.getMail().isVerified() && user.getMail().getVerification() != null) {
+            if (!user.getMail().isVerified() && user.getMail().getVerification() != null) {
                 if(user.getMail().getVerification().getCode().equals(code) && !user.getMail().getVerification().isExpired()) {
                     user.getMail().verify();
                     try {

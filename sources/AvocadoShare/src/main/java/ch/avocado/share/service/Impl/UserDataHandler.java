@@ -59,9 +59,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         boolean emailVerified;
         String emailAddress;
         try {
-            if (!resultSet.next()) {
-                return null;
-            }
             id = "" + resultSet.getLong(USER_RESULT_ID_INDEX);
             description = resultSet.getString(USER_RESULT_DESCRIPTION_INDEX);
             emailVerified = resultSet.getBoolean(USER_RESULT_VERIFIED_INDEX);
@@ -84,10 +81,15 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);
     }
 
-    private User getUserFromPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataHandlerException {
+    private User getUserFromPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataHandlerException, ObjectNotFoundException {
         if (preparedStatement == null) throw new IllegalArgumentException("preparedStatement is null");
         ResultSet resultSet = getConnectionHandler().executeQuery(preparedStatement);
-        User user = getUserFromResultSet(resultSet);
+        User user;
+        if (resultSet.next()) {
+            user = getUserFromResultSet(resultSet);
+        } else {
+            throw new ObjectNotFoundException(User.class, "");
+        }
         if (user != null && !user.getMail().isVerified()) {
             MailVerification emailAddressVerification = getEmailAddressVerification(user.getId(), user.getMail().getAddress());
             if (emailAddressVerification != null) {
@@ -99,7 +101,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
     @Override
-    public User getUser(String userId) throws DataHandlerException {
+    public User getUser(String userId) throws DataHandlerException, ObjectNotFoundException {
         if (userId == null) throw new IllegalArgumentException("userId is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_USER_QUERY);
@@ -111,7 +113,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
     @Override
-    public User getUserByEmailAddress(String emailAddress) throws DataHandlerException {
+    public User getUserByEmailAddress(String emailAddress) throws DataHandlerException, ObjectNotFoundException {
         if (emailAddress == null) throw new IllegalArgumentException("emailAddress is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler == null) return null;

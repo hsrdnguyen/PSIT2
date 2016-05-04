@@ -84,7 +84,7 @@ public class AccessControlObjectBaseTest {
 
     @Test
     public void testGetCategories() throws Exception {
-        assertEquals(categories, object.getCategoryList());
+        assertCategoriesEquals(categories, object.getCategoryList());
         assertNotSame(categories, object.getCategoryList());
     }
 

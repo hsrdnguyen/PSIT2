@@ -50,11 +50,9 @@ public class FileTest {
         file.setModuleId(null);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testSetCategoriesToNull() throws Exception {
         file.setCategories(null);
-        assertNotNull(file.getCategoryList());
-        assertTrue(file.getCategoryList().isEmpty());
     }
 
     @Test

@@ -3,6 +3,7 @@ package ch.avocado.share.service;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface ICategoryDataHandler {
      * @param name the Category name
      * @return the Category object
      */
-    Category getCategoryByName(String name) throws DataHandlerException;
+    Category getCategoryByName(String name) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Returns all categories, which are assigned to AccessControlObject.

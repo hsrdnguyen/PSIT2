@@ -89,7 +89,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public File getFile(String fileId) throws DataHandlerException {
+    public File getFile(String fileId) throws DataHandlerException, ObjectNotFoundException {
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
@@ -97,7 +97,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement = connectionHandler.getPreparedStatement(SELECT_BY_ID_QUERY);
             preparedStatement.setLong(1, Long.parseLong(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
-            return getFileFromSelectResultSet(resultSet);
+            if (resultSet.next()) {
+                return createFileFromResultSet(resultSet);
+            } else {
+                throw new ObjectNotFoundException(File.class, fileId);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -148,7 +152,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
+    public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException, ObjectNotFoundException {
         if (fileTitle == null) throw new IllegalArgumentException("fileTitle is null");
         if (moduleId == null) throw new IllegalArgumentException("moduleId is null");
         long parsedModuleId = Long.parseLong(moduleId);
@@ -160,7 +164,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setString(1, fileTitle);
             preparedStatement.setLong(2, parsedModuleId);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
-            return getFileFromSelectResultSet(resultSet);
+            if (resultSet.next()) {
+                return createFileFromResultSet(resultSet);
+            } else {
+                throw new ObjectNotFoundException(File.class, fileTitle + ", " + parsedModuleId);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -211,17 +219,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     private void updateFileCategoriesFromDb(File changedFile) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
         categoryHandler.updateAccessObjectCategories(changedFile);
-    }
-
-    private File getFileFromSelectResultSet(ResultSet resultSet) throws DataHandlerException {
-        try {
-            if (resultSet.next()) {
-                return createFileFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
-        return null;
     }
 
     private List<File> getMultipleFilesFromResultSet(ResultSet resultSet) throws DataHandlerException {

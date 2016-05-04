@@ -28,7 +28,7 @@ public class FileAccessBean implements Serializable {
      * The e-mail address of the user who requests the access.
      */
     private String requesterUserMail;
-    private String ownerUserId;
+    private User objectOwner;
     private String requesterUserId;
 
     /**
@@ -58,14 +58,8 @@ public class FileAccessBean implements Serializable {
         AccessLevelEnum currentLevel;
         try {
             user = userDataHandler.getUserByEmailAddress(requesterUserMail);
-            if (user == null) {
-                return false;
-            }
-            try {
-                file = fileDataHandler.getFile(fileId);
-            } catch (ObjectNotFoundException e) {
-                return false;
-            }
+            file = fileDataHandler.getFile(fileId);
+
             if (file.getOwnerId() == null) {
                 System.out.println("File has no owner");
                 return false;
@@ -73,6 +67,9 @@ public class FileAccessBean implements Serializable {
             currentLevel = securityHandler.getAccessLevel(user, file);
             owningUser = userDataHandler.getUser(file.getOwnerId());
         } catch (DataHandlerException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ObjectNotFoundException e) {
             e.printStackTrace();
             return false;
         }
@@ -84,14 +81,13 @@ public class FileAccessBean implements Serializable {
 
     public boolean grantAccess() {
         if (requesterUserId == null) throw new IllegalArgumentException("requesterUserId is null");
-        if (ownerUserId == null) throw new IllegalArgumentException("ownerUserId is null");
+        if (objectOwner == null) throw new IllegalArgumentException("objectOwner is null");
         if (fileId == null) throw new IllegalArgumentException("fileId is null");
 
         IFileDataHandler fileDataHandler;
         ISecurityHandler securityHandler;
         IUserDataHandler userDataHandler;
 
-        User fileOwner;
         File file;
 
         try {
@@ -105,12 +101,12 @@ public class FileAccessBean implements Serializable {
         try {
             try {
                 file = fileDataHandler.getFile(fileId);
-                fileOwner = userDataHandler.getUser(ownerUserId);
             } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
                 return false;
             }
             AccessLevelEnum requestingUserCurrentLevel = securityHandler.getAccessLevel(requesterUserId, fileId);
-            AccessLevelEnum ownerUserLevel = securityHandler.getAccessLevel(fileOwner, file);
+            AccessLevelEnum ownerUserLevel = securityHandler.getAccessLevel(objectOwner, file);
             // check if the owner has manage rights.
             if (ownerUserLevel.containsLevel(AccessLevelEnum.MANAGE)) {
                 // check if the requester doesn't have rights already
@@ -128,8 +124,8 @@ public class FileAccessBean implements Serializable {
         return false;
     }
 
-    public void setOwnerUserId(String ownerUserId) {
-        this.ownerUserId = ownerUserId;
+    public void setObjectOwner(User objectOwnerId) {
+        this.objectOwner = objectOwnerId;
     }
 
     public void setRequesterUserId(String requesterUserId) {

@@ -282,7 +282,12 @@ public class FileDataHandlerTest {
         file.setLastChanged(lastChanged);
         file.setDiskFile(new DiskFile(path, "image/png", ".png"));
         file.setModuleId(moduleTwo.getId());
+        System.out.println("Current" +file.getCategoryList());
         file.setCategories(categories);
+        System.out.println("Current" + file.getCategoryList());
+        System.out.println(file.getCategoryList().getNewCategories());
+        System.out.println(file.getCategoryList().getRemovedCategories());
+
         fileDataHandler.updateFile(file);
 
         File fetchedFile = fileDataHandler.getFile(file.getId());
