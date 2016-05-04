@@ -40,8 +40,40 @@ public class CategoryListTest {
     }
 
     @Test
+    public void testSetCategoriesWithSame() throws Exception {
+        ArrayList<Category> newCategories = new ArrayList<>();
+        // first test we use an identical list
+        newCategories.add(new Category("one"));
+        newCategories.add(new Category("two"));
+        newCategories.add(new Category("three"));
+        categoryList.setCategories(newCategories);
+
+        assertEquals(0, categoryList.getRemovedCategories().size());
+        assertEquals(0, categoryList.getNewCategories().size());
+        assertCategoriesEquals(newCategories, categoryList);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetCategoriesWithNull() throws Exception {
+        categoryList.setCategories(null);
+    }
+
+    @Test
     public void testSetCategories() throws Exception {
         ArrayList<Category> newCategories = new ArrayList<>();
+        // first test we use an identical list
+        newCategories.add(new Category("one"));
+        newCategories.add(new Category("two"));
+        newCategories.add(new Category("four"));
+        newCategories.add(new Category("five"));
+        categoryList.setCategories(newCategories);
+        assertCategoriesEquals(newCategories, categoryList);
+        assertTrue(categoryList.getNewCategories().contains(new Category("four")));
+        assertTrue(categoryList.getNewCategories().contains(new Category("five")));
+        assertEquals(2, categoryList.getNewCategories().size());
+
+        assertTrue(categoryList.getRemovedCategories().contains(new Category("three")));
+        assertEquals(1, categoryList.getRemovedCategories().size());
     }
 
     @Test

@@ -267,7 +267,7 @@ public class FileDataHandlerTest {
 
         assertNotNull(fileDataHandler.addFile(file));
         notDeletedIds.push(file.getId());
-        assertNotNull(fileDataHandler.getFile(file.getId()));
+        file = fileDataHandler.getFile(file.getId());
 
 
         description = description + " new";
