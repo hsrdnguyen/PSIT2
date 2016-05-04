@@ -206,7 +206,7 @@ abstract class DataHandlerBase {
             try {
                 parsedId = Long.parseLong(id);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("ids contain invalid value");
+                throw new IllegalArgumentException("ids contain invalid value: " + id);
             }
             if (!addComma) {
                 addComma = true;

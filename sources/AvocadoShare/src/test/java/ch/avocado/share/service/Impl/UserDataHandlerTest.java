@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.test.Asserts;
 import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
@@ -34,10 +35,10 @@ public class UserDataHandlerTest {
     @After
     public void tearDown() throws Exception {
         try {
-            while(!notDeletedUserIds.isEmpty()) {
+            while (!notDeletedUserIds.isEmpty()) {
                 String id = notDeletedUserIds.pop();
                 User user = userDataHandler.getUser(id);
-                if(user != null) {
+                if (user != null) {
                     userDataHandler.deleteUser(user);
                 }
             }
@@ -158,7 +159,11 @@ public class UserDataHandlerTest {
     @Test
     public void testDeleteUser() throws Exception {
         User user = getTestUser();
-        assertNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
+        try {
+            userDataHandler.getUserByEmailAddress(user.getMail().getAddress());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
         String id = userDataHandler.addUser(user);
         assertNotNull(id);
         notDeletedUserIds.push(id);
@@ -166,7 +171,15 @@ public class UserDataHandlerTest {
         assertNotNull(user = userDataHandler.getUser(id));
         userDataHandler.deleteUser(user);
         notDeletedUserIds.pop();
-        assertNull(userDataHandler.getUser(user.getId()));
-        assertNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
+        try {
+            userDataHandler.getUser(user.getId());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
+        try {
+            userDataHandler.getUserByEmailAddress(user.getMail().getAddress());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
     }
 }

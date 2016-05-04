@@ -172,7 +172,6 @@ public class ModuleDataHandlerTest {
         ids.add(id);
 
         ids.add(owner.getId());
-        ids.add(null);
 
         List<Module> modules = moduleDataHandler.getModules(ids);
         assertEquals(2, modules.size());

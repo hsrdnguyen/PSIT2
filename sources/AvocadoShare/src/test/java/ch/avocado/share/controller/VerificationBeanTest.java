@@ -89,7 +89,7 @@ public class VerificationBeanTest {
     @Test
     public void testVerifyFailsWithInvalidEmail() throws Exception {
 
-        when(userDataHandler.getUserByEmailAddress(any(String.class))).thenReturn(null);
+        when(userDataHandler.getUserByEmailAddress(any(String.class))).thenThrow(new ObjectNotFoundException(User.class, ""));
 
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());

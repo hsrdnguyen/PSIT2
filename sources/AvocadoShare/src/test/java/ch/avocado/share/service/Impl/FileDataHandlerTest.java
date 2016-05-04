@@ -181,8 +181,16 @@ public class FileDataHandlerTest {
         assertNotNull(file.getId());
 
         fileDataHandler.deleteFile(file);
-        assertNull(fileDataHandler.getFile(file.getId()));
-        assertNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
+        try {
+            fileDataHandler.getFile(file.getId());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
+        try {
+            assertNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
+            fail();
+        }catch (ObjectNotFoundException e) {
+        }
     }
 
 

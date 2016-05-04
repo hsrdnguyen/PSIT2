@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static ch.avocado.share.test.Asserts.assertCategoriesEquals;
 import static org.junit.Assert.*;
 
 /**
@@ -34,14 +35,14 @@ public class GroupDataHandlerTest {
 
     private void deleteExistingTestGroups() throws DataHandlerException, ObjectNotFoundException {
         Group group;
-        group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_1);
-        if(group != null) {
+        try {
+            group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_1);
             groupDataHandler.deleteGroup(group);
-        }
-        group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_2);
-        if(group != null) {
+        }catch (ObjectNotFoundException e){}
+        try{
+            group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_2);
             groupDataHandler.deleteGroup(group);
-        }
+        } catch (ObjectNotFoundException e){}
 
     }
 
@@ -68,6 +69,7 @@ public class GroupDataHandlerTest {
             userDataHandler.deleteUser(user);
             userDataHandler.deleteUser(userTwo);
             deleteExistingTestGroups();
+
         } finally {
             ServiceLocatorModifier.restore();
         }
@@ -90,7 +92,6 @@ public class GroupDataHandlerTest {
         ids.add(id);
         // Add another id to the list
         ids.add(user.getId());
-        ids.add(null);
         List<Group> groups = groupDataHandler.getGroups(ids);
         assertFalse("groups contain null", groups.contains(null));
         assertEquals("fetched groups differ from possible groups", 2, groups.size());
@@ -181,8 +182,17 @@ public class GroupDataHandlerTest {
         // delete group
         groupDataHandler.deleteGroup(group);
         // check if group is deleted
-        assertNull(groupDataHandler.getGroup(group.getId()));
-        assertNull(groupDataHandler.getGroupByName(group.getName()));
+        try {
+            groupDataHandler.getGroup(group.getId());
+            fail();
+        }catch (ObjectNotFoundException e) {
+        }
+
+        try{
+            assertNull(groupDataHandler.getGroupByName(group.getName()));
+            fail();
+        }catch (ObjectNotFoundException e) {
+        }
     }
 
     @Test
@@ -200,7 +210,7 @@ public class GroupDataHandlerTest {
         assertEquals(group.getName(), fetchedGroup.getName());
         assertEquals(group.getDescription(), fetchedGroup.getDescription());
         assertEquals(group.getOwnerId(), fetchedGroup.getOwnerId());
-        assertEquals(group.getCategoryList(), fetchedGroup.getCategoryList());
+        assertCategoriesEquals(group.getCategoryList(), fetchedGroup.getCategoryList());
 
         // delete group
         groupDataHandler.deleteGroup(group);
