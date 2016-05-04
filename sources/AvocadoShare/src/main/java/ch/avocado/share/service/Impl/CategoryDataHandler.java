@@ -13,10 +13,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static ch.avocado.share.common.constants.sql.CategoryConstants.*;
 
@@ -43,12 +40,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         }
     }
 
-    /**
-     * return the Category by passing the Category name
-     *
-     * @param name the Category name
-     * @return the Category object
-     */
     @Override
     public Category getCategoryByName(String name) throws DataHandlerException, ObjectNotFoundException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
@@ -58,20 +49,13 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             preparedStatement = connectionHandler.getPreparedStatement(SELECT_BY_NAME);
             preparedStatement.setString(1, name);
             resultSet = preparedStatement.executeQuery();
-            if(!resultSet.next()) throw new ObjectNotFoundException(Category.class, name);
+            if (!resultSet.next()) throw new ObjectNotFoundException(Category.class, name);
             return createCategoryFromResultSet(resultSet);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
 
-    /**
-     * checks if a Category is already added to a AccessControlObject
-     *
-     * @param name                    the name of the Category
-     * @param accessObjectReferenceId the id of the AccessControlObject
-     * @return true if the Category is already added to the AccessControlObject
-     */
     @Override
     public boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
@@ -89,14 +73,10 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         }
     }
 
-    /**
-     * Returns all categories, which are assigned to AccessControlObject.
-     *
-     * @param accessControlObjectId the accessObjectId, for which the categories should be returned.
-     * @return the accessObject assigned categories.
-     */
     @Override
     public List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) throws DataHandlerException {
+        ArrayList<Category> categories;
+        if (accessControlObjectId == null) throw new IllegalArgumentException("accessControlObjectId is null");
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         ResultSet resultSet;
@@ -104,10 +84,38 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_SELECT_CATEGORIES_BY_OBJECT_ID);
             preparedStatement.setLong(1, Long.parseLong(accessControlObjectId));
             resultSet = preparedStatement.executeQuery();
-            return createAccessObjectAssignedCategories(resultSet);
+            Map<String, List<String>> categoryIdMap = createCategoryIdMapFromResultSet(resultSet);
+            categories = new ArrayList<>(categoryIdMap.size());
+            for (Map.Entry<String, List<String>> categoryEntry : categoryIdMap.entrySet()) {
+                categories.add(new Category(categoryEntry.getKey(), categoryEntry.getValue()));
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
+        return categories;
+    }
+
+    /**
+     * @param resultSet The sql resultset
+     * @return A map containing the category names a keys and a list of all objects ids
+     *         assigned to the category as value.
+     * @throws DataHandlerException
+     * @throws SQLException
+     */
+    private Map<String, List<String>> createCategoryIdMapFromResultSet(ResultSet resultSet) throws DataHandlerException, SQLException {
+        HashMap<String, List<String>> categoryIdMap = new HashMap<>();
+        while (resultSet.next()) {
+            String id = resultSet.getString(1);
+            String name = resultSet.getString(2);
+            if (categoryIdMap.containsKey(name)) {
+                categoryIdMap.get(name).add(id);
+            } else {
+                List<String> idList = new ArrayList<>();
+                idList.add(id);
+                categoryIdMap.put(name, idList);
+            }
+        }
+        return categoryIdMap;
     }
 
     private Category createCategoryFromResultSet(ResultSet resultSet) throws DataHandlerException {
@@ -128,31 +136,12 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         return category;
     }
 
-    private List<Category> createAccessObjectAssignedCategories(ResultSet resultSet) throws DataHandlerException {
-        List<Category> categories = new ArrayList<>();
-        try {
-            while (resultSet.next()) {
-                Category category = null;
-                try {
-                    category = getCategoryByName(resultSet.getString(1));
-                } catch (ObjectNotFoundException e) {
-                    continue;
-                }
-                categories.add(category);
-            }
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
-        return categories;
-    }
-
     private void addCategory(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_ADD_CATEGORY);
             preparedStatement.setLong(1, Long.parseLong(accessObjectReferenceId));
-            System.out.println("name: " + name);
             preparedStatement.setString(2, name);
             preparedStatement.execute();
         } catch (SQLException e) {
