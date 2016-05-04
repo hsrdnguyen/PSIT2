@@ -59,7 +59,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         boolean emailVerified;
         String emailAddress;
         try {
-            id = "" + resultSet.getLong(USER_RESULT_ID_INDEX);
+            id = Long.toString(resultSet.getLong(USER_RESULT_ID_INDEX));
             description = resultSet.getString(USER_RESULT_DESCRIPTION_INDEX);
             emailVerified = resultSet.getBoolean(USER_RESULT_VERIFIED_INDEX);
             emailAddress = resultSet.getString(USER_RESULT_ADDRESS_INDEX);
@@ -73,31 +73,17 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        email = new EmailAddress(emailVerified, emailAddress, null);
         if (resetCode != null && resetExpiry != null) {
             MailVerification verification = new MailVerification(resetExpiry, resetCode);
             password.setResetVerification(verification);
         }
-        return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);
-    }
 
-    private User getUserFromPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataHandlerException, ObjectNotFoundException {
-        if (preparedStatement == null) throw new IllegalArgumentException("preparedStatement is null");
-        ResultSet resultSet = getConnectionHandler().executeQuery(preparedStatement);
-        User user;
-        if (resultSet.next()) {
-            user = getUserFromResultSet(resultSet);
-        } else {
-            throw new ObjectNotFoundException(User.class, "");
+        MailVerification emailAddressVerification = null
+        if (!emailVerified) {
+            emailAddressVerification = getEmailAddressVerification(id, emailAddress);
         }
-        if (user != null && !user.getMail().isVerified()) {
-            MailVerification emailAddressVerification = getEmailAddressVerification(user.getId(), user.getMail().getAddress());
-            if (emailAddressVerification != null) {
-                user.getMail().setVerification(emailAddressVerification);
-                user.getMail().setDirty(false);
-            }
-        }
-        return user;
+        email = new EmailAddress(emailVerified, emailAddress, emailAddressVerification);
+        return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);
     }
 
     @Override
@@ -106,7 +92,9 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_USER_QUERY);
             preparedStatement.setLong(1, Long.parseLong(userId));
-            return getUserFromPreparedStatement(preparedStatement);
+            ResultSet resultSet = getConnectionHandler().executeQuery(preparedStatement);
+            if(!resultSet.next()) throw new ObjectNotFoundException(User.class, userId);
+            return getUserFromResultSet(resultSet);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -117,15 +105,15 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         if (emailAddress == null) throw new IllegalArgumentException("emailAddress is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler == null) return null;
-        User user;
         try {
             PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(SELECT_USER_BY_MAIL_QUERY);
             preparedStatement.setString(1, emailAddress);
-            user = getUserFromPreparedStatement(preparedStatement);
+            ResultSet resultSet = getConnectionHandler().executeQuery(preparedStatement);
+            if(!resultSet.next()) throw new ObjectNotFoundException(User.class, emailAddress);
+            return getUserFromResultSet(resultSet);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return user;
     }
 
 

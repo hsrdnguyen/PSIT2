@@ -38,6 +38,7 @@ public class VerificationBean implements Serializable {
                 e.printStackTrace();
                 return false;
             }
+            assert user != null;
             if (!user.getMail().isVerified() && user.getMail().getVerification() != null) {
                 if(user.getMail().getVerification().getCode().equals(code) && !user.getMail().getVerification().isExpired()) {
                     user.getMail().verify();

@@ -184,7 +184,11 @@ public class FileAccessBeanTest {
 
         // We use a inexisting id
         String notExistingFileId = "999999999999999";
-        assertNull(ServiceLocator.getService(IFileDataHandler.class).getFile(notExistingFileId));
+        try {
+            ServiceLocator.getService(IFileDataHandler.class).getFile(notExistingFileId);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
         bean.setFileId(notExistingFileId);
         bean.setRequesterUserMail(userWithoutReadRights.getId());
         assertFalse(bean.requestAccess());

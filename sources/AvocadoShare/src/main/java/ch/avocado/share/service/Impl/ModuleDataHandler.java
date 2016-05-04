@@ -59,18 +59,19 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Module(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name, new ArrayList<>());
+        List<Category> categories = getCategories(id);
+        return new Module(id, categories, creationDate, 0.0f, ownerId, description, name, new ArrayList<>());
     }
 
-    private void getCategories(Module module) throws DataHandlerException {
+    private List<Category> getCategories(String id) throws DataHandlerException {
         ICategoryDataHandler categoryDataHandler;
         try {
             categoryDataHandler = ServiceLocator.getService(ICategoryDataHandler.class);
         } catch (ServiceNotFoundException e) {
             throw new DataHandlerException(e);
         }
-        List<Category> categories = categoryDataHandler.getAccessObjectAssignedCategories(module.getId());
-        module.setCategories(categories);
+        return categoryDataHandler.getAccessObjectAssignedCategories(id);
+
     }
 
     private void updateCategories(Module module) throws DataHandlerException, ObjectNotFoundException {
@@ -106,21 +107,20 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             throw new DataHandlerException(e);
         }
         try {
-            if(!resultSet.next()) throw new ObjectNotFoundException(Module.class, moduleId);
+            if(!resultSet.next()) {
+                throw new ObjectNotFoundException(Module.class, moduleId);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
         Module module = getModuleFromResult(resultSet);
-        if(module != null) {
-            getCategories(module);
-            module.setFileIds(getFileIds(moduleIdAsLong));
-        }
+        module.setFileIds(getFileIds(moduleIdAsLong));
         return module;
     }
 
 
     private List<String> getFileIds(long moduleId) throws DataHandlerException {
-        List<String> fileIds = new LinkedList<>();
+        List<String> fileIds = new ArrayList<>();
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         try {
             PreparedStatement statement = connectionHandler.getPreparedStatement(SELECT_FILES);

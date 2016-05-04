@@ -2,6 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
@@ -135,9 +136,19 @@ public class ModuleDataHandlerTest {
         notDeletedModuleIds.push(id);
         assertNotNull(module.getId());
         assertNotNull(moduleDataHandler.getModule(id));
+
         moduleDataHandler.deleteModule(module);
-        assertNull(moduleDataHandler.getModule(id));
+        try {
+            moduleDataHandler.getModule(id);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
         notDeletedModuleIds.pop();
+        try {
+            moduleDataHandler.updateModule(module);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
     }
 
     @Test
