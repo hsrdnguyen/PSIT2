@@ -36,11 +36,11 @@ public class GroupDataHandlerTest {
         Group group;
         group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_1);
         if(group != null) {
-            assertTrue(groupDataHandler.deleteGroup(group));
+            groupDataHandler.deleteGroup(group);
         }
         group = groupDataHandler.getGroupByName(UNEXISTING_GROUP_NAME_2);
         if(group != null) {
-            assertTrue(groupDataHandler.deleteGroup(group));
+            groupDataHandler.deleteGroup(group);
         }
 
     }
@@ -121,7 +121,7 @@ public class GroupDataHandlerTest {
         assertEquals(description, queryGroup.getDescription());
         assertEquals(user.getId(), queryGroup.getOwnerId());
 //        assertTrue(created.getTime() - queryGroup.getCreationDate().getTime() < 1000);
-        assertTrue(groupDataHandler.deleteGroup(group));
+        groupDataHandler.deleteGroup(group);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class GroupDataHandlerTest {
         group.setDescription(newDescription);
         group.setOwnerId(userTwo.getId());
 
-        assertTrue(groupDataHandler.updateGroup(group));
+        groupDataHandler.updateGroup(group);
 
         Group queriedGroup = groupDataHandler.getGroup(group.getId());
         assertEquals(newDescription, queriedGroup.getDescription());
@@ -151,7 +151,7 @@ public class GroupDataHandlerTest {
         assertEquals(group.getId(), queriedGroup.getId());
         assertEquals(userTwo.getId(), queriedGroup.getOwnerId());
 
-        assertTrue(groupDataHandler.deleteGroup(queriedGroup));
+        groupDataHandler.deleteGroup(queriedGroup);
 
     }
 
@@ -179,7 +179,7 @@ public class GroupDataHandlerTest {
         assertNotNull(groupDataHandler.getGroupByName(group.getName()));
 
         // delete group
-        assertTrue(groupDataHandler.deleteGroup(group));
+        groupDataHandler.deleteGroup(group);
         // check if group is deleted
         assertNull(groupDataHandler.getGroup(group.getId()));
         assertNull(groupDataHandler.getGroupByName(group.getName()));
@@ -203,6 +203,6 @@ public class GroupDataHandlerTest {
         assertEquals(group.getCategoryList(), fetchedGroup.getCategoryList());
 
         // delete group
-        assertTrue(groupDataHandler.deleteGroup(group));
+        groupDataHandler.deleteGroup(group);
     }
 }

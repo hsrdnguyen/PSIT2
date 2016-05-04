@@ -9,6 +9,7 @@ import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import org.bouncycastle.math.raw.Mod;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -79,9 +80,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         }catch (ServiceNotFoundException e) {
             throw new DataHandlerException(e);
         }
-        if(!categoryDataHandler.updateAccessObjectCategories(module)) {
-            throw new DataHandlerException("Failed to update categories of an existing module");
-        }
+        categoryDataHandler.updateAccessObjectCategories(module);
     }
 
     private void addCategories(Module module) throws  DataHandlerException {
@@ -165,20 +164,24 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     }
 
     @Override
-    public boolean updateModule(Module module) throws DataHandlerException, ObjectNotFoundException {
-        boolean success;
+    public void updateModule(Module module) throws DataHandlerException, ObjectNotFoundException {
+        if(module == null) throw new IllegalArgumentException("module is null");
+        if(module.getId() == null) throw new IllegalArgumentException("module.id is null");
+        long moduleId;
+        try {
+            moduleId = Long.parseLong(module.getId());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("module.id is not a number");
+        }
         try {
             PreparedStatement statement = getConnectionHandler().getPreparedStatement(UPDATE_QUERY);
-            statement.setInt(UPDATE_QUERY_INDEX_ID, Integer.parseInt(module.getId()));
+            statement.setLong(UPDATE_QUERY_INDEX_ID, moduleId);
             statement.setString(UPDATE_QUERY_INDEX_NAME, module.getName());
-            success = getConnectionHandler().updateDataSet(statement);
-            if (success) {
-                success = updateObject(module);
+            if(!getConnectionHandler().updateDataSet(statement)) {
+                throw new ObjectNotFoundException(Module.class, moduleId);
             }
-            if (success) {
-                updateCategories(module);
-            }
-            return success;
+            updateObject(module);
+            updateCategories(module);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }

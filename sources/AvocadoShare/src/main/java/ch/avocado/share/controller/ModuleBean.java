@@ -4,6 +4,7 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
@@ -84,7 +85,7 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
-    public void destroy(Module module) throws DataHandlerException, ServiceNotFoundException {
+    public void destroy(Module module) throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
         getService(IModuleDataHandler.class).deleteModule(module);
     }
 

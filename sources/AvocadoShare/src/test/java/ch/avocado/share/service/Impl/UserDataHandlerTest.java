@@ -133,7 +133,7 @@ public class UserDataHandlerTest {
         assertTrue(updatedUser.getMail().isVerified());
         assertNull(updatedUser.getMail().getVerification());
         assertTrue(updatedUser.getMail().isDirty());
-        assertTrue(userDataHandler.updateUser(updatedUser));
+        userDataHandler.updateUser(updatedUser);
         assertFalse(updatedUser.getMail().isDirty());
         User fetchedUser = userDataHandler.getUser(id);
         assertFalse(fetchedUser.getMail().isDirty());
@@ -164,7 +164,7 @@ public class UserDataHandlerTest {
         notDeletedUserIds.push(id);
         assertNotNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
         assertNotNull(user = userDataHandler.getUser(id));
-        assertTrue(userDataHandler.deleteUser(user));
+        userDataHandler.deleteUser(user);
         notDeletedUserIds.pop();
         assertNull(userDataHandler.getUser(user.getId()));
         assertNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));

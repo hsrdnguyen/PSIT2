@@ -4,6 +4,8 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.MailVerification;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICaptchaVerifier;
 import ch.avocado.share.service.IMailingService;
@@ -43,13 +45,14 @@ public class ForgottenPasswordBean implements Serializable {
 
     private boolean storeVerification(User user, IUserDataHandler userDataHandler) {
         try {
-            if (!userDataHandler.updateUser(user)) {
-                errorMessage = ErrorMessageConstants.UPDATE_USER_FAILED;
-                return false;
-            }
+            userDataHandler.updateUser(user);
         } catch (DataHandlerException e) {
             e.printStackTrace();
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            return false;
+        } catch (ObjectNotFoundException e) {
+            e.printStackTrace();
+            errorMessage = ErrorMessageConstants.OBJECT_NOT_FOUND;
             return false;
         }
         return true;
@@ -80,8 +83,8 @@ public class ForgottenPasswordBean implements Serializable {
     /**
      * Make sure you call {@link #setEmail(String)} before calling this method.
      *
-     * @return True if a password reset link was send to the user
      * @param request
+     * @return True if a password reset link was send to the user
      */
     public boolean requestNewPassword(HttpServletRequest request) {
         if (!checkParameterEmail()) return false;
@@ -100,7 +103,7 @@ public class ForgottenPasswordBean implements Serializable {
     }
 
     private MailVerification createPasswordResetVerification() {
-        return MailVerification.fromExpiryInHours(24*2);
+        return MailVerification.fromExpiryInHours(24 * 2);
     }
 
     /**
@@ -185,7 +188,7 @@ public class ForgottenPasswordBean implements Serializable {
         if (userDataHandler == null) return null;
 
         User user = getUserFromEmail(userDataHandler, email);
-        if (user == null || user.getPassword().getResetVerification() == null|| !user.getPassword().getResetVerification().getCode().equals(code)) {
+        if (user == null || user.getPassword().getResetVerification() == null || !user.getPassword().getResetVerification().getCode().equals(code)) {
             this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
             return null;
         }
@@ -228,7 +231,7 @@ public class ForgottenPasswordBean implements Serializable {
                     try {
                         ServiceLocator.getService(IUserDataHandler.class).updateUser(user);
                         return true;
-                    } catch (ServiceNotFoundException | DataHandlerException e) {
+                    } catch (ServiceException e) {
                         errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
                     }
                 } else {

@@ -135,7 +135,7 @@ public class ModuleDataHandlerTest {
         notDeletedModuleIds.push(id);
         assertNotNull(module.getId());
         assertNotNull(moduleDataHandler.getModule(id));
-        assertTrue(moduleDataHandler.deleteModule(module));
+        moduleDataHandler.deleteModule(module);
         assertNull(moduleDataHandler.getModule(id));
         notDeletedModuleIds.pop();
     }
@@ -193,7 +193,7 @@ public class ModuleDataHandlerTest {
         updatedModule.setCategories(categories);
         updatedModule.setOwnerId(ownerTwo.getId());
 
-        assertTrue(moduleDataHandler.updateModule(updatedModule));
+        moduleDataHandler.updateModule(updatedModule);
 
         Module fetchedModule = moduleDataHandler.getModule(id);
         assertEquals("Fetched name doesn't match", name, fetchedModule.getName());

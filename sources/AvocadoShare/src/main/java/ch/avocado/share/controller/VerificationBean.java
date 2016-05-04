@@ -2,6 +2,7 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -38,8 +39,9 @@ public class VerificationBean implements Serializable {
                 if(user.getMail().getVerification().getCode().equals(code) && !user.getMail().getVerification().isExpired()) {
                     user.getMail().verify();
                     try {
-                        isVerified = userDataHandler.updateUser(user);
-                    } catch (DataHandlerException e) {
+                        userDataHandler.updateUser(user);
+                        isVerified = true;
+                    } catch (DataHandlerException | ObjectNotFoundException e) {
                         isVerified = false;
                     }
                 }

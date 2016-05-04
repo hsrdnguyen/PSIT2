@@ -58,6 +58,6 @@ public interface IFileDataHandler {
      * @param file file with updated data
      * @return {@code true} if the file was found an has been updated.
      */
-    boolean updateFile(File file) throws DataHandlerException, ObjectNotFoundException;
+    void updateFile(File file) throws DataHandlerException, ObjectNotFoundException;
 }
 

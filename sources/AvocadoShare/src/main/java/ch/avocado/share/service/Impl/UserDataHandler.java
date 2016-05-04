@@ -4,6 +4,7 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,16 +45,8 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
     @Override
-    public boolean deleteUser(User user) throws DataHandlerException {
-        if (user == null) throw new IllegalArgumentException("user is null");
-        if (user.getId() == null) throw new IllegalArgumentException("user.id is null");
-        try {
-            PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(DELETE_USER_QUERY);
-            preparedStatement.setInt(DELETE_USER_QUERY_ID_INDEX, Integer.parseInt(user.getId()));
-            return getConnectionHandler().deleteDataSet(preparedStatement);
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
+    public void deleteUser(User user) throws DataHandlerException, ObjectNotFoundException {
+        deleteAccessControlObject(user);
     }
 
     private User getUserFromResultSet(ResultSet resultSet) throws DataHandlerException {
@@ -156,7 +149,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
         return new MailVerification(expiry1, code1);
     }
 
-    private void updateEmailAddress(EmailAddress emailAddress) throws SQLException, DataHandlerException {
+    private void updateEmailAddress(EmailAddress emailAddress) throws SQLException, DataHandlerException, ObjectNotFoundException {
         if(emailAddress == null) {
             throw new IllegalArgumentException("emailAddress is null");
         }
@@ -166,7 +159,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             statement.setBoolean(SET_EMAIL_VERIFICATION_INDEX_VALID, emailAddress.isValid());
             statement.setString(SET_EMAIL_VERIFICATION_INDEX_ADDRESS, emailAddress.getAddress());
             if(1 != statement.executeUpdate()) {
-                throw new DataHandlerException("Update address failed");
+                throw new ObjectNotFoundException(EmailAddress.class, emailAddress.getAddress());
             }
             emailAddress.setDirty(false);
         }
@@ -235,16 +228,14 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
     @Override
-    public boolean updateUser(User user) throws DataHandlerException {
+    public void updateUser(User user) throws DataHandlerException, ObjectNotFoundException {
         if (user == null) throw new IllegalArgumentException("user is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-        if (!updateObject(user)) {
-            return false;
-        }
+        updateObject(user);
         long userId = Long.parseLong(user.getId());
         updatePasswordResetVerification(userId, user.getPassword().getResetVerification());
 
-        PreparedStatement stmt = null;
+        PreparedStatement stmt;
         try {
             stmt = connectionHandler.getPreparedStatement(UPDATE_USER_QUERY);
             stmt.setString(1, user.getPrename());
@@ -253,13 +244,12 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             stmt.setString(4, user.getPassword().getDigest());
             stmt.setLong(5, userId);
             if(!connectionHandler.updateDataSet(stmt)) {
-                return false;
+                throw new ObjectNotFoundException(Group.class, userId);
             }
             updateEmailAddress(user.getMail());
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return true;
     }
 
     private boolean addPasswordResetVerification(long userId, MailVerification verification) throws DataHandlerException, SQLException {

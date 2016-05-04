@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
+import ch.avocado.share.model.data.CategoryList;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
@@ -26,27 +27,20 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     @Override
     public void addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException {
-        for (Category category : accessObject.getCategoryList()) {
-            if (!addCategory(category.getName(), accessObject.getId()))
-                return false;
+        for (Category category : accessObject.getCategoryList().getNewCategories()) {
+            addCategory(category.getName(), accessObject.getId());
         }
-        return true;
     }
 
     @Override
-    public boolean updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException {
-        Set<Category> categories = changedAccessObject.getCategoryList().getNewCategories();
-        for (Category newCategory : categories) {
-            if (!addCategory(newCategory.getName(), changedAccessObject.getId()))
-                return false;
+    public void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException {
+        CategoryList categories = changedAccessObject.getCategoryList();
+        for (Category newCategory : categories.getNewCategories()) {
+            addCategory(newCategory.getName(), changedAccessObject.getId());
         }
-
-        categories = changedAccessObject.getCategoryList().getRemovedCategories();
-        for (Category delCategory : categories) {
-            if (!deleteCategoryAssignedObject(delCategory.getName(), changedAccessObject.getId()))
-                return false;
+        for (Category delCategory : categories.getRemovedCategories()) {
+            deleteCategoryAssignedObject(delCategory.getName(), changedAccessObject.getId());
         }
-        return true;
     }
 
     /**
@@ -145,7 +139,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         return categories;
     }
 
-    private boolean addCategory(String name, String accessObjectReferenceId) throws DataHandlerException {
+    private void addCategory(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         try {
@@ -158,14 +152,14 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         }
     }
 
-    private boolean deleteCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
+    private void deleteCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_DELETE_CATEGORY_FROM_OBJECT);
             preparedStatement.setString(1, name);
             preparedStatement.setLong(2, Long.parseLong(accessObjectReferenceId));
-            return connectionHandler.deleteDataSet(preparedStatement);
+            connectionHandler.deleteDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }

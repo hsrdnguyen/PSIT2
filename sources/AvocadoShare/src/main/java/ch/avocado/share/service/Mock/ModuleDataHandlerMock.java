@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
 import ch.avocado.share.service.IModuleDataHandler;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
     }
 
     @Override
-    public boolean deleteModule(Module module) {
-        return delete(module);
+    public void deleteModule(Module module) throws ObjectNotFoundException {
+        delete(module);
     }
 
     @Override
@@ -63,8 +64,8 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
     }
 
     @Override
-    public boolean updateModule(Module module) {
-        return update(module);
+    public void updateModule(Module module) throws ObjectNotFoundException {
+        update(module);
     }
 
     public static void use() throws Exception {

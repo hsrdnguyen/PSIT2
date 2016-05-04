@@ -2,6 +2,7 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
@@ -76,15 +77,27 @@ public class FileAccessBeanTest {
         User user;
         user = userDataHandler.getUserByEmailAddress(email0);
         if(user != null) {
-            userDataHandler.deleteUser(user);
+            try {
+                userDataHandler.deleteUser(user);
+            } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         user = userDataHandler.getUserByEmailAddress(email1);
         if(user != null) {
-            userDataHandler.deleteUser(user);
+            try {
+                userDataHandler.deleteUser(user);
+            } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         user = userDataHandler.getUserByEmailAddress(email2);
         if(user != null) {
-            userDataHandler.deleteUser(user);
+            try {
+                userDataHandler.deleteUser(user);
+            } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
     }

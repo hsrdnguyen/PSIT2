@@ -2,6 +2,7 @@ package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +27,7 @@ public interface IUserDataHandler {
      * @return true if was found and deleted to {@code false} indicates that the user doesn't exist.
      * @throws DataHandlerException if an unexpected error occurs.
      */
-    boolean deleteUser(User user) throws DataHandlerException;
+    void deleteUser(User user) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Returns the user from the database
@@ -58,7 +59,7 @@ public interface IUserDataHandler {
      * @param user user with updated data
      * @return true if it was successfully updated
      */
-    boolean updateUser(User user) throws DataHandlerException;
+    void updateUser(User user) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * loads multiple users

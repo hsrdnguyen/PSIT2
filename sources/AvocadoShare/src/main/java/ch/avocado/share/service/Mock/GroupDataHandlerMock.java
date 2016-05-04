@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,12 +72,12 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     }
 
     @Override
-    public void updateGroup(Group group) {
+    public void updateGroup(Group group) throws ObjectNotFoundException {
         update(group);
     }
 
     @Override
-    public void deleteGroup(Group group) {
+    public void deleteGroup(Group group) throws ObjectNotFoundException {
         delete(group);
     }
 

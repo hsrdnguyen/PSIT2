@@ -7,6 +7,7 @@ import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.data.UserPassword;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.*;
 
@@ -44,8 +45,8 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean deleteUser(User user) {
-        return delete(user);
+    public void deleteUser(User user) throws ObjectNotFoundException {
+        delete(user);
     }
 
     @Override
@@ -69,8 +70,8 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean updateUser(User user) {
-        return update(user);
+    public void updateUser(User user) throws ObjectNotFoundException {
+        update(user);
     }
 
 

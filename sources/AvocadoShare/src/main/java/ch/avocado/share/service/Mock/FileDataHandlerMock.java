@@ -27,7 +27,7 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
 
     @Override
     public void deleteFile(File file) throws DataHandlerException, ObjectNotFoundException {
-        if(!delete(file)) throw new ObjectNotFoundException(File.class, file.getId());
+        delete(file);
     }
 
     @Override
@@ -65,8 +65,8 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     }
 
     @Override
-    public boolean updateFile(File file){
-        return update(file);
+    public void updateFile(File file) throws ObjectNotFoundException {
+        update(file);
     }
 
     public static void use() throws Exception {

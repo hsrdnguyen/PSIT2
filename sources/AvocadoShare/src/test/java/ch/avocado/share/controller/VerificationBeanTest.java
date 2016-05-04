@@ -28,7 +28,6 @@ public class VerificationBeanTest {
         user = spy(new User(UserPassword.fromPassword(""), "Prename", "Surname", "1234.jpg", email));
         userDataHandler = mock(IUserDataHandler.class);
         when(userDataHandler.getUserByEmailAddress(email.getAddress())).thenReturn(user);
-        when(userDataHandler.updateUser(any(User.class))).thenReturn(true);
         ServiceLocatorModifier.setService(IUserDataHandler.class, userDataHandler);
         bean = new VerificationBean();
     }
@@ -51,7 +50,6 @@ public class VerificationBeanTest {
 
     @Test
     public void testVerifyFailsWhenUpdateFails() throws Exception {
-        when(userDataHandler.updateUser(any(User.class))).thenReturn(false);
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());
         assertFalse("verifyEmailCode succeeded", bean.verifyEmailCode());

@@ -7,6 +7,7 @@ import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -62,12 +63,20 @@ public class FileDataHandlerTest {
     private void deleteModules() throws DataHandlerException {
         if (module != null && module.getId() != null) {
             if (module.getId() != null) {
-                moduleDataHandler.deleteModule(module);
+                try {
+                    moduleDataHandler.deleteModule(module);
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (moduleTwo != null) {
             if (moduleTwo.getId() != null) {
-                moduleDataHandler.deleteModule(moduleTwo);
+                try {
+                    moduleDataHandler.deleteModule(moduleTwo);
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -171,7 +180,7 @@ public class FileDataHandlerTest {
         assertNotNull(id);
         assertNotNull(file.getId());
 
-        assertTrue(fileDataHandler.deleteFile(file));
+        fileDataHandler.deleteFile(file);
         assertNull(fileDataHandler.getFile(file.getId()));
         assertNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
     }
@@ -274,7 +283,7 @@ public class FileDataHandlerTest {
         file.setDiskFile(new DiskFile(path, "image/png", ".png"));
         file.setModuleId(moduleTwo.getId());
         file.setCategories(categories);
-        assertTrue(fileDataHandler.updateFile(file));
+        fileDataHandler.updateFile(file);
 
         File fetchedFile = fileDataHandler.getFile(file.getId());
         assertNotNull(fetchedFile);

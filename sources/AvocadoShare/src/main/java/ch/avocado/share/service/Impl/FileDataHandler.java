@@ -61,7 +61,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setId(addAccessControlObject(file));
         insertFileData(file);
         addFileToModule(file);
-        if(!addFileCategoriesToDb(file)) throw new DataHandlerException("Unable to add categories.");
+        addFileCategoriesToDb(file);
         return file.getId();
     }
 
@@ -167,7 +167,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public boolean updateFile(File file) throws DataHandlerException, ObjectNotFoundException {
+    public void updateFile(File file) throws DataHandlerException, ObjectNotFoundException {
         if(file == null)throw new IllegalArgumentException("file is null");
         if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
         long fileId;
@@ -203,10 +203,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return categoryHandler.getAccessObjectAssignedCategories(fileId);
     }
 
-    private boolean addFileCategoriesToDb(File file) throws DataHandlerException {
+    private void addFileCategoriesToDb(File file) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if (!categoryHandler.addAccessObjectCategories(file)) return false;
-        return true;
+        categoryHandler.addAccessObjectCategories(file);
     }
 
     private void updateFileCategoriesFromDb(File changedFile) throws DataHandlerException {
