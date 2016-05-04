@@ -6,6 +6,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by kunzlio1 on 23.03.2016.
@@ -42,7 +43,7 @@ public interface ICategoryDataHandler {
     /**
      * Returns all categories, which are assigned to AccessControlObject.
      * @param accessControlObjectId the accessObjectId, for which the categories should be returned.
-     * @return the accessObject assigned categories.
+     * @return the accessObject assigned categories. If the object could not be found am empty list is returned.
      */
     List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) throws DataHandlerException;
 }
