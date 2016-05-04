@@ -9,26 +9,27 @@ import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IFileDataHandler;
-import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.ISecurityHandler;
-import ch.avocado.share.service.Impl.CategoryDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.servlet.resources.base.ExtendedHttpServlet;
+import ch.avocado.share.servlet.resources.base.Parameter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 import static ch.avocado.share.common.HttpStatusCode.*;
 import static ch.avocado.share.common.constants.ErrorMessageConstants.*;
 
 
 @WebServlet("/category")
-public class CategoryServlet extends HttpServlet {
+public class CategoryServlet extends ExtendedHttpServlet {
+
+    protected static final String PARAMETER_ID = "id";
 
     private void ensureHasWriteAccess(User user, File file) throws HttpBeanException {
         if(user == null) throw new IllegalArgumentException("user is null");
@@ -47,20 +48,17 @@ public class CategoryServlet extends HttpServlet {
         }
     }
 
-    private void ensureRequesterHasWriteAccess(HttpServletRequest request, File file) throws HttpBeanException {
-        UserSession userSession = new UserSession(request);
-        User accessingUser = userSession.getUser();
+    private void ensureRequesterHasWriteAccess(UserSession session, File file) throws HttpBeanException {
+        User accessingUser = session.getUser();
         if(accessingUser == null) {
             throw new HttpBeanException(UNAUTHORIZED, NOT_LOGGED_IN);
         }
-        ensureHasWriteAccess(userSession.getUser(), file);
-
+        ensureHasWriteAccess(session.getUser(), file);
     }
 
-    private File getFileFromRequestParameter(HttpServletRequest request) throws HttpBeanException{
+    private File getFileFromRequestParameter(Parameter parameter) throws HttpBeanException{
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        String identifier = request.getParameter("id");
-        if(identifier == null) throw new HttpBeanException(BAD_REQUEST, MISSING_PARAMETER);
+        String identifier = parameter.getRequiredParameter(PARAMETER_ID);
         File file;
         try {
             file = fileDataHandler.getFile(identifier);
@@ -68,7 +66,6 @@ public class CategoryServlet extends HttpServlet {
             e.printStackTrace();
             throw new HttpBeanException(INTERNAL_SERVER_ERROR, DATAHANDLER_EXPCEPTION);
         }
-        ensureRequesterHasWriteAccess(request, file);
         return file;
     }
 
@@ -88,55 +85,37 @@ public class CategoryServlet extends HttpServlet {
         }
     }
 
-    private void deleteCategory(HttpServletRequest req) throws HttpBeanException {
-        File file = getFileFromRequestParameter(req);
-        Category category = getCategoryFromRequestPrameter(req);
-        if(!file.getCategoryList().contains(category)) {
-            return;
-        }
-        file.getCategoryList().remove(category);
-        updateFile(file);
-    }
-
-    private Category getCategoryFromRequestPrameter(HttpServletRequest req) throws HttpBeanException {
-        String categoryName = req.getParameter("category");
+    private Category getCategoryFromRequestPrameter(Parameter parameter) throws HttpBeanException {
+        String categoryName = parameter.getRequiredParameter("category");
         if(categoryName == null) throw new HttpBeanException(BAD_REQUEST, MISSING_PARAMETER);
         return new Category(categoryName);
     }
 
-    private void addNewCategory(HttpServletRequest request) throws HttpBeanException {
-        File file = getFileFromRequestParameter(request);
-        Category category = getCategoryFromRequestPrameter(request);
+
+    @Override
+    protected void doCreate(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter) throws IOException, HttpBeanException {
+        File file = getFileFromRequestParameter(parameter);
+        Category category = getCategoryFromRequestPrameter(parameter);
         if(file.getCategoryList().contains(category)) {
             // Nothing to do
             return;
         }
         file.getCategoryList().add(category);
         updateFile(file);
-
+        ResponseHelper.redirectToOrigin(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if("DELETE".equalsIgnoreCase(req.getParameter("method"))) {
-            doDelete(req, resp);
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter) throws IOException, HttpBeanException {
+        File file = getFileFromRequestParameter(parameter);
+        ensureRequesterHasWriteAccess(session, file);
+        Category category = getCategoryFromRequestPrameter(parameter);
+        if(!file.getCategoryList().contains(category)) {
+            // Nothing to do
             return;
         }
-        try {
-            addNewCategory(req);
-            ResponseHelper.redirectToOrigin(req, resp);
-        }catch (HttpBeanException e) {
-            ResponseHelper.sendErrorFromHttpBeanException(e, resp);
-        }
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            deleteCategory(req);
-            ResponseHelper.redirectToOrigin(req, resp);
-        } catch (HttpBeanException e) {
-            ResponseHelper.sendErrorFromHttpBeanException(e, resp);
-        }
+        file.getCategoryList().remove(category);
+        updateFile(file);
+        ResponseHelper.redirectToOrigin(request, response);
     }
 }

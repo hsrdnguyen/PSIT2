@@ -207,7 +207,20 @@ a.modul-link:hover .modul {
 
 
 .category {
+    display: inline;
+    line-height: 2em;
+}
 
+.category input[type=submit], .category button {
+    padding: 0.1em;
+    margin: 0;
+    display: inline;
+    line-height: 1em;
+    font-size: 0.8em;
+}
+
+input.add-category {
+    min-width: 200px;
 }
 
 .category .delete-category {
