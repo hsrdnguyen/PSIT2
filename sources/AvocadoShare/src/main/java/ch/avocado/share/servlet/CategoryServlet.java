@@ -15,12 +15,10 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.servlet.resources.base.ExtendedHttpServlet;
 import ch.avocado.share.servlet.resources.base.Parameter;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 import static ch.avocado.share.common.HttpStatusCode.*;
 import static ch.avocado.share.common.constants.ErrorMessageConstants.*;
@@ -85,7 +83,7 @@ public class CategoryServlet extends ExtendedHttpServlet {
         }
     }
 
-    private Category getCategoryFromRequestPrameter(Parameter parameter) throws HttpBeanException {
+    private Category getCategoryFromRequestParameter(Parameter parameter) throws HttpBeanException {
         String categoryName = parameter.getRequiredParameter("category");
         if(categoryName == null) throw new HttpBeanException(BAD_REQUEST, MISSING_PARAMETER);
         return new Category(categoryName);
@@ -95,7 +93,7 @@ public class CategoryServlet extends ExtendedHttpServlet {
     @Override
     protected void doCreate(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter) throws IOException, HttpBeanException {
         File file = getFileFromRequestParameter(parameter);
-        Category category = getCategoryFromRequestPrameter(parameter);
+        Category category = getCategoryFromRequestParameter(parameter);
         if(file.getCategoryList().contains(category)) {
             // Nothing to do
             return;
@@ -109,7 +107,7 @@ public class CategoryServlet extends ExtendedHttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter) throws IOException, HttpBeanException {
         File file = getFileFromRequestParameter(parameter);
         ensureRequesterHasWriteAccess(session, file);
-        Category category = getCategoryFromRequestPrameter(parameter);
+        Category category = getCategoryFromRequestParameter(parameter);
         if(!file.getCategoryList().contains(category)) {
             // Nothing to do
             return;
