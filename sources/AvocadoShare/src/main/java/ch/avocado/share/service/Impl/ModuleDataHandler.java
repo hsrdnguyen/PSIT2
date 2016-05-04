@@ -3,7 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
@@ -22,6 +22,7 @@ import java.util.List;
 import static ch.avocado.share.common.constants.sql.ModuleConstants.*;
 
 public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHandler {
+
     @Override
     public String addModule(Module module) throws DataHandlerException {
         if(module == null) throw new IllegalArgumentException("module is null");
@@ -41,9 +42,8 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     }
 
     @Override
-    public boolean deleteModule(Module module) throws DataHandlerException {
-        if(module == null) throw new IllegalArgumentException("module is null");
-        return deleteAccessControlObject(module.getId());
+    public void deleteModule(Module module) throws DataHandlerException, ObjectNotFoundException {
+        deleteAccessControlObject(module);
     }
 
     private Module getModuleFromResult(ResultSet resultSet) throws DataHandlerException {
@@ -79,8 +79,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         }catch (ServiceNotFoundException e) {
             throw new DataHandlerException(e);
         }
-        Module oldModule = getModule(module.getId());
-        if(!categoryDataHandler.updateAccessObjectCategories(oldModule, module)) {
+        if(!categoryDataHandler.updateAccessObjectCategories(module)) {
             throw new DataHandlerException("Failed to update categories of an existing module");
         }
     }

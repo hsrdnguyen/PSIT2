@@ -3,11 +3,12 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,7 +40,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         }
     }
 
-    private boolean changeFileAssociatedModule(File file) throws DataHandlerException {
+    private void changeFileAssociatedModule(File file) throws DataHandlerException, ObjectNotFoundException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -47,7 +48,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             PreparedStatement statement = connectionHandler.getPreparedStatement(UPDATE_UPLOADED);
             statement.setLong(UPDATE_UPLOADED_INDEX_FILE, fileId);
             statement.setLong(UPDATE_UPLOADED_INDEX_MODULE, moduleId);
-            return connectionHandler.updateDataSet(statement);
+            if(!connectionHandler.updateDataSet(statement))  {
+                throw new ObjectNotFoundException(File.class, fileId);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -81,10 +84,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public boolean deleteFile(File file) throws DataHandlerException {
-        if(file == null) throw new IllegalArgumentException("file is null");
-        if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
-        return deleteAccessControlObject(file.getId());
+    public void deleteFile(File file) throws DataHandlerException, ObjectNotFoundException {
+        deleteAccessControlObject(file);
     }
 
     @Override
@@ -166,11 +167,15 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public boolean updateFile(File file) throws DataHandlerException {
+    public boolean updateFile(File file) throws DataHandlerException, ObjectNotFoundException {
         if(file == null)throw new IllegalArgumentException("file is null");
         if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
-        File oldFileOnDb = getFile(file.getId());
-        if (oldFileOnDb == null) throw new IllegalArgumentException("there's no such file on db");
+        long fileId;
+        try {
+            fileId = Long.parseLong(file.getId());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("file.id is not a number");
+        }
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(UPDATE_QUERY);
@@ -179,21 +184,17 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setString(3, file.getPath());
             preparedStatement.setString(4, file.getExtension());
             preparedStatement.setString(5, file.getMimeType());
-            preparedStatement.setLong(6, Long.parseLong(file.getId()));
+            preparedStatement.setLong(6, fileId);
 
             if (!getConnectionHandler().updateDataSet(preparedStatement)) {
-                return false;
+                throw new ObjectNotFoundException(File.class, fileId);
             }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        if(!changeFileAssociatedModule(file)) {
-            return false;
-        }
-        if (!updateFileCategoriesFromDb(oldFileOnDb, file)){
-            return false;
-        }
-        return updateObject(file);
+        changeFileAssociatedModule(file);
+        updateFileCategoriesFromDb(file);
+        updateObject(file);
     }
 
     private List<Category> getFileCategoriesFromDb(String fileId) throws DataHandlerException {
@@ -208,9 +209,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private boolean updateFileCategoriesFromDb(File oldFile, File changedFile) throws DataHandlerException {
+    private void updateFileCategoriesFromDb(File changedFile) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        return categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
+        categoryHandler.updateAccessObjectCategories(changedFile);
     }
 
     private File getFileFromSelectResultSet(ResultSet resultSet) throws DataHandlerException {

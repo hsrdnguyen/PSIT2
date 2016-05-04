@@ -71,13 +71,13 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     }
 
     @Override
-    public boolean updateGroup(Group group) {
-        return update(group);
+    public void updateGroup(Group group) {
+        update(group);
     }
 
     @Override
-    public boolean deleteGroup(Group group) {
-        return delete(group);
+    public void deleteGroup(Group group) {
+        delete(group);
     }
 
     @Override

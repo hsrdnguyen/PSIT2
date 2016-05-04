@@ -1,9 +1,6 @@
 package ch.avocado.share.model.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * File model.
@@ -16,7 +13,7 @@ public class File extends AccessControlObjectBase {
     private String moduleId;
     private DiskFile diskFile;
 
-    private File(String id, List<Category> categories, Date creationDate, float rating,
+    private File(String id, Collection<Category> categories, Date creationDate, float rating,
                  String ownerId, String description, String title, Date lastChanged,
                  String moduleId, DiskFile diskFile) {
         super(id, categories, creationDate, rating, ownerId, description);

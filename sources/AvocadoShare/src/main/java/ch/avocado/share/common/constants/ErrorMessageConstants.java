@@ -62,5 +62,12 @@ public final class ErrorMessageConstants {
     public static final String DESCRIPTION_TOO_LONG = "Die Beschreibung ist zu lang.";
     public static final String UPDATE_USER_FAILED = "Der Benutzer konnte nicht aktualisiert werden.";
     public static final String CAPTCHA_INCORRECT = "Das CAPTCHA konnte nicht verfiziert werden.";
+    public static final String NO_RIGHTS_TO_ADD_CATEGORY = "Sie müssen Schreibrecht besitzen, um Kategorien hinzuzufügen";
+    public static final String NOT_RENDERABLE = "Anzeigen der Antwort fehlgeschlagen.";
+    public static final String ACTION_NOT_IMPLEMENTED = "Diese Aktion is nicht implementiert.";
+    public static final String PARAMETER_STRING_EXPECTED = "Ein Parameter ist nicht ein Formularfeld sondern eine Datei.";
     public static final String RESPONSE_NOT_WRITEABLE = "Antwort konnte nicht geschrieben werden.";
+    public static final String FILE_STORAGE_EXCEPTION = "Es trat ein Fehler beim schreiben oder lesen der Datei auf.";
+    public static final java.lang.String UNSUPPORTED_ENCODING = "Ein erforderliches Encoding wird nicht unterstützt.";
+    public static String UNKNOWN_SERVICE_EXCEPTION = "Unbekannter Fehler";
 }

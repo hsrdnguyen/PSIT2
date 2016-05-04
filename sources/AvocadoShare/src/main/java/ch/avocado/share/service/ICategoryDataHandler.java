@@ -13,19 +13,15 @@ public interface ICategoryDataHandler {
     /**
      * updates the categories from a AccessControlObjectBase object,
      * by passing the old Object on the database and the "new"/"changed" Object.
-     * @param oldAccessObject       the AccessControlObject on the database
      * @param changedAccessObject   the "new"/"changed" AccessControlObject
-     * @return true if updated successfully
      */
-    boolean updateAccessObjectCategories(AccessControlObjectBase oldAccessObject,
-                                         AccessControlObjectBase changedAccessObject) throws DataHandlerException;
+    void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException;
 
     /**
      * adds all categories from new created AccessControlObject to the database
      * @param accessObject the new created AccessControlObject
-     * @return true if added all categories successful
      */
-    boolean addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException;
+    void addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException;
 
     /**
      * checks if a Category is already added to a AccessControlObject

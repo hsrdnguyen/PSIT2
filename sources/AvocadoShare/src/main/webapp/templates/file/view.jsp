@@ -45,6 +45,7 @@
     </div>
     <div class="content-right">
         <%@include file="../member/index.jsp" %>
+        <%@include file="categories.jsp"%>
         <%@include file="info.jsp"%>
     </div>
 </div>

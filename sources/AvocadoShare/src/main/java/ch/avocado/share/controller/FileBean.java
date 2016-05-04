@@ -4,12 +4,14 @@ import ch.avocado.share.common.Filename;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileStorageConstants;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
+import ch.avocado.share.model.exceptions.AccessDeniedException;
 import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -48,7 +50,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public File create() throws HttpBeanException, DataHandlerException {
+    public File create() throws DataHandlerException, ServiceNotFoundException, FileStorageException, AccessDeniedException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
         File file = newFile();
@@ -87,13 +89,13 @@ public class FileBean extends ResourceBean<File> {
         if (user == null) {
             throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }
-        ISecurityHandler securityHandler = getService(ISecurityHandler.class);
-        IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
-        List<Module> modules = null;
+        List<Module> modules;
         try {
+            ISecurityHandler securityHandler = getService(ISecurityHandler.class);
+            IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
             modules = moduleDataHandler.getModules(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.WRITE));
-        } catch (DataHandlerException e) {
-            throw new HttpBeanDatabaseException();
+        } catch (ServiceException e) {
+            throw new HttpBeanException(e);
         }
         return modules;
     }
@@ -103,22 +105,18 @@ public class FileBean extends ResourceBean<File> {
      * @throws HttpBeanException
      */
     @Override
-    public List<File> index() throws HttpBeanException {
+    public List<File> index() throws ServiceNotFoundException, DataHandlerException {
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         if (getAccessingUser() != null) {
-            try {
-                List<String> fileIds = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ);
-                return fileDataHandler.getFiles(fileIds);
-            } catch (DataHandlerException e) {
-                throw new HttpBeanDatabaseException();
-            }
+            List<String> fileIds = securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ);
+            return fileDataHandler.getFiles(fileIds);
         }
         return new ArrayList<>();
     }
 
     @Override
-    public File get() throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
+    public File get() throws DataHandlerException, ObjectNotFoundException, ServiceNotFoundException {
         if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         File file;
@@ -132,7 +130,7 @@ public class FileBean extends ResourceBean<File> {
 
 
     @Override
-    public void update(File file) throws HttpBeanException, ObjectNotFoundException {
+    public void update(File file) throws ServiceException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         boolean changed = false;
         if (getTitle() != null && !file.getTitle().equals(getTitle())) {
@@ -166,28 +164,14 @@ public class FileBean extends ResourceBean<File> {
         }
 
         if (!file.hasErrors() && changed) {
-            try {
-                if (!fileDataHandler.updateFile(file)) {
-                    throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
-                }
-            } catch (DataHandlerException e) {
-                e.printStackTrace();
-                throw new HttpBeanDatabaseException();
-            }
+            fileDataHandler.updateFile(file);
         }
     }
 
     @Override
-    public void destroy(File object) throws HttpBeanException, ObjectNotFoundException {
+    public void destroy(File object) throws ServiceException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-        try {
-            if (!fileDataHandler.deleteFile(object)) {
-                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_FILE);
-            }
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanDatabaseException();
-        }
+        fileDataHandler.deleteFile(object);
     }
 
 
@@ -196,9 +180,10 @@ public class FileBean extends ResourceBean<File> {
      *
      * @param fileItem The file
      * @return The reference to the file on the disk
-     * @throws HttpBeanException
+     * @throws ServiceNotFoundException The IFileStorageHandler implementation could not be found.
+     * @throws FileStorageException     the file could not be uploaded
      */
-    private DiskFile uploadFile(FileItem fileItem) throws HttpBeanException {
+    private DiskFile uploadFile(FileItem fileItem) throws ServiceNotFoundException, FileStorageException {
         if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
         IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
         String mimeType, path, extension;
@@ -212,13 +197,8 @@ public class FileBean extends ResourceBean<File> {
         ServletFileUpload upload = new ServletFileUpload(factory);
         // maximum file size to be uploaded.
         upload.setSizeMax(FileStorageConstants.MAX_FILE_SIZE);
-        try {
-            path = fileStorageHandler.saveFile(fileItem);
-            mimeType = fileStorageHandler.getContentType(path, fileItem.getName());
-        } catch (FileStorageException e) {
-            e.printStackTrace();
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Datei konnte nicht gespeichert werden.");
-        }
+        path = fileStorageHandler.saveFile(fileItem);
+        mimeType = fileStorageHandler.getContentType(path, fileItem.getName());
         extension = Filename.getExtension(fileItem.getName());
         return new DiskFile(path, mimeType, extension);
     }
@@ -325,7 +305,7 @@ public class FileBean extends ResourceBean<File> {
      * @return the rating of the user for the file
      * @throws HttpBeanException is thrown, if there is an error while getting the rating.
      */
-    public int getRatingForAccessingUser() throws HttpBeanException {
+    public int getRatingForAccessingUser() throws HttpBeanException, ServiceNotFoundException {
         if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId())))
             throw new HttpBeanException(0, "User hadn't rated yet");
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
@@ -343,22 +323,18 @@ public class FileBean extends ResourceBean<File> {
      * @param ratingUserId the id of the user which had rated
      * @throws HttpBeanException is thrown, if there is an error while adding the rating.
      */
-    public void addRatingForAccessingUser(int rating, long ratingUserId) throws HttpBeanException {
+    public void addRatingForAccessingUser(int rating, long ratingUserId) throws ServiceNotFoundException, DataHandlerException {
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
-        try {
-            if (this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
-                ratingDataHandler.updateRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
-                this.rating.addRating(rating, ratingUserId);
-            } else {
-                ratingDataHandler.addRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
-                this.rating.addRating(rating, ratingUserId);
-            }
-        } catch (DataHandlerException e) {
-            throw new HttpBeanException(0, "Couldn't add rating"); //TODO @kunzlio1: ErrorsMessges => Constants
+        if (this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
+            ratingDataHandler.updateRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
+            this.rating.addRating(rating, ratingUserId);
+        } else {
+            ratingDataHandler.addRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
+            this.rating.addRating(rating, ratingUserId);
         }
     }
 
-    private void checkParameterTitle(File file) throws HttpBeanException {
+    private void checkParameterTitle(File file) throws DataHandlerException, ServiceNotFoundException {
         checkParameterModuleId(file);
         if (file.hasErrors()) {
             return;
@@ -368,15 +344,10 @@ public class FileBean extends ResourceBean<File> {
         } else {
             setTitle(getTitle().trim());
             IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
-
             try {
-                try {
-                    fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId());
-                    file.addFieldError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
-                } catch (ObjectNotFoundException ignored) {
-                }
-            } catch (DataHandlerException e) {
-                file.addFieldError("title", ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+                fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId());
+                file.addFieldError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
+            } catch (ObjectNotFoundException ignored) {
             }
         }
     }

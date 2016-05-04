@@ -138,26 +138,26 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     }
 
     @Override
-    public boolean updateGroup(Group group) throws DataHandlerException {
+    public void updateGroup(Group group) throws DataHandlerException, ObjectNotFoundException {
         if (group == null) throw new IllegalArgumentException("group is null");
         PreparedStatement statement;
+        long id = Long.parseLong(group.getId());
         try {
             statement = getConnectionHandler().getPreparedStatement(UPDATE);
-            statement.setInt(UPDATE_INDEX_ID, Integer.parseInt(group.getId()));
+            statement.setLong(UPDATE_INDEX_ID, id);
             statement.setString(UPDATE_INDEX_NAME, group.getName());
-            if (!getConnectionHandler().updateDataSet(statement)) {
-                return false;
+            if(!getConnectionHandler().updateDataSet(statement)) {
+                throw new ObjectNotFoundException(Group.class, id);
             }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return updateObject(group);
+        updateObject(group);
     }
 
     @Override
-    public boolean deleteGroup(Group group) throws DataHandlerException {
-        if (group == null) throw new IllegalArgumentException("group is null");
-        return deleteAccessControlObject(group.getId());
+    public void deleteGroup(Group group) throws DataHandlerException, ObjectNotFoundException {
+        deleteAccessControlObject(group);
     }
 
     private PreparedStatement getGetByNameStatement(String name) throws DataHandlerException {

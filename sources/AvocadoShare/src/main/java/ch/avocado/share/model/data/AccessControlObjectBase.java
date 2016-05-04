@@ -1,9 +1,6 @@
 package ch.avocado.share.model.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Base class for all access control objects.
@@ -11,7 +8,7 @@ import java.util.Objects;
 public abstract class AccessControlObjectBase extends Model{
 
     private String id;
-    private List<Category> categories;
+    private CategoryList categoryList;
     private Date creationDate;
     private float rating;
     private String ownerId;
@@ -26,9 +23,12 @@ public abstract class AccessControlObjectBase extends Model{
      * @param ownerId The identifier of the owner
      * @param description Description of the object
      */
-    public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
+    public AccessControlObjectBase(String id, Collection<Category> categories, Date creationDate, float rating, String ownerId, String description) {
         this.id = id;
-        setCategories(categories);
+        if(categories == null) {
+            categories = new ArrayList<>();
+        }
+        this.categoryList = new CategoryList(categories);
         setCreationDate(creationDate);
         this.rating = rating;
         setOwnerId(ownerId);
@@ -56,20 +56,16 @@ public abstract class AccessControlObjectBase extends Model{
     /**
      * @return The categories assigned to this object.
      */
-    public List<Category> getCategories() {
-        return categories;
+    public CategoryList getCategoryList() {
+        return categoryList;
     }
 
     /**
-     * @param categories The categories assigned to this object
+     * @param categoryList The categories assigned to this object
      */
-    public void setCategories(List<Category> categories) {
-        if(categories == null || categories.isEmpty()) {
-            this.categories = new ArrayList<>();
-        } else {
-            this.categories = new ArrayList<>(categories.size());
-            this.categories.addAll(categories);
-        }
+    public void setCategories(Collection<Category> categoryList) {
+        if(categoryList == null) throw new IllegalArgumentException("categoryList is null");
+        this.categoryList.setCategories(categoryList);
         setDirty(true);
     }
 

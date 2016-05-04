@@ -1,8 +1,7 @@
 package ch.avocado.share.servlet;
 
-import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IAvatarStorageHandler;
 import org.apache.commons.io.IOUtils;
 

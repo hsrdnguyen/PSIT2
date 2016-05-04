@@ -22,7 +22,7 @@ public interface IFileDataHandler {
      * deletes the given file rom the database and the server
      * @param file file to be deleted
      */
-    boolean deleteFile(File file) throws ObjectNotFoundException, DataHandlerException;
+    void deleteFile(File file) throws ObjectNotFoundException, DataHandlerException;
 
     /**
      * Returns the file from the server with the data from the database

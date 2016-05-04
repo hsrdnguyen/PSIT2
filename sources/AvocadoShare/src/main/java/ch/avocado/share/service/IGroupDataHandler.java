@@ -43,7 +43,7 @@ public interface IGroupDataHandler {
      * @return {@code true} if the group was found and updated. {@code false} if there is no such group.
      * @throws DataHandlerException
      */
-    boolean updateGroup(Group group) throws DataHandlerException;
+    void updateGroup(Group group) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Deletes a group.
@@ -51,7 +51,7 @@ public interface IGroupDataHandler {
      * @return
      * @throws DataHandlerException
      */
-    boolean deleteGroup(Group group) throws DataHandlerException;
+    void deleteGroup(Group group) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Loads a group from the database with the given name

@@ -2,6 +2,7 @@ package ch.avocado.share.model.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  *
  * Category objects are immutable.
  */
-public class Category {
+public class Category implements Comparable<Category> {
 
     private final String name;
     private final List<String> objectIds;
@@ -46,5 +47,23 @@ public class Category {
         if (other.getClass() != getClass()) return false;
         if (!name.equals(((Category)other).getName())) return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public int compareTo(Category category) {
+        if(category == null) throw new IllegalArgumentException("category is null");
+        return name.compareTo(category.getName());
     }
 }

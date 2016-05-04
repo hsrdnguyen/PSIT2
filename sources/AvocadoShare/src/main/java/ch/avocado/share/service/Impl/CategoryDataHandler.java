@@ -3,7 +3,8 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static ch.avocado.share.common.constants.sql.CategoryConstants.*;
 
@@ -21,55 +23,29 @@ import static ch.avocado.share.common.constants.sql.CategoryConstants.*;
  * Handler for categories
  */
 public class CategoryDataHandler implements ICategoryDataHandler {
-    /**
-     * adds all categories from new created AccessControlObject to the database
-     * @param accessObject the new created AccessControlObject
-     * @return true if added all categories successful
-     */
+
     @Override
-    public boolean addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException {
-        for (Category category : accessObject.getCategories()) {
+    public void addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException {
+        for (Category category : accessObject.getCategoryList()) {
             if (!addCategory(category.getName(), accessObject.getId()))
                 return false;
         }
         return true;
     }
 
-    /**
-     * updates the categories from a AccessControlObjectBase object,
-     * by passing the old Object on the database and the "new"/"changed" Object.
-     * @param oldAccessObject       the AccessControlObject on the database
-     * @param changedAccessObject   the "new"/"changed" AccessControlObject
-     * @return true if updated successfully
-     */
     @Override
-    public boolean updateAccessObjectCategories(AccessControlObjectBase oldAccessObject,
-                                                AccessControlObjectBase changedAccessObject) throws DataHandlerException {
-        List<Category> delCategories = new ArrayList<>();
-        List<Category> newCategories = new ArrayList<>();
-
-        for (Category changedCategory : changedAccessObject.getCategories()) {
-            if (!oldAccessObject.getCategories().contains(changedCategory)){
-                newCategories.add(changedCategory);
-            }
-        }
-
-        for (Category oldCategory : oldAccessObject.getCategories()) {
-            if (!changedAccessObject.getCategories().contains(oldCategory)){
-                delCategories.add(oldCategory);
-            }
-        }
-
-        for (Category newCategory : newCategories) {
+    public boolean updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException {
+        Set<Category> categories = changedAccessObject.getCategoryList().getNewCategories();
+        for (Category newCategory : categories) {
             if (!addCategory(newCategory.getName(), changedAccessObject.getId()))
                 return false;
         }
 
-        for (Category delCategory : delCategories) {
-            if (!deleteCategoryAssignedObject(delCategory.getName(), oldAccessObject.getId()))
+        categories = changedAccessObject.getCategoryList().getRemovedCategories();
+        for (Category delCategory : categories) {
+            if (!deleteCategoryAssignedObject(delCategory.getName(), changedAccessObject.getId()))
                 return false;
         }
-
         return true;
     }
 
@@ -81,7 +57,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     @Override
     public Category getCategoryByName(String name) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return null;
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
@@ -125,7 +100,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     @Override
     public List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(connectionHandler == null) return null;
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
@@ -163,9 +137,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         try {
             while(resultSet.next()) {
                 Category category = getCategoryByName(resultSet.getString(1));
-                if(category == null) {
-                    return null;
-                }
                 categories.add(category);
             }
         } catch (SQLException e) {
@@ -176,7 +147,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     private boolean addCategory(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if(hasCategoryAssignedObject(name, accessObjectReferenceId)) return true;
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_ADD_CATEGORY);
@@ -186,7 +156,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return true;
     }
 
     private boolean deleteCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {

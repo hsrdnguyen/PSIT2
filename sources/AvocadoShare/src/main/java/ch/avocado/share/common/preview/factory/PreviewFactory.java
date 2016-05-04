@@ -5,11 +5,9 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.preview.IPreviewGenerator;
 import ch.avocado.share.common.preview.PreviewException;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.servlet.DownloadServlet;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * Base class for all preview factories

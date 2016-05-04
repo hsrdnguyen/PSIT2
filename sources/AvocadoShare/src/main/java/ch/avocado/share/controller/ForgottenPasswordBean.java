@@ -4,7 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.MailVerification;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICaptchaVerifier;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
@@ -12,7 +12,6 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Bean to reset a forgotten password.

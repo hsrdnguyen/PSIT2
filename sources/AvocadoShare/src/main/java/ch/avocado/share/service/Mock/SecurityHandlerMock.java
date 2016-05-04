@@ -2,7 +2,7 @@ package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;

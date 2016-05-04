@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +26,8 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     }
 
     @Override
-    public boolean deleteFile(File file) throws DataHandlerException {
-        return delete(file);
+    public void deleteFile(File file) throws DataHandlerException, ObjectNotFoundException {
+        if(!delete(file)) throw new ObjectNotFoundException(File.class, file.getId());
     }
 
     @Override

@@ -3,14 +3,13 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
-import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
-import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,18 +35,13 @@ public class GroupBean extends ResourceBean<Group> {
         }
     }
 
-    private void checkNameIsUnique(Group group) throws HttpBeanException {
+    private void checkNameIsUnique(Group group) throws ServiceNotFoundException, DataHandlerException {
         try {
-            try {
-                getService(IGroupDataHandler.class).getGroupByName(name);
-                group.setName(name);
-                group.addFieldError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
-            } catch (ObjectNotFoundException ignored) {
-                // The name is unique
-            }
-        } catch (DataHandlerException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+            getService(IGroupDataHandler.class).getGroupByName(name);
+            group.setName(name);
+            group.addFieldError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
+        } catch (ObjectNotFoundException ignored) {
+            // The name is unique
         }
     }
 
@@ -57,7 +51,7 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public Group create() throws HttpBeanException, DataHandlerException {
+    public Group create() throws DataHandlerException, ServiceNotFoundException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), "", "");
         checkNameNotEmpty(group);
@@ -72,7 +66,7 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public Group get() throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
+    public Group get() throws ServiceException {
         if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         Group group = null;
@@ -86,24 +80,17 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public List<Group> index() throws HttpBeanException {
+    public List<Group> index() throws ServiceException {
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
-        List<Group> groupList;
         if (getAccessingUser() != null) {
-            try {
-                groupList = groupDataHandler.getGroups(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
-            } catch (DataHandlerException e) {
-                e.printStackTrace();
-                throw new HttpBeanDatabaseException();
-            }
-            return groupList;
+            return groupDataHandler.getGroups(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
         }
         return new ArrayList<>();
     }
 
     @Override
-    public void update(Group group) throws HttpBeanException, DataHandlerException {
+    public void update(Group group) throws ServiceException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         checkParameterDescription(group);
         checkNameNotEmpty(group);
@@ -116,18 +103,14 @@ public class GroupBean extends ResourceBean<Group> {
             group.setName(name);
             group.setDescription(description);
             System.out.println("Updating: name: " + name + " description: " + description);
-            if (!groupDataHandler.updateGroup(group)) {
-                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
-            }
+            groupDataHandler.updateGroup(group);
         }
     }
 
     @Override
-    public void destroy(Group group) throws HttpBeanException, DataHandlerException {
+    public void destroy(Group group) throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
-        if (!groupDataHandler.deleteGroup(group)) {
-            throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ErrorMessageConstants.ERROR_NO_SUCH_GROUP);
-        }
+        groupDataHandler.deleteGroup(group);
     }
 
     /**

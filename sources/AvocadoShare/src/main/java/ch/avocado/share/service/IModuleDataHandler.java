@@ -13,11 +13,11 @@ import java.util.List;
 public interface IModuleDataHandler {
     String addModule(Module module) throws DataHandlerException;
 
-    boolean deleteModule(Module module) throws DataHandlerException;
+    void deleteModule(Module module) throws DataHandlerException, ObjectNotFoundException;
 
     Module getModule(String moduleId) throws DataHandlerException, ObjectNotFoundException;
 
     List<Module> getModules(Collection<String> ids) throws DataHandlerException;
 
-    boolean updateModule(Module module) throws DataHandlerException, ObjectNotFoundException;
+    void updateModule(Module module) throws DataHandlerException, ObjectNotFoundException;
 }

@@ -38,7 +38,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             }
             addMail(user);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DataHandlerException(e);
         }
         return user.getId();
@@ -53,7 +52,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             preparedStatement.setInt(DELETE_USER_QUERY_ID_INDEX, Integer.parseInt(user.getId()));
             return getConnectionHandler().deleteDataSet(preparedStatement);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DataHandlerException(e);
         }
     }
@@ -114,8 +112,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_USER_QUERY);
             preparedStatement.setLong(1, Long.parseLong(userId));
             return getUserFromPreparedStatement(preparedStatement);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
@@ -260,7 +257,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             }
             updateEmailAddress(user.getMail());
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DataHandlerException(e);
         }
         return true;
@@ -325,7 +321,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             }
             rs = connectionHandler.executeQuery(ps);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DataHandlerException(e);
         }
         return getUsersFromResultSet(rs);

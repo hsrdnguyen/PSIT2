@@ -2,9 +2,10 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessControlObjectBase;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,23 +37,31 @@ abstract class DataHandlerBase {
         return connectionHandler;
     }
 
-    private boolean addOwnership(long ownerId, long objectId) throws DataHandlerException, SQLException {
+    private void addOwnership(long ownerId, long objectId) throws DataHandlerException, SQLException {
         PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(INSERT_OWNERSHIP);
         preparedStatement.setLong(INSERT_OWNERSHIP_INDEX_OWNER, ownerId);
         preparedStatement.setLong(INSERT_OWNERSHIP_INDEX_OBJECT, objectId);
-        getConnectionHandler().insertDataSet(preparedStatement); // TODO: check result?
-        return true;
+        getConnectionHandler().insertDataSet(preparedStatement);
+        // We don't check the result because if will fail if the object or owner doesn't exist
     }
 
-    protected boolean updateObject(AccessControlObjectBase object) throws DataHandlerException {
+    protected void updateObject(AccessControlObjectBase object) throws DataHandlerException, ObjectNotFoundException {
         if (object == null) throw new IllegalArgumentException("object is null");
-        long objectId = Long.parseLong(object.getId());
-        if (!updateDescription(objectId, object.getDescription())) return false;
+        if (object.getId() == null) throw new IllegalArgumentException("object.id is null");
+        long objectId;
+        try {
+            objectId = Long.parseLong(object.getId());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("object.id is not a number");
+        }
+        if (!updateDescription(objectId, object.getDescription())) {
+            throw new ObjectNotFoundException(object.getClass(), objectId);
+        }
         Long ownerId = null;
         if(object.getOwnerId() != null) {
             ownerId = Long.parseLong(object.getOwnerId());
         }
-        return setOwnership(objectId, ownerId);
+        setOwnership(objectId, ownerId);
     }
 
     private boolean updateDescription(long objectId, String description) throws DataHandlerException {
@@ -70,22 +79,18 @@ abstract class DataHandlerBase {
     /**
      * @param objectId The identifier of the object
      * @param ownerId  Id of the owner or null if there is no owner
-     * @return
      * @throws DataHandlerException
      */
-    private boolean setOwnership(long objectId, Long ownerId) throws DataHandlerException {
+    private void setOwnership(long objectId, Long ownerId) throws DataHandlerException, ObjectNotFoundException {
         try {
             if (ownerId == null) {
                 deleteOwnership(objectId);
-                // We don't return the result of deleteOwnership because
-                // it's not a failure if there was no existing ownership
-                return true;
             } else {
                 Long currentOwner = getOwnerIdInternal(objectId);
                 if (currentOwner == null) {
-                    return addOwnership(objectId, ownerId);
+                    addOwnership(objectId, ownerId);
                 } else {
-                    return updateOwnership(objectId, ownerId);
+                    updateOwnership(objectId, ownerId);
                 }
             }
         } catch (SQLException e) {
@@ -93,11 +98,13 @@ abstract class DataHandlerBase {
         }
     }
 
-    private boolean updateOwnership(long objectId, Long ownerId) throws DataHandlerException, SQLException {
+    private void updateOwnership(long objectId, Long ownerId) throws DataHandlerException, SQLException, ObjectNotFoundException {
         PreparedStatement statement = getConnectionHandler().getPreparedStatement(UPDATE_OWNERSHIP);
         statement.setLong(UPDATE_OWNERSHIP_INDEX_OBJECT, objectId);
         statement.setLong(UPDATE_OWNERSHIP_INDEX_OWNER, ownerId);
-        return getConnectionHandler().updateDataSet(statement);
+        if(!getConnectionHandler().updateDataSet(statement)) {
+            throw new ObjectNotFoundException(AccessControlObjectBase.class, objectId);
+        }
     }
 
     private void deleteOwnership(long objectId) throws SQLException, DataHandlerException {
@@ -109,20 +116,28 @@ abstract class DataHandlerBase {
     /**
      * Delete the access control object. This will also delete the subtype. (ON DELETE CASCADE).
      *
-     * @param objectId The identifier of the object.
+     * @param object The object to delete.
      * @return {@code true} if the object was found and deleted. Otherwise {@code false} is returned.
      * @throws DataHandlerException If something went wrong
+     * @throws ObjectNotFoundException If the object doesn't exist
      */
-    protected boolean deleteAccessControlObject(String objectId) throws DataHandlerException {
-        if (objectId == null) throw new IllegalArgumentException("objectId is null");
+    protected void deleteAccessControlObject(AccessControlObjectBase object) throws DataHandlerException, ObjectNotFoundException {
+        if(object == null) throw new IllegalArgumentException("object is null");
+        if(object.getId() == null) throw new IllegalArgumentException("object.id is null");
+        long id;
+        try {
+            id = Long.parseLong(object.getId());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("object.id is not a number");
+        }
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(DELETE_ACCESS_CONTROL_QUERY);
-            preparedStatement.setLong(1, Long.parseLong(objectId));
-            return getConnectionHandler().deleteDataSet(preparedStatement);
+            preparedStatement.setLong(1, id);
+            if(!getConnectionHandler().deleteDataSet(preparedStatement)) {
+                throw new ObjectNotFoundException(object.getClass(), id);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
-        } catch (NumberFormatException e) {
-            throw new DataHandlerException("Invalid ID");
         }
     }
 

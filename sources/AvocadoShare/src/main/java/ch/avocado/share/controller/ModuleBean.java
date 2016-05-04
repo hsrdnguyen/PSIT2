@@ -4,13 +4,12 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
-import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +38,7 @@ public class ModuleBean extends ResourceBean<Module> {
 
 
     @Override
-    public Module create() throws HttpBeanException, DataHandlerException {
+    public Module create() throws ServiceException {
         Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), "", "", new ArrayList<>());
         checkParameterDescription(module);
         checkParameterName(module);
@@ -53,12 +52,12 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
-    public Module get() throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
+    public Module get() throws ServiceException {
         return getService(IModuleDataHandler.class).getModule(getId());
     }
 
     @Override
-    public List<Module> index() throws HttpBeanException, DataHandlerException {
+    public List<Module> index() throws ServiceException {
         if (getAccessingUser() == null) {
             return new ArrayList<>();
         }
@@ -67,7 +66,7 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
-    public void update(Module module) throws HttpBeanException, DataHandlerException, ObjectNotFoundException {
+    public void update(Module module) throws ServiceException {
         boolean updated = false;
         if (getName() != null && !getName().equals(module.getName())) {
             checkParameterName(module);
@@ -80,14 +79,12 @@ public class ModuleBean extends ResourceBean<Module> {
         updated |= updateDescription(module);
 
         if(module.isValid() && updated) {
-            if(!getService(IModuleDataHandler.class).updateModule(module)) {
-                throw new HttpBeanException(HttpServletResponse.SC_NOT_FOUND, ERROR_MODULE_NOT_FOUND);
-            }
+            getService(IModuleDataHandler.class).updateModule(module);
         }
     }
 
     @Override
-    public void destroy(Module module) throws HttpBeanException, DataHandlerException {
+    public void destroy(Module module) throws DataHandlerException, ServiceNotFoundException {
         getService(IModuleDataHandler.class).deleteModule(module);
     }
 
