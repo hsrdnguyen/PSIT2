@@ -2,14 +2,12 @@ package ch.avocado.share.model.data;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.CORBA.OBJECT_NOT_EXIST;
-import org.omg.CORBA.OBJ_ADAPTER;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.EmptyStackException;
-import java.util.List;
 
+import static ch.avocado.share.test.Asserts.assertCategoriesEquals;
 import static org.junit.Assert.*;
 
 /**
@@ -39,7 +37,7 @@ public class AccessControlObjectBaseTest {
          * @param ownerId      The identifier of the owner
          * @param description  Description of the object
          */
-        public Object(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
+        public Object(String id, Collection<Category> categories, Date creationDate, float rating, String ownerId, String description) {
             super(id, categories, creationDate, rating, ownerId, description);
         }
 
@@ -86,19 +84,19 @@ public class AccessControlObjectBaseTest {
 
     @Test
     public void testGetCategories() throws Exception {
-        assertEquals(categories, object.getCategories());
-        assertNotSame(categories, object.getCategories());
+        assertEquals(categories, object.getCategoryList());
+        assertNotSame(categories, object.getCategoryList());
     }
 
     @Test
     public void testSetCategories() throws Exception {
         categories.add(new Category("new"));
-        assertNotEquals(categories, object.getCategories());
+        assertNotEquals(categories, object.getCategoryList());
         assertFalse(object.isDirty());
         object.setCategories(categories);
         assertTrue(object.isDirty());
-        assertEquals(categories, object.getCategories());
-        assertNotSame(categories, object.getCategories());
+        assertCategoriesEquals(categories, object.getCategoryList());
+        assertNotSame(categories, object.getCategoryList());
     }
 
     @Test

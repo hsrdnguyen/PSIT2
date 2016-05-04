@@ -62,4 +62,8 @@ public final class ErrorMessageConstants {
     public static final String DESCRIPTION_TOO_LONG = "Die Beschreibung ist zu lang.";
     public static final String UPDATE_USER_FAILED = "Der Benutzer konnte nicht aktualisiert werden.";
     public static final String CAPTCHA_INCORRECT = "Das CAPTCHA konnte nicht verfiziert werden.";
+    public static final String NO_RIGHTS_TO_ADD_CATEGORY = "Sie müssen Schreibrecht besitzen, um Kategorien hinzuzufügen";
+    public static final String NOT_RENDERABLE = "Anzeigen der Antwort fehlgeschlagen.";
+    public static final String ACTION_NOT_IMPLEMENTED = "Diese Aktion is nicht implementiert.";
+    public static final String PARAMETER_STRING_EXPECTED = "Ein Parameter ist nicht ein Formularfeld sondern eine Datei.";
 }

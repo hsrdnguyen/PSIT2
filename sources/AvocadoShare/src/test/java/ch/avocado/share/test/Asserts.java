@@ -3,10 +3,7 @@ package ch.avocado.share.test;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.User;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +11,7 @@ import static org.junit.Assert.*;
  * Created by coffeemakr on 18.04.16.
  */
 public class Asserts {
-    public static void assertCategoriesEquals(List<Category> expected, List<Category> actual) {
+    public static void assertCategoriesEquals(Collection<Category> expected, Collection<Category> actual) {
         List<String> expectedNames = getCategoryNames(expected);
         List<String> actualNames = getCategoryNames(actual);
         for (Iterator<String> iterator = expectedNames.iterator(); iterator.hasNext(); ) {
@@ -31,7 +28,7 @@ public class Asserts {
         }
     }
 
-    private static List<String> getCategoryNames(List<Category> categories) {
+    private static List<String> getCategoryNames(Collection<Category> categories) {
         if(categories == null) throw new IllegalArgumentException("categories is null");
         ArrayList<String> names = new ArrayList<>(categories.size());
         for(Category category: categories) {

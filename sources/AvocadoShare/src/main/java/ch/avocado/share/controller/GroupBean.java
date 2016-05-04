@@ -35,15 +35,10 @@ public class GroupBean extends ResourceBean<Group> {
         }
     }
 
-    private void checkNameIsUnique(Group group) throws HttpBeanException {
-        try {
-            if (getService(IGroupDataHandler.class).getGroupByName(name) != null) {
-                group.setName(name);
-                group.addFieldError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
-            }
-        } catch (DataHandlerException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+    private void checkNameIsUnique(Group group) throws HttpBeanException, DataHandlerException {
+        if (getService(IGroupDataHandler.class).getGroupByName(name) != null) {
+            group.setName(name);
+            group.addFieldError("name", ErrorMessageConstants.ERROR_GROUP_NAME_ALREADY_EXISTS);
         }
     }
 
@@ -84,18 +79,11 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public List<Group> index() throws HttpBeanException {
+    public List<Group> index() throws HttpBeanException, DataHandlerException {
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
-        List<Group> groupList;
         if (getAccessingUser() != null) {
-            try {
-                groupList = groupDataHandler.getGroups(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
-            } catch (DataHandlerException e) {
-                e.printStackTrace();
-                throw new HttpBeanDatabaseException();
-            }
-            return groupList;
+            return groupDataHandler.getGroups(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(getAccessingUser(), AccessLevelEnum.READ));
         }
         return new ArrayList<>();
     }

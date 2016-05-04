@@ -132,7 +132,7 @@ public class FileBean extends ResourceBean<File> {
 
 
     @Override
-    public void update(File file) throws HttpBeanException {
+    public void update(File file) throws HttpBeanException, DataHandlerException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         boolean changed = false;
         if (getTitle() != null && !file.getTitle().equals(getTitle())) {
@@ -358,7 +358,7 @@ public class FileBean extends ResourceBean<File> {
         }
     }
 
-    private void checkParameterTitle(File file) throws HttpBeanException {
+    private void checkParameterTitle(File file) throws HttpBeanException, DataHandlerException {
         checkParameterModuleId(file);
         if (file.hasErrors()) {
             return;
@@ -369,13 +369,10 @@ public class FileBean extends ResourceBean<File> {
             setTitle(getTitle().trim());
             IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
 
-            try {
-                if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
-                    file.addFieldError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
-                }
-            } catch (DataHandlerException e) {
-                file.addFieldError("title", ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+            if (fileDataHandler.getFileByTitleAndModule(getTitle(), getModuleId()) != null) {
+                file.addFieldError("title", ErrorMessageConstants.ERROR_FILE_TITLE_ALREADY_EXISTS);
             }
+
         }
     }
 

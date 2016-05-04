@@ -199,7 +199,7 @@ public class GroupDataHandlerTest {
         assertEquals(group.getName(), fetchedGroup.getName());
         assertEquals(group.getDescription(), fetchedGroup.getDescription());
         assertEquals(group.getOwnerId(), fetchedGroup.getOwnerId());
-        assertEquals(group.getCategories(), fetchedGroup.getCategories());
+        assertEquals(group.getCategoryList(), fetchedGroup.getCategoryList());
 
         // delete group
         assertTrue(groupDataHandler.deleteGroup(group));

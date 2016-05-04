@@ -168,8 +168,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     public boolean updateFile(File file) throws DataHandlerException {
         if(file == null)throw new IllegalArgumentException("file is null");
         if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
-        File oldFileOnDb = getFile(file.getId());
-        if (oldFileOnDb == null) throw new IllegalArgumentException("there's no such file on db");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(UPDATE_QUERY);
@@ -189,7 +187,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         if(!changeFileAssociatedModule(file)) {
             return false;
         }
-        if (!updateFileCategoriesFromDb(oldFileOnDb, file)){
+        if (!updateFileCategoriesFromDb(file)){
             return false;
         }
         return updateObject(file);
@@ -207,9 +205,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return true;
     }
 
-    private boolean updateFileCategoriesFromDb(File oldFile, File changedFile) throws DataHandlerException {
+    private boolean updateFileCategoriesFromDb(File changedFile) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        return categoryHandler.updateAccessObjectCategories(oldFile, changedFile);
+        return categoryHandler.updateAccessObjectCategories(changedFile);
     }
 
     private File getFileFromSelectResultSet(ResultSet resultSet) throws DataHandlerException {

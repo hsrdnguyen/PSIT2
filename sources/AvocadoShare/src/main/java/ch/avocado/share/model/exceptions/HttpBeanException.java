@@ -11,21 +11,31 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 public class HttpBeanException extends Exception{
     private final String description;
     private final int statusCode;
+    private final Throwable originalCause;
     //private final Map<String, String> headers;
 
     public HttpBeanException(DataHandlerException e) {
-        this(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+        this(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION, e);
     }
 
-    public HttpBeanException(int statusCode, String description) {
+    public HttpBeanException(int statusCode, String description, Throwable originalCause) {
         super(description);
         this.statusCode = statusCode;
         this.description = description;
-        //this.headers = null;
+        this.originalCause = originalCause;
+    }
+
+
+    public HttpBeanException(int statusCode, String description) {
+        this(statusCode, description, null);
     }
 
     public HttpBeanException(HttpStatusCode statusCode, String description) {
-        this(statusCode.getCode(), description);
+        this(statusCode.getCode(), description, null);
+    }
+
+    public HttpBeanException(HttpStatusCode statusCode, String description, Throwable originalCause) {
+        this(statusCode.getCode(), description, originalCause);
     }
 
     public String getDescription() {
@@ -34,5 +44,9 @@ public class HttpBeanException extends Exception{
 
     public int getStatusCode() {
         return statusCode;
+    }
+
+    public Throwable getOriginalCause() {
+        return originalCause;
     }
 }

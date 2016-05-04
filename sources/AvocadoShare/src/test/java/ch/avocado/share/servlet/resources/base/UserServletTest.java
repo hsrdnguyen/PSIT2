@@ -92,13 +92,13 @@ public class UserServletTest {
         request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        request.setParameter(ResourceServlet.PARAMETER_METHOD, method);
+        request.setParameter(ExtendedHttpServlet.PARAMETER_METHOD, method);
         requests.add(request);
 
         request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        request.setParameter(ResourceServlet.PARAMETER_METHOD, method.toLowerCase());
+        request.setParameter(ExtendedHttpServlet.PARAMETER_METHOD, method.toLowerCase());
         requests.add(request);
 
         return requests;

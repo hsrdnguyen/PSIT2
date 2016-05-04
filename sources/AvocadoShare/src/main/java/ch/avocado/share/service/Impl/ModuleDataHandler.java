@@ -79,8 +79,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         }catch (ServiceNotFoundException e) {
             throw new DataHandlerException(e);
         }
-        Module oldModule = getModule(module.getId());
-        if(!categoryDataHandler.updateAccessObjectCategories(oldModule, module)) {
+        if(!categoryDataHandler.updateAccessObjectCategories(module)) {
             throw new DataHandlerException("Failed to update categories of an existing module");
         }
     }
