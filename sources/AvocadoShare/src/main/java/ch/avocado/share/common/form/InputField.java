@@ -3,12 +3,17 @@ package ch.avocado.share.common.form;
 import ch.avocado.share.common.Encoder;
 
 public class InputField extends FieldBase {
-    private String value = "";
+    private String value;
     private InputType type;
 
     public InputField(String name, String id, InputType type) {
+        this(name, id, type, "");
+    }
+
+    public InputField(String name, String id, InputType type, String value) {
         super(name, id);
         setType(type);
+        setValue(value);
     }
 
     /**

@@ -5,7 +5,6 @@ import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.EmailAddress;
 import ch.avocado.share.model.data.UserPassword;
-import ch.avocado.share.model.exceptions.FormBuilderException;
 import ch.avocado.share.servlet.resources.base.DetailViewConfig;
 import ch.avocado.share.servlet.resources.base.FormError;
 import org.apache.commons.fileupload.FileItem;
@@ -85,25 +84,21 @@ public class FormBuilder {
         return formErrorsString;
     }
 
-    public String getFormBegin(String method) throws FormBuilderException {
+    public String getFormBegin(HttpMethod method){
         String form = "<form ";
         String formContent = "";
         String formMethod;
-        HttpMethod httpMethod = HttpMethod.fromString(method);
-        if (httpMethod == null) {
-            throw new FormBuilderException("Method not supported: " + method);
-        }
-        switch (httpMethod) {
+        switch (method) {
             case POST:
             case GET:
-                formMethod = httpMethod.name();
+                formMethod = method.name();
                 break;
             case PUT:
             case PATCH:
             case DELETE:
             default:
                 formMethod = HttpMethod.POST.name();
-                formContent = getInputFor("method", InputType.HIDDEN, method).toString();
+                formContent = getInputFor("method", InputType.HIDDEN, method.toString()).toString();
         }
 
         if (object != null) {
@@ -125,7 +120,12 @@ public class FormBuilder {
         return "</form>";
     }
 
-    private InputType getTypeFromGetter(Method getter) throws FormBuilderException {
+    /**
+     * @param getter The getter method
+     * @throws IllegalFieldTypeException if the type the getter returns cannot be interpreted.
+     * @return The input type of the method
+     */
+    private InputType getTypeFromGetter(Method getter) {
         if (getter == null) throw new IllegalArgumentException("getter is null");
         InputType type;
         Class fieldType = getter.getReturnType();
@@ -140,26 +140,26 @@ public class FormBuilder {
         } else if (fieldType == FileItem.class) {
             type = InputType.FILE;
         } else {
-            throw new FormBuilderException("unknown type " + fieldType);
+            throw new IllegalFieldTypeException(fieldType);
         }
         return type;
     }
 
 
-    private Method getGetterMethod(String fieldName) throws FormBuilderException {
+    private Method getGetterMethod(String fieldName) {
         String getterMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
         try {
             return objectClass.getMethod(getterMethodName);
         } catch (NoSuchMethodException e) {
-            throw new FormBuilderException("Getter " + getterMethodName + " doesn't exist in " + objectClass);
+            throw new IllegalArgumentException("Getter " + getterMethodName + " doesn't exist in " + objectClass);
         }
     }
 
-    public InputField getInputFor(String fieldName) throws FormBuilderException {
+    public InputField getInputFor(String fieldName) {
         return getInputFor(fieldName, null, null);
     }
 
-    public InputField getInputFor(String fieldName, InputType type) throws FormBuilderException {
+    public InputField getInputFor(String fieldName, InputType type) {
         return getInputFor(fieldName, type, null);
     }
 
@@ -224,9 +224,8 @@ public class FormBuilder {
      * @param fieldName
      * @param objects
      * @return A select field
-     * @throws FormBuilderException
      */
-    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects, String selectedId) throws FormBuilderException {
+    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects, String selectedId) {
         if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
         SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
         if(selectedId == null) {
@@ -245,7 +244,7 @@ public class FormBuilder {
         return selectField;
     }
 
-    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects) throws FormBuilderException {
+    public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects) {
         return getSelectFor(fieldName, objects, null);
     }
 
@@ -254,9 +253,8 @@ public class FormBuilder {
      * @param type      null or the type of the element.
      * @param value     null or the value of the element.
      * @return The input field.
-     * @throws FormBuilderException
      */
-    public InputField getInputFor(String fieldName, InputType type, String value) throws FormBuilderException {
+    public InputField getInputFor(String fieldName, InputType type, String value) {
         if (fieldName == null) throw new IllegalArgumentException("field is null");
         if (type == null || value == null) {
             Method getter = null;
@@ -282,14 +280,14 @@ public class FormBuilder {
         return inputField;
     }
 
-    private String getValueFromGetter(Method getter) throws FormBuilderException {
+    private String getValueFromGetter(Method getter) {
         if (getter == null) throw new IllegalArgumentException("getter is null");
         if (object == null) throw new IllegalStateException("object is null");
         String value;
         try {
             value = "" + getter.invoke(object);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new FormBuilderException(e.getMessage());
+            throw new IllegalArgumentException("Method " + getter + " is not callable");
         }
         return value;
     }
