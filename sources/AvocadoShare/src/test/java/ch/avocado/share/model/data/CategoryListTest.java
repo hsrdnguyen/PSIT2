@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import static ch.avocado.share.test.Asserts.assertCategoriesEquals;
 import static org.junit.Assert.*;
@@ -26,21 +28,26 @@ public class CategoryListTest {
     }
 
     @Test
-    public void testGetCategories() throws Exception {
+    public void testGetCategories() {
         assertCategoriesEquals(originalCategories, categoryList.getCategories());
         assertCategoriesEquals(originalCategories, categoryList);
     }
 
     @Test
-    public void testAddCategory() throws Exception {
+    public void testAddCategory() {
         categoryList.add(new Category("four"));
         assertTrue(categoryList.contains(new Category("four")));
         originalCategories.add(new Category("four"));
         assertCategoriesEquals(originalCategories, categoryList);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testAddCategoryNull() {
+        categoryList.add(null);
+    }
+
     @Test
-    public void testSetCategoriesWithSame() throws Exception {
+    public void testSetCategoriesWithSame() {
         ArrayList<Category> newCategories = new ArrayList<>();
         // first test we use an identical list
         newCategories.add(new Category("one"));
@@ -56,10 +63,11 @@ public class CategoryListTest {
     @Test(expected = NullPointerException.class)
     public void testSetCategoriesWithNull() throws Exception {
         categoryList.setCategories(null);
+
     }
 
     @Test
-    public void testSetCategories() throws Exception {
+    public void testSetCategories() {
         ArrayList<Category> newCategories = new ArrayList<>();
         // first test we use an identical list
         newCategories.add(new Category("one"));
@@ -77,14 +85,31 @@ public class CategoryListTest {
     }
 
     @Test
-    public void testRemoveCategory() throws Exception {
-        assertTrue(categoryList.contains(new Category("three")));
-        categoryList.remove(new Category("three"));
-        assertFalse(categoryList.contains(new Category("three")));
+    public void testRemoveAll() {
+        ArrayList<Category> categoriesToRemove = new ArrayList<>();
+        categoriesToRemove.add(new Category("one"));
+        categoriesToRemove.add(new Category("one"));
+        categoriesToRemove.add(new Category("three"));
+        categoryList.removeAll(categoriesToRemove);
+
+        ArrayList<Category> expectedCategories = new ArrayList<>();
+        expectedCategories.add(new Category("two"));
+        assertEquals(1, categoryList.size());
+        assertCategoriesEquals(expectedCategories, categoryList);
     }
 
     @Test
-    public void testGetNewCategories() throws Exception {
+    public void testRemoveCategory() {
+        assertFalse(categoryList.contains(new Category("four")));
+        assertFalse(categoryList.remove(new Category("four")));
+        assertTrue(categoryList.contains(new Category("three")));
+        assertTrue(categoryList.remove(new Category("three")));
+        assertFalse(categoryList.contains(new Category("three")));
+        assertFalse(categoryList.remove(null));
+    }
+
+    @Test
+    public void testGetNewCategories() {
         categoryList.add(new Category("four"));
         assertTrue(categoryList.contains(new Category("four")));
         assertEquals(1, categoryList.getNewCategories().size());
@@ -102,7 +127,7 @@ public class CategoryListTest {
     }
 
     @Test
-    public void testGetRemovedCategories() throws Exception {
+    public void testGetRemovedCategories() {
         categoryList.remove(new Category("three"));
         assertTrue(categoryList.getRemovedCategories().contains(new Category("three")));
         assertEquals(1, categoryList.getRemovedCategories().size());
