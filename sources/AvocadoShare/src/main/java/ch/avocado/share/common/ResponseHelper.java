@@ -1,6 +1,6 @@
 package ch.avocado.share.common;
 
-import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.model.exceptions.HttpServletException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ResponseHelper {
     public static final String EXCEPTION_ATTRIBUTE = "ch.avocado.share.servlet.resources.base.ExtendedHttpServlet.excpetion";
 
-    static public void sendErrorFromHttpBeanException(HttpBeanException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    static public void sendErrorFromHttpBeanException(HttpServletException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setAttribute(EXCEPTION_ATTRIBUTE, e);
         response.sendError(e.getStatusCode().getCode(), e.getDescription());
     }

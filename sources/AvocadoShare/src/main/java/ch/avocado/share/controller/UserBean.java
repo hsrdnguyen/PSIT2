@@ -1,8 +1,6 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IAvatarStorageHandler;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;

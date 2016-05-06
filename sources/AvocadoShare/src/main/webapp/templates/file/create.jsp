@@ -4,7 +4,7 @@
 <%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="ch.avocado.share.model.data.Module" %>
-<%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
+<%@ page import="ch.avocado.share.model.exceptions.HttpServletException" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="java.util.ArrayList" %>
@@ -27,7 +27,7 @@
     List<Module> userModules = new ArrayList<Module>();
     try {
         userModules = FileBean.getModulesToUpload(userSession.getUser());
-    } catch (HttpBeanException e) {
+    } catch (HttpServletException e) {
         response.sendError(e.getStatusCode(), e.getDescription());
     }
 

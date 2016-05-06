@@ -7,7 +7,7 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.model.exceptions.HttpServletException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IFileStorageHandler;
@@ -48,7 +48,7 @@ public class DownloadServlet extends HttpServlet{
         return file.getPath();
     }
 
-    private static void download(File file, HttpServletRequest request, HttpServletResponse response, boolean attached) throws IOException, HttpBeanException {
+    private static void download(File file, HttpServletRequest request, HttpServletResponse response, boolean attached) throws IOException, HttpServletException {
         byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
         InputStream stream;
         String etag = getEtag(file);
@@ -66,7 +66,7 @@ public class DownloadServlet extends HttpServlet{
             size = storageHandler.getFileSize(file.getPath());
             stream = storageHandler.readFile(file.getPath());
         } catch (ServiceException e) {
-            throw new HttpBeanException(e);
+            throw new HttpServletException(e);
         }
         response.setHeader("Content-Length", Long.toString(size));
         response.setHeader("Content-Type", file.getMimeType());
@@ -130,7 +130,7 @@ public class DownloadServlet extends HttpServlet{
 
         try {
             download(file, request, response, attached);
-        } catch (HttpBeanException e) {
+        } catch (HttpServletException e) {
             ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
         }
     }

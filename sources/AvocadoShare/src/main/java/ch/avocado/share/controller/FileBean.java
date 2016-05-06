@@ -6,7 +6,7 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileStorageConstants;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.model.exceptions.AccessDeniedException;
-import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.model.exceptions.HttpServletException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -17,7 +17,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,11 +83,11 @@ public class FileBean extends ResourceBean<File> {
     /**
      * @param user the accessing user
      * @return A list of all modules a user can upload files into.
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    static public List<Module> getModulesToUpload(User user) throws HttpBeanException {
+    static public List<Module> getModulesToUpload(User user) throws HttpServletException {
         if (user == null) {
-            throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
+            throw new HttpServletException(HttpStatusCode.FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }
         List<Module> modules;
         try {
@@ -96,14 +95,14 @@ public class FileBean extends ResourceBean<File> {
             IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
             modules = moduleDataHandler.getModules(securityHandler.getIdsOfObjectsOnWhichIdentityHasAccess(user, AccessLevelEnum.WRITE));
         } catch (ServiceException e) {
-            throw new HttpBeanException(e);
+            throw new HttpServletException(e);
         }
         return modules;
     }
 
     /**
      * @return A list of all files the user owns.
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
     @Override
     public List<File> index() throws ServiceNotFoundException, DataHandlerException {
@@ -304,7 +303,7 @@ public class FileBean extends ResourceBean<File> {
      * Gets the rating which the accessing user gave to the file
      *
      * @return the rating of the user for the file
-     * @throws HttpBeanException is thrown, if there is an error while getting the rating.
+     * @throws HttpServletException is thrown, if there is an error while getting the rating.
      */
     public int getRatingForAccessingUser() throws ServiceNotFoundException {
         if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
@@ -325,7 +324,7 @@ public class FileBean extends ResourceBean<File> {
      *
      * @param rating       the rating the user gave to the file.
      * @param ratingUserId the id of the user which had rated
-     * @throws HttpBeanException is thrown, if there is an error while adding the rating.
+     * @throws HttpServletException is thrown, if there is an error while adding the rating.
      */
     public void addRatingForAccessingUser(int rating, long ratingUserId) throws ServiceNotFoundException, DataHandlerException {
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);

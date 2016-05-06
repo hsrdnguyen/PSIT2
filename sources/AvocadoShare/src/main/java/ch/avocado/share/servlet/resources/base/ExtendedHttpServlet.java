@@ -5,7 +5,7 @@ import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ResponseHelper;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
-import ch.avocado.share.model.exceptions.HttpBeanException;
+import ch.avocado.share.model.exceptions.HttpServletException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -37,9 +37,9 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      */
     public static final String PARAMETER_METHOD = "method";
 
-    private void throwMethodNotAllowed(String method) throws HttpBeanException {
+    private void throwMethodNotAllowed(String method) throws HttpServletException {
         if (method == null) throw new NullPointerException("method is null");
-        throw new HttpBeanException(HttpStatusCode.METHOD_NOT_ALLOWED, ErrorMessageConstants.METHOD_NOT_ALLOWED + method);
+        throw new HttpServletException(HttpStatusCode.METHOD_NOT_ALLOWED, ErrorMessageConstants.METHOD_NOT_ALLOWED + method);
     }
 
     /**
@@ -49,9 +49,9 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      * @param request   The http request (not null)
      * @param parameter The parsed parameters (not null)
      * @return The http method to be executed.
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    private HttpMethod getMethodFromRequest(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
+    private HttpMethod getMethodFromRequest(HttpServletRequest request, Map<String, Object> parameter) throws HttpServletException {
         if (request == null) throw new NullPointerException("request is null");
         if (parameter == null) throw new NullPointerException("parameter is null");
         HttpMethod method = HttpMethod.fromString(request.getMethod());
@@ -92,7 +92,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         throw new RuntimeException("Method not checked: " + method);
     }
 
-    private void parseRequestAndCallAction(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException, ServletException {
+    private void parseRequestAndCallAction(HttpServletRequest request, HttpServletResponse response) throws HttpServletException, IOException, ServletException {
         if (request == null) throw new NullPointerException("request is null");
         if (response == null) throw new NullPointerException("response is null");
         Parameter parameter = getParameter(request);
@@ -102,7 +102,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         executeAction(request, response, session, parameter, action);
     }
 
-    protected void executeAction(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter, Action action) throws HttpBeanException, IOException {
+    protected void executeAction(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter, Action action) throws HttpServletException, IOException {
         switch (action) {
             case VIEW:
                 doView(request, response, session, parameter);
@@ -120,7 +120,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
                 doCreate(request, response, session, parameter);
                 break;
             default:
-                throw new HttpBeanException(HttpStatusCode.NOT_IMPLEMENTED, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+                throw new HttpServletException(HttpStatusCode.NOT_IMPLEMENTED, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
         }
     }
 
@@ -159,7 +159,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         if (response == null) throw new NullPointerException("response is null");
         try {
             parseRequestAndCallAction(request, response);
-        } catch (HttpBeanException e) {
+        } catch (HttpServletException e) {
             e.printStackTrace();
             if (!response.isCommitted()) {
                 System.out.println("Sending HttpBeanException: " + e.getDescription() + " - " + e.getStatusCode());
@@ -175,9 +175,9 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      *
      * @param request The request.
      * @return A map of parameter - values.
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    private Parameter getParameter(HttpServletRequest request) throws HttpBeanException {
+    private Parameter getParameter(HttpServletRequest request) throws HttpServletException {
         if (request == null) throw new NullPointerException("request is null");
         if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
             return getMultipartParameter(request);
@@ -190,7 +190,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
                 try {
                     value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.UNSUPPORTED_ENCODING, e);
+                    throw new HttpServletException(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.UNSUPPORTED_ENCODING, e);
                 }
                 parameter.put(paramName, value);
             }
@@ -203,15 +203,15 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      *
      * @param request The request
      * @return A map of Parameter name mapped to the value.
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    private Parameter getMultipartParameter(HttpServletRequest request) throws HttpBeanException {
+    private Parameter getMultipartParameter(HttpServletRequest request) throws HttpServletException {
         Parameter parameter = new Parameter();
         List<FileItem> items;
         try {
             items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
         } catch (FileUploadException e) {
-            throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, e.getMessage());
+            throw new HttpServletException(HttpStatusCode.BAD_REQUEST, e.getMessage());
         }
         for (FileItem item : items) {
             if (item.isFormField()) {
@@ -228,29 +228,29 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
     }
 
     protected void doCreate(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
-            throws HttpBeanException, IOException {
-        throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+            throws HttpServletException, IOException {
+        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
-            throws HttpBeanException, IOException {
-        throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+            throws HttpServletException, IOException {
+        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
 
     }
 
     protected void doUpdate(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
-            throws HttpBeanException, IOException {
-        throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+            throws HttpServletException, IOException {
+        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
     }
 
     protected void doView(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
-            throws HttpBeanException, IOException {
-        throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+            throws HttpServletException, IOException {
+        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
     }
 
     protected void doReplace(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
-            throws HttpBeanException, IOException {
-        throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+            throws HttpServletException, IOException {
+        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
     }
 
 }
