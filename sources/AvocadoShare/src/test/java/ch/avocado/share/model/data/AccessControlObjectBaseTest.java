@@ -54,9 +54,10 @@ public class AccessControlObjectBaseTest {
         categories = new ArrayList<>();
         categories.add(new Category("name"));
         creationDate = new Date();
-        rating = new Rating(Long.parseLong(id));
         ownerId = "9876543";
         description = "Description";
+        rating = new Rating(Long.parseLong(id));
+        rating.addRating(2, Long.parseLong(ownerId));
         object = new Object(id, categories, creationDate, rating, ownerId, description);
         assertFalse(object.isDirty());
     }
@@ -128,7 +129,6 @@ public class AccessControlObjectBaseTest {
         assertNotSame(newCreationDate, object.getCreationDate());
     }
 
-    @Ignore
     @Test
     public void testGetRating() throws Exception {
         assertEquals(rating, object.getRating());
