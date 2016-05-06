@@ -18,7 +18,7 @@ public class GroupTest {
     private static final String DEFAULT_NAME = "name";
     @Before
     public void setUp() {
-        group = new Group("id", new ArrayList<Category>(), new Date(), 0.0f, "owner", "description", DEFAULT_NAME);
+        group = new Group("id", new ArrayList<Category>(), new Date(), new Rating(), "owner", "description", DEFAULT_NAME);
     }
 
     @Test

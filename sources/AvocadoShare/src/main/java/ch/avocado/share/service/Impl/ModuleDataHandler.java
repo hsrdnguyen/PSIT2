@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
@@ -58,7 +59,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Module(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name, new ArrayList<>());
+        return new Module(id, new ArrayList<Category>(), creationDate, new Rating(), ownerId, description, name, new ArrayList<>());
     }
 
     private void getCategories(Module module) throws DataHandlerException {

@@ -2,6 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -67,7 +68,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         if (ownerId == null) {
             ownerId = id;
         }
-        return new Group(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name);
+        return new Group(id, new ArrayList<Category>(), creationDate, new Rating(), ownerId, description, name);
     }
 
     @Override

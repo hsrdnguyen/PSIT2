@@ -14,7 +14,7 @@ public class User extends AccessIdentity {
     private String avatar;
     private EmailAddress mail;
 
-    public User(String id, List<Category> categories, Date creationDate, float rating, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
+    public User(String id, List<Category> categories, Date creationDate, Rating rating, String description, UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
         super(id, categories, creationDate, rating, null, description);
         setAvatar(avatar);
         setMail(mail);
@@ -24,7 +24,7 @@ public class User extends AccessIdentity {
     }
 
     public User(UserPassword password, String prename, String surname, String avatar, EmailAddress mail) {
-        this(null, null, new Date(), 0.0f, "", password, prename, surname, avatar, mail);
+        this(null, null, new Date(), new Rating(), "", password, prename, surname, avatar, mail);
     }
 
     /**

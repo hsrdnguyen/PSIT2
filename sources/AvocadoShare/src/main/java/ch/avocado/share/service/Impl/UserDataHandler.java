@@ -91,7 +91,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             MailVerification verification = new MailVerification(expiry, code);
             password.setResetVerification(verification);
         }
-        return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);
+        return new User(id, null, creationDate, new Rating(), description, password, prename, surname, avatar, email);
     }
 
     private User getUserFromPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataHandlerException {

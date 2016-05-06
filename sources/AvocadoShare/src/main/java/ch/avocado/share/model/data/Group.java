@@ -25,7 +25,7 @@ public class Group extends AccessIdentity implements Serializable {
     public Group(String id,
                  List<Category> categories,
                  Date creationDate,
-                 float rating,
+                 Rating rating,
                  String ownerId,
                  String description,
                  String name) {
@@ -34,7 +34,7 @@ public class Group extends AccessIdentity implements Serializable {
     }
 
     public Group(String ownerId, String description, String name) {
-        this(null, new ArrayList<Category>(), new Date(0), 0.0f, ownerId, description, name);
+        this(null, new ArrayList<Category>(), new Date(0), new Rating(), ownerId, description, name);
     }
 
     /**

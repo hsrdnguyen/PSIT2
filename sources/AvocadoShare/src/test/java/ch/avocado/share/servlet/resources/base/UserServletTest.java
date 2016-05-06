@@ -68,9 +68,9 @@ public class UserServletTest {
 
         response = new MockHttpServletResponse();
         final Date expiry = new Date();
-        dummyUser = new User(null, new ArrayList<Category>(), new Date(), 0.0f, "Description", UserPassword.fromPassword(""), "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new MailVerification(expiry)));
+        dummyUser = new User(null, new ArrayList<Category>(), new Date(), new Rating(), "Description", UserPassword.fromPassword(""), "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new MailVerification(expiry)));
         final Date expiry1 = new Date();
-        accessingUser = new User(null, new ArrayList<Category>(), new Date(), 0.0f, "Description", UserPassword.fromPassword(""), "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new MailVerification(expiry1)));
+        accessingUser = new User(null, new ArrayList<Category>(), new Date(), new Rating(), "Description", UserPassword.fromPassword(""), "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new MailVerification(expiry1)));
 
         ServiceLocator.getService(IUserDataHandler.class).addUser(dummyUser);
         ServiceLocator.getService(IUserDataHandler.class).addUser(accessingUser);

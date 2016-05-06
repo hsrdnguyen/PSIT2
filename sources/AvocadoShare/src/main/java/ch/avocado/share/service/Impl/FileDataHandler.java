@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
@@ -247,7 +248,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         String extension = resultSet.getString(9);
         String mimeType = resultSet.getString(10);
         List<Category> categories = getFileCategoriesFromDb(id);
-        return new File(id, categories, creation, 0.0f, ownerId, description,
+        return new File(id, categories, creation, new Rating(), ownerId, description,
                         title, path, lastChanged, extension, moduleId, mimeType);
 
     }
