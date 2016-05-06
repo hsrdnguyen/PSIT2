@@ -48,6 +48,7 @@ public class FileAccessBeanTest {
         IModuleDataHandler moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+        IRatingDataHandler ratingDataHandler = ServiceLocator.getService(IRatingDataHandler.class);
         securityHandler = ServiceLocator.getService(ISecurityHandler.class);
 
         bean = new FileAccessBean();
@@ -65,6 +66,7 @@ public class FileAccessBeanTest {
         moduleDataHandler.addModule(module);
         file = DummyFactory.newFile(1, owner, module);
         fileDataHandler.addFile(file);
+        ratingDataHandler.addRating(Long.parseLong(file.getId()), Long.parseLong(owner.getId()), 2);
         assertNotNull(fileDataHandler.getFile(file.getId()).getOwnerId());
 
         assertTrue(securityHandler.setAccessLevel(userWithReadRights, file, AccessLevelEnum.READ));

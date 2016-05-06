@@ -13,7 +13,7 @@ public interface IRatingDataHandler {
      * @return The Ranking for the AccessControlObject.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    Rating getRatingForObject(int ratedObjectId) throws DataHandlerException;
+    Rating getRatingForObject(long ratedObjectId) throws DataHandlerException;
 
     /**
      * Gets the rating as integer, which the a User gave to an AccessControlObject.

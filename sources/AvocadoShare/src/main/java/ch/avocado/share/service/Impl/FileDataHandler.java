@@ -8,6 +8,7 @@ import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
+import ch.avocado.share.service.IRatingDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.PreparedStatement;
@@ -248,7 +249,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         String extension = resultSet.getString(9);
         String mimeType = resultSet.getString(10);
         List<Category> categories = getFileCategoriesFromDb(id);
-        return new File(id, categories, creation, new Rating(), ownerId, description,
+        Rating rating = getRatingDataHandler().getRatingForObject(Long.parseLong(id));
+        return new File(id, categories, creation, rating, ownerId, description,
                         title, path, lastChanged, extension, moduleId, mimeType);
 
     }
@@ -256,6 +258,14 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     private ICategoryDataHandler getCategoryDataHandler() throws DataHandlerException {
         try {
             return ServiceLocator.getService(ICategoryDataHandler.class);
+        } catch (ServiceNotFoundException e) {
+            throw new DataHandlerException(e);
+        }
+    }
+
+    private IRatingDataHandler getRatingDataHandler() throws DataHandlerException {
+        try {
+            return ServiceLocator.getService(IRatingDataHandler.class);
         } catch (ServiceNotFoundException e) {
             throw new DataHandlerException(e);
         }
