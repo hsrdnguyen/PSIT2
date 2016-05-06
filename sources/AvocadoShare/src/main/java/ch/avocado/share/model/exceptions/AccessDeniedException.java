@@ -7,7 +7,7 @@ import ch.avocado.share.model.data.User;
 /**
  * Created by coffeemakr on 04.05.16.
  */
-public class AccessDeniedException extends Exception{
+public class AccessDeniedException extends ControllerException{
     private final AccessControlObjectBase target;
     private final User user;
     private final AccessLevelEnum requiredLevel;

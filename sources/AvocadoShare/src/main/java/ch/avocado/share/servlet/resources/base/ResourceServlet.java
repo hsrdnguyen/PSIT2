@@ -1,5 +1,6 @@
 package ch.avocado.share.servlet.resources.base;
 
+import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.controller.ResourceBean;
 import ch.avocado.share.controller.UserSession;
@@ -461,7 +462,7 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
         if (view == View.LIST) {
             List<E> objects = controller.index();
             if (objects == null) {
-                throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR,
                         ERROR_INDEX_FAILED);
             }
             List<Model> models = new ArrayList<>(objects.size());

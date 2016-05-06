@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessControlObjectBase;
@@ -110,7 +111,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @throws HttpBeanException
      */
     public void replace(E object) throws HttpBeanException, DataHandlerException {
-        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Replacement not allowed");
+        throw new HttpBeanException(HttpStatusCode.METHOD_NOT_ALLOWED, "Replacement not allowed");
     }
 
 

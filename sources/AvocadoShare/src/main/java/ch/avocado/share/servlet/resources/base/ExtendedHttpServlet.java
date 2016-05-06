@@ -2,6 +2,7 @@ package ch.avocado.share.servlet.resources.base;
 
 import ch.avocado.share.common.HttpMethod;
 import ch.avocado.share.common.HttpStatusCode;
+import ch.avocado.share.common.ResponseHelper;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.exceptions.HttpBeanException;
@@ -35,11 +36,10 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      * Simulated request parameter.
      */
     public static final String PARAMETER_METHOD = "method";
-    public static final String EXCEPTION_ATTRIBUTE = "ch.avocado.share.servlet.resources.base.ExtendedHttpServlet.excpetion";
 
     private void throwMethodNotAllowed(String method) throws HttpBeanException {
         if (method == null) throw new NullPointerException("method is null");
-        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, ErrorMessageConstants.METHOD_NOT_ALLOWED + method);
+        throw new HttpBeanException(HttpStatusCode.METHOD_NOT_ALLOWED, ErrorMessageConstants.METHOD_NOT_ALLOWED + method);
     }
 
     /**
@@ -163,8 +163,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
             e.printStackTrace();
             if (!response.isCommitted()) {
                 System.out.println("Sending HttpBeanException: " + e.getDescription() + " - " + e.getStatusCode());
-                request.setAttribute(EXCEPTION_ATTRIBUTE, e);
-                response.sendError(e.getStatusCode(), e.getDescription());
+                ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
             } else {
                 throw new ServletException(e.getMessage());
             }
@@ -212,7 +211,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         try {
             items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
         } catch (FileUploadException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, e.getMessage());
         }
         for (FileItem item : items) {
             if (item.isFormField()) {

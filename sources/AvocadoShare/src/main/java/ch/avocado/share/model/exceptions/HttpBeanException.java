@@ -12,50 +12,50 @@ import static ch.avocado.share.common.HttpStatusCode.*;
 
 public class HttpBeanException extends Exception{
     private final String description;
-    private final int statusCode;
-    private final Throwable originalCause;
-    //private final Map<String, String> headers;
-
+    private final HttpStatusCode statusCode;
+    
     public HttpBeanException(DataHandlerException e) {
         this(INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION, e);
     }
 
-    public HttpBeanException(int statusCode, String description, Throwable originalCause) {
-        super(description);
-        this.statusCode = statusCode;
-        this.description = description;
-        this.originalCause = originalCause;
-    }
-
-    public HttpBeanException(int statusCode, String description) {
-        this(statusCode, description, null);
-    }
-
     public HttpBeanException(HttpStatusCode statusCode, String description) {
-        this(statusCode.getCode(), description, null);
+        super(description);
+        this.description = description;
+        this.statusCode = statusCode;
     }
 
     public HttpBeanException(HttpStatusCode statusCode, String description, Throwable originalCause) {
-        this(statusCode.getCode(), description, originalCause);
+        super(description, originalCause);
+        this.statusCode = statusCode;
+        this.description = description;
+    }
+
+    private static String getErrorMessageFromServiceException(ServiceException e) {
+        if(e instanceof ObjectNotFoundException) {
+            return ErrorMessageConstants.OBJECT_NOT_FOUND;
+        } else {
+            if(e instanceof DataHandlerException){
+                return ErrorMessageConstants.DATAHANDLER_EXPCEPTION;
+            } else if(e instanceof ServiceNotFoundException) {
+                return ErrorMessageConstants.SERVICE_NOT_FOUND + ((ServiceNotFoundException) e).getService();
+            } else if(e instanceof FileStorageException) {
+                return ErrorMessageConstants.FILE_STORAGE_EXCEPTION;
+            } else {
+                return ErrorMessageConstants.UNKNOWN_SERVICE_EXCEPTION;
+            }
+        }
+    }
+
+    private static HttpStatusCode getStatusCodeFromServiceException(ServiceException e) {
+        if(e instanceof ObjectNotFoundException) {
+            return NOT_FOUND;
+        } else {
+            return INTERNAL_SERVER_ERROR;
+        }
     }
 
     public HttpBeanException(ServiceException e) {
-        if(e instanceof ObjectNotFoundException) {
-            statusCode = NOT_FOUND.getCode();
-            description  = ErrorMessageConstants.OBJECT_NOT_FOUND;
-        } else {
-            statusCode = INTERNAL_SERVER_ERROR.getCode();
-            if(e instanceof DataHandlerException){
-                description = ErrorMessageConstants.DATAHANDLER_EXPCEPTION;
-            } else if(e instanceof ServiceNotFoundException) {
-                description = ErrorMessageConstants.SERVICE_NOT_FOUND + ((ServiceNotFoundException) e).getService();
-            } else if(e instanceof FileStorageException) {
-                description = ErrorMessageConstants.FILE_STORAGE_EXCEPTION;
-            } else {
-                description = ErrorMessageConstants.UNKNOWN_SERVICE_EXCEPTION;
-            }
-        }
-        originalCause = e;
+        this(getStatusCodeFromServiceException(e), getErrorMessageFromServiceException(e), e);
     }
 
     public HttpBeanException(AccessDeniedException e) {
@@ -67,11 +67,8 @@ public class HttpBeanException extends Exception{
         return this.description;
     }
 
-    public int getStatusCode() {
+    public HttpStatusCode getStatusCode() {
         return statusCode;
     }
 
-    public Throwable getOriginalCause() {
-        return originalCause;
-    }
 }

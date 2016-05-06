@@ -1,6 +1,7 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.Filename;
+import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.FileStorageConstants;
 import ch.avocado.share.model.data.*;
@@ -87,7 +88,7 @@ public class FileBean extends ResourceBean<File> {
      */
     static public List<Module> getModulesToUpload(User user) throws HttpBeanException {
         if (user == null) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
+            throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
         }
         List<Module> modules;
         try {
@@ -305,14 +306,17 @@ public class FileBean extends ResourceBean<File> {
      * @return the rating of the user for the file
      * @throws HttpBeanException is thrown, if there is an error while getting the rating.
      */
-    public int getRatingForAccessingUser() throws HttpBeanException, ServiceNotFoundException {
-        if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId())))
-            throw new HttpBeanException(0, "User hadn't rated yet");
+    public int getRatingForAccessingUser() throws ServiceNotFoundException {
+        if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
+            // TODO: throw appropirate exception
+            throw new RuntimeException("User hadn't rated yet");
+        }
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
         try {
             return ratingDataHandler.getRatingForUserAndObject(Long.parseLong(getAccessingUser().getId()), Long.parseLong(moduleId));
         } catch (DataHandlerException e) {
-            throw new HttpBeanException(e);
+            // TODO: throw appropirate exception
+            throw new RuntimeException(e);
         }
     }
 

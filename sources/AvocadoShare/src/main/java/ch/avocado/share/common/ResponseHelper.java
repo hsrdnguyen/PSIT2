@@ -7,12 +7,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by coffeemakr on 03.05.16.
+ * Helper for sending http responses.
  */
 public class ResponseHelper {
-    static public void sendErrorFromHttpBeanException(HttpBeanException e, HttpServletResponse response) throws IOException {
-        response.sendError(e.getStatusCode(), e.getDescription());
+    public static final String EXCEPTION_ATTRIBUTE = "ch.avocado.share.servlet.resources.base.ExtendedHttpServlet.excpetion";
 
+    static public void sendErrorFromHttpBeanException(HttpBeanException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.setAttribute(EXCEPTION_ATTRIBUTE, e);
+        response.sendError(e.getStatusCode().getCode(), e.getDescription());
     }
 
     public static void redirectToOrigin(HttpServletRequest req, HttpServletResponse resp) throws IOException {

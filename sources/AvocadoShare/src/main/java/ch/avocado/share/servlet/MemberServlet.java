@@ -1,6 +1,7 @@
 package ch.avocado.share.servlet;
 
 import ch.avocado.share.common.HttpStatusCode;
+import ch.avocado.share.common.ResponseHelper;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.UrlHelper;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
@@ -30,7 +31,7 @@ public class MemberServlet extends HttpServlet {
         return new UserSession(request).getUser();
     }
 
-    private void setAccessLevel(User accessingUser, String ownerId, String targetId, String level) throws HttpBeanException, DataHandlerException {
+    private void setAccessLevel(User accessingUser, String ownerId, String targetId, String level) throws HttpBeanException {
         if (ownerId == null || ownerId.isEmpty() || targetId == null || targetId.isEmpty() || level == null || ownerId.equals(targetId)) {
             throw new HttpBeanException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.MISSING_PARAMETER);
         }
@@ -49,12 +50,16 @@ public class MemberServlet extends HttpServlet {
         if(accessingUser == null) {
             throw new HttpBeanException(HttpStatusCode.UNAUTHORIZED, ErrorMessageConstants.NOT_LOGGED_IN);
         }
-        AccessLevelEnum allowedLevel = securityHandler.getAccessLevel(accessingUser.getId(), targetId);
-        if (!allowedLevel.containsLevel(AccessLevelEnum.MANAGE)) {
-            throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
-        }
-        if(!securityHandler.setAccessLevel(ownerId, targetId, accessLevel)) {
-            throw new HttpBeanException(HttpStatusCode.NOT_FOUND, ErrorMessageConstants.OBJECT_NOT_FOUND);
+        try {
+            AccessLevelEnum allowedLevel = securityHandler.getAccessLevel(accessingUser.getId(), targetId);
+            if (!allowedLevel.containsLevel(AccessLevelEnum.MANAGE)) {
+                throw new HttpBeanException(HttpStatusCode.FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
+            }
+            if (!securityHandler.setAccessLevel(ownerId, targetId, accessLevel)) {
+                throw new HttpBeanException(HttpStatusCode.NOT_FOUND, ErrorMessageConstants.OBJECT_NOT_FOUND);
+            }
+        } catch (DataHandlerException e) {
+            throw new HttpBeanException(e);
         }
     }
 
@@ -77,11 +82,7 @@ public class MemberServlet extends HttpServlet {
             setAccessLevel(accessingUser, ownerId, targetId, level);
         } catch (HttpBeanException e) {
             e.printStackTrace();
-            response.sendError(e.getStatusCode(), e.getDescription());
-            return;
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            response.sendError(HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(), ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+            ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
             return;
         }
         UrlHelper urlHelper = new UrlHelper(request);

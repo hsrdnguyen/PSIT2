@@ -131,7 +131,7 @@ public class DownloadServlet extends HttpServlet{
         try {
             download(file, request, response, attached);
         } catch (HttpBeanException e) {
-            ResponseHelper.sendErrorFromHttpBeanException(e, response);
+            ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
         }
     }
 }
