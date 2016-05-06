@@ -162,6 +162,7 @@ public class SQLQueryConstants {
         public static final String UPDATE_UPLOADED = "UPDATE avocado_share.uploaded_into SET module_id = ? WHERE file_id = ?";
         public static final int UPDATE_UPLOADED_INDEX_MODULE = 1;
         public static final int UPDATE_UPLOADED_INDEX_FILE = 2;
+        public static final String SELECT_ALL_FILES ="SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id";
 
     }
 

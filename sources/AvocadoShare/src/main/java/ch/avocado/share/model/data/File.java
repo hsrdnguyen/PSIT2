@@ -72,15 +72,6 @@ public class File extends AccessControlObjectBase {
         if (extension == null) throw new IllegalArgumentException("extension is null");
         this.extension = extension;
     }
-    /*
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        if (version == null) throw new IllegalArgumentException("version is null");
-        this.version = version;
-    }*/
 
     public String getModuleId() {
         return moduleId;
