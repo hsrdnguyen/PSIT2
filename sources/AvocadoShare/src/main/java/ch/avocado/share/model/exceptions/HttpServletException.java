@@ -14,7 +14,6 @@ import static ch.avocado.share.common.HttpStatusCode.*;
  * Exceptions of this kind should normally not be thrown and catched in two different classes.
  */
 public class HttpServletException extends Exception {
-    private final String description;
     private final HttpStatusCode statusCode;
 
     /**
@@ -25,7 +24,6 @@ public class HttpServletException extends Exception {
      */
     public HttpServletException(HttpStatusCode statusCode, String description) {
         super(description);
-        this.description = description;
         this.statusCode = statusCode;
     }
 
@@ -39,7 +37,6 @@ public class HttpServletException extends Exception {
     public HttpServletException(HttpStatusCode statusCode, String description, Throwable originalCause) {
         super(description, originalCause);
         this.statusCode = statusCode;
-        this.description = description;
     }
 
     /**
@@ -82,10 +79,10 @@ public class HttpServletException extends Exception {
     /**
      * Create a new excpetion based on any {@link ServiceException}.
      *
-     * @param e The service exception.
+     * @param exception The service exception.
      */
-    public HttpServletException(ServiceException e) {
-        this(getStatusCodeFromServiceException(e), getErrorMessageFromServiceException(e), e);
+    public HttpServletException(ServiceException exception) {
+        this(getStatusCodeFromServiceException(exception), getErrorMessageFromServiceException(exception), exception);
     }
 
     /**
@@ -95,11 +92,6 @@ public class HttpServletException extends Exception {
      */
     public HttpServletException(AccessDeniedException e) {
         this(HttpStatusCode.FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED, e);
-    }
-
-
-    public String getDescription() {
-        return this.description;
     }
 
     public HttpStatusCode getStatusCode() {

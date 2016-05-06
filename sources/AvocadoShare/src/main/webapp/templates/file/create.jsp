@@ -28,7 +28,7 @@
     try {
         userModules = FileBean.getModulesToUpload(userSession.getUser());
     } catch (HttpServletException e) {
-        response.sendError(e.getStatusCode(), e.getDescription());
+        response.sendError(e.getStatusCode(), e.getMessage());
     }
 
 %>

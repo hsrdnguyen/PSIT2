@@ -14,7 +14,7 @@ public class ResponseHelper {
 
     static public void sendErrorFromHttpBeanException(HttpServletException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setAttribute(EXCEPTION_ATTRIBUTE, e);
-        response.sendError(e.getStatusCode().getCode(), e.getDescription());
+        response.sendError(e.getStatusCode().getCode(), e.getMessage());
     }
 
     public static void redirectToOrigin(HttpServletRequest req, HttpServletResponse resp) throws IOException {

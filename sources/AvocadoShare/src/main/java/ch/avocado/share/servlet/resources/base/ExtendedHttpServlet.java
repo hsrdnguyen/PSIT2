@@ -162,7 +162,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         } catch (HttpServletException e) {
             e.printStackTrace();
             if (!response.isCommitted()) {
-                System.out.println("Sending HttpBeanException: " + e.getDescription() + " - " + e.getStatusCode());
+                System.out.println("Sending HttpBeanException: " + e.getMessage() + " - " + e.getStatusCode());
                 ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
             } else {
                 throw new ServletException(e.getMessage());
