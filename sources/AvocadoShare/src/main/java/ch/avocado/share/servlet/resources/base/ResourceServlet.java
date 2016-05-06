@@ -363,6 +363,8 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
             bean.destroy(object);
         } catch (ServiceException e) {
             throw new HttpServletException(e);
+        } catch (AccessDeniedException e) {
+            throw new HttpServletException(e);
         }
         redirectAfterSuccess(request, response, Action.DELETE, object);
     }

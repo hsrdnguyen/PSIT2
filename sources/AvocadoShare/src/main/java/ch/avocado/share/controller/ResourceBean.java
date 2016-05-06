@@ -9,6 +9,7 @@ import ch.avocado.share.model.data.Members;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.AccessDeniedException;
 import ch.avocado.share.model.exceptions.HttpServletException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -100,18 +101,9 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     /**
      * Destroy the object
      *
-     * @throws HttpServletException
+     * @throws ServiceException
      */
-    public abstract void destroy(E object) throws ServiceException;
-
-    /**
-     * Replace the object
-     *
-     * @throws HttpServletException
-     */
-    public void replace(E object) throws HttpServletException, DataHandlerException {
-        throw new HttpServletException(HttpStatusCode.METHOD_NOT_ALLOWED, "Replacement not allowed");
-    }
+    public abstract void destroy(E object) throws ServiceException, AccessDeniedException;
 
 
     public Members getMembers(E object) throws HttpServletException {
