@@ -20,7 +20,7 @@ public class FileTest {
         this.file = new File("id", new ArrayList<Category>(), new Date(), 0.0f, "1234", "description", "title", "path", new Date(), "", "4123321", "image/png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetTitleNull() throws Exception {
         file.setTitle(null);
     }
@@ -30,12 +30,12 @@ public class FileTest {
         file.setTitle("");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetLastChangedNull() throws Exception {
         file.setLastChanged(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetDiskFileNull() throws Exception {
         file.setDiskFile(null);
     }
@@ -45,12 +45,12 @@ public class FileTest {
         file.setModuleId("");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetModuleIdToNull() throws Exception {
         file.setModuleId(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetCategoriesToNull() throws Exception {
         file.setCategories(null);
     }

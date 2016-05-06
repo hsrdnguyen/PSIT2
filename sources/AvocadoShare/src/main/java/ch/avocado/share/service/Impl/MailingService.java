@@ -18,7 +18,7 @@ public class MailingService implements IMailingService {
 
     @Override
     public boolean sendVerificationEmail(User user) {
-        if (user == null) throw new IllegalArgumentException("user is Null");
+        if (user == null) throw new NullPointerException("user is Null");
         if (user.getMail().getVerification() == null) throw new IllegalArgumentException("emailAddressVerification is Null");
 
         Session session = prepareMessage();
@@ -39,9 +39,9 @@ public class MailingService implements IMailingService {
 
     @Override
     public boolean sendRequestAccessEmail(User requestingUser, User owningUser, File file) {
-        if (requestingUser == null) throw new IllegalArgumentException("user is Null");
-        if (file == null) throw new IllegalArgumentException("file is Null");
-        if (owningUser == null) throw new IllegalArgumentException("owningUser is Null");
+        if (requestingUser == null) throw new NullPointerException("user is Null");
+        if (file == null) throw new NullPointerException("file is Null");
+        if (owningUser == null) throw new NullPointerException("owningUser is Null");
 
         Session session = prepareMessage();
 
@@ -58,7 +58,7 @@ public class MailingService implements IMailingService {
 
     @Override
     public boolean sendPasswordResetEmail(User user) {
-        if (user == null) throw new IllegalArgumentException("user is Null");
+        if (user == null) throw new NullPointerException("user is Null");
         String code, email;
         Session session = prepareMessage();
 

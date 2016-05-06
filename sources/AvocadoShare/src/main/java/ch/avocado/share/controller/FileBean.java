@@ -184,7 +184,7 @@ public class FileBean extends ResourceBean<File> {
      * @throws FileStorageException     the file could not be uploaded
      */
     private DiskFile uploadFile(FileItem fileItem) throws ServiceNotFoundException, FileStorageException {
-        if (fileItem == null) throw new IllegalArgumentException("fileItem is null");
+        if (fileItem == null) throw new NullPointerException("fileItem is null");
         IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
         String mimeType, path, extension;
         DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -295,7 +295,7 @@ public class FileBean extends ResourceBean<File> {
      * @param category The category which you want to remove from the file
      */
     public void removeCategory(Category category) {
-        if (category == null) throw new IllegalArgumentException("category is null");
+        if (category == null) throw new NullPointerException("category is null");
         categories.remove(category); //TODO @kunzlio1: fragen was wir aus dem jsp heraus bekommen? (Category Obj oder name)
     }
 

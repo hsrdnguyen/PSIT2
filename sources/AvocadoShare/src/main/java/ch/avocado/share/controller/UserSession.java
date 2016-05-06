@@ -44,7 +44,7 @@ public class UserSession {
 	 * @param session
 	 */
 	private UserSession(HttpSession session) {
-		if(session == null) throw new IllegalArgumentException("session can't be null");
+		if(session == null) throw new NullPointerException("session can't be null");
 		this.session = session;
         userId = (String) this.session.getAttribute(SESSION_UID);
         user = null;
@@ -76,7 +76,7 @@ public class UserSession {
 	 * @param user The user.
      */
 	public void authenticate(User user) {
-        if(user == null) throw new IllegalArgumentException("user is null");
+        if(user == null) throw new NullPointerException("user is null");
         if(user.getId() == null) throw new IllegalArgumentException("user's id is null");
 		this.user = user;
 		this.userId = user.getId();

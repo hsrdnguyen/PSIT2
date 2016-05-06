@@ -10,7 +10,7 @@ public class CategoryList extends AbstractCollection<Category> {
     Set<Category> categories = null;
 
     public CategoryList(Collection<Category> originalCategories) {
-        if(originalCategories == null) throw new IllegalArgumentException("originalCategories is null");
+        if(originalCategories == null) throw new NullPointerException("originalCategories is null");
         this.originalCategories = new HashSet<>(originalCategories.size());
         this.originalCategories.addAll(originalCategories);
 
@@ -30,7 +30,7 @@ public class CategoryList extends AbstractCollection<Category> {
      */
     @Override
     public boolean add(Category category) {
-        if(category == null) throw new IllegalArgumentException("category is null");
+        if(category == null) throw new NullPointerException("category is null");
         Set<Category> categories = getCategories();
         boolean result = categories.add(category);
         this.categories = categories;
@@ -38,7 +38,7 @@ public class CategoryList extends AbstractCollection<Category> {
     }
 
     public void setCategories(Collection<Category> categories) {
-        if(categories == null) throw new IllegalArgumentException("categories is null");
+        if(categories == null) throw new NullPointerException("categories is null");
         this.categories = new HashSet<>(categories);
     }
 

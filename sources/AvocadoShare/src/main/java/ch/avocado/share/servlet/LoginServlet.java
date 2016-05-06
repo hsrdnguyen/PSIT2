@@ -77,7 +77,7 @@ public class LoginServlet extends HttpServlet {
 
     private void redirectIfUrlIsValid(String url, HttpServletResponse response) {
         if(url == null) throw  new IllegalArgumentException("url is null");
-        if(response == null) throw new IllegalArgumentException("response is null");
+        if(response == null) throw new NullPointerException("response is null");
         url = getValidRedirectUrl(url);
         try {
             response.sendRedirect(url);

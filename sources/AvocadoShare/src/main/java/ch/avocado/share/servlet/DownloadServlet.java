@@ -36,7 +36,7 @@ public class DownloadServlet extends HttpServlet{
     private static final int DOWNLOAD_BUFFER_SIZE = 512;
 
     static public String getStreamUrl(File file) {
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(file == null) throw new NullPointerException("file is null");
         return "/download?" + PARAMETER_ID + "=" + Encoder.forUrl(file.getId());
     }
 

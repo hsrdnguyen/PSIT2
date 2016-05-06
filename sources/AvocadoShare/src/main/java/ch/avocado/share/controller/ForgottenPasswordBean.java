@@ -34,7 +34,7 @@ public class ForgottenPasswordBean implements Serializable {
     }
 
     public void setEmail(String email) {
-        if (email == null) throw new IllegalArgumentException("email can't be null");
+        if (email == null) throw new NullPointerException("email can't be null");
         this.email = email;
     }
 
@@ -125,7 +125,7 @@ public class ForgottenPasswordBean implements Serializable {
      * @param code The password reset code.
      */
     public void setCode(String code) {
-        if (code == null) throw new IllegalArgumentException("code can't be null");
+        if (code == null) throw new NullPointerException("code can't be null");
         this.code = code;
     }
 
@@ -133,7 +133,7 @@ public class ForgottenPasswordBean implements Serializable {
      * @param passwordConfirmation The repeated password
      */
     public void setPasswordConfirmation(String passwordConfirmation) {
-        if (passwordConfirmation == null) throw new IllegalArgumentException("passwordConfirmation can't be null");
+        if (passwordConfirmation == null) throw new NullPointerException("passwordConfirmation can't be null");
         this.passwordConfirmation = passwordConfirmation;
     }
 
@@ -141,7 +141,7 @@ public class ForgottenPasswordBean implements Serializable {
      * @param password The new password
      */
     public void setPassword(String password) {
-        if (password == null) throw new IllegalArgumentException("password can't be null");
+        if (password == null) throw new NullPointerException("password can't be null");
         this.password = password;
     }
 
@@ -153,8 +153,8 @@ public class ForgottenPasswordBean implements Serializable {
      * @return The user or null
      */
     private User getUserFromEmail(IUserDataHandler userDataHandler, String email) {
-        if (userDataHandler == null) throw new IllegalArgumentException("userDataHandler is null");
-        if (email == null) throw new IllegalArgumentException("email is null");
+        if (userDataHandler == null) throw new NullPointerException("userDataHandler is null");
+        if (email == null) throw new NullPointerException("email is null");
         User user;
         try {
             user = userDataHandler.getUserByEmailAddress(email);

@@ -29,7 +29,7 @@ public class Asserts {
     }
 
     private static List<String> getCategoryNames(Collection<Category> categories) {
-        if(categories == null) throw new IllegalArgumentException("categories is null");
+        if(categories == null) throw new NullPointerException("categories is null");
         ArrayList<String> names = new ArrayList<>(categories.size());
         for(Category category: categories) {
             names.add(category.getName());

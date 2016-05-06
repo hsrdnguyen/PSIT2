@@ -46,8 +46,8 @@ abstract class DataHandlerBase {
     }
 
     protected void updateObject(AccessControlObjectBase object) throws DataHandlerException, ObjectNotFoundException {
-        if (object == null) throw new IllegalArgumentException("object is null");
-        if (object.getId() == null) throw new IllegalArgumentException("object.id is null");
+        if (object == null) throw new NullPointerException("object is null");
+        if (object.getId() == null) throw new NullPointerException("object.id is null");
         long objectId;
         try {
             objectId = Long.parseLong(object.getId());
@@ -65,7 +65,7 @@ abstract class DataHandlerBase {
     }
 
     private boolean updateDescription(long objectId, String description) throws DataHandlerException {
-        if (description == null) throw new IllegalArgumentException("description is null");
+        if (description == null) throw new NullPointerException("description is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(UPDATE_ACCESS_CONTROL_DESCRIPTION);
             preparedStatement.setLong(UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX, objectId);
@@ -122,7 +122,7 @@ abstract class DataHandlerBase {
      * @throws ObjectNotFoundException If the object doesn't exist
      */
     protected void deleteAccessControlObject(AccessControlObjectBase object) throws DataHandlerException, ObjectNotFoundException {
-        if(object == null) throw new IllegalArgumentException("object is null");
+        if(object == null) throw new NullPointerException("object is null");
         if(object.getId() == null) throw new IllegalArgumentException("object.id is null");
         long id;
         try {
@@ -149,8 +149,8 @@ abstract class DataHandlerBase {
      * @throws DataHandlerException If something went wrong
      */
     protected String addAccessControlObject(AccessControlObjectBase object) throws DataHandlerException {
-        if (object == null) throw new IllegalArgumentException("object is null");
-        if (object.getDescription() == null) throw new IllegalArgumentException("object.description is null");
+        if (object == null) throw new NullPointerException("object is null");
+        if (object.getDescription() == null) throw new NullPointerException("object.description is null");
         String id;
         Long ownerId = null;
         if(object.getOwnerId() != null) {

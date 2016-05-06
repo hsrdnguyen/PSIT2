@@ -53,7 +53,7 @@ public class CategoryListTest {
         assertCategoriesEquals(newCategories, categoryList);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetCategoriesWithNull() throws Exception {
         categoryList.setCategories(null);
     }

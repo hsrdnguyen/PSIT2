@@ -23,12 +23,12 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
     }
 
     protected E get(String id) {
-        if(id == null) throw new IllegalArgumentException("id is null");
+        if(id == null) throw new NullPointerException("id is null");
         return objects.get(id);
     }
 
     protected String add(E object) {
-        if(object == null) throw new IllegalArgumentException("object is null");
+        if(object == null) throw new NullPointerException("object is null");
         if(object.getId() != null) throw new IllegalArgumentException("object.getId() is not null");
         Random random = new Random();
         object.setId("object_" + random.nextLong() + random.nextLong());
@@ -45,7 +45,7 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
     }
 
     protected void update(E object) throws ObjectNotFoundException {
-        if(object == null) throw new IllegalArgumentException("object is null");
+        if(object == null) throw new NullPointerException("object is null");
         if(objects.containsKey(object.getId())) {
             objects.put(object.getId(), object);
         } else {

@@ -90,7 +90,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public File getFile(String fileId) throws DataHandlerException, ObjectNotFoundException {
-        if (fileId == null) throw new IllegalArgumentException("fileId is null");
+        if (fileId == null) throw new NullPointerException("fileId is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         try {
@@ -109,7 +109,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public List<File> getFiles(List<String> idList) throws DataHandlerException {
-        if(idList == null) throw new IllegalArgumentException("idList is null");
+        if(idList == null) throw new NullPointerException("idList is null");
         if(idList.isEmpty()) return new ArrayList<>();
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         ResultSet result = null;
@@ -153,8 +153,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     @Override
     public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException, ObjectNotFoundException {
-        if (fileTitle == null) throw new IllegalArgumentException("fileTitle is null");
-        if (moduleId == null) throw new IllegalArgumentException("moduleId is null");
+        if (fileTitle == null) throw new NullPointerException("fileTitle is null");
+        if (moduleId == null) throw new NullPointerException("moduleId is null");
         long parsedModuleId = Long.parseLong(moduleId);
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler == null) return null;
@@ -177,7 +177,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     @Override
     public void updateFile(File file) throws DataHandlerException, ObjectNotFoundException {
         if(file == null)throw new IllegalArgumentException("file is null");
-        if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
+        if(file.getId() == null) throw new NullPointerException("file.id is null");
         long fileId;
         try {
             fileId = Long.parseLong(file.getId());

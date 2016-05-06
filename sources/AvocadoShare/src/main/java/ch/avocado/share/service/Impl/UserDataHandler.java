@@ -22,7 +22,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public String addUser(User user) throws DataHandlerException {
-        if (user == null) throw new IllegalArgumentException("user is null");
+        if (user == null) throw new NullPointerException("user is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         try {
             user.setId(addAccessControlObject(user));
@@ -88,7 +88,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public User getUser(String userId) throws DataHandlerException, ObjectNotFoundException {
-        if (userId == null) throw new IllegalArgumentException("userId is null");
+        if (userId == null) throw new NullPointerException("userId is null");
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_USER_QUERY);
             preparedStatement.setLong(1, Long.parseLong(userId));
@@ -102,7 +102,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public User getUserByEmailAddress(String emailAddress) throws DataHandlerException, ObjectNotFoundException {
-        if (emailAddress == null) throw new IllegalArgumentException("emailAddress is null");
+        if (emailAddress == null) throw new NullPointerException("emailAddress is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler == null) return null;
         try {
@@ -118,7 +118,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
 
     private MailVerification getEmailAddressVerification(String userId, String address) throws DataHandlerException {
-        if (userId == null) throw new IllegalArgumentException("userId is null");
+        if (userId == null) throw new NullPointerException("userId is null");
         Date expiry;
         String code;
         try {
@@ -157,10 +157,10 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public boolean addMail(User user) throws DataHandlerException {
-        if (user == null) throw new IllegalArgumentException("user is null");
-        if (user.getId() == null) throw new IllegalArgumentException("user.id is null");
-        if (user.getMail() == null) throw new IllegalArgumentException("user.mail is null");
-        if (user.getMail().getAddress() == null) throw new IllegalArgumentException("user.mail.address is null");
+        if (user == null) throw new NullPointerException("user is null");
+        if (user.getId() == null) throw new NullPointerException("user.id is null");
+        if (user.getMail() == null) throw new NullPointerException("user.mail is null");
+        if (user.getMail().getAddress() == null) throw new NullPointerException("user.mail.address is null");
 
         PreparedStatement stmt;
         IDatabaseConnectionHandler connectionHandler;
@@ -186,8 +186,8 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
     private void addEmailAddressVerification(long userId, String address, MailVerification verification) throws SQLException, DataHandlerException {
-        if(address == null) throw new IllegalArgumentException("address is null");
-        if(verification == null) throw new IllegalArgumentException("verification is null");
+        if(address == null) throw new NullPointerException("address is null");
+        if(verification == null) throw new NullPointerException("verification is null");
         IDatabaseConnectionHandler handler = getConnectionHandler();
         PreparedStatement stmt = handler.getPreparedStatement(INSERT_MAIL_VERIFICATION);
         stmt.setLong(INSERT_MAIL_VERIFICATION_INDEX_USER, userId);
@@ -219,7 +219,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public void updateUser(User user) throws DataHandlerException, ObjectNotFoundException {
-        if (user == null) throw new IllegalArgumentException("user is null");
+        if (user == null) throw new NullPointerException("user is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         updateObject(user);
         long userId = Long.parseLong(user.getId());
@@ -243,7 +243,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     }
 
     private boolean addPasswordResetVerification(long userId, MailVerification verification) throws DataHandlerException, SQLException {
-        if (verification == null) throw new IllegalArgumentException("verification is null");
+        if (verification == null) throw new NullPointerException("verification is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement stmt;
 
@@ -277,7 +277,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
 
     @Override
     public List<User> search(Set<String> searchTerms) throws DataHandlerException {
-        if (searchTerms == null) throw new IllegalArgumentException("searchTerms is null");
+        if (searchTerms == null) throw new NullPointerException("searchTerms is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         searchTerms.remove("");
         if (searchTerms.isEmpty()) {

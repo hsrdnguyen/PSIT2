@@ -103,12 +103,12 @@ public class VerificationBeanTest {
 
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetCodeToNull() throws Exception {
         bean.setCode(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetEmailToNull() throws Exception {
         bean.setEmail(null);
     }

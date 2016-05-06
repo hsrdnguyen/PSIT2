@@ -26,8 +26,8 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
 
     @Override
     public String addModule(Module module) throws DataHandlerException {
-        if(module == null) throw new IllegalArgumentException("module is null");
-        if(module.getOwnerId() == null) throw new IllegalArgumentException("module.ownerId is null");
+        if(module == null) throw new NullPointerException("module is null");
+        if(module.getOwnerId() == null) throw new NullPointerException("module.ownerId is null");
         String id = addAccessControlObject(module);
         module.setId(id);
         try {
@@ -149,7 +149,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
 
     @Override
     public List<Module> getModules(Collection<String> ids) throws DataHandlerException {
-        if (ids == null) throw new IllegalArgumentException("ids is null");
+        if (ids == null) throw new NullPointerException("ids is null");
         if (ids.isEmpty()) return new ArrayList<>();
         String query = SELECT_BY_ID_LIST + getIdList(ids);
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -165,8 +165,8 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
 
     @Override
     public void updateModule(Module module) throws DataHandlerException, ObjectNotFoundException {
-        if(module == null) throw new IllegalArgumentException("module is null");
-        if(module.getId() == null) throw new IllegalArgumentException("module.id is null");
+        if(module == null) throw new NullPointerException("module is null");
+        if(module.getId() == null) throw new NullPointerException("module.id is null");
         long moduleId;
         try {
             moduleId = Long.parseLong(module.getId());

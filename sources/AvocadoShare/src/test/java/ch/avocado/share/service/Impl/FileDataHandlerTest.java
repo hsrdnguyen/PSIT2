@@ -111,7 +111,7 @@ public class FileDataHandlerTest {
         return categories;
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddNull() throws Exception {
         fileDataHandler.addFile(null);
     }
@@ -158,7 +158,7 @@ public class FileDataHandlerTest {
         assertCategoriesEquals(expected.getCategoryList(), actual.getCategoryList());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteNull() throws Exception {
         fileDataHandler.deleteFile(null);
     }

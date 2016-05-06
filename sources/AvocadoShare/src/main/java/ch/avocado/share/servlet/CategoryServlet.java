@@ -30,8 +30,8 @@ public class CategoryServlet extends ExtendedHttpServlet {
     public static final String PARAMETER_CATEGORY = "category";
 
     private void ensureHasWriteAccess(User user, File file) throws HttpBeanException {
-        if(user == null) throw new IllegalArgumentException("user is null");
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(user == null) throw new NullPointerException("user is null");
+        if(file == null) throw new NullPointerException("file is null");
         ISecurityHandler securityHandler;
         AccessLevelEnum level;
         try {

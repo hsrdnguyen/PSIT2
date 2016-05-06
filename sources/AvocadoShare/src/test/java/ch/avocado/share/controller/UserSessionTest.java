@@ -54,7 +54,7 @@ public class UserSessionTest {
         assertTrue(session.isAuthenticated());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAuthenticateWithNull() throws Exception {
         UserSession session = new UserSession(request);
         session.authenticate(null);

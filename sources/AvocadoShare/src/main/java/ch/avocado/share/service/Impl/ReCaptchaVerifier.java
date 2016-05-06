@@ -36,8 +36,8 @@ public class ReCaptchaVerifier implements ICaptchaVerifier {
         private final String hostname;
 
         public ApiResponse(boolean valid, Date timestamp, String hostname) {
-            if(timestamp == null) throw new IllegalArgumentException("timestamp is null");
-            if(hostname == null) throw new IllegalArgumentException("hostname is null");
+            if(timestamp == null) throw new NullPointerException("timestamp is null");
+            if(hostname == null) throw new NullPointerException("hostname is null");
             this.valid = valid;
             this.timestamp = timestamp;
             this.hostname = hostname;
@@ -86,7 +86,7 @@ public class ReCaptchaVerifier implements ICaptchaVerifier {
     }
 
     private String getPostPayload(String response, String remoteAddress) throws UnsupportedEncodingException {
-        if(response == null) throw new IllegalArgumentException("response is null");
+        if(response == null) throw new NullPointerException("response is null");
         String payload = encodePostParameter(API_PARAM_SECRET, CLIENT_SECRET) + "&";
         if(VERIFY_REMOTE_ADDRESS && remoteAddress != null) {
             payload += encodePostParameter(API_PARAM_REMOTE_ADDRESS, remoteAddress) + "&";

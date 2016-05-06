@@ -100,7 +100,7 @@ public class GroupDataHandlerTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddNull() throws Exception {
         groupDataHandler.addGroup(null);
     }
@@ -156,7 +156,7 @@ public class GroupDataHandlerTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteNull() throws Exception {
         groupDataHandler.deleteGroup(null);
     }

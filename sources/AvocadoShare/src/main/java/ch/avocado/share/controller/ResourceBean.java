@@ -204,8 +204,8 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @throws HttpBeanException If the required access is not met.
      */
     protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws ServiceNotFoundException, DataHandlerException, AccessDeniedException {
-        if (target == null) throw new IllegalArgumentException("target is null");
-        if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
+        if (target == null) throw new NullPointerException("target is null");
+        if (requiredLevel == null) throw new NullPointerException("requiredLevel is null");
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         AccessLevelEnum grantedAccessLevel;
         User user = getAccessingUser();

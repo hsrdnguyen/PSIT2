@@ -33,7 +33,7 @@ public class FormBuilder {
     }
 
     static private AccessControlObjectBase checkObjectNotNull(AccessControlObjectBase object) {
-        if (object == null) throw new IllegalArgumentException("object is null");
+        if (object == null) throw new NullPointerException("object is null");
         return object;
     }
 
@@ -46,7 +46,7 @@ public class FormBuilder {
     }
 
     public FormBuilder(AccessControlObjectBase object, Class<? extends AccessControlObjectBase> resourceClass, FormError formErrors) {
-        if (resourceClass == null) throw new IllegalArgumentException("objectClass is null");
+        if (resourceClass == null) throw new NullPointerException("objectClass is null");
         if (formErrors == null) {
             this.formErrors = new FormError();
         } else {
@@ -126,7 +126,7 @@ public class FormBuilder {
      * @return The input type of the method
      */
     private InputType getTypeFromGetter(Method getter) {
-        if (getter == null) throw new IllegalArgumentException("getter is null");
+        if (getter == null) throw new NullPointerException("getter is null");
         InputType type;
         Class fieldType = getter.getReturnType();
         if (fieldType == String.class) {
@@ -182,7 +182,7 @@ public class FormBuilder {
     }
 
     public String getLabelFor(String fieldName, String htmlClass) {
-        if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
+        if (fieldName == null) throw new NullPointerException("fieldName is null");
         String content;
         if (readableFieldNames.containsKey(fieldName)) {
             content = readableFieldNames.get(fieldName);
@@ -226,7 +226,7 @@ public class FormBuilder {
      * @return A select field
      */
     public SelectField getSelectFor(String fieldName, Iterable<? extends AccessControlObjectBase> objects, String selectedId) {
-        if (fieldName == null) throw new IllegalArgumentException("fieldName is null");
+        if (fieldName == null) throw new NullPointerException("fieldName is null");
         SelectField selectField = new SelectField(fieldName, getIdForFieldName(fieldName));
         if(selectedId == null) {
             if (object != null) {
@@ -255,7 +255,7 @@ public class FormBuilder {
      * @return The input field.
      */
     public InputField getInputFor(String fieldName, InputType type, String value) {
-        if (fieldName == null) throw new IllegalArgumentException("field is null");
+        if (fieldName == null) throw new NullPointerException("field is null");
         if (type == null || value == null) {
             Method getter = null;
             if (type == null) {
@@ -281,7 +281,7 @@ public class FormBuilder {
     }
 
     private String getValueFromGetter(Method getter) {
-        if (getter == null) throw new IllegalArgumentException("getter is null");
+        if (getter == null) throw new NullPointerException("getter is null");
         if (object == null) throw new IllegalStateException("object is null");
         String value;
         try {
@@ -311,7 +311,7 @@ public class FormBuilder {
      * @param action The http action
      */
     public void setAction(String action) {
-        if (action == null) throw new IllegalArgumentException("action is null");
+        if (action == null) throw new NullPointerException("action is null");
         this.action = action;
     }
 

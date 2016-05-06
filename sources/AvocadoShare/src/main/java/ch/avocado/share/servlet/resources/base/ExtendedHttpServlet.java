@@ -38,7 +38,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
     public static final String EXCEPTION_ATTRIBUTE = "ch.avocado.share.servlet.resources.base.ExtendedHttpServlet.excpetion";
 
     private void throwMethodNotAllowed(String method) throws HttpBeanException {
-        if (method == null) throw new IllegalArgumentException("method is null");
+        if (method == null) throw new NullPointerException("method is null");
         throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, ErrorMessageConstants.METHOD_NOT_ALLOWED + method);
     }
 
@@ -52,8 +52,8 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      * @throws HttpBeanException
      */
     private HttpMethod getMethodFromRequest(HttpServletRequest request, Map<String, Object> parameter) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        if (parameter == null) throw new IllegalArgumentException("parameter is null");
+        if (request == null) throw new NullPointerException("request is null");
+        if (parameter == null) throw new NullPointerException("parameter is null");
         HttpMethod method = HttpMethod.fromString(request.getMethod());
         if (method == HttpMethod.POST) {
             if (parameter.containsKey(PARAMETER_METHOD)) {
@@ -76,7 +76,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      * @return The action
      */
     private Action getActionFromMethod(HttpMethod method) {
-        if (method == null) throw new IllegalArgumentException("method is null");
+        if (method == null) throw new NullPointerException("method is null");
         switch (method) {
             case POST:
                 return Action.CREATE;
@@ -93,8 +93,8 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
     }
 
     private void parseRequestAndCallAction(HttpServletRequest request, HttpServletResponse response) throws HttpBeanException, IOException, ServletException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        if (response == null) throw new IllegalArgumentException("response is null");
+        if (request == null) throw new NullPointerException("request is null");
+        if (response == null) throw new NullPointerException("response is null");
         Parameter parameter = getParameter(request);
         HttpMethod method = getMethodFromRequest(request, parameter);
         UserSession session = new UserSession(request);
@@ -155,8 +155,8 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      * @throws ServletException
      */
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (request == null) throw new IllegalArgumentException("request is null");
-        if (response == null) throw new IllegalArgumentException("response is null");
+        if (request == null) throw new NullPointerException("request is null");
+        if (response == null) throw new NullPointerException("response is null");
         try {
             parseRequestAndCallAction(request, response);
         } catch (HttpBeanException e) {
@@ -179,7 +179,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
      * @throws HttpBeanException
      */
     private Parameter getParameter(HttpServletRequest request) throws HttpBeanException {
-        if (request == null) throw new IllegalArgumentException("request is null");
+        if (request == null) throw new NullPointerException("request is null");
         if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
             return getMultipartParameter(request);
         } else {

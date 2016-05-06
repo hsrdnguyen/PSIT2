@@ -36,8 +36,8 @@ public class FileAccessBean implements Serializable {
      * @return
      */
     public boolean requestAccess() {
-        if (fileId == null) throw new IllegalArgumentException("fileId is null");
-        if (requesterUserMail == null) throw new IllegalArgumentException("requestingUserMail is null");
+        if (fileId == null) throw new NullPointerException("fileId is null");
+        if (requesterUserMail == null) throw new NullPointerException("requestingUserMail is null");
         IMailingService mailingService;
         IFileDataHandler fileDataHandler;
         IUserDataHandler userDataHandler;
@@ -80,9 +80,9 @@ public class FileAccessBean implements Serializable {
     }
 
     public boolean grantAccess() {
-        if (requesterUserId == null) throw new IllegalArgumentException("requesterUserId is null");
-        if (objectOwner == null) throw new IllegalArgumentException("objectOwner is null");
-        if (fileId == null) throw new IllegalArgumentException("fileId is null");
+        if (requesterUserId == null) throw new NullPointerException("requesterUserId is null");
+        if (objectOwner == null) throw new NullPointerException("objectOwner is null");
+        if (fileId == null) throw new NullPointerException("fileId is null");
 
         IFileDataHandler fileDataHandler;
         ISecurityHandler securityHandler;

@@ -22,7 +22,7 @@ public abstract class PreviewFactory {
      * @throws PreviewException
      */
     protected String getStreamUrl(File file) throws PreviewException {
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(file == null) throw new NullPointerException("file is null");
 
         return DownloadServlet.getStreamUrl(file) + "&cache=" + file.getPath();
 

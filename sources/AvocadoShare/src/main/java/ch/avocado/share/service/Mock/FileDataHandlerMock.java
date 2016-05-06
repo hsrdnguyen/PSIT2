@@ -18,10 +18,10 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
 
     @Override
     public String addFile(File file) throws DataHandlerException {
-        if(file.getTitle() == null) throw new IllegalArgumentException("file.title is null");
-        if(file.getModuleId() == null) throw new IllegalArgumentException("file.moduleId is null");
-        if(file.getPath() == null) throw new IllegalArgumentException("file.path is null");
-        if(file.getLastChanged() == null) throw new IllegalArgumentException("file.lastChanged is null");
+        if(file.getTitle() == null) throw new NullPointerException("file.title is null");
+        if(file.getModuleId() == null) throw new NullPointerException("file.moduleId is null");
+        if(file.getPath() == null) throw new NullPointerException("file.path is null");
+        if(file.getLastChanged() == null) throw new NullPointerException("file.lastChanged is null");
         return add(file);
     }
 
@@ -54,8 +54,8 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
 
     @Override
     public File getFileByTitleAndModule(String fileTitle, String moduleId) {
-        if(fileTitle == null) throw new IllegalArgumentException("fileTitle is null");
-        if(moduleId == null) throw new IllegalArgumentException("moduleId is null");
+        if(fileTitle == null) throw new NullPointerException("fileTitle is null");
+        if(moduleId == null) throw new NullPointerException("moduleId is null");
         for(File file: objects.values()) {
             if(fileTitle.equals(file.getTitle()) && moduleId.equals(file.getModuleId())) {
                 return file;

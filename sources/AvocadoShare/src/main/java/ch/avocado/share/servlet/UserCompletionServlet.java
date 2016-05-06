@@ -37,8 +37,8 @@ public class UserCompletionServlet extends HttpServlet {
     }
 
     private void renderResult(List<User> users, OutputStream out) throws IOException {
-        if(users == null) throw new IllegalArgumentException("users is null");
-        if(out == null) throw new IllegalArgumentException("out is null");
+        if(users == null) throw new NullPointerException("users is null");
+        if(out == null) throw new NullPointerException("out is null");
 
         out.write("{\"users\":[".getBytes());
         Iterator<User> i = users.iterator();

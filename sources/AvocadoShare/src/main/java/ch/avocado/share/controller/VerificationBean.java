@@ -59,7 +59,7 @@ public class VerificationBean implements Serializable {
     }
 
     public void setCode(String code) {
-        if (code == null) throw new IllegalArgumentException("code is null");
+        if (code == null) throw new NullPointerException("code is null");
         this.code = code;
     }
 
@@ -68,7 +68,7 @@ public class VerificationBean implements Serializable {
     }
 
     public void setEmail(String email) {
-        if (email == null) throw new IllegalArgumentException("email is null");
+        if (email == null) throw new NullPointerException("email is null");
         this.email = email;
     }
 

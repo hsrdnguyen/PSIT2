@@ -25,7 +25,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
 
     private PreparedStatement getGetStatement(String id) throws DataHandlerException {
-        if (id == null) throw new IllegalArgumentException("id is null");
+        if (id == null) throw new NullPointerException("id is null");
         PreparedStatement statement;
 
         try {
@@ -43,7 +43,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
      * @throws DataHandlerException
      */
     private ResultSet executeGetStatement(PreparedStatement statement) throws DataHandlerException {
-        if (statement == null) throw new IllegalArgumentException("statement is null");
+        if (statement == null) throw new NullPointerException("statement is null");
         try {
             return getConnectionHandler().executeQuery(statement);
         } catch (SQLException e) {
@@ -52,7 +52,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     }
 
     private Group getGroupFromResultSet(ResultSet resultSet) throws DataHandlerException {
-        if (resultSet == null) throw new IllegalArgumentException("resultSet is null");
+        if (resultSet == null) throw new NullPointerException("resultSet is null");
         String id, name, description, ownerId;
         Date creationDate;
         // TODO: @muellcy1 fetch categories and rating
@@ -73,7 +73,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
     @Override
     public Group getGroup(String id) throws DataHandlerException, ObjectNotFoundException {
-        if (id == null) throw new IllegalArgumentException("id is null");
+        if (id == null) throw new NullPointerException("id is null");
         PreparedStatement statement = getGetStatement(id);
         ResultSet resultSet = executeGetStatement(statement);
         try {
@@ -86,7 +86,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
     @Override
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
-        if (ids == null) throw new IllegalArgumentException("ids is null");
+        if (ids == null) throw new NullPointerException("ids is null");
         if (ids.size() == 0) return new ArrayList<>();
         ArrayList<Group> groups = new ArrayList<>(ids.size());
         String query = SELECT_BY_ID_LIST + getIdList(ids);
@@ -105,8 +105,8 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     }
 
     private PreparedStatement getInsertStatement(String id, String name) throws DataHandlerException {
-        if (name == null) throw new IllegalArgumentException("name is null");
-        if (id == null) throw new IllegalArgumentException("id is null");
+        if (name == null) throw new NullPointerException("name is null");
+        if (id == null) throw new NullPointerException("id is null");
         PreparedStatement statement;
         try {
             statement = getConnectionHandler().getPreparedStatement(INSERT_QUERY);
@@ -119,7 +119,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     }
 
     private void executeInsertStatement(PreparedStatement statement) throws DataHandlerException {
-        if (statement == null) throw new IllegalArgumentException("statement is null");
+        if (statement == null) throw new NullPointerException("statement is null");
         try {
             getConnectionHandler().insertDataSet(statement);
         } catch (SQLException e) {
@@ -129,7 +129,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
     @Override
     public String addGroup(Group group) throws DataHandlerException {
-        if (group == null) throw new IllegalArgumentException("group is null");
+        if (group == null) throw new NullPointerException("group is null");
         if (group.getId() != null) throw new IllegalArgumentException("group.getId() is not null");
         group.setId(addAccessControlObject(group));
         PreparedStatement statement = getInsertStatement(group.getId(), group.getName());
@@ -139,7 +139,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
     @Override
     public void updateGroup(Group group) throws DataHandlerException, ObjectNotFoundException {
-        if (group == null) throw new IllegalArgumentException("group is null");
+        if (group == null) throw new NullPointerException("group is null");
         PreparedStatement statement;
         long id = Long.parseLong(group.getId());
         try {
@@ -173,7 +173,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
 
     @Override
     public Group getGroupByName(String name) throws DataHandlerException, ObjectNotFoundException {
-        if (name == null) throw new IllegalArgumentException("name is null");
+        if (name == null) throw new NullPointerException("name is null");
         ResultSet resultSet = executeGetStatement(getGetByNameStatement(name));
         try {
             if (!resultSet.next()) throw new ObjectNotFoundException(Group.class, name);

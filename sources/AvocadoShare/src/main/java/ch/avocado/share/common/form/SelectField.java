@@ -41,8 +41,8 @@ public class SelectField extends FieldBase {
     }
 
     public void addChoice(String name, String value) {
-        if(name == null) throw new IllegalArgumentException("name is null");
-        if(value == null) throw new IllegalArgumentException("value is null");
+        if(name == null) throw new NullPointerException("name is null");
+        if(value == null) throw new NullPointerException("value is null");
         valuesWithName.put(value, name);
     }
 

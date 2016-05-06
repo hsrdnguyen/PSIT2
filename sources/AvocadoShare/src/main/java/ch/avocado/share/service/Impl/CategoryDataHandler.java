@@ -76,7 +76,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     @Override
     public List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) throws DataHandlerException {
         ArrayList<Category> categories;
-        if (accessControlObjectId == null) throw new IllegalArgumentException("accessControlObjectId is null");
+        if (accessControlObjectId == null) throw new NullPointerException("accessControlObjectId is null");
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         ResultSet resultSet;

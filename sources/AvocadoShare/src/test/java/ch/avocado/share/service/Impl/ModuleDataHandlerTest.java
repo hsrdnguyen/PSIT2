@@ -70,7 +70,7 @@ public class ModuleDataHandlerTest {
         return categories;
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddNull() throws Exception {
         moduleDataHandler.addModule(null);
     }
@@ -111,7 +111,7 @@ public class ModuleDataHandlerTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteNull() throws Exception {
         moduleDataHandler.deleteModule(null);
     }

@@ -47,17 +47,17 @@ public class UserDataHandlerTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddUserWithNull() throws Exception {
         userDataHandler.addUser(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetByEmailWithNull() throws Exception {
         userDataHandler.getUserByEmailAddress(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetUserWithNull() throws Exception {
         userDataHandler.getUser(null);
     }
@@ -76,7 +76,7 @@ public class UserDataHandlerTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddNull() throws Exception {
         userDataHandler.addUser(null);
     }
@@ -144,7 +144,7 @@ public class UserDataHandlerTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteNull() throws Exception {
         userDataHandler.deleteUser(null);
     }

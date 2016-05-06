@@ -71,9 +71,7 @@ public class UserPassword extends Model implements Serializable {
 	 * @return
 	 */
 	static public UserPassword fromPassword(String password) {
-		if(password == null) {
-			throw new IllegalArgumentException("password can't be null");
-		}
+		if(password == null) throw new NullPointerException("password can't be null");
 		UserPassword passwordObject = new UserPassword();
 		passwordObject.setPassword(password);
 		return passwordObject;
@@ -118,7 +116,7 @@ public class UserPassword extends Model implements Serializable {
 	 * @param digest The digest
 	 */
 	public void setDigest(String digest) {
-		if(digest == null) throw new IllegalArgumentException("digest can't be null");
+		if(digest == null) throw new NullPointerException("digest can't be null");
 		if(!digest.contains(":")) throw new IllegalArgumentException("invalid digest");
 		this.digest = digest;
 	}

@@ -775,7 +775,7 @@ public class Encoder {
     }
 
     private static String htmlEntities(String value) {
-        if(value == null) throw new IllegalArgumentException("value can't be null");
+        if(value == null) throw new NullPointerException("value can't be null");
         String result = "";
         for(char character: value.toCharArray()) {
             String letter = getHtmlEntityCharacter(character);

@@ -37,8 +37,8 @@ public class SecurityHandlerMock implements ISecurityHandler {
 
     @Override
     public AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) {
-        if(identity == null) throw new IllegalArgumentException("identity is null");
-        if(target == null) throw new IllegalArgumentException("target is null");
+        if(identity == null) throw new NullPointerException("identity is null");
+        if(target == null) throw new NullPointerException("target is null");
         if(identity.getId().equals(target.getId())) {
             return AccessLevelEnum.MANAGE;
         }
@@ -56,8 +56,8 @@ public class SecurityHandlerMock implements ISecurityHandler {
 
     @Override
     public boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) {
-        if(identity == null) throw new IllegalArgumentException("identity is null");
-        if(accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
+        if(identity == null) throw new NullPointerException("identity is null");
+        if(accessLevel == null) throw new NullPointerException("accessLevel is null");
         identityWithAccess.put(identity.getId(), accessLevel);
         return true;
     }
@@ -87,8 +87,8 @@ public class SecurityHandlerMock implements ISecurityHandler {
 
     @Override
     public Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) throws DataHandlerException {
-        if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum is null");
-        if(target == null) throw new IllegalArgumentException("target is null");
+        if(accessLevelEnum == null) throw new NullPointerException("accessLevelEnum is null");
+        if(target == null) throw new NullPointerException("target is null");
         Map<String, AccessLevelEnum> identityList = new HashMap<>();
         IGroupDataHandler groupDataHandler;
         try {
@@ -113,8 +113,8 @@ public class SecurityHandlerMock implements ISecurityHandler {
     }
 
     public Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevelEnum, AccessControlObjectBase target) throws DataHandlerException {
-        if(accessLevelEnum == null) throw new IllegalArgumentException("accessLevelEnum is null");
-        if(target == null) throw new IllegalArgumentException("target is null");
+        if(accessLevelEnum == null) throw new NullPointerException("accessLevelEnum is null");
+        if(target == null) throw new NullPointerException("target is null");
         Map<String, AccessLevelEnum> identityList = new HashMap<>();
         IUserDataHandler userDataHandler;
         try {
@@ -204,7 +204,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
      * @throws ServiceNotFoundException
      */
     public Group getGroupWithAccess(AccessLevelEnum level) throws ServiceNotFoundException, DataHandlerException, ObjectNotFoundException {
-        if(level == null) throw new IllegalArgumentException("level is null");
+        if(level == null) throw new NullPointerException("level is null");
         IGroupDataHandler groupDataHandler = ServiceLocator.getService(IGroupDataHandler.class);
         for(Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue() == level) {
@@ -224,7 +224,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
      * @throws ServiceNotFoundException
      */
     public User getUserWithAccess(AccessLevelEnum level) throws ServiceNotFoundException, DataHandlerException {
-        if(level == null) throw new IllegalArgumentException("level is null");
+        if(level == null) throw new NullPointerException("level is null");
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         for(Map.Entry<String, AccessLevelEnum> entry: identityWithAccess.entrySet()) {
             if(entry.getValue() == level) {
@@ -252,7 +252,7 @@ public class SecurityHandlerMock implements ISecurityHandler {
      * @param anonymousAccess The anonymous access level to all objects
      */
     public void setAnonymousAccess(AccessLevelEnum anonymousAccess) {
-        if(anonymousAccess == null) throw new IllegalArgumentException("anonymousAccess is null");
+        if(anonymousAccess == null) throw new NullPointerException("anonymousAccess is null");
         this.anonymousAccess = anonymousAccess;
     }
 
