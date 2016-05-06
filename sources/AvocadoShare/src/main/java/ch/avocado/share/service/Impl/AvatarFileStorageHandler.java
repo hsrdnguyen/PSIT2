@@ -2,7 +2,7 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ImageHelper;
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IAvatarStorageHandler;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.exceptions.FileStorageException;
@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 
 public class AvatarFileStorageHandler implements IAvatarStorageHandler {
@@ -22,23 +21,20 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
     public static final int AVATAR_HEIGHT = 128;
 
     @Override
-    public String storeAvatar(InputStream imageStream) {
-        IFileStorageHandler fileStorageHandler = null;
+    public String storeAvatar(InputStream imageStream) throws FileStorageException {
+        IFileStorageHandler fileStorageHandler;
         String reference;
         BufferedImage uploadedImage, outputImage;
 
         try {
             fileStorageHandler = ServiceLocator.getService(IFileStorageHandler.class);
         } catch (ServiceNotFoundException e) {
-            // TODO: error handling
-            throw new RuntimeException(e);
+            throw new FileStorageException(e.getMessage());
         }
         try {
             uploadedImage = ImageIO.read(imageStream);
         } catch (IOException e) {
-            // TODO: error handling
-            e.printStackTrace();
-            throw new RuntimeException("Couldn't read image");
+            throw new FileStorageException(e);
         }
         if(uploadedImage == null) {
             throw new RuntimeException("Not an image");
@@ -49,31 +45,27 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
             tempFile = File.createTempFile("ashare-avatar", ".png");
             ImageIO.write(outputImage, "png", tempFile);
             reference = fileStorageHandler.saveFile(tempFile);
-        } catch (FileStorageException | IOException e) {
-            // TODO: error handling
-            throw new RuntimeException(e.getMessage());
+        } catch (IOException e) {
+            throw new FileStorageException(e);
         } finally {
             if(tempFile != null) {
-                tempFile.delete();
+                if(!tempFile.delete()) {
+                    System.out.println("File couldn't be deleted: " + tempFile);
+                }
             }
         }
         return reference;
     }
 
     @Override
-    public InputStream readImages(String avatarId) {
+    public InputStream readImages(String avatarId) throws FileStorageException {
         IFileStorageHandler fileStorageHandler;
         try {
             fileStorageHandler = ServiceLocator.getService(IFileStorageHandler.class);
         } catch (ServiceNotFoundException e) {
-            // TODO: error handling
-            throw new RuntimeException(e.getMessage());
+            throw new FileStorageException(e.getMessage());
         }
-        try {
-            return fileStorageHandler.readFile(avatarId);
-        } catch (FileStorageException e) {
-            throw new RuntimeException(e);
-        }
+        return fileStorageHandler.readFile(avatarId);
     }
 
     @Override

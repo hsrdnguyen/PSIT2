@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.test.Asserts;
 import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
@@ -34,10 +35,10 @@ public class UserDataHandlerTest {
     @After
     public void tearDown() throws Exception {
         try {
-            while(!notDeletedUserIds.isEmpty()) {
+            while (!notDeletedUserIds.isEmpty()) {
                 String id = notDeletedUserIds.pop();
                 User user = userDataHandler.getUser(id);
-                if(user != null) {
+                if (user != null) {
                     userDataHandler.deleteUser(user);
                 }
             }
@@ -46,17 +47,17 @@ public class UserDataHandlerTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddUserWithNull() throws Exception {
         userDataHandler.addUser(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetByEmailWithNull() throws Exception {
         userDataHandler.getUserByEmailAddress(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetUserWithNull() throws Exception {
         userDataHandler.getUser(null);
     }
@@ -75,7 +76,7 @@ public class UserDataHandlerTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddNull() throws Exception {
         userDataHandler.addUser(null);
     }
@@ -133,7 +134,7 @@ public class UserDataHandlerTest {
         assertTrue(updatedUser.getMail().isVerified());
         assertNull(updatedUser.getMail().getVerification());
         assertTrue(updatedUser.getMail().isDirty());
-        assertTrue(userDataHandler.updateUser(updatedUser));
+        userDataHandler.updateUser(updatedUser);
         assertFalse(updatedUser.getMail().isDirty());
         User fetchedUser = userDataHandler.getUser(id);
         assertFalse(fetchedUser.getMail().isDirty());
@@ -143,7 +144,7 @@ public class UserDataHandlerTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteNull() throws Exception {
         userDataHandler.deleteUser(null);
     }
@@ -158,15 +159,27 @@ public class UserDataHandlerTest {
     @Test
     public void testDeleteUser() throws Exception {
         User user = getTestUser();
-        assertNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
+        try {
+            userDataHandler.getUserByEmailAddress(user.getMail().getAddress());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
         String id = userDataHandler.addUser(user);
         assertNotNull(id);
         notDeletedUserIds.push(id);
         assertNotNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
         assertNotNull(user = userDataHandler.getUser(id));
-        assertTrue(userDataHandler.deleteUser(user));
+        userDataHandler.deleteUser(user);
         notDeletedUserIds.pop();
-        assertNull(userDataHandler.getUser(user.getId()));
-        assertNull(userDataHandler.getUserByEmailAddress(user.getMail().getAddress()));
+        try {
+            userDataHandler.getUser(user.getId());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
+        try {
+            userDataHandler.getUserByEmailAddress(user.getMail().getAddress());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
     }
 }

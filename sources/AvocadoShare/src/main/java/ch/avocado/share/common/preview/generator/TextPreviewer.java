@@ -14,7 +14,7 @@ public class TextPreviewer implements IPreviewGenerator {
     private static final String TAIL = "</pre>";
 
     public TextPreviewer(String content) {
-        if(content == null) throw new IllegalArgumentException("content is null");
+        if(content == null) throw new NullPointerException("content is null");
         this.content = content;
     }
 

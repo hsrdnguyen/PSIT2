@@ -2,7 +2,9 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
+import ch.avocado.share.service.Impl.UserDataHandler;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +30,6 @@ public class VerificationBeanTest {
         user = spy(new User(UserPassword.fromPassword(""), "Prename", "Surname", "1234.jpg", email));
         userDataHandler = mock(IUserDataHandler.class);
         when(userDataHandler.getUserByEmailAddress(email.getAddress())).thenReturn(user);
-        when(userDataHandler.updateUser(any(User.class))).thenReturn(true);
         ServiceLocatorModifier.setService(IUserDataHandler.class, userDataHandler);
         bean = new VerificationBean();
     }
@@ -51,7 +52,7 @@ public class VerificationBeanTest {
 
     @Test
     public void testVerifyFailsWhenUpdateFails() throws Exception {
-        when(userDataHandler.updateUser(any(User.class))).thenReturn(false);
+        when(userDataHandler.getUserByEmailAddress(any(String.class))).thenThrow(new ObjectNotFoundException(User.class, ""));
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());
         assertFalse("verifyEmailCode succeeded", bean.verifyEmailCode());
@@ -88,7 +89,7 @@ public class VerificationBeanTest {
     @Test
     public void testVerifyFailsWithInvalidEmail() throws Exception {
 
-        when(userDataHandler.getUserByEmailAddress(any(String.class))).thenReturn(null);
+        when(userDataHandler.getUserByEmailAddress(any(String.class))).thenThrow(new ObjectNotFoundException(User.class, ""));
 
         bean.setEmail(email.getAddress());
         bean.setCode(addressVerification.getCode());
@@ -102,12 +103,12 @@ public class VerificationBeanTest {
 
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetCodeToNull() throws Exception {
         bean.setCode(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetEmailToNull() throws Exception {
         bean.setEmail(null);
     }

@@ -90,7 +90,7 @@ public class FileStorageHandler implements IFileStorageHandler {
 
     @Override
     public String saveFile(FileItem tempUploadedFile) throws FileStorageException {
-        if (tempUploadedFile == null) throw new IllegalArgumentException("tempUploadedFile is null");
+        if (tempUploadedFile == null) throw new NullPointerException("tempUploadedFile is null");
         if (tempUploadedFile.isFormField()) {
             throw new IllegalArgumentException("tempUploadedFile isFormField and not an unploaded file");
         }

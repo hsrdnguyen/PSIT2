@@ -22,7 +22,7 @@ public class Base64 {
      * @return the translated Base64 string (not null)
      */
     public static String encode(byte[] buffer) {
-        if(buffer == null) throw new IllegalArgumentException("buffer is null");
+        if(buffer == null) throw new NullPointerException("buffer is null");
         int size = buffer.length;
         char[] ar = new char[((size + 2) / 3) * 4];
         int a = 0;
@@ -54,7 +54,7 @@ public class Base64 {
      * @return the byte array (not null)
      */
     public static byte[] decode(String value) {
-        if(value == null) throw new IllegalArgumentException("value is null");
+        if(value == null) throw new NullPointerException("value is null");
         byte[] buffer = new byte[getDecodedLength(value)];
         int mask = 0xFF;
         int index = 0;

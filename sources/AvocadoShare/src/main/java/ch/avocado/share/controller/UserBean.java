@@ -1,12 +1,10 @@
 package ch.avocado.share.controller;
 
-import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IAvatarStorageHandler;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.*;
 import org.apache.commons.fileupload.FileItem;
 
 import java.io.IOException;
@@ -77,13 +75,15 @@ public class UserBean extends ResourceBean<User> {
     }
 
 
-    private void checkEmailAddressIsUnique(User user) throws HttpBeanException, DataHandlerException {
+    private void checkEmailAddressIsUnique(User user) throws DataHandlerException, ServiceNotFoundException {
         if(getMail() == null) {
             return;
         }
-        if(getService(IUserDataHandler.class).getUserByEmailAddress(getMail()) != null) {
+        try {
+            getService(IUserDataHandler.class).getUserByEmailAddress(getMail());
             // email already taken
             user.addFieldError("mail", "E-Mail-Adresse existiert bereits");
+        } catch (ObjectNotFoundException ignored) {
         }
     }
 
@@ -117,14 +117,14 @@ public class UserBean extends ResourceBean<User> {
         user.setMail(mail);
     }
 
-    private void storeNewEmailAddress(User user, String emailAddress) throws HttpBeanException, DataHandlerException {
+    private void storeNewEmailAddress(User user, String emailAddress) throws DataHandlerException, ServiceNotFoundException {
         addEmailToUser(user, emailAddress);
         getService(IUserDataHandler.class).addMail(user);
         getService(IMailingService.class).sendVerificationEmail(user);
     }
 
     @Override
-    public User create() throws HttpBeanException, DataHandlerException {
+    public User create() throws DataHandlerException, ServiceNotFoundException, FileStorageException {
         User user = new User(UserPassword.fromPassword(""), "", "", "", new EmailAddress(false, "", null));
 
         checkPrename(user);
@@ -148,7 +148,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
     @Override
-    public User get() throws HttpBeanException, DataHandlerException {
+    public User get() throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
         return getService(IUserDataHandler.class).getUser(getId());
     }
 
@@ -158,20 +158,20 @@ public class UserBean extends ResourceBean<User> {
     }
 
 
-    private void storeAvatar(User user, FileItem avatar) throws HttpBeanException {
+    private void storeAvatar(User user, FileItem avatar) throws FileStorageException, ServiceNotFoundException {
         IAvatarStorageHandler avatarStorageHandler = getService(IAvatarStorageHandler.class);
         InputStream inputStream = null;
         try {
             inputStream = avatar.getInputStream();
         } catch (IOException e) {
-            throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, "Avatar konnte nicht gelesen werden");
+            throw new FileStorageException("Avatar konnte nicht gelesen werden");
         }
         String reference = avatarStorageHandler.storeAvatar(inputStream);
         user.setAvatar(reference);
     }
 
     @Override
-    public void update(User user) throws HttpBeanException, DataHandlerException {
+    public void update(User user) throws ServiceException {
         boolean userChanged = false;
         if(prename != null) {
             checkPrename(user);
@@ -214,7 +214,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
     @Override
-    public void destroy(User user) throws HttpBeanException, DataHandlerException {
+    public void destroy(User user) throws ServiceException {
         getService(IUserDataHandler.class).deleteUser(user);
     }
 

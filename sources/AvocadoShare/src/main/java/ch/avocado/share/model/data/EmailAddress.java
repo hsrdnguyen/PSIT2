@@ -12,7 +12,7 @@ public class EmailAddress extends Model {
     private MailVerification verification;
 
     public EmailAddress(boolean verified, String address, MailVerification verification) {
-        if(address == null) throw new IllegalArgumentException("address is null");
+        if(address == null) throw new NullPointerException("address is null");
         address = address.trim();
         if(address.isEmpty()) throw new IllegalArgumentException("address is empty");
         this.verified = verified;

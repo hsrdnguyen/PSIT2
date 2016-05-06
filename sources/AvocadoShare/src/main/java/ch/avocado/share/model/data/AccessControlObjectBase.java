@@ -48,7 +48,7 @@ public abstract class AccessControlObjectBase extends Model{
      * @param id The unique identifier of this object.
      */
     public void setId(String id) {
-        if (id == null) throw new IllegalArgumentException("id is null");
+        if (id == null) throw new NullPointerException("id is null");
         if (id.isEmpty()) throw new IllegalArgumentException("id is empty");
         this.id = id;
     }
@@ -64,7 +64,7 @@ public abstract class AccessControlObjectBase extends Model{
      * @param categoryList The categories assigned to this object
      */
     public void setCategories(Collection<Category> categoryList) {
-        if(categoryList == null) throw new IllegalArgumentException("categoryList is null");
+        if(categoryList == null) throw new NullPointerException("categoryList is null");
         this.categoryList.setCategories(categoryList);
         setDirty(true);
     }
@@ -80,7 +80,7 @@ public abstract class AccessControlObjectBase extends Model{
      * @param creationDate Set the creation date
      */
     public void setCreationDate(Date creationDate) {
-        if(creationDate == null) throw new IllegalArgumentException("creationDate is null");
+        if(creationDate == null) throw new NullPointerException("creationDate is null");
         if(!creationDate.equals(this.creationDate)) {
             this.creationDate = new Date(creationDate.getTime());
             setDirty(true);
@@ -124,7 +124,7 @@ public abstract class AccessControlObjectBase extends Model{
      * @param description The description of the object.
      */
     public void setDescription(String description) {
-        if(description == null) throw new IllegalArgumentException("description is null");
+        if(description == null) throw new NullPointerException("description is null");
         this.description = description;
         setDirty(true);
     }

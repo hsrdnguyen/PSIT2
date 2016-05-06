@@ -1,8 +1,8 @@
 package ch.avocado.share.servlet;
 
-import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.FileStorageException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IAvatarStorageHandler;
 import org.apache.commons.io.IOUtils;
 
@@ -28,12 +28,16 @@ public class AvatarServlet extends HttpServlet {
         if(avatarParameter == null) {
             resp.sendError(NOT_FOUND.getCode());
         } else {
-            writeAvatar(avatarParameter, resp);
+            try {
+                writeAvatar(avatarParameter, resp);
+            } catch (FileStorageException e) {
+                resp.sendError(INTERNAL_SERVER_ERROR.getCode());
+            }
         }
 
     }
 
-    private void writeAvatar(String avatarParameter, HttpServletResponse resp) throws IOException {
+    private void writeAvatar(String avatarParameter, HttpServletResponse resp) throws IOException, FileStorageException {
         if(avatarParameter == null) {
             throw new IllegalArgumentException("avatarParameter is null");
         }

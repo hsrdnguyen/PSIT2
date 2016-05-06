@@ -2,9 +2,8 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
-import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ServiceException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class SearchBean implements Serializable {
                 String[] parts = searchString.split(" ");
                 List<File> results = service.search(Arrays.asList(parts));
                 return results;
-            } catch (ServiceNotFoundException | DataHandlerException e) {
+            } catch (ServiceException e) {
                 e.printStackTrace();
             }
         }

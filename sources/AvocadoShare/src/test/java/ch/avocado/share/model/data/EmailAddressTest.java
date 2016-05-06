@@ -32,7 +32,7 @@ public class EmailAddressTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructorFailsWithNullAsAddress() {
         new EmailAddress(false, null, null);
     }

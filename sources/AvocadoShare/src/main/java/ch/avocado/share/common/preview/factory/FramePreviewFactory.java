@@ -12,7 +12,7 @@ import ch.avocado.share.model.data.File;
 public class FramePreviewFactory extends PreviewFactory{
     @Override
     public IPreviewGenerator getInstance(File file) throws PreviewException {
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(file == null) throw new NullPointerException("file is null");
         return new FramePreview(getStreamUrl(file));
     }
 }

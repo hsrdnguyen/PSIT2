@@ -4,7 +4,7 @@
 <jsp:setProperty name="accessBean" property="requesterUserId" />
 <%@include file="includes/header.jsp"%>
 <%
-    accessBean.setOwnerUserId(userSession.getUserId());
+    accessBean.setObjectOwner(userSession.getUser());
     if(accessBean.grantAccess()) {
 %>
 <div class="alert alert-success">

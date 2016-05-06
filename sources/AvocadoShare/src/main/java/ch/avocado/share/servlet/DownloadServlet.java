@@ -1,18 +1,20 @@
 package ch.avocado.share.servlet;
 
 import ch.avocado.share.common.Encoder;
+import ch.avocado.share.common.ResponseHelper;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.model.exceptions.HttpServletException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import ch.avocado.share.service.exceptions.FileStorageException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import static ch.avocado.share.common.HttpStatusCode.*;
 
@@ -35,7 +36,7 @@ public class DownloadServlet extends HttpServlet{
     private static final int DOWNLOAD_BUFFER_SIZE = 512;
 
     static public String getStreamUrl(File file) {
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(file == null) throw new NullPointerException("file is null");
         return "/download?" + PARAMETER_ID + "=" + Encoder.forUrl(file.getId());
     }
 
@@ -47,25 +48,26 @@ public class DownloadServlet extends HttpServlet{
         return file.getPath();
     }
 
-    private static void download(File file, HttpServletRequest request, HttpServletResponse response, boolean attached) throws IOException, ServiceNotFoundException, FileStorageException {
+    private static void download(File file, HttpServletRequest request, HttpServletResponse response, boolean attached) throws IOException, HttpServletException {
         byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
         InputStream stream;
         String etag = getEtag(file);
 
         String ifNoneMatch = request.getHeader(IF_NONE_MATCH);
-        if(ifNoneMatch != null && etag.equals(ifNoneMatch)) {
+        if (ifNoneMatch != null && etag.equals(ifNoneMatch)) {
             // Not modified
             response.sendError(NOT_MODIFIED.getCode());
             return;
         }
 
-        IFileStorageHandler storageHandler;
-        storageHandler = ServiceLocator.getService(IFileStorageHandler.class);
-
         long size;
-        size = storageHandler.getFileSize(file.getPath());
-        stream = storageHandler.readFile(file.getPath());
-
+        try {
+            IFileStorageHandler storageHandler = ServiceLocator.getService(IFileStorageHandler.class);
+            size = storageHandler.getFileSize(file.getPath());
+            stream = storageHandler.readFile(file.getPath());
+        } catch (ServiceException e) {
+            throw new HttpServletException(e);
+        }
         response.setHeader("Content-Length", Long.toString(size));
         response.setHeader("Content-Type", file.getMimeType());
         response.setHeader("ETag", etag);
@@ -111,6 +113,9 @@ public class DownloadServlet extends HttpServlet{
         } catch (ServiceNotFoundException | DataHandlerException e) {
             response.sendError(INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
             return;
+        } catch (ObjectNotFoundException e) {
+            response.sendError(NOT_FOUND.getCode(), "Datei existiert nicht.");
+            return;
         }
 
         if(!allowedLevel.containsLevel(AccessLevelEnum.READ)) {
@@ -125,9 +130,8 @@ public class DownloadServlet extends HttpServlet{
 
         try {
             download(file, request, response, attached);
-        } catch (ServiceNotFoundException | FileStorageException e) {
-            e.printStackTrace();
-            response.sendError(INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
+        } catch (HttpServletException e) {
+            ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
         }
     }
 }

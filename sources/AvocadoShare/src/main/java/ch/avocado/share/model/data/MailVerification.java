@@ -22,8 +22,8 @@ public class MailVerification {
     }
 
     public MailVerification(Date expiry, String code) {
-        if (code == null) throw new IllegalArgumentException("code is null");
-        if (expiry == null) throw new IllegalArgumentException("expiry is null");
+        if (code == null) throw new NullPointerException("code is null");
+        if (expiry == null) throw new NullPointerException("expiry is null");
         if (code.isEmpty()) throw new IllegalArgumentException("code is empty");
         this.code = code;
         this.expiry = (Date) expiry.clone();

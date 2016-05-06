@@ -1,7 +1,7 @@
 package ch.avocado.share.model.data;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
@@ -39,7 +39,7 @@ public class Module extends AccessControlObjectBase {
      * @param name The name of the module
      */
     public void setName(String name) {
-        if (name == null) throw new IllegalArgumentException("name is null");
+        if (name == null) throw new NullPointerException("name is null");
         this.name = name;
     }
 
@@ -50,7 +50,7 @@ public class Module extends AccessControlObjectBase {
     }
 
     public void setFileIds(List<String> fileIds) {
-        if(fileIds == null) throw new IllegalArgumentException("fileIds is null");
+        if(fileIds == null) throw new NullPointerException("fileIds is null");
         this.fileIds = new ArrayList<>(fileIds);
     }
 

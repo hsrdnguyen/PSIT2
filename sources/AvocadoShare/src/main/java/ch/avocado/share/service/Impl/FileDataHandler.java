@@ -3,11 +3,12 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +25,7 @@ import static ch.avocado.share.common.constants.sql.FileConstants.*;
  */
 public class FileDataHandler extends DataHandlerBase implements IFileDataHandler {
 
+
     private void addFileToModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
@@ -38,7 +40,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         }
     }
 
-    private boolean changeFileAssociatedModule(File file) throws DataHandlerException {
+    private void changeFileAssociatedModule(File file) throws DataHandlerException, ObjectNotFoundException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
@@ -46,7 +48,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             PreparedStatement statement = connectionHandler.getPreparedStatement(UPDATE_UPLOADED);
             statement.setLong(UPDATE_UPLOADED_INDEX_FILE, fileId);
             statement.setLong(UPDATE_UPLOADED_INDEX_MODULE, moduleId);
-            return connectionHandler.updateDataSet(statement);
+            if(!connectionHandler.updateDataSet(statement))  {
+                throw new ObjectNotFoundException(File.class, fileId);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -57,7 +61,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         file.setId(addAccessControlObject(file));
         insertFileData(file);
         addFileToModule(file);
-        if(!addFileCategoriesToDb(file)) throw new DataHandlerException("Unable to add categories.");
+        addFileCategoriesToDb(file);
         return file.getId();
     }
 
@@ -80,47 +84,50 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public boolean deleteFile(File file) throws DataHandlerException {
-        if(file == null) throw new IllegalArgumentException("file is null");
-        if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
-        return deleteAccessControlObject(file.getId());
+    public void deleteFile(File file) throws DataHandlerException, ObjectNotFoundException {
+        deleteAccessControlObject(file);
     }
 
     @Override
-    public File getFile(String fileId) throws DataHandlerException {
-        if (fileId == null) throw new IllegalArgumentException("fileId is null");
+    public File getFile(String fileId) throws DataHandlerException, ObjectNotFoundException {
+        if (fileId == null) throw new NullPointerException("fileId is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SELECT_BY_ID_QUERY);
             preparedStatement.setLong(1, Long.parseLong(fileId));
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
-            return getFileFromSelectResultSet(resultSet);
+            if (resultSet.next()) {
+                return createFileFromResultSet(resultSet);
+            } else {
+                throw new ObjectNotFoundException(File.class, fileId);
+            }
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 
     @Override
     public List<File> getFiles(List<String> idList) throws DataHandlerException {
-        if(idList == null) throw new IllegalArgumentException("idList is null");
-        List<File> files = new ArrayList<>(idList.size());
-        for (String id : idList) {
-            File file = getFile(id);
-            if (file != null) {
-                files.add(file);
-            }
+        if(idList == null) throw new NullPointerException("idList is null");
+        if(idList.isEmpty()) return new ArrayList<>();
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        ResultSet result = null;
+        String query = SELECT_BY_ID_LIST + getIdList(idList);
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement(query);
+            result = connectionHandler.executeQuery(statement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
-        return files;
+        return getMultipleFilesFromResultSet(result);
     }
 
     @Override
     public List<File> search(List<String> searchTerms) throws DataHandlerException {
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
         try {
-            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-
-            String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
-
             for (String tmp : searchTerms) {
                 // TODO @bergmsas: equals verwenden?
                 if (!tmp.equals(searchTerms.get(0))) {
@@ -140,15 +147,14 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
             return getMultipleFilesFromResultSet(rs);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DataHandlerException(e);
         }
-        return null;
     }
 
     @Override
-    public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException {
-        if (fileTitle == null) throw new IllegalArgumentException("fileTitle is null");
-        if (moduleId == null) throw new IllegalArgumentException("moduleId is null");
+    public File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException, ObjectNotFoundException {
+        if (fileTitle == null) throw new NullPointerException("fileTitle is null");
+        if (moduleId == null) throw new NullPointerException("moduleId is null");
         long parsedModuleId = Long.parseLong(moduleId);
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler == null) return null;
@@ -158,16 +164,26 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setString(1, fileTitle);
             preparedStatement.setLong(2, parsedModuleId);
             ResultSet resultSet = connectionHandler.executeQuery(preparedStatement);
-            return getFileFromSelectResultSet(resultSet);
+            if (resultSet.next()) {
+                return createFileFromResultSet(resultSet);
+            } else {
+                throw new ObjectNotFoundException(File.class, fileTitle + ", " + parsedModuleId);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
 
     @Override
-    public boolean updateFile(File file) throws DataHandlerException {
+    public void updateFile(File file) throws DataHandlerException, ObjectNotFoundException {
         if(file == null)throw new IllegalArgumentException("file is null");
-        if(file.getId() == null) throw new IllegalArgumentException("file.id is null");
+        if(file.getId() == null) throw new NullPointerException("file.id is null");
+        long fileId;
+        try {
+            fileId = Long.parseLong(file.getId());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("file.id is not a number");
+        }
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(UPDATE_QUERY);
@@ -176,21 +192,17 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             preparedStatement.setString(3, file.getPath());
             preparedStatement.setString(4, file.getExtension());
             preparedStatement.setString(5, file.getMimeType());
-            preparedStatement.setLong(6, Long.parseLong(file.getId()));
+            preparedStatement.setLong(6, fileId);
 
             if (!getConnectionHandler().updateDataSet(preparedStatement)) {
-                return false;
+                throw new ObjectNotFoundException(File.class, fileId);
             }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        if(!changeFileAssociatedModule(file)) {
-            return false;
-        }
-        if (!updateFileCategoriesFromDb(file)){
-            return false;
-        }
-        return updateObject(file);
+        changeFileAssociatedModule(file);
+        updateFileCategoriesFromDb(file);
+        updateObject(file);
     }
 
     private List<Category> getFileCategoriesFromDb(String fileId) throws DataHandlerException {
@@ -199,26 +211,14 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         return categoryHandler.getAccessObjectAssignedCategories(fileId);
     }
 
-    private boolean addFileCategoriesToDb(File file) throws DataHandlerException {
+    private void addFileCategoriesToDb(File file) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        if (!categoryHandler.addAccessObjectCategories(file)) return false;
-        return true;
+        categoryHandler.addAccessObjectCategories(file);
     }
 
-    private boolean updateFileCategoriesFromDb(File changedFile) throws DataHandlerException {
+    private void updateFileCategoriesFromDb(File changedFile) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
-        return categoryHandler.updateAccessObjectCategories(changedFile);
-    }
-
-    private File getFileFromSelectResultSet(ResultSet resultSet) throws DataHandlerException {
-        try {
-            if (resultSet.next()) {
-                return createFileFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
-        return null;
+        categoryHandler.updateAccessObjectCategories(changedFile);
     }
 
     private List<File> getMultipleFilesFromResultSet(ResultSet resultSet) throws DataHandlerException {

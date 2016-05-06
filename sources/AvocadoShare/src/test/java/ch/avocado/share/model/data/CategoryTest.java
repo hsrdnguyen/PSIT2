@@ -22,17 +22,17 @@ public class CategoryTest {
         assertEquals(name, category.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testNullAsNameInConstructor() throws Exception {
         new Category(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testNullAsNameInConstructorWithIds() throws Exception {
         new Category(null, new ArrayList<>());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testNullAsIdsInConstructor() throws Exception {
         new Category("some name", null);
     }

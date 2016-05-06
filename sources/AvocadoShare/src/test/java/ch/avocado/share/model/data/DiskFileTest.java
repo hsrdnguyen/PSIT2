@@ -13,7 +13,7 @@ public class DiskFileTest {
         new DiskFile("", "image/png", ".png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructorWithPathNull() {
         new DiskFile(null, "image/png", ".png");
     }
@@ -23,12 +23,12 @@ public class DiskFileTest {
         new DiskFile("4783291084032432", "", ".png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructorWithMimeTypeNull() {
         new DiskFile("3u21039210321890", null, ".png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructorWithExtensionNull() {
         new DiskFile("3u21039210321890", "image/png", null);
     }

@@ -9,7 +9,7 @@ import java.io.IOException;
 abstract class ResourceRenderer implements ViewRenderer {
     @Override
     public void renderView(ViewConfig config) throws ServletException, IOException {
-        if(config == null) throw new IllegalArgumentException("config is null");
+        if(config == null) throw new NullPointerException("config is null");
         DetailViewConfig detailViewConfig;
         switch (config.getView()) {
             case EDIT:

@@ -65,7 +65,7 @@ public class AccessControlObjectBaseTest {
         assertEquals(id, object.getId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetIdNull() throws Exception {
         object.setId(null);
     }
@@ -84,7 +84,7 @@ public class AccessControlObjectBaseTest {
 
     @Test
     public void testGetCategories() throws Exception {
-        assertEquals(categories, object.getCategoryList());
+        assertCategoriesEquals(categories, object.getCategoryList());
         assertNotSame(categories, object.getCategoryList());
     }
 
@@ -104,7 +104,7 @@ public class AccessControlObjectBaseTest {
         assertEquals(creationDate, object.getCreationDate());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetCreationDateToNull() throws Exception {
         object.setCreationDate(null);
     }
@@ -139,7 +139,7 @@ public class AccessControlObjectBaseTest {
     }
 
     /* Disabled because its allowed
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetOwnerIdToNull() throws Exception {
         object.setOwnerId(null);
     }*/
@@ -161,7 +161,7 @@ public class AccessControlObjectBaseTest {
         assertEquals(description, object.getDescription());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetDescriptionToNull() throws Exception {
         object.setDescription(null);
     }

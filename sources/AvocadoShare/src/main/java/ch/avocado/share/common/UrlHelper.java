@@ -20,7 +20,7 @@ public class UrlHelper {
     private final HttpServletRequest request;
 
     public UrlHelper(HttpServletRequest request) {
-        if(request == null) throw new IllegalArgumentException("request is null");
+        if(request == null) throw new NullPointerException("request is null");
         this.request = request;
     }
 

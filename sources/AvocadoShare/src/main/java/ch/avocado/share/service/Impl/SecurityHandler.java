@@ -116,8 +116,8 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAccessLevel(AccessIdentity identity, AccessControlObjectBase target) throws DataHandlerException {
-        if (identity == null) throw new IllegalArgumentException("identity is null");
-        if (target == null) throw new IllegalArgumentException("target is null");
+        if (identity == null) throw new NullPointerException("identity is null");
+        if (target == null) throw new NullPointerException("target is null");
         if (target.getOwnerId() != null && identity.getId() != null) {
             if (target.getOwnerId().equals(identity.getId())) {
                 return AccessLevelEnum.OWNER;
@@ -169,7 +169,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
         if (identityId == null || identityId.isEmpty())
             throw new IllegalArgumentException("identityId is null or empty");
         if (targetId == null || targetId.isEmpty()) throw new IllegalArgumentException("targetId is null or empty");
-        if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
+        if (accessLevel == null) throw new NullPointerException("accessLevel is null");
 
         long objectId = Long.parseLong(targetId);
         long ownerId = Long.parseLong(identityId);
@@ -186,9 +186,9 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException {
-        if (identity == null) throw new IllegalArgumentException("identity is null");
-        if (target == null) throw new IllegalArgumentException("target is null");
-        if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
+        if (identity == null) throw new NullPointerException("identity is null");
+        if (target == null) throw new NullPointerException("target is null");
+        if (accessLevel == null) throw new NullPointerException("accessLevel is null");
         return setAccessLevel(identity.getId(), target.getId(), accessLevel);
     }
 
@@ -205,7 +205,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAnonymousAccessLevel(String targetId) throws DataHandlerException {
-        if (targetId == null) throw new IllegalArgumentException("targetId is null");
+        if (targetId == null) throw new NullPointerException("targetId is null");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_ANONYMOUS_ACCESS_LEVEL);
@@ -223,7 +223,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public AccessLevelEnum getAnonymousAccessLevel(AccessControlObjectBase target) throws DataHandlerException {
-        if (target == null) throw new IllegalArgumentException("target is null");
+        if (target == null) throw new NullPointerException("target is null");
         return getAnonymousAccessLevel(target.getId());
     }
 
@@ -283,8 +283,8 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
     @Override
     public Map<String, AccessLevelEnum> getUsersWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException {
-        if (target == null) throw new IllegalArgumentException("target is null");
-        if (accessLevel == null) throw new IllegalArgumentException("accessLevel is null");
+        if (target == null) throw new NullPointerException("target is null");
+        if (accessLevel == null) throw new NullPointerException("accessLevel is null");
         long objectId = Long.parseLong(target.getId());
         try {
             PreparedStatement preparedStatement = getConnectionHandler().getPreparedStatement(SELECT_USER_WITH_ACCESS_ON_OBJECT);

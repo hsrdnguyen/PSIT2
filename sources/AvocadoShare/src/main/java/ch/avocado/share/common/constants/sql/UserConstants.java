@@ -64,6 +64,9 @@ public class UserConstants {
             "  LEFT JOIN avocado_share.password_reset AS r " +
             "    ON r.id = I.id ";
 
+    public static final String SELECT_USERS_BY_ID_LIST = SELECT_USERS + " WHERE I.id IN ";
+
+
     public static final String SELECT_USER_BY_MAIL_QUERY = SELECT_USERS + "  WHERE E.address = ?";
     public static final String SELECT_USER_QUERY = SELECT_USERS + "  WHERE I.id = ?";
 
