@@ -31,7 +31,7 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     }
 
     @Override
-    public File getFile(String fileId) {
+    public File getFile(String fileId) throws ObjectNotFoundException {
         return get(fileId);
     }
 
@@ -39,10 +39,13 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     public List<File> getFiles(List<String> ids) throws DataHandlerException {
         ArrayList<File> files = new ArrayList<>(ids.size());
         for(String id: ids) {
-            File file = getFile(id);
-            if(file != null) {
-                files.add(file);
+            File file = null;
+            try {
+                file = getFile(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            files.add(file);
         }
         return files;
     }

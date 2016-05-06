@@ -47,7 +47,7 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     }
 
     @Override
-    public Group getGroup(String id) {
+    public Group getGroup(String id) throws ObjectNotFoundException {
         return get(id);
     }
 
@@ -55,10 +55,13 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
         ArrayList<Group> groups = new ArrayList<>(ids.size());
         for(String id: ids) {
-            Group group = getGroup(id);
-            if(group != null) {
-                groups.add(group);
+            Group group;
+            try {
+                group = getGroup(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            groups.add(group);
         }
         return groups;
     }

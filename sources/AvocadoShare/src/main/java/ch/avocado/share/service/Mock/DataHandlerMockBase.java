@@ -22,9 +22,11 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
         objects = new HashMap<>();
     }
 
-    protected E get(String id) {
+    protected E get(String id) throws ObjectNotFoundException {
         if(id == null) throw new NullPointerException("id is null");
-        return objects.get(id);
+        E result = objects.get(id);
+        if(result == null) throw new ObjectNotFoundException(AccessControlObjectBase.class, id);
+        return result;
     }
 
     protected String add(E object) {

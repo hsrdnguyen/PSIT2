@@ -17,7 +17,7 @@
     String userName = Encoder.forHtml(user.getFullName());
     String description = Encoder.forHtml(user.getDescription());
     UrlHelper urlHelper = new UrlHelper(request);
-    String avatarUrl = urlHelper.getAvatarUrl(user.getAvatar());
+    String avatarUrl = urlHelper.getAvatarUrl(user.getId());
     String editUrl = urlHelper.getBase() + "/user" + "?action=" + ResourceServlet.ACTION_EDIT + "&id=" + user.getId();
     editUrl = Encoder.forHtmlAttribute(editUrl);
 %>

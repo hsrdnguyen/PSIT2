@@ -50,7 +50,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public User getUser(String userId) {
+    public User getUser(String userId) throws ObjectNotFoundException {
         return get(userId);
     }
 
@@ -79,10 +79,13 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
         List<User> users = new ArrayList<>(ids.size());
         for(String id: ids) {
-            User user = getUser(id);
-            if(user != null) {
-                users.add(user);
+            User user = null;
+            try {
+                user = getUser(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            users.add(user);
         }
         return users;
     }
