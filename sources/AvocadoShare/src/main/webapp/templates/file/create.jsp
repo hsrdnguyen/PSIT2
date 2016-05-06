@@ -11,6 +11,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.common.form.InputType" %>
 <%@ page import="ch.avocado.share.common.form.FormEncoding" %>
+<%@ page import="ch.avocado.share.common.ResponseHelper" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     String parameterModuleId = request.getParameter("m");
@@ -28,7 +29,7 @@
     try {
         userModules = FileBean.getModulesToUpload(userSession.getUser());
     } catch (HttpServletException e) {
-        response.sendError(e.getStatusCode(), e.getMessage());
+        ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
     }
 
 %>
