@@ -98,24 +98,29 @@ public class EmailAddressTest {
         assertFalse(emailAddress.equals(null));
         assertTrue(emailAddress.equals(emailAddress));
         assertTrue(emailAddress.equals(emailAddressTwo));
+        assertEquals(emailAddress.hashCode(), emailAddressTwo.hashCode());
 
 
         emailAddressTwo = new EmailAddress(false, address + "other", null);
         assertFalse(emailAddress.equals(emailAddressTwo));
-
+        assertNotEquals(emailAddress.hashCode(), emailAddressTwo.hashCode());
         emailAddressTwo = new EmailAddress(true, address, null);
         assertFalse(emailAddress.equals(emailAddressTwo));
+        assertNotEquals(emailAddress.hashCode(), emailAddressTwo.hashCode());
 
         emailAddress = new EmailAddress(false, address, new MailVerification(new Date(1), "1234"));
         emailAddressTwo = new EmailAddress(false, address, new MailVerification(new Date(1), "1234"));
         assertTrue(emailAddress.equals(emailAddressTwo));
+        assertEquals(emailAddress.hashCode(), emailAddressTwo.hashCode());
 
 
         emailAddressTwo = new EmailAddress(false, address, new MailVerification(new Date(0), "1234"));
         assertFalse(emailAddress.equals(emailAddressTwo));
+        assertNotEquals(emailAddress.hashCode(), emailAddressTwo.hashCode());
 
         emailAddressTwo = new EmailAddress(false, address, new MailVerification(new Date(1), "12345"));
         assertFalse(emailAddress.equals(emailAddressTwo));
+        assertNotEquals(emailAddress.hashCode(), emailAddressTwo.hashCode());
     }
 
 

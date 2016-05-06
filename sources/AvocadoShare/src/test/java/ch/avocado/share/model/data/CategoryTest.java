@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class CategoryTest {
 
     @Test
-    public void testGetName() throws Exception {
+    public void testGetName() {
         String name = "my name";
         Category category = new Category(name);
         assertEquals(name, category.getName());
@@ -23,22 +23,27 @@ public class CategoryTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNullAsNameInConstructor() throws Exception {
+    public void testNullAsNameInConstructor() {
         new Category(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNullAsNameInConstructorWithIds() throws Exception {
+    public void testNullAsNameInConstructorWithIds() {
         new Category(null, new ArrayList<>());
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNullAsIdsInConstructor() throws Exception {
+    public void testNullAsIdsInConstructor() {
         new Category("some name", null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testEmptyNameInConstructor() {
+        new Category("");
+    }
+
     @Test
-    public void testGetObjectIds() throws Exception {
+    public void testGetObjectIds() {
         String name = "category name";
         ArrayList<String> ids = new ArrayList<>();
         Category category = new Category(name, ids);
@@ -52,7 +57,7 @@ public class CategoryTest {
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         String name = "category name";
         ArrayList<String> ids = new ArrayList<>();
         Category category = new Category(name, ids);
@@ -68,5 +73,49 @@ public class CategoryTest {
         categoryTwo = new Category(name + "different");
         assertFalse(category.equals(categoryTwo));
         assertFalse(categoryTwo.equals(category));
+    }
+
+    @Test
+    public void testCompareTo() {
+        assertTrue(new Category("aaaa").compareTo(new Category("bbbb")) < 0);
+        assertTrue(new Category("bbbb").compareTo(new Category("aaaa")) > 0);
+        assertTrue(new Category("aaaa").compareTo(new Category("BBBB")) < 0);
+        assertTrue(new Category("BBBB").compareTo(new Category("aaaa")) > 0);
+        assertTrue(new Category("AAAA").compareTo(new Category("bbbb")) < 0);
+        assertTrue(new Category("bbbb").compareTo(new Category("AAAA")) > 0);
+        assertTrue(new Category("AAaa").compareTo(new Category("aaaa")) < 0);
+        assertTrue(new Category("aaaa").compareTo(new Category("AAaa")) > 0);
+        assertTrue(new Category("ab").compareTo(new Category("abb")) < 0);
+        assertTrue(new Category("abb").compareTo(new Category("ab")) > 0);
+        assertTrue(new Category("ABCD").compareTo(new Category("ABCD")) == 0);
+        assertTrue(new Category("abCd").compareTo(new Category("abCd")) == 0);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testCompareToWithNull() {
+        new Category("1234").compareTo(null);
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        Category category = new Category("1234");
+        assertTrue(category.toString().contains("Category"));
+        assertTrue(category.toString().contains("1234"));
+    }
+
+    @Test
+    public void testHashCode() throws Exception {
+        assertNotEquals(new Category("1234").hashCode(), new Category("3213"));
+        ArrayList<String> ids1 = new ArrayList<>();
+        ids1.add("1");
+        ids1.add("2");
+
+        ArrayList<String> ids2 = new ArrayList<>();
+        ids1.add("321");
+        ids1.add("421");
+
+        assertEquals(new Category("1234").hashCode(), new Category("1234").hashCode());
+        assertEquals(new Category("1234").hashCode(), new Category("1234", ids1).hashCode());
+        assertEquals(new Category("1234", ids1).hashCode(), new Category("1234",  ids2).hashCode());
     }
 }

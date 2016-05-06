@@ -34,4 +34,9 @@ public class GroupTest {
     public void testSetNameWithNull() {
         group.setName(null);
     }
+
+    @Test
+    public void testGetReadableName() {
+        assertEquals(group.getName(), group.getReadableName());
+    }
 }

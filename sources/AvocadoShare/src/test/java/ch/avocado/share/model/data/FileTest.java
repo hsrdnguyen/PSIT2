@@ -77,6 +77,10 @@ public class FileTest {
         assertEquals(moduleId, file.getModuleId());
     }
 
+    @Test
+    public void testGetReadableName() throws Exception {
+        assertEquals(file.getTitle(), file.getReadableName());
+    }
 
     @Test
     public void testSetCategories() throws Exception {

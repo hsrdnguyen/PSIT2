@@ -11,7 +11,7 @@
     AccessIdentity identityFromParameter = null;
     AccessLevelEnum currentLevel = AccessLevelEnum.NONE;
     if (owner != null) {
-        for (Map.Entry<AccessIdentity, AccessLevelEnum> entry : members.getIdentitiesWithAccess()) {
+        for (Map.Entry<AccessIdentity, AccessLevelEnum> entry : members.getIdentitiesWithAccess().entrySet()) {
             if (entry.getKey().getId().equals(owner)) {
                 identityFromParameter = entry.getKey();
                 currentLevel = entry.getValue();

@@ -31,7 +31,7 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
         if(object == null) throw new NullPointerException("object is null");
         if(object.getId() != null) throw new IllegalArgumentException("object.getId() is not null");
         Random random = new Random();
-        object.setId("object_" + random.nextLong() + random.nextLong());
+        object.setId("" + random.nextLong() + random.nextLong());
         objects.put(object.getId(), object);
         return object.getId();
     }

@@ -29,7 +29,7 @@ public class GroupDataHandlerTest {
     private User user;
     private User userTwo;
 
-    private String UNEXISTING_GROUP_NAME_1 = "Unexisting Group name";
+    private String UNEXISTING_GROUP_NAME_1 = "Unexisting Group name 1";
     private String UNEXISTING_GROUP_NAME_2 = "Unexisting Group name 2";
 
 
@@ -66,8 +66,12 @@ public class GroupDataHandlerTest {
     public void tearDown() throws Exception {
         try {
             IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-            userDataHandler.deleteUser(user);
-            userDataHandler.deleteUser(userTwo);
+            try {
+                userDataHandler.deleteUser(user);
+            }catch (ObjectNotFoundException ignored) {}
+            try {
+                userDataHandler.deleteUser(userTwo);
+            } catch (ObjectNotFoundException ignored) {}
             deleteExistingTestGroups();
 
         } finally {
