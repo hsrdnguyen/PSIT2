@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,20 +18,20 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
 
     @Override
     public String addFile(File file) throws DataHandlerException {
-        if(file.getTitle() == null) throw new IllegalArgumentException("file.title is null");
-        if(file.getModuleId() == null) throw new IllegalArgumentException("file.moduleId is null");
-        if(file.getPath() == null) throw new IllegalArgumentException("file.path is null");
-        if(file.getLastChanged() == null) throw new IllegalArgumentException("file.lastChanged is null");
+        if(file.getTitle() == null) throw new NullPointerException("file.title is null");
+        if(file.getModuleId() == null) throw new NullPointerException("file.moduleId is null");
+        if(file.getPath() == null) throw new NullPointerException("file.path is null");
+        if(file.getLastChanged() == null) throw new NullPointerException("file.lastChanged is null");
         return add(file);
     }
 
     @Override
-    public boolean deleteFile(File file) throws DataHandlerException {
-        return delete(file);
+    public void deleteFile(File file) throws DataHandlerException, ObjectNotFoundException {
+        delete(file);
     }
 
     @Override
-    public File getFile(String fileId) {
+    public File getFile(String fileId) throws ObjectNotFoundException {
         return get(fileId);
     }
 
@@ -38,10 +39,13 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     public List<File> getFiles(List<String> ids) throws DataHandlerException {
         ArrayList<File> files = new ArrayList<>(ids.size());
         for(String id: ids) {
-            File file = getFile(id);
-            if(file != null) {
-                files.add(file);
+            File file = null;
+            try {
+                file = getFile(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            files.add(file);
         }
         return files;
     }
@@ -53,8 +57,8 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
 
     @Override
     public File getFileByTitleAndModule(String fileTitle, String moduleId) {
-        if(fileTitle == null) throw new IllegalArgumentException("fileTitle is null");
-        if(moduleId == null) throw new IllegalArgumentException("moduleId is null");
+        if(fileTitle == null) throw new NullPointerException("fileTitle is null");
+        if(moduleId == null) throw new NullPointerException("moduleId is null");
         for(File file: objects.values()) {
             if(fileTitle.equals(file.getTitle()) && moduleId.equals(file.getModuleId())) {
                 return file;
@@ -64,8 +68,8 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     }
 
     @Override
-    public boolean updateFile(File file){
-        return update(file);
+    public void updateFile(File file) throws ObjectNotFoundException {
+        update(file);
     }
 
     public static void use() throws Exception {

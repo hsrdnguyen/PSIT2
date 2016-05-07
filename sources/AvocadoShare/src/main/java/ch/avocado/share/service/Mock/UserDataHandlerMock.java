@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.*;
 
@@ -41,12 +42,12 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean deleteUser(User user) {
-        return delete(user);
+    public void deleteUser(User user) throws ObjectNotFoundException {
+        delete(user);
     }
 
     @Override
-    public User getUser(String userId) {
+    public User getUser(String userId) throws ObjectNotFoundException {
         return get(userId);
     }
 
@@ -66,8 +67,8 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     }
 
     @Override
-    public boolean updateUser(User user) {
-        return update(user);
+    public void updateUser(User user) throws ObjectNotFoundException {
+        update(user);
     }
 
 
@@ -75,10 +76,13 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
     public List<User> getUsers(Collection<String> ids) throws DataHandlerException {
         List<User> users = new ArrayList<>(ids.size());
         for(String id: ids) {
-            User user = getUser(id);
-            if(user != null) {
-                users.add(user);
+            User user = null;
+            try {
+                user = getUser(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            users.add(user);
         }
         return users;
     }

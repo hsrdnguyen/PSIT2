@@ -41,7 +41,7 @@ public class File extends AccessControlObjectBase {
     }
 
     public void setTitle(String title) {
-        if (title == null) throw new IllegalArgumentException("title is null");
+        if (title == null) throw new NullPointerException("title is null");
         if (title.isEmpty()) throw new IllegalArgumentException("title is empty");
         this.title = title;
     }
@@ -51,7 +51,7 @@ public class File extends AccessControlObjectBase {
     }
 
     public void setLastChanged(Date lastChanged) {
-        if (lastChanged == null) throw new IllegalArgumentException("lastChanged is null");
+        if (lastChanged == null) throw new NullPointerException("lastChanged is null");
         this.lastChanged = lastChanged;
     }
 
@@ -61,7 +61,7 @@ public class File extends AccessControlObjectBase {
     }
 
     public void setModuleId(String moduleId) {
-        if (moduleId == null) throw new IllegalArgumentException("moduleId is null");
+        if (moduleId == null) throw new NullPointerException("moduleId is null");
         if (moduleId.isEmpty()) throw new IllegalArgumentException("moduleId is empty");
         this.moduleId = moduleId;
     }
@@ -73,7 +73,7 @@ public class File extends AccessControlObjectBase {
 
 
     public void setDiskFile(DiskFile diskFile) {
-        if (diskFile == null) throw new IllegalArgumentException("diskFile is null");
+        if (diskFile == null) throw new NullPointerException("diskFile is null");
         if (!Objects.equals(this.diskFile, diskFile)) {
             this.diskFile = diskFile;
             setDirty(true);

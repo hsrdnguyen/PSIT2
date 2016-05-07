@@ -15,7 +15,7 @@ public class ImageHelper {
      * @param height the height to which the image will be adjusted
      */
     public static BufferedImage resizeFilling(BufferedImage image, int width, int height)  {
-        if(image == null) throw new IllegalArgumentException("image is null");
+        if(image == null) throw new NullPointerException("image is null");
         if(width < 1) throw new IllegalArgumentException("width has to be greater than 0");
         if(height < 1) throw new IllegalArgumentException("height has to be greater than 0");
 

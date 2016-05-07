@@ -29,17 +29,17 @@ public class MailVerificationTest {
 		new MailVerification(new Date(), "");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void testConstructorWithNullAsCode() throws Exception {
 		new MailVerification(new Date(), null);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void testConstructorWithNullAsDateWithCode() throws Exception {
 		new MailVerification(null, "123123");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void testConstructorWithNullAsDate() throws Exception {
 		new MailVerification(null);
 	}

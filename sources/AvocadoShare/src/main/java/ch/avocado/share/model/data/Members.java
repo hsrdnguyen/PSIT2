@@ -1,7 +1,7 @@
 package ch.avocado.share.model.data;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -22,9 +22,9 @@ public class Members {
     }
 
     public Members(Map<User, AccessLevelEnum> users, Map<Group, AccessLevelEnum> groups, AccessControlObjectBase target) {
-        if(users == null) throw new IllegalArgumentException("users is null");
-        if(groups == null) throw new IllegalArgumentException("groups is null");
-        if(target == null) throw new IllegalArgumentException("target is null");
+        if(users == null) throw new NullPointerException("users is null");
+        if(groups == null) throw new NullPointerException("groups is null");
+        if(target == null) throw new NullPointerException("target is null");
         this.users = users;
         this.groups = groups;
         this.target = target;
@@ -34,9 +34,10 @@ public class Members {
                                             Map<String, AccessLevelEnum> groupIdsWithRights,
                                             AccessControlObjectBase target)
             throws ServiceNotFoundException, DataHandlerException {
-        if(target == null) throw new IllegalArgumentException("target is null");
-        if (userIdsWithRights == null) throw new IllegalArgumentException("userIdsWithRights is null");
-        if (groupIdsWithRights == null) throw new IllegalArgumentException("groupIdsWithRights is null");
+        if(target == null) throw new NullPointerException("target is null");
+        if (userIdsWithRights == null) throw new NullPointerException("userIdsWithRights is null");
+        if (groupIdsWithRights == null) throw new NullPointerException("groupIdsWithRights is null");
+
         Map<User, AccessLevelEnum> usersWithRights = new HashMap<>();
         Map<Group, AccessLevelEnum> groupsWithRights = new HashMap<>();
 
@@ -66,23 +67,23 @@ public class Members {
         return groups.keySet();
     }
 
-    public Iterable<Map.Entry<User, AccessLevelEnum>> getUsersWithAccess() {
-        return new HashMap<>(users).entrySet();
+    public HashMap<User, AccessLevelEnum> getUsersWithAccess() {
+        return new HashMap<>(users);
     }
 
-    public Iterable<Map.Entry<Group, AccessLevelEnum>> getGroupsWithAccess() {
-        return new HashMap<>(groups).entrySet();
+    public HashMap<Group, AccessLevelEnum> getGroupsWithAccess() {
+        return new HashMap<>(groups);
     }
 
     public AccessControlObjectBase getTarget() {
         return target;
     }
 
-    public Iterable<Map.Entry<AccessIdentity, AccessLevelEnum>> getIdentitiesWithAccess() {
+    public Map<AccessIdentity, AccessLevelEnum> getIdentitiesWithAccess() {
         Map<AccessIdentity, AccessLevelEnum> map = new HashMap<>();
         map.putAll(users);
         map.putAll(groups);
-        return map.entrySet();
+        return map;
     }
 
     public Iterable<AccessIdentity> getIdentities() {

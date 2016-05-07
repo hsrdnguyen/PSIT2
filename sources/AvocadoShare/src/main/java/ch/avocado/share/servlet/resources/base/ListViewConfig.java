@@ -40,7 +40,7 @@ public class ListViewConfig extends ViewConfig {
      * @return A list of casted objects.
      */
     public <E> List<E> getObjects(Class<E> modelClass) {
-        if(modelClass == null) throw new IllegalArgumentException("modelClass is null");
+        if(modelClass == null) throw new NullPointerException("modelClass is null");
         List<E> list = new ArrayList<>(objects.size());
         for(Model object: objects) {
             E castedObject = modelClass.cast(object);

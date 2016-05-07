@@ -38,7 +38,7 @@ public class User extends AccessIdentity {
      * @param password The password object (not null)
      */
     private void setPassword(UserPassword password) {
-        if (password == null) throw new IllegalArgumentException("password is null");
+        if (password == null) throw new NullPointerException("password is null");
         this.password = password;
     }
 
@@ -46,7 +46,7 @@ public class User extends AccessIdentity {
      * @param password The plaintext password (not null)
      */
     public void setPassword(String password) {
-        if (password == null) throw new IllegalArgumentException("password is null");
+        if (password == null) throw new NullPointerException("password is null");
         this.password = UserPassword.fromPassword(password);
     }
 
@@ -61,7 +61,7 @@ public class User extends AccessIdentity {
      * @param prename The first name of the user (not null)
      */
     public void setPrename(String prename) {
-        if (prename == null) throw new IllegalArgumentException("prename is null");
+        if (prename == null) throw new NullPointerException("prename is null");
         this.prename = prename;
     }
 
@@ -76,7 +76,7 @@ public class User extends AccessIdentity {
      * @param surname The last name (not null)
      */
     public void setSurname(String surname) {
-        if (surname == null) throw new IllegalArgumentException("surname is null");
+        if (surname == null) throw new NullPointerException("surname is null");
         this.surname = surname;
     }
 
@@ -91,7 +91,7 @@ public class User extends AccessIdentity {
      * @param avatar The path? to the avatar (not null)
      */
     public void setAvatar(String avatar) {
-        if (avatar == null) throw new IllegalArgumentException("avatar is null");
+        if (avatar == null) throw new NullPointerException("avatar is null");
         this.avatar = avatar;
     }
 
@@ -106,7 +106,7 @@ public class User extends AccessIdentity {
      * @param mail The email adress (not null)
      */
     public void setMail(EmailAddress mail) {
-        if (mail == null) throw new IllegalArgumentException("mail is null");
+        if (mail == null) throw new NullPointerException("mail is null");
         this.mail = mail;
     }
 
@@ -123,6 +123,8 @@ public class User extends AccessIdentity {
      * @return {@code true} if the code is correct and the password changed.
      */
     public boolean resetPassword(String password, String code) {
+        if(password == null) throw new NullPointerException("password is null");
+        if(code == null) throw new NullPointerException("code is null");
         MailVerification verification = getPassword().getResetVerification();
         if(verification != null && !verification.isExpired() && verification.getCode().equals(code)) {
             getPassword().setPassword(password);

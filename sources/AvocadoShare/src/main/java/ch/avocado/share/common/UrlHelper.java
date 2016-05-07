@@ -3,14 +3,10 @@ package ch.avocado.share.common;
 
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.servlet.AvatarServlet;
-import ch.avocado.share.servlet.CategoryServlet;
 import ch.avocado.share.servlet.DownloadServlet;
 import ch.avocado.share.servlet.LoginServlet;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Created by coffeemakr on 26.04.16.
@@ -20,7 +16,7 @@ public class UrlHelper {
     private final HttpServletRequest request;
 
     public UrlHelper(HttpServletRequest request) {
-        if(request == null) throw new IllegalArgumentException("request is null");
+        if(request == null) throw new NullPointerException("request is null");
         this.request = request;
     }
 
@@ -69,8 +65,8 @@ public class UrlHelper {
         return getLoginUrl() + "?" + encodeUrlParameter(LoginServlet.FIELD_REDIRECT_TO, currentUrl);
     }
 
-    public String getAvatarUrl(String avatarId) {
-        return getBase() + "/avatar?" + encodeUrlParameter(AvatarServlet.PARAMETER_AVATAR, avatarId);
+    public String getAvatarUrl(String userId) {
+        return getBase() + "/avatar?" + encodeUrlParameter(AvatarServlet.PARAMETER_USER_ID, userId);
     }
 
     public String getReferrer() {

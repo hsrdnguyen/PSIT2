@@ -2,7 +2,8 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
@@ -69,7 +70,7 @@ public class ModuleDataHandlerTest {
         return categories;
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddNull() throws Exception {
         moduleDataHandler.addModule(null);
     }
@@ -110,7 +111,7 @@ public class ModuleDataHandlerTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteNull() throws Exception {
         moduleDataHandler.deleteModule(null);
     }
@@ -135,9 +136,19 @@ public class ModuleDataHandlerTest {
         notDeletedModuleIds.push(id);
         assertNotNull(module.getId());
         assertNotNull(moduleDataHandler.getModule(id));
-        assertTrue(moduleDataHandler.deleteModule(module));
-        assertNull(moduleDataHandler.getModule(id));
+
+        moduleDataHandler.deleteModule(module);
+        try {
+            moduleDataHandler.getModule(id);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
         notDeletedModuleIds.pop();
+        try {
+            moduleDataHandler.updateModule(module);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
     }
 
     @Test
@@ -161,7 +172,6 @@ public class ModuleDataHandlerTest {
         ids.add(id);
 
         ids.add(owner.getId());
-        ids.add(null);
 
         List<Module> modules = moduleDataHandler.getModules(ids);
         assertEquals(2, modules.size());
@@ -193,7 +203,7 @@ public class ModuleDataHandlerTest {
         updatedModule.setCategories(categories);
         updatedModule.setOwnerId(ownerTwo.getId());
 
-        assertTrue(moduleDataHandler.updateModule(updatedModule));
+        moduleDataHandler.updateModule(updatedModule);
 
         Module fetchedModule = moduleDataHandler.getModule(id);
         assertEquals("Fetched name doesn't match", name, fetchedModule.getName());

@@ -1,9 +1,11 @@
-package ch.avocado.share.model.exceptions;
+package ch.avocado.share.service.exceptions;
+
+import ch.avocado.share.service.exceptions.ServiceException;
 
 /**
  * Created by bergm on 15/03/2016.
  */
-public class ServiceNotFoundException extends Exception {
+public class ServiceNotFoundException extends ServiceException {
 
     private final String service;
     private final String source;

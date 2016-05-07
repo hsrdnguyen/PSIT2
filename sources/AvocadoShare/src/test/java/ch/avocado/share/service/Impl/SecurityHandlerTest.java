@@ -118,12 +118,12 @@ public class SecurityHandlerTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetAccessLevelWithUserNull() throws Exception {
         securityHandler.getAccessLevel(null, groupOne);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetAccessLevelWithObjectNull() throws Exception {
         securityHandler.getAccessLevel(user, null);
     }
@@ -229,12 +229,12 @@ public class SecurityHandlerTest {
         assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(groupOne, groupTwo));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetAnonymousAccessLevelWithNullForString() throws DataHandlerException {
         securityHandler.getAnonymousAccessLevel((String) null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testGetAnonymousAccessLevelWithNullForIdentity() throws DataHandlerException {
         securityHandler.getAnonymousAccessLevel((AccessIdentity) null);
     }

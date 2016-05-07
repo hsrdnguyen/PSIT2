@@ -7,6 +7,7 @@ import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -62,12 +63,20 @@ public class FileDataHandlerTest {
     private void deleteModules() throws DataHandlerException {
         if (module != null && module.getId() != null) {
             if (module.getId() != null) {
-                moduleDataHandler.deleteModule(module);
+                try {
+                    moduleDataHandler.deleteModule(module);
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (moduleTwo != null) {
             if (moduleTwo.getId() != null) {
-                moduleDataHandler.deleteModule(moduleTwo);
+                try {
+                    moduleDataHandler.deleteModule(moduleTwo);
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -85,7 +94,7 @@ public class FileDataHandlerTest {
                         System.out.println("Deleting file: " + file);
                         fileDataHandler.deleteFile(file);
                     }
-                } catch (DataHandlerException e) {
+                } catch (ObjectNotFoundException | DataHandlerException e) {
                     e.printStackTrace();
                 }
             }
@@ -102,7 +111,7 @@ public class FileDataHandlerTest {
         return categories;
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testAddNull() throws Exception {
         fileDataHandler.addFile(null);
     }
@@ -149,7 +158,7 @@ public class FileDataHandlerTest {
         assertCategoriesEquals(expected.getCategoryList(), actual.getCategoryList());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testDeleteNull() throws Exception {
         fileDataHandler.deleteFile(null);
     }
@@ -171,9 +180,17 @@ public class FileDataHandlerTest {
         assertNotNull(id);
         assertNotNull(file.getId());
 
-        assertTrue(fileDataHandler.deleteFile(file));
-        assertNull(fileDataHandler.getFile(file.getId()));
-        assertNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
+        fileDataHandler.deleteFile(file);
+        try {
+            fileDataHandler.getFile(file.getId());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
+        try {
+            assertNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
+            fail();
+        }catch (ObjectNotFoundException e) {
+        }
     }
 
 
@@ -258,7 +275,7 @@ public class FileDataHandlerTest {
 
         assertNotNull(fileDataHandler.addFile(file));
         notDeletedIds.push(file.getId());
-        assertNotNull(fileDataHandler.getFile(file.getId()));
+        file = fileDataHandler.getFile(file.getId());
 
 
         description = description + " new";
@@ -273,8 +290,13 @@ public class FileDataHandlerTest {
         file.setLastChanged(lastChanged);
         file.setDiskFile(new DiskFile(path, "image/png", ".png"));
         file.setModuleId(moduleTwo.getId());
+        System.out.println("Current" +file.getCategoryList());
         file.setCategories(categories);
-        assertTrue(fileDataHandler.updateFile(file));
+        System.out.println("Current" + file.getCategoryList());
+        System.out.println(file.getCategoryList().getNewCategories());
+        System.out.println(file.getCategoryList().getRemovedCategories());
+
+        fileDataHandler.updateFile(file);
 
         File fetchedFile = fileDataHandler.getFile(file.getId());
         assertNotNull(fetchedFile);

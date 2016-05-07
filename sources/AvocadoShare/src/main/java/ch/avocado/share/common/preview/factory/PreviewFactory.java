@@ -5,11 +5,9 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.preview.IPreviewGenerator;
 import ch.avocado.share.common.preview.PreviewException;
 import ch.avocado.share.model.data.File;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.servlet.DownloadServlet;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * Base class for all preview factories
@@ -24,7 +22,7 @@ public abstract class PreviewFactory {
      * @throws PreviewException
      */
     protected String getStreamUrl(File file) throws PreviewException {
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(file == null) throw new NullPointerException("file is null");
 
         return DownloadServlet.getStreamUrl(file) + "&cache=" + file.getPath();
 

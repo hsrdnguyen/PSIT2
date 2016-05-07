@@ -15,8 +15,7 @@ import java.io.Serializable;
  * For existing hashes you can simply use the default constructor. 
  * If you want to create a hash from a new password you have to 
  * use the @{link UserPassword.fromPassword} method.
- * 
- * @author muellcy1
+ *
  */
 public class UserPassword extends Model implements Serializable {
 
@@ -71,9 +70,7 @@ public class UserPassword extends Model implements Serializable {
 	 * @return
 	 */
 	static public UserPassword fromPassword(String password) {
-		if(password == null) {
-			throw new IllegalArgumentException("password can't be null");
-		}
+		if(password == null) throw new NullPointerException("password can't be null");
 		UserPassword passwordObject = new UserPassword();
 		passwordObject.setPassword(password);
 		return passwordObject;
@@ -95,12 +92,8 @@ public class UserPassword extends Model implements Serializable {
 	 * @return
 	 */
 	private static String generateDigest(String password, byte[] salt) {
-		if(password == null){
-			throw new IllegalArgumentException("password can't be null");
-		}
-		if(salt == null) {
-			throw new IllegalArgumentException("salt can't be null");
-		}
+		if(password == null) throw new NullPointerException("password can't be null");
+		if(salt == null) throw new NullPointerException("salt can't be null");
 		byte[] key = SCrypt.generate(password.getBytes(), salt, SCRYPT_CPU_MEMORY_COST, SCRYPT_BLOCK_SIZE,
 				SCRYPT_PARALLELIZING_FACTOR, SCRYPT_KEY_LENGTH);
 		return Base64.encode(salt) + ":" + Base64.encode(key);
@@ -118,7 +111,7 @@ public class UserPassword extends Model implements Serializable {
 	 * @param digest The digest
 	 */
 	public void setDigest(String digest) {
-		if(digest == null) throw new IllegalArgumentException("digest can't be null");
+		if(digest == null) throw new NullPointerException("digest can't be null");
 		if(!digest.contains(":")) throw new IllegalArgumentException("invalid digest");
 		this.digest = digest;
 	}

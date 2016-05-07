@@ -10,11 +10,11 @@ public class DiskFile {
     private final String path;
 
     public DiskFile(String path, String mimeType, String extension) {
-        if(path == null) throw new IllegalArgumentException("path is null");
+        if(path == null) throw new NullPointerException("path is null");
         if(path.isEmpty()) throw new IllegalArgumentException("path is empty");
-        if(mimeType == null) throw new IllegalArgumentException("mimetype is null");
+        if(mimeType == null) throw new NullPointerException("mimetype is null");
         if(mimeType.isEmpty()) throw new IllegalArgumentException("mimetype is empty");
-        if(extension == null) throw new IllegalArgumentException("extension is null");
+        if(extension == null) throw new NullPointerException("extension is null");
         this.path = path;
         this.mimeType = mimeType;
         this.extension = extension;

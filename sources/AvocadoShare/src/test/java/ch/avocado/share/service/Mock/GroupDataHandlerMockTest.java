@@ -87,7 +87,7 @@ public class GroupDataHandlerMockTest {
         String description = "new_description";
         String name = "new_group_name";
         group = new Group(GroupDataHandlerMock.EXISTING_GROUP0, new ArrayList<Category>(), new Date(System.currentTimeMillis()), new Rating(), ownerId, description,  name);
-        assertTrue(handler.updateGroup(group));
+        handler.updateGroup(group);
         group = handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
         assertEquals(group.getId(), GroupDataHandlerMock.EXISTING_GROUP0);
         assertEquals(group.getName(), name);

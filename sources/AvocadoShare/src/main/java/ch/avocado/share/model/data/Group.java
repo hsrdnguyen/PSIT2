@@ -48,7 +48,7 @@ public class Group extends AccessIdentity implements Serializable {
      * @param name The name of the group
      */
     public void setName(String name) {
-        if(name == null) throw new IllegalArgumentException("name is null");
+        if(name == null) throw new NullPointerException("name is null");
         this.name = name;
     }
 

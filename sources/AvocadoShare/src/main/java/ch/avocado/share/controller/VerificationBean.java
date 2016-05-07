@@ -2,7 +2,8 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
@@ -33,13 +34,18 @@ public class VerificationBean implements Serializable {
             } catch (DataHandlerException e) {
                 e.printStackTrace();
                 return false;
+            } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
+                return false;
             }
-            if (user != null && !user.getMail().isVerified() && user.getMail().getVerification() != null) {
+            assert user != null;
+            if (!user.getMail().isVerified() && user.getMail().getVerification() != null) {
                 if(user.getMail().getVerification().getCode().equals(code) && !user.getMail().getVerification().isExpired()) {
                     user.getMail().verify();
                     try {
-                        isVerified = userDataHandler.updateUser(user);
-                    } catch (DataHandlerException e) {
+                        userDataHandler.updateUser(user);
+                        isVerified = true;
+                    } catch (DataHandlerException | ObjectNotFoundException e) {
                         isVerified = false;
                     }
                 }
@@ -53,7 +59,7 @@ public class VerificationBean implements Serializable {
     }
 
     public void setCode(String code) {
-        if (code == null) throw new IllegalArgumentException("code is null");
+        if (code == null) throw new NullPointerException("code is null");
         this.code = code;
     }
 
@@ -62,7 +68,7 @@ public class VerificationBean implements Serializable {
     }
 
     public void setEmail(String email) {
-        if (email == null) throw new IllegalArgumentException("email is null");
+        if (email == null) throw new NullPointerException("email is null");
         this.email = email;
     }
 

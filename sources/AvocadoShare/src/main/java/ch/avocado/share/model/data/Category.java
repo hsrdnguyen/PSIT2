@@ -16,8 +16,8 @@ public class Category implements Comparable<Category> {
     private final List<String> objectIds;
 
     public Category(String name, List<String> objectIds) {
-        if(name == null ) throw new IllegalArgumentException("name in category");
-        if(objectIds == null ) throw new IllegalArgumentException("objectIds in category");
+        if(name == null ) throw new NullPointerException("name in category");
+        if(objectIds == null ) throw new NullPointerException("objectIds in category");
 
         this.name = name;
         this.objectIds = new ArrayList<>(objectIds.size());
@@ -25,7 +25,8 @@ public class Category implements Comparable<Category> {
     }
 
     public Category(String name) {
-        if(name == null ) throw new IllegalArgumentException("name in category");
+        if(name == null ) throw new NullPointerException("name in category");
+        if(name.isEmpty()) throw new IllegalArgumentException("empty name");
         this.name = name;
         this.objectIds = new ArrayList<>();
     }
@@ -63,7 +64,11 @@ public class Category implements Comparable<Category> {
 
     @Override
     public int compareTo(Category category) {
-        if(category == null) throw new IllegalArgumentException("category is null");
-        return name.compareTo(category.getName());
+        if(category == null) throw new NullPointerException("category is null");
+        int result = name.toLowerCase().compareTo(category.getName().toLowerCase());
+        if(result == 0) {
+            return name.compareTo(category.getName());
+        }
+        return result;
     }
 }

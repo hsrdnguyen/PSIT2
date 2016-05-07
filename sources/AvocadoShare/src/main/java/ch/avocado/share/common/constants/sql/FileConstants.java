@@ -13,6 +13,8 @@ public class FileConstants {
             "   ON u.file_id = f.id " +
             "JOIN " + OWNERSHIP_TABLE + " AS owner " +
             "   ON owner.object_id = f.id ";
+
+    public static final String SELECT_BY_ID_LIST = SELECT_FILES + " WHERE f.id IN ";
     public static final String INSERT_QUERY = "INSERT INTO " + FILE_TABLE + " (id, title, last_changed, path, extension, mimetype) VALUES (?, ?, ?, ?, ?, ?)";
     public static final String UPDATE_QUERY = "UPDATE " + FILE_TABLE + " SET title=?, last_changed=?, path=?, extension=?, mimetype=? WHERE id = ?";
     public static final String SEARCH_QUERY_START = SELECT_FILES + " WHERE ";

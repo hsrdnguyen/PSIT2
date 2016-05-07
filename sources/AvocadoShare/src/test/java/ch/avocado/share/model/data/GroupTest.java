@@ -30,8 +30,13 @@ public class GroupTest {
         assertEquals(group.getName(), name);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetNameWithNull() {
         group.setName(null);
+    }
+
+    @Test
+    public void testGetReadableName() {
+        assertEquals(group.getName(), group.getReadableName());
     }
 }

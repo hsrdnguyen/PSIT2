@@ -6,6 +6,7 @@ import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +48,7 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     }
 
     @Override
-    public Group getGroup(String id) {
+    public Group getGroup(String id) throws ObjectNotFoundException {
         return get(id);
     }
 
@@ -55,10 +56,13 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
         ArrayList<Group> groups = new ArrayList<>(ids.size());
         for(String id: ids) {
-            Group group = getGroup(id);
-            if(group != null) {
-                groups.add(group);
+            Group group;
+            try {
+                group = getGroup(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            groups.add(group);
         }
         return groups;
     }
@@ -72,13 +76,13 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     }
 
     @Override
-    public boolean updateGroup(Group group) {
-        return update(group);
+    public void updateGroup(Group group) throws ObjectNotFoundException {
+        update(group);
     }
 
     @Override
-    public boolean deleteGroup(Group group) {
-        return delete(group);
+    public void deleteGroup(Group group) throws ObjectNotFoundException {
+        delete(group);
     }
 
     @Override

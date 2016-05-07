@@ -13,7 +13,7 @@ public class DiskFileTest {
         new DiskFile("", "image/png", ".png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructorWithPathNull() {
         new DiskFile(null, "image/png", ".png");
     }
@@ -23,12 +23,12 @@ public class DiskFileTest {
         new DiskFile("4783291084032432", "", ".png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructorWithMimeTypeNull() {
         new DiskFile("3u21039210321890", null, ".png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructorWithExtensionNull() {
         new DiskFile("3u21039210321890", "image/png", null);
     }
@@ -58,19 +58,23 @@ public class DiskFileTest {
         DiskFile diskFile = new DiskFile("3218i9321", "image/png", "png");
         DiskFile diskFileTwo = new DiskFile("3218i9321", "image/png", "png");
         assertTrue(diskFile.equals(diskFileTwo));
+        assertEquals(diskFile.hashCode(), diskFileTwo.hashCode());
         assertTrue(diskFileTwo.equals(diskFile));
         assertTrue(diskFile.equals(diskFile));
         assertFalse(diskFile.equals(null));
 
         diskFileTwo = new DiskFile("3218i93213", "image/png", "png");
+        assertNotEquals(diskFile.hashCode(), diskFileTwo.hashCode());
         assertFalse(diskFile.equals(diskFileTwo));
         assertFalse(diskFileTwo.equals(diskFile));
 
         diskFileTwo = new DiskFile("3218i9321", "image/jpeg", "png");
+        assertNotEquals(diskFile.hashCode(), diskFileTwo.hashCode());
         assertFalse(diskFile.equals(diskFileTwo));
         assertFalse(diskFileTwo.equals(diskFile));
 
         diskFileTwo = new DiskFile("3218i9321", "image/png", "jpg");
+        assertNotEquals(diskFile.hashCode(), diskFileTwo.hashCode());
         assertFalse(diskFile.equals(diskFileTwo));
         assertFalse(diskFileTwo.equals(diskFile));
     }

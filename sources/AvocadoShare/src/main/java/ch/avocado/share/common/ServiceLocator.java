@@ -1,6 +1,6 @@
 package ch.avocado.share.common;
 
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Impl.*;
 import ch.avocado.share.service.Mock.FileStorageHandlerMock;

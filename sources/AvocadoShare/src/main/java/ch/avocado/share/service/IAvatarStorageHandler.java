@@ -1,5 +1,6 @@
 package ch.avocado.share.service;
 
+import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
 
 import java.io.InputStream;
@@ -14,13 +15,13 @@ public interface IAvatarStorageHandler {
      * @param avatarImage the correctly resisized avatar image
      * @return The avatar id
      */
-    String storeAvatar(InputStream avatarImage);
+    String storeAvatar(InputStream avatarImage) throws FileStorageException;
 
     /**
      * @param avatarId The identifier of the avatar
      * @return The readable image content
      */
-    InputStream readImages(String avatarId);
+    InputStream readImages(String avatarId) throws FileStorageException;
 
     /**
      * @param avatarId The identifier of the avatar

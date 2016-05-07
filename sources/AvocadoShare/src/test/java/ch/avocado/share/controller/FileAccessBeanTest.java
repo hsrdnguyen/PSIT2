@@ -2,7 +2,8 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.MailingServiceMock;
@@ -62,7 +63,7 @@ public class FileAccessBeanTest {
         assertNotNull(userDataHandler.addUser(userWithoutReadRights));
         assertNotNull(userDataHandler.addUser(owner));
 
-        module = new Module(owner.getId(), "description",  "UNEXISTING MODULE!!!!");
+        module = new Module(owner.getId(), "description", "UNEXISTING MODULE!!!!");
         moduleDataHandler.addModule(module);
         file = DummyFactory.newFile(1, owner, module);
         fileDataHandler.addFile(file);
@@ -76,17 +77,24 @@ public class FileAccessBeanTest {
     private void deleteTestUsers() throws DataHandlerException, ServiceNotFoundException {
         IUserDataHandler userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
         User user;
-        user = userDataHandler.getUserByEmailAddress(email0);
-        if(user != null) {
+        try {
+            user = userDataHandler.getUserByEmailAddress(email0);
             userDataHandler.deleteUser(user);
+        } catch (ObjectNotFoundException e) {
+            e.printStackTrace();
         }
-        user = userDataHandler.getUserByEmailAddress(email1);
-        if(user != null) {
+        try {
+            user = userDataHandler.getUserByEmailAddress(email1);
             userDataHandler.deleteUser(user);
+        } catch (ObjectNotFoundException e) {
+            e.printStackTrace();
         }
-        user = userDataHandler.getUserByEmailAddress(email2);
-        if(user != null) {
+
+        try {
+            user = userDataHandler.getUserByEmailAddress(email2);
             userDataHandler.deleteUser(user);
+        } catch (ObjectNotFoundException e) {
+            e.printStackTrace();
         }
 
     }
@@ -178,7 +186,11 @@ public class FileAccessBeanTest {
 
         // We use a inexisting id
         String notExistingFileId = "999999999999999";
-        assertNull(ServiceLocator.getService(IFileDataHandler.class).getFile(notExistingFileId));
+        try {
+            ServiceLocator.getService(IFileDataHandler.class).getFile(notExistingFileId);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
         bean.setFileId(notExistingFileId);
         bean.setRequesterUserMail(userWithoutReadRights.getId());
         assertFalse(bean.requestAccess());
@@ -191,7 +203,7 @@ public class FileAccessBeanTest {
     public void testGrantAccess() throws Exception {
 
         bean.setFileId(file.getId());
-        bean.setOwnerUserId(owner.getId());
+        bean.setObjectOwner(owner);
         bean.setRequesterUserId(userWithoutReadRights.getId());
         assertTrue(bean.grantAccess());
         assertEquals(AccessLevelEnum.READ, securityHandler.getAccessLevel(userWithoutReadRights, file));
@@ -200,7 +212,7 @@ public class FileAccessBeanTest {
     @Test
     public void testGrantAccessWithInvalidOwner() throws Exception {
         bean.setFileId(file.getId());
-        bean.setOwnerUserId(userWithReadRights.getId());
+        bean.setObjectOwner(userWithReadRights);
         bean.setRequesterUserId(userWithoutReadRights.getId());
         assertFalse(bean.grantAccess());
         assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(userWithoutReadRights, file));
@@ -208,8 +220,9 @@ public class FileAccessBeanTest {
 
     @Test
     public void testGrantAccessWithInvalidFile() throws Exception {
+        assertNotNull(owner.getId());
         bean.setFileId(owner.getId());
-        bean.setOwnerUserId(owner.getId());
+        bean.setObjectOwner(owner);
         bean.setRequesterUserId(userWithoutReadRights.getId());
         assertFalse(bean.grantAccess());
         assertEquals(AccessLevelEnum.NONE, securityHandler.getAccessLevel(userWithoutReadRights, file));
@@ -219,7 +232,7 @@ public class FileAccessBeanTest {
     @Test
     public void testGrantAccessForUserWithRights() throws Exception {
         bean.setFileId(file.getId());
-        bean.setOwnerUserId(owner.getId());
+        bean.setObjectOwner(owner);
         bean.setRequesterUserId(userWithReadRights.getId());
         assertTrue(bean.grantAccess());
         assertEquals(AccessLevelEnum.READ, securityHandler.getAccessLevel(userWithReadRights, file));

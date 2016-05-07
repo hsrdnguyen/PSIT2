@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IModuleDataHandler;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -42,12 +43,12 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
     }
 
     @Override
-    public boolean deleteModule(Module module) {
-        return delete(module);
+    public void deleteModule(Module module) throws ObjectNotFoundException {
+        delete(module);
     }
 
     @Override
-    public Module getModule(String moduleId) {
+    public Module getModule(String moduleId) throws ObjectNotFoundException {
         return get(moduleId);
     }
 
@@ -55,17 +56,20 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
     public List<Module> getModules(Collection<String> ids) {
         ArrayList<Module> modules = new ArrayList<>(ids.size());
         for(String id: ids) {
-            Module module = getModule(id);
-            if(module != null) {
-                modules.add(module);
+            Module module = null;
+            try {
+                module = getModule(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            modules.add(module);
         }
         return modules;
     }
 
     @Override
-    public boolean updateModule(Module module) {
-        return update(module);
+    public void updateModule(Module module) throws ObjectNotFoundException {
+        update(module);
     }
 
     public static void use() throws Exception {
