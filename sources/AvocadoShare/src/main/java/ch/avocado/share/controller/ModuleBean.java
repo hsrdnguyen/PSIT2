@@ -6,6 +6,7 @@ import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
