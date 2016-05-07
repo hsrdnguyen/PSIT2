@@ -119,7 +119,7 @@ public class FileDataHandlerTest {
     @Test
     public void testAddAndGetFile() throws Exception {
         // String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
@@ -166,7 +166,7 @@ public class FileDataHandlerTest {
 
     @Test
     public void testDeleteFile() throws Exception {
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
@@ -199,7 +199,7 @@ public class FileDataHandlerTest {
         ArrayList<String> ids = new ArrayList<>();
 
         String id;
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
@@ -240,7 +240,7 @@ public class FileDataHandlerTest {
     @Test
     public void testGetFileByTitleAndModule() throws Exception {
         String id;
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
@@ -263,7 +263,7 @@ public class FileDataHandlerTest {
 
     @Test
     public void testUpdateFile() throws Exception {
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();

@@ -130,14 +130,14 @@ public class RatingDataHandlerTest {
         assertEquals("Rating FromUser ForObject", rating, ratingValue, 0.01f);
     }
 
-    @Test(expected = DataHandlerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testMinValueForRating() throws Exception{
         int ratingValue = RatingConstants.MIN_RATING_VALUE -1;
 
         ratingDataHandler.addRating(fileId, user1Id, ratingValue);
     }
 
-    @Test(expected = DataHandlerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testMaxValueForRating() throws Exception{
         int ratingValue = RatingConstants.MAX_RATING_VALUE +1;
 
