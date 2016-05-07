@@ -83,7 +83,7 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
             emailAddressVerification = getEmailAddressVerification(id, emailAddress);
         }
         email = new EmailAddress(emailVerified, emailAddress, emailAddressVerification);
-        return new User(id, null, creationDate, 0.0f, description, password, prename, surname, avatar, email);
+        return new User(id, null, creationDate, new Rating(), description, password, prename, surname, avatar, email);
     }
 
     @Override

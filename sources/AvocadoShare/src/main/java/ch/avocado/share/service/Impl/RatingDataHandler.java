@@ -24,7 +24,7 @@ public class RatingDataHandler implements IRatingDataHandler{
      * @return The Ranking for the AccessControlObject.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    public Rating getRatingForObject(int ratedObjectId) throws DataHandlerException {
+    public Rating getRatingForObject(long ratedObjectId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if (connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;

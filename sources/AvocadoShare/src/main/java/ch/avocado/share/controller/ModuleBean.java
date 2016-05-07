@@ -4,12 +4,12 @@ import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import ch.avocado.share.service.exceptions.ServiceException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +40,7 @@ public class ModuleBean extends ResourceBean<Module> {
 
     @Override
     public Module create() throws ServiceException {
-        Module module = new Module(null, new ArrayList<Category>(), new Date(), 0.0f, getAccessingUser().getId(), "", "", new ArrayList<>());
+        Module module = new Module(null, new ArrayList<Category>(), new Date(), new Rating(), getAccessingUser().getId(), "", "", new ArrayList<>());
         checkParameterDescription(module);
         checkParameterName(module);
         if (module.isValid()) {

@@ -3,13 +3,13 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
-import org.bouncycastle.math.raw.Mod;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -60,7 +60,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             throw new DataHandlerException(e);
         }
         List<Category> categories = getCategories(id);
-        return new Module(id, categories, creationDate, 0.0f, ownerId, description, name, new ArrayList<>());
+        return new Module(id, categories, creationDate, new Rating(), ownerId, description, name, new ArrayList<>());
     }
 
     private List<Category> getCategories(String id) throws DataHandlerException {

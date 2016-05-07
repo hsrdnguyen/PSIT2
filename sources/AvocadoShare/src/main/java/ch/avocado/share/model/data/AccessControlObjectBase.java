@@ -10,7 +10,7 @@ public abstract class AccessControlObjectBase extends Model{
     private String id;
     private CategoryList categoryList;
     private Date creationDate;
-    private float rating;
+    private Rating rating;
     private String ownerId;
     private String description;
 
@@ -23,7 +23,7 @@ public abstract class AccessControlObjectBase extends Model{
      * @param ownerId The identifier of the owner
      * @param description Description of the object
      */
-    public AccessControlObjectBase(String id, Collection<Category> categories, Date creationDate, float rating, String ownerId, String description) {
+    public AccessControlObjectBase(String id, Collection<Category> categories, Date creationDate, Rating rating, String ownerId, String description) {
         this.id = id;
         if(categories == null) {
             categories = new ArrayList<>();
@@ -88,9 +88,9 @@ public abstract class AccessControlObjectBase extends Model{
     }
 
     /**
-     * @return The average rating
+     * @return The rating object.
      */
-    public float getRating() {
+    public Rating getRating() {
         return rating;
     }
 

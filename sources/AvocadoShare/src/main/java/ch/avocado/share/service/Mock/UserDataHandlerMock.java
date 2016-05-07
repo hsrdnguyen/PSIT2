@@ -1,10 +1,7 @@
 package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.data.EmailAddress;
-import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.data.UserPassword;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
@@ -35,7 +32,7 @@ public class UserDataHandlerMock extends DataHandlerMockBase<User> implements IU
         objects.clear();
         for (int i = 0; i < 100; i++) {
             String id = String.format("1%06d", i);
-            objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), 0, "description" + i, DEFAULT_PASSWORD, "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
+            objects.put(id, new User(id, new ArrayList<Category>(), new Date(1000), new Rating(), "description" + i, DEFAULT_PASSWORD, "prename" + i, "surname" + i, "avator" + i, new EmailAddress(true, "email" + i + "@zhaw.ch", null)));
         }
     }
 

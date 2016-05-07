@@ -18,14 +18,14 @@ public class Module extends AccessControlObjectBase {
     private String name;
     private List<String> fileIds;
 
-    public Module(String id, Collection<Category> categories, Date creationDate, float rating, String ownerId, String description, String name, List<String> fileIds) {
+    public Module(String id, Collection<Category> categories, Date creationDate, Rating rating, String ownerId, String description, String name, List<String> fileIds) {
         super(id, categories, creationDate, rating, ownerId, description);
         setName(name);
         setFileIds(fileIds);
     }
 
     public Module(String ownerId, String description, String name) {
-        this(null, new ArrayList<>(), new Date(), 0.0f, ownerId, description, name, new ArrayList<>());
+        this(null, new ArrayList<>(), new Date(), new Rating(), ownerId, description, name, new ArrayList<>());
     }
 
     /**

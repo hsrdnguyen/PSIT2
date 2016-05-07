@@ -3,6 +3,7 @@ package ch.avocado.share.service.Mock;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
@@ -42,7 +43,7 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
         objects.clear();
         for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
             String id = "group" + i;
-            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "Eine Beschreibung der Gruppe " + i + ".\n Vielleicht wiederspiegelt diese Gruppe eine Klasse, dann könnte das hier stehen.", "groupName" + i));
+            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), new Rating(), "owner" + i, "Eine Beschreibung der Gruppe " + i + ".\n Vielleicht wiederspiegelt diese Gruppe eine Klasse, dann könnte das hier stehen.", "groupName" + i));
         }
     }
 

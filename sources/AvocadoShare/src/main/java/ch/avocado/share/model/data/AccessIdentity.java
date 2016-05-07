@@ -8,7 +8,7 @@ import java.util.Date;
  * @todo Rename appropriate
  */
 public abstract class AccessIdentity extends AccessControlObjectBase{
-    public AccessIdentity(String id, Collection<Category> categories, Date creationDate, float rating, String ownerId, String description) {
+    public AccessIdentity(String id, Collection<Category> categories, Date creationDate, Rating rating, String ownerId, String description) {
         super(id, categories, creationDate, rating, ownerId, description);
     }
 }

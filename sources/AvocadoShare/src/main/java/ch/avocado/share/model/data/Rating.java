@@ -9,6 +9,7 @@ import java.util.List;
  * Created by kunzlio1 on 18.04.2016.
  */
 public class Rating {
+    private static long DEFAULT_RATED_OBJECT_ID = -1;
     private List<Long> ratingUserIds;
     private long ratedObjectId;
     private float rating;
@@ -16,6 +17,11 @@ public class Rating {
     public Rating(long ratedObjectId){
         ratingUserIds = new ArrayList<>();
         this.ratedObjectId = ratedObjectId;
+    }
+
+    public Rating(){
+        ratingUserIds = new ArrayList<>();
+        this.ratedObjectId = DEFAULT_RATED_OBJECT_ID;
     }
 
     public void addRatingUserId(long ratingUserId){

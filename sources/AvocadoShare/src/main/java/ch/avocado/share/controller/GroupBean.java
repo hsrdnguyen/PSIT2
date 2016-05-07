@@ -3,7 +3,9 @@ package ch.avocado.share.controller;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Group;
-import ch.avocado.share.service.exceptions.ServiceNotFoundException;
+import ch.avocado.share.model.data.Rating;
+import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
+import ch.avocado.share.model.exceptions.HttpBeanException;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -53,7 +55,7 @@ public class GroupBean extends ResourceBean<Group> {
     @Override
     public Group create() throws DataHandlerException, ServiceNotFoundException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
-        Group group = new Group(null, null, new Date(System.currentTimeMillis()), 0, getAccessingUser().getId(), "", "");
+        Group group = new Group(null, null, new Date(System.currentTimeMillis()), new Rating(), getAccessingUser().getId(), "", "");
         checkNameNotEmpty(group);
         checkNameIsUnique(group);
         checkParameterDescription(group);

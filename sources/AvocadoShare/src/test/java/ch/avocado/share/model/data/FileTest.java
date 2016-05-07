@@ -17,7 +17,7 @@ public class FileTest {
 
     @Before
     public void setUp() {
-        this.file = new File("id", new ArrayList<Category>(), new Date(), 0.0f, "1234", "description", "title", "path", new Date(), "", "4123321", "image/png");
+        this.file = new File("id", new ArrayList<Category>(), new Date(), new Rating(), "1234", "description", "title", "path", new Date(), "", "4123321", "image/png");
     }
 
     @Test(expected = NullPointerException.class)

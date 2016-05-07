@@ -70,7 +70,7 @@ public class UserDataHandlerTest {
         MailVerification verification = new MailVerification(expiry, "123456789");
         EmailAddress emailAddress = new EmailAddress(false, "test@test.com", verification);
         UserPassword pwd = UserPassword.fromPassword("123456789");
-        User user = new User(null, null, new Date(), 0.0f, "", pwd, "Max", "Muster", "123456789.jpg", emailAddress);
+        User user = new User(null, null, new Date(), new Rating(), "", pwd, "Max", "Muster", "123456789.jpg", emailAddress);
         assertNotNull(user.getDescription());
         return user;
     }

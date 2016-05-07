@@ -13,7 +13,7 @@ public class File extends AccessControlObjectBase {
     private String moduleId;
     private DiskFile diskFile;
 
-    private File(String id, Collection<Category> categories, Date creationDate, float rating,
+    private File(String id, Collection<Category> categories, Date creationDate, Rating rating,
                  String ownerId, String description, String title, Date lastChanged,
                  String moduleId, DiskFile diskFile) {
         super(id, categories, creationDate, rating, ownerId, description);
@@ -24,7 +24,7 @@ public class File extends AccessControlObjectBase {
         this.diskFile = diskFile;
     }
 
-    public File(String id, List<Category> categories, Date creationDate, float rating,
+    public File(String id, List<Category> categories, Date creationDate, Rating rating,
                 String ownerId, String description, String title, String path, Date lastChanged,
                 String extension, String moduleId, String mimeType) {
         this(id, categories, creationDate, rating, ownerId, description, title, lastChanged, moduleId,
@@ -32,7 +32,7 @@ public class File extends AccessControlObjectBase {
     }
 
     public File(String ownerId, String description, String title, Date lastChanged, String moduleId, DiskFile diskFile) {
-        this(null, new ArrayList<Category>(), new Date(), 0.0f, ownerId, description, title, lastChanged, moduleId, diskFile);
+        this(null, new ArrayList<Category>(), new Date(), new Rating(), ownerId, description, title, lastChanged, moduleId, diskFile);
     }
 
 
