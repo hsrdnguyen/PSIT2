@@ -4,6 +4,7 @@ import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IGroupDataHandler;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,7 +101,10 @@ public class GroupDataHandlerMockTest {
         Group group = handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
         assertNotNull(group);
         handler.deleteGroup(group);
-        assertNull(handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0));
+        try {
+            handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
+            fail();
+        } catch (ObjectNotFoundException e){}
     }
 
     @Test

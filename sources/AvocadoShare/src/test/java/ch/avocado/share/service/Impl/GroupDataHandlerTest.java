@@ -101,6 +101,7 @@ public class GroupDataHandlerTest {
         assertEquals("fetched groups differ from possible groups", 2, groups.size());
         for(Group group: groups) {
             assertTrue(group.getId().equals(groupOne.getId()) || group.getId().equals(groupTwo.getId()));
+            groupDataHandler.deleteGroup(group);
         }
     }
 
