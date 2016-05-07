@@ -25,23 +25,22 @@ public interface IRatingDataHandler {
     int getRatingForUserAndObject(long ratingUserId, long ratedObjectId) throws DataHandlerException;
 
     /**
+     * Insert or update a ranking in the database.
+     * @param ratedAccessObjectId The id of the rated AccessControlObject.
+     * @param userId The id of the rating User.
+     * @param rating The rating, which the User gave to the AccessControlObject.
+     * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
+     */
+    void putRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
+
+    /**
      * Insert a new Ranking int to the database.
      * @param ratedAccessObjectId The id of the rated AccessControlObject.
      * @param userId The id of the rating User.
      * @param rating The rating, which the User gave to the AccessControlObject.
-     * @return The primary key, from the inserted dataset.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    long addRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
-
-    /**
-     * Deletes a Ranking from the database.
-     * @param ratedAccessObjectId The id of the rated AccessControlObject.
-     * @param userId The id of the rating User.
-     * @return True if the Ranking was deleted from the database. False if not.
-     * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
-     */
-    boolean deleteRating(long ratedAccessObjectId, long userId) throws DataHandlerException;
+    void addRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
 
     /**
      * Updated a Ranking in the database.
@@ -52,4 +51,14 @@ public interface IRatingDataHandler {
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
     boolean updateRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
+
+    /**
+     * Deletes a Ranking from the database.
+     * @param ratedAccessObjectId The id of the rated AccessControlObject.
+     * @param userId The id of the rating User.
+     * @return True if the Ranking was deleted from the database. False if not.
+     * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
+     */
+    boolean deleteRating(long ratedAccessObjectId, long userId) throws DataHandlerException;
+
 }

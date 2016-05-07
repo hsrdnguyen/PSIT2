@@ -156,4 +156,20 @@ public class RatingDataHandlerTest {
         rating = fileFromDb.getRating();
         assertTrue(rating.hasUserRated(user1Id));
     }
+
+    @Test
+    public void testPutRating() throws Exception {
+        ratingDataHandler.putRating(fileId, user1Id, 1);
+        File fileFromDb = fileDataHandler.getFile(fileId.toString());
+        Rating rating = fileFromDb.getRating();
+        assertTrue(rating.hasUserRated(user1Id));
+        assertEquals(rating.getRating(), 1, 0.1);
+
+
+        ratingDataHandler.putRating(fileId, user1Id, 2);
+        fileFromDb = fileDataHandler.getFile(fileId.toString());
+        rating = fileFromDb.getRating();
+        assertTrue(rating.hasUserRated(user1Id));
+        assertEquals(rating.getRating(), 2, 0.1);
+    }
 }

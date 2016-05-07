@@ -35,7 +35,11 @@ public class RatingDataHandler implements IRatingDataHandler {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_SELECT_BY_OBJECT_ID);
             preparedStatement.setLong(1, ratedObjectId);
             resultSet = preparedStatement.executeQuery();
-            return getRatingFromResultSet(resultSet);
+            if(resultSet.next()) {
+                return getRatingFromResultSet(resultSet);
+            } else {
+                return new Rating(ratedObjectId);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -66,24 +70,29 @@ public class RatingDataHandler implements IRatingDataHandler {
         }
     }
 
+    @Override
+    public void putRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException {
+        if(!updateRating(ratedAccessObjectId, userId, rating)) {
+            insertRating(ratedAccessObjectId, userId, rating);
+        }
+    }
+
     /**
      * Insert a new Ranking int to the database.
      *
      * @param ratedAccessObjectId The id of the rated AccessControlObject.
      * @param ratingUserId        The id of the rating User.
      * @param rating              The rating, which the User gave to the AccessControlObject.
-     * @return The primary key, from the inserted dataset.
      * @throws DataHandlerException     This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      * @throws IllegalArgumentException If the rating is not between {@value RatingConstants#MIN_RATING_VALUE}
      *                                  and {@value RatingConstants#MAX_RATING_VALUE}
      */
-    public long addRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
+    public void addRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
         if (rating < MIN_RATING_VALUE || rating > MAX_RATING_VALUE) {
             throw new IllegalArgumentException("Rating not between " + MIN_RATING_VALUE
                     + " and " + MAX_RATING_VALUE);
         }
-
-        return insertRating(ratedAccessObjectId, ratingUserId, rating);
+        insertRating(ratedAccessObjectId, ratingUserId, rating);
     }
 
     /**
@@ -132,7 +141,7 @@ public class RatingDataHandler implements IRatingDataHandler {
         }
     }
 
-    private long insertRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
+    private void insertRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         if (connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
@@ -141,26 +150,21 @@ public class RatingDataHandler implements IRatingDataHandler {
             preparedStatement.setLong(1, ratedAccessObjectId);
             preparedStatement.setLong(2, ratingUserId);
             preparedStatement.setInt(3, rating);
-            return Long.parseLong(connectionHandler.insertDataSet(preparedStatement));
+            if(null == connectionHandler.insertDataSet(preparedStatement)) {
+                throw new DataHandlerException("Rating could not be added");
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
 
-    private Rating getRatingFromResultSet(ResultSet resultSet) throws DataHandlerException {
-        Rating rating = null;
-        try {
-            if (resultSet.next()) {
-                rating = new Rating(resultSet.getLong(1));
-                do {
-                    rating.addRating(resultSet.getInt(3), resultSet.getLong(2));
-                } while (resultSet.next());
-            }
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
-        if (rating != null) return rating;
-        throw new DataHandlerException("There's no rating for that object");
+    private Rating getRatingFromResultSet(ResultSet resultSet) throws SQLException {
+        Rating rating;
+        rating = new Rating(resultSet.getLong(1));
+        do {
+            rating.addRating(resultSet.getInt(3), resultSet.getLong(2));
+        } while (resultSet.next());
+        return rating;
     }
 
     private IDatabaseConnectionHandler getDatabaseHandler() {
