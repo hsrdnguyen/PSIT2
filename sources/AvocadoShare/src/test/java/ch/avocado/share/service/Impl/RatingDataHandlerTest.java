@@ -12,6 +12,8 @@ import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +38,7 @@ public class RatingDataHandlerTest {
     private Long user2Id;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws IllegalAccessException, DataHandlerException, ServiceNotFoundException {
         DatabaseConnectionHandlerMock.use();
         ratingDataHandler = new RatingDataHandler();
 
@@ -57,7 +59,7 @@ public class RatingDataHandlerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
 
         ServiceLocator.getService(IFileDataHandler.class).deleteFile(file);
         ServiceLocator.getService(IModuleDataHandler.class).deleteModule(module);
@@ -68,7 +70,7 @@ public class RatingDataHandlerTest {
     }
 
     @Test
-    public void testAddAndGetOneRatingsForFile() throws Exception{
+    public void testAddAndGetOneRatingsForFile() throws DataHandlerException{
         int ratingValue = 2;
 
         ratingDataHandler.addRating(fileId, user1Id, ratingValue);
@@ -82,7 +84,7 @@ public class RatingDataHandlerTest {
     }
 
     @Test
-    public void testAddAndGetTwoRatingsForFile() throws Exception{
+    public void testAddAndGetTwoRatingsForFile() throws DataHandlerException{
         int ratingValue1 = 0;
         int ratingValue2 = 3;
 
@@ -101,7 +103,7 @@ public class RatingDataHandlerTest {
     }
 
     @Test
-    public void testAddAndGetTwoRatingsForFile_WithGetFile() throws Exception{
+    public void testAddAndGetTwoRatingsForFile_WithGetFile() throws DataHandlerException, ObjectNotFoundException {
         int ratingValue1 = 0;
         int ratingValue2 = 3;
 
@@ -121,7 +123,7 @@ public class RatingDataHandlerTest {
     }
 
     @Test
-    public void testAddAndGetRatingForUserAndFile() throws Exception{
+    public void testAddAndGetRatingForUserAndFile() throws DataHandlerException {
         int ratingValue = 2;
 
         ratingDataHandler.addRating(fileId, user1Id, ratingValue);
@@ -131,16 +133,27 @@ public class RatingDataHandlerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMinValueForRating() throws Exception{
+    public void testMinValueForRating() throws DataHandlerException {
         int ratingValue = RatingConstants.MIN_RATING_VALUE -1;
-
         ratingDataHandler.addRating(fileId, user1Id, ratingValue);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMaxValueForRating() throws Exception{
+    public void testMaxValueForRating() throws DataHandlerException {
         int ratingValue = RatingConstants.MAX_RATING_VALUE +1;
-
         ratingDataHandler.addRating(fileId, user1Id, ratingValue);
+    }
+
+    @Test
+    public void testDeleteRating() throws Exception {
+        ratingDataHandler.addRating(fileId, user1Id, 1);
+        File fileFromDb = fileDataHandler.getFile(fileId.toString());
+        Rating rating = fileFromDb.getRating();
+        assertTrue(rating.hasUserRated(user1Id));
+        assertEquals(rating.getRating(), 1, 0.1);
+        ratingDataHandler.deleteRating(fileId, user1Id);
+        fileFromDb = fileDataHandler.getFile(fileId.toString());
+        rating = fileFromDb.getRating();
+        assertTrue(rating.hasUserRated(user1Id));
     }
 }

@@ -4,7 +4,7 @@ import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 /**
- * Created by User on 18.04.2016.
+ * Data handler interface to manage ratings.
  */
 public interface IRatingDataHandler {
     /**
