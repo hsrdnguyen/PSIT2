@@ -31,7 +31,7 @@ abstract class DataHandlerBase {
             try {
                 connectionHandler = ServiceLocator.getService(IDatabaseConnectionHandler.class);
             } catch (ServiceNotFoundException e) {
-                throw new DataHandlerException(e.getMessage());
+                throw new DataHandlerException(e);
             }
         }
         return connectionHandler;

@@ -120,6 +120,9 @@ public class FileAccessBean implements Serializable {
         } catch (DataHandlerException e) {
             e.printStackTrace();
             return false;
+        } catch (ObjectNotFoundException e){
+            e.printStackTrace();
+            return false;
         }
         return false;
     }

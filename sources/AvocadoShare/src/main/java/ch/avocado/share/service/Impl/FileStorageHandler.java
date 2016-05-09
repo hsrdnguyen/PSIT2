@@ -35,7 +35,7 @@ public class FileStorageHandler implements IFileStorageHandler {
         try {
             return tika.detect(bufferedIn, metadata);
         } catch (IOException e) {
-            throw new FileStorageException("Unable to determinate type: " + e.getMessage());
+            throw new FileStorageException("Unable to determinate type: " + e.getMessage(), e);
         }
     }
 
@@ -57,7 +57,7 @@ public class FileStorageHandler implements IFileStorageHandler {
         try {
             messageDigest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            throw new FileStorageException("SHA-256 digest doesn't exist");
+            throw new FileStorageException("SHA-256 digest doesn't exist", e);
         }
         try {
             while (readBytes >= 0) {
@@ -67,7 +67,7 @@ public class FileStorageHandler implements IFileStorageHandler {
                 }
             }
         } catch (IOException e) {
-            throw new FileStorageException("Unable to hash file: " + e.getMessage());
+            throw new FileStorageException("Unable to hash file: " + e.getMessage(), e);
         } finally {
             try {
                 inputStream.close();
@@ -104,7 +104,7 @@ public class FileStorageHandler implements IFileStorageHandler {
                 tempUploadedFile.write(storedFile);
             }
         } catch (Exception e) {
-            throw new FileStorageException("Failed to store uploaded file: " + e.getMessage());
+            throw new FileStorageException("Failed to store uploaded file: " + e.getMessage(), e);
         }
         return filename;
     }
@@ -129,7 +129,7 @@ public class FileStorageHandler implements IFileStorageHandler {
                 }
             }
         } catch (IOException e) {
-            throw new FileStorageException(e.getMessage());
+            throw new FileStorageException(e);
         }
         return filename;
     }

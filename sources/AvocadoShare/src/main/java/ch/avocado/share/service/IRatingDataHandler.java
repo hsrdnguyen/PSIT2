@@ -2,6 +2,7 @@ package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 /**
  * Data handler interface to manage ratings.
@@ -22,7 +23,7 @@ public interface IRatingDataHandler {
      * @return The rating as integer, which the a User gave to the AccessControlObject.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    int getRatingForUserAndObject(long ratingUserId, long ratedObjectId) throws DataHandlerException;
+    int getRatingForUserAndObject(long ratingUserId, long ratedObjectId) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Insert or update a ranking in the database.

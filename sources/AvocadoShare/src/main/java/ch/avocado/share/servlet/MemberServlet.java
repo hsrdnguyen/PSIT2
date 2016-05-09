@@ -9,6 +9,7 @@ import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.model.exceptions.HttpServletException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
@@ -59,6 +60,8 @@ public class MemberServlet extends HttpServlet {
                 throw new HttpServletException(HttpStatusCode.NOT_FOUND, ErrorMessageConstants.OBJECT_NOT_FOUND);
             }
         } catch (DataHandlerException e) {
+            throw new HttpServletException(e);
+        } catch (ObjectNotFoundException e){
             throw new HttpServletException(e);
         }
     }

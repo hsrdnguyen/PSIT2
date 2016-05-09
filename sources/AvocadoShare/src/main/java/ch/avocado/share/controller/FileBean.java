@@ -105,7 +105,7 @@ public class FileBean extends ResourceBean<File> {
      * @throws HttpServletException
      */
     @Override
-    public List<File> index() throws ServiceNotFoundException, DataHandlerException {
+    public List<File> index() throws ServiceNotFoundException, DataHandlerException, ObjectNotFoundException {
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         if (getAccessingUser() != null) {
@@ -305,7 +305,7 @@ public class FileBean extends ResourceBean<File> {
      * @return the rating of the user for the file
      * @throws HttpServletException is thrown, if there is an error while getting the rating.
      */
-    public int getRatingForAccessingUser() throws ServiceNotFoundException {
+    public int getRatingForAccessingUser() throws ServiceNotFoundException, ObjectNotFoundException {
         if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
             // TODO: throw appropirate exception
             throw new RuntimeException("User hadn't rated yet");
