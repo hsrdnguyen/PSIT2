@@ -27,6 +27,8 @@ public class FileStorageHandler implements IFileStorageHandler {
 
     @Override
     public String getContentType(String filepath, String name) throws FileStorageException {
+        if (filepath == null) throw new NullPointerException("filepath is null");
+        if (name == null) throw new NullPointerException("name is null");
         Metadata metadata = new Metadata();
         metadata.set(Metadata.RESOURCE_NAME_KEY, name);
         metadata.set(Metadata.CONTENT_LENGTH, Long.toString(getFileSize(filepath)));
@@ -111,6 +113,7 @@ public class FileStorageHandler implements IFileStorageHandler {
 
     @Override
     public String saveFile(File fileToSave) throws FileStorageException {
+        if (fileToSave == null) throw new NullPointerException("fileToSave is null");
         String filename;
         try {
             InputStream inputStream = new FileInputStream(fileToSave);
@@ -140,6 +143,7 @@ public class FileStorageHandler implements IFileStorageHandler {
      * @return A file object
      */
     private File getFileByReference(String reference) {
+        if (reference == null) throw new NullPointerException("reference is null");
         return new File(getStoreDirectory(), reference);
     }
 

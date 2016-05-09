@@ -36,7 +36,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
             PreparedStatement statement = connectionHandler.getPreparedStatement(INSERT_UPLOADED_QUERY);
             statement.setLong(INSERT_UPLOADED_QUERY_INDEX_FILE, fileId);
             statement.setLong(INSERT_UPLOADED_QUERY_INDEX_MODULE, moduleId);
-            statement.execute();
+            connectionHandler.insertDataSet(statement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -218,7 +218,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         categoryHandler.addAccessObjectCategories(file);
     }
 
-    private void updateFileCategoriesFromDb(File changedFile) throws DataHandlerException {
+    private void updateFileCategoriesFromDb(File changedFile) throws DataHandlerException, ObjectNotFoundException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
         categoryHandler.updateAccessObjectCategories(changedFile);
     }

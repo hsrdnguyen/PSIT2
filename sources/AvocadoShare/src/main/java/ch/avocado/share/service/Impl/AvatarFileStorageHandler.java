@@ -22,10 +22,10 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
 
     @Override
     public String storeAvatar(InputStream imageStream) throws FileStorageException {
+        if (imageStream == null) throw new NullPointerException("imageStream is null");
         IFileStorageHandler fileStorageHandler;
         String reference;
         BufferedImage uploadedImage, outputImage;
-
         try {
             fileStorageHandler = ServiceLocator.getService(IFileStorageHandler.class);
         } catch (ServiceNotFoundException e) {
@@ -59,6 +59,7 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
 
     @Override
     public InputStream readImages(String avatarId) throws FileStorageException {
+        if (avatarId == null) throw new NullPointerException("avatarId is null");
         IFileStorageHandler fileStorageHandler;
         try {
             fileStorageHandler = ServiceLocator.getService(IFileStorageHandler.class);

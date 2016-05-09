@@ -17,7 +17,7 @@ public interface ICategoryDataHandler {
      * by passing the old Object on the database and the "new"/"changed" Object.
      * @param changedAccessObject   the "new"/"changed" AccessControlObject
      */
-    void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException;
+    void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * adds all categories from new created AccessControlObject to the database

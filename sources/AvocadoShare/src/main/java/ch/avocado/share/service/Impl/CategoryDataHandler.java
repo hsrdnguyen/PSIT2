@@ -24,13 +24,15 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     @Override
     public void addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException {
+        if (accessObject == null) throw new NullPointerException("accessObject is null");
         for (Category category : accessObject.getCategoryList()) {
             addCategory(category.getName(), accessObject.getId());
         }
     }
 
     @Override
-    public void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException {
+    public void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException, ObjectNotFoundException {
+        if (changedAccessObject == null) throw new NullPointerException("changedAccessObject is null");
         CategoryList categories = changedAccessObject.getCategoryList();
         for (Category newCategory : categories.getNewCategories()) {
             addCategory(newCategory.getName(), changedAccessObject.getId());
@@ -42,6 +44,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     @Override
     public Category getCategoryByName(String name) throws DataHandlerException, ObjectNotFoundException {
+        if (name == null) throw new NullPointerException("name is null");
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         ResultSet resultSet;
@@ -58,6 +61,8 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     @Override
     public boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
+        if (name == null) throw new NullPointerException("name is null");
+        if (accessObjectReferenceId == null) throw new NullPointerException("accessObjectReferenceId is null");
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         ResultSet resultSet;
@@ -123,7 +128,7 @@ public class CategoryDataHandler implements ICategoryDataHandler {
 
     private Category createCategoryFromResultSet(ResultSet resultSet) throws DataHandlerException {
         String name;
-        Category category = null;
+        Category category;
         try {
             List<String> objectIds = new LinkedList<>();
             name = resultSet.getString(2);
@@ -146,20 +151,21 @@ public class CategoryDataHandler implements ICategoryDataHandler {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_ADD_CATEGORY);
             preparedStatement.setLong(1, Long.parseLong(accessObjectReferenceId));
             preparedStatement.setString(2, name);
-            preparedStatement.execute();
+            connectionHandler.insertDataSet(preparedStatement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
     }
 
-    private void deleteCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
+    private void deleteCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException, ObjectNotFoundException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_DELETE_CATEGORY_FROM_OBJECT);
             preparedStatement.setString(1, name);
             preparedStatement.setLong(2, Long.parseLong(accessObjectReferenceId));
-            connectionHandler.deleteDataSet(preparedStatement);
+            if(!connectionHandler.deleteDataSet(preparedStatement))
+                throw new ObjectNotFoundException(Category.class, name + " " + accessObjectReferenceId);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
