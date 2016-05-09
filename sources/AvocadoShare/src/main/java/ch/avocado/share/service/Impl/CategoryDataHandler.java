@@ -59,7 +59,6 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     @Override
     public boolean hasCategoryAssignedObject(String name, String accessObjectReferenceId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if (connectionHandler == null) return false;
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
@@ -102,18 +101,22 @@ public class CategoryDataHandler implements ICategoryDataHandler {
      * @throws DataHandlerException
      * @throws SQLException
      */
-    private Map<String, List<String>> createCategoryIdMapFromResultSet(ResultSet resultSet) throws DataHandlerException, SQLException {
+    private Map<String, List<String>> createCategoryIdMapFromResultSet(ResultSet resultSet) throws DataHandlerException {
         HashMap<String, List<String>> categoryIdMap = new HashMap<>();
-        while (resultSet.next()) {
-            String id = resultSet.getString(1);
-            String name = resultSet.getString(2);
-            if (categoryIdMap.containsKey(name)) {
-                categoryIdMap.get(name).add(id);
-            } else {
-                List<String> idList = new ArrayList<>();
-                idList.add(id);
-                categoryIdMap.put(name, idList);
+        try {
+            while (resultSet.next()) {
+                String id = resultSet.getString(1);
+                String name = resultSet.getString(2);
+                if (categoryIdMap.containsKey(name)) {
+                    categoryIdMap.get(name).add(id);
+                } else {
+                    List<String> idList = new ArrayList<>();
+                    idList.add(id);
+                    categoryIdMap.put(name, idList);
+                }
             }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
         return categoryIdMap;
     }

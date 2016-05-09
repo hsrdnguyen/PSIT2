@@ -7,6 +7,7 @@ import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ import static ch.avocado.share.common.constants.sql.SecurityConstants.*;
 
 public class SecurityHandler extends DataHandlerBase implements ISecurityHandler {
 
-    private int getAccessLevelInt(AccessLevelEnum level) throws DataHandlerException {
+    private int getAccessLevelInt(AccessLevelEnum level) throws DataHandlerException, ObjectNotFoundException {
         boolean readable = level.containsLevel(AccessLevelEnum.READ);
         boolean writable = level.containsLevel(AccessLevelEnum.WRITE);
         boolean manageable = level.containsLevel(AccessLevelEnum.MANAGE);
@@ -33,7 +34,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (!resultSet.next()) {
-                throw new DataHandlerException("Could not find level: " + level);
+                throw new ObjectNotFoundException(AccessLevelEnum.class, String.valueOf(level));
             }
             return resultSet.getInt(1);
         } catch (SQLException e) {
@@ -165,7 +166,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     }
 
     @Override
-    public boolean setAccessLevel(String identityId, String targetId, AccessLevelEnum accessLevel) throws DataHandlerException {
+    public boolean setAccessLevel(String identityId, String targetId, AccessLevelEnum accessLevel) throws DataHandlerException, ObjectNotFoundException {
         if (identityId == null || identityId.isEmpty())
             throw new IllegalArgumentException("identityId is null or empty");
         if (targetId == null || targetId.isEmpty()) throw new IllegalArgumentException("targetId is null or empty");
@@ -185,7 +186,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     }
 
     @Override
-    public boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException {
+    public boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException, ObjectNotFoundException {
         if (identity == null) throw new NullPointerException("identity is null");
         if (target == null) throw new NullPointerException("target is null");
         if (accessLevel == null) throw new NullPointerException("accessLevel is null");
@@ -229,7 +230,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
 
 
     @Override
-    public boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum accessLevelEnum) throws DataHandlerException {
+    public boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum accessLevelEnum) throws DataHandlerException, ObjectNotFoundException {
         int level = getAccessLevelInt(accessLevelEnum);
         int objectId = Integer.parseInt(object.getId());
         PreparedStatement preparedStatement;
@@ -314,7 +315,7 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
     }
 
     @Override
-    public List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException {
+    public List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException, ObjectNotFoundException {
         if(accessLevelEnum == AccessLevelEnum.OWNER) {
             return getIdsOfOwnedObjects(identity);
         }

@@ -104,7 +104,6 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     public User getUserByEmailAddress(String emailAddress) throws DataHandlerException, ObjectNotFoundException {
         if (emailAddress == null) throw new NullPointerException("emailAddress is null");
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler == null) return null;
         try {
             PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(SELECT_USER_BY_MAIL_QUERY);
             preparedStatement.setString(1, emailAddress);

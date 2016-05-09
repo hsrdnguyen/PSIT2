@@ -29,7 +29,7 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
         try {
             fileStorageHandler = ServiceLocator.getService(IFileStorageHandler.class);
         } catch (ServiceNotFoundException e) {
-            throw new FileStorageException(e.getMessage());
+            throw new FileStorageException(e);
         }
         try {
             uploadedImage = ImageIO.read(imageStream);
@@ -63,7 +63,7 @@ public class AvatarFileStorageHandler implements IAvatarStorageHandler {
         try {
             fileStorageHandler = ServiceLocator.getService(IFileStorageHandler.class);
         } catch (ServiceNotFoundException e) {
-            throw new FileStorageException(e.getMessage());
+            throw new FileStorageException(e);
         }
         return fileStorageHandler.readFile(avatarId);
     }

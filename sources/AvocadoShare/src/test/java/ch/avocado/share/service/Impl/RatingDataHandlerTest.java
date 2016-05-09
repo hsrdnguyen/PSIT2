@@ -123,7 +123,7 @@ public class RatingDataHandlerTest {
     }
 
     @Test
-    public void testAddAndGetRatingForUserAndFile() throws DataHandlerException {
+    public void testAddAndGetRatingForUserAndFile() throws DataHandlerException, ObjectNotFoundException {
         int ratingValue = 2;
 
         ratingDataHandler.addRating(fileId, user1Id, ratingValue);

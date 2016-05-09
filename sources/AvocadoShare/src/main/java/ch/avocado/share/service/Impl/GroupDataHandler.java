@@ -33,7 +33,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
             statement = getConnectionHandler().getPreparedStatement(SELECT_BY_ID_QUERY);
             statement.setInt(GET_BY_ID_ID_INDEX, Integer.parseInt(id));
         } catch (SQLException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
         return statement;
     }

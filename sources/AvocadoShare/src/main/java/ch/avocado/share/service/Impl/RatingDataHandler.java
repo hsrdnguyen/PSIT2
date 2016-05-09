@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.sql.RatingConstants;
 import ch.avocado.share.model.data.Rating;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IRatingDataHandler;
@@ -28,7 +29,6 @@ public class RatingDataHandler implements IRatingDataHandler {
      */
     public Rating getRatingForObject(long ratedObjectId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if (connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
@@ -53,9 +53,8 @@ public class RatingDataHandler implements IRatingDataHandler {
      * @return The rating as integer, which the a User gave to the AccessControlObject.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    public int getRatingForUserAndObject(long ratingUserId, long ratedObjectId) throws DataHandlerException {
+    public int getRatingForUserAndObject(long ratingUserId, long ratedObjectId) throws DataHandlerException, ObjectNotFoundException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if (connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
@@ -63,7 +62,7 @@ public class RatingDataHandler implements IRatingDataHandler {
             preparedStatement.setLong(1, ratingUserId);
             preparedStatement.setLong(2, ratedObjectId);
             resultSet = preparedStatement.executeQuery();
-            if (!resultSet.next()) throw new DataHandlerException("There's no rating from that user for that object");
+            if (!resultSet.next()) throw new ObjectNotFoundException(Rating.class, ratingUserId + ", " + ratedObjectId);
             return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -105,7 +104,6 @@ public class RatingDataHandler implements IRatingDataHandler {
      */
     public boolean deleteRating(long ratedAccessObjectId, long ratingUserId) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if (connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_DELETE_RATING);
@@ -128,7 +126,6 @@ public class RatingDataHandler implements IRatingDataHandler {
      */
     public boolean updateRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if (connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_UPDATE_RATING);
@@ -143,7 +140,6 @@ public class RatingDataHandler implements IRatingDataHandler {
 
     private void insertRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
-        if (connectionHandler == null) throw new DataHandlerException("DatabaseConnectionHandler is not available");
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_ADD_RATING);
@@ -167,11 +163,11 @@ public class RatingDataHandler implements IRatingDataHandler {
         return rating;
     }
 
-    private IDatabaseConnectionHandler getDatabaseHandler() {
+    private IDatabaseConnectionHandler getDatabaseHandler() throws DataHandlerException {
         try {
             return ServiceLocator.getService(IDatabaseConnectionHandler.class);
         } catch (ServiceNotFoundException e) {
-            return null;
+            throw new DataHandlerException(e);
         }
     }
 }
