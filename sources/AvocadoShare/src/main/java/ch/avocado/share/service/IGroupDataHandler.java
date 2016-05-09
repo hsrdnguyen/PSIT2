@@ -59,4 +59,13 @@ public interface IGroupDataHandler {
      * @throws DataHandlerException
      */
     Group getGroupByName(String name) throws DataHandlerException;
+
+
+    /**
+     * searches all groups
+     * @param searchString String to search after
+     * @return groups that match the given String
+     * @throws DataHandlerException
+     */
+    List<Group> searchGroups(String searchString) throws DataHandlerException;
 }

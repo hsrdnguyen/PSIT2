@@ -66,8 +66,6 @@ public class SolRJService implements ISearchEngineService {
                 System.out.print(doc.keySet());
 
             }
-
-
         } catch (SolrServerException e) {
             e.printStackTrace();
         }

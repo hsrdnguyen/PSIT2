@@ -4,9 +4,11 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
 import ch.avocado.share.service.IModuleDataHandler;
+import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -65,6 +67,11 @@ public class ModuleDataHandlerMock extends DataHandlerMockBase<Module> implement
     @Override
     public boolean updateModule(Module module) {
         return update(module);
+    }
+
+    @Override
+    public List<Module> searchModules(String searchString) throws DataHandlerException {
+        return Arrays.asList(getAllModules());
     }
 
     public static void use() throws Exception {

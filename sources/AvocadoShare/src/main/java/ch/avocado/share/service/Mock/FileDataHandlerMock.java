@@ -47,8 +47,8 @@ public class FileDataHandlerMock extends DataHandlerMockBase<File> implements IF
     }
 
     @Override
-    public List<File> search(List<String> searchTerms) throws DataHandlerException {
-        return getFiles(Arrays.asList("1", "2", "3"));
+    public List<File> searchFiles(String searchString) throws DataHandlerException {
+        return Arrays.asList(getAll(File.class));
     }
 
     @Override

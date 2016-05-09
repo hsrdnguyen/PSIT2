@@ -10,10 +10,7 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Implementation of the group data handler which accesses
@@ -162,5 +159,31 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
     public Group getGroupByName(String name) throws DataHandlerException {
         if (name == null) throw new IllegalArgumentException("name is null");
         return getGroupFromResultSet(executeGetStatement(getGetByNameStatement(name)));
+    }
+
+    @Override
+    public List<Group> searchGroups(String searchString) throws DataHandlerException {
+        try {
+            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+
+            PreparedStatement ps = connectionHandler.getPreparedStatement(SQLQueryConstants.Group.SEARCH_QUERY);
+            ps.setString(1, "%"+searchString+"%");
+            ps.setString(2, "%"+searchString+"%");
+
+            ResultSet rs = connectionHandler.executeQuery(ps);
+
+            List<Group> groups = new LinkedList<>();
+            Group group = getGroupFromResultSet(rs);
+
+            while (group != null)
+            {
+                groups.add(group);
+            }
+
+            return groups;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

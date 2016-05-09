@@ -6,10 +6,7 @@ import ch.avocado.share.model.data.Group;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Mock handler for group data.
@@ -88,6 +85,11 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
             }
         }
         return null;
+    }
+
+    @Override
+    public List<Group> searchGroups(String searchString) throws DataHandlerException {
+        return Arrays.asList(getAllGroups());
     }
 
     public static void use() throws Exception{

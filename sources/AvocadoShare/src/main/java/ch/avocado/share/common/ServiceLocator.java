@@ -6,6 +6,7 @@ import ch.avocado.share.service.Impl.*;
 import ch.avocado.share.service.Mock.FileStorageHandlerMock;
 
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,5 +51,12 @@ public class ServiceLocator {
         services.put(ICategoryDataHandler.class, new CategoryDataHandler());
         services.put(IModuleDataHandler.class, new ModuleDataHandler());
         services.put(ICaptchaVerifier.class, new ReCaptchaVerifier());
+        try {
+            services.put(ISearchEngineService.class, new SolRJService(getService(IDatabaseConnectionHandler.class)));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ServiceNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

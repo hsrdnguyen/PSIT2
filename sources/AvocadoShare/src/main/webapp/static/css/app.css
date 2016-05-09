@@ -204,3 +204,20 @@ a.modul-link:hover .modul {
 .preview img, .preview video, .preview pre, .preview iframe, .preview frame  {
     width: 100%;
 }
+
+.ModuleResult
+{
+    background-color: #22FF0000;
+}
+
+.GroupResult
+{
+    background-color: #2200FF00;
+}
+
+
+.FileResult
+{
+    background-color: #220000FF;
+}
+

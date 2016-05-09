@@ -43,7 +43,16 @@ public class SQLQueryConstants {
                 "       ON a.id = owner.object_id " +
                 "   WHERE a.id = ? ";
 
+
         public static final int SELECT_QUERY_INDEX_ID = 1;
+
+        public static final String SEARCH_QUERY = "" +
+                "SELECT " + SELECT_COLUMNS + " FROM " + table + " AS m " +
+                "   JOIN avocado_share.access_control as a " +
+                "       ON m.id = a.id " +
+                "   LEFT JOIN avocado_share.ownership AS owner " +
+                "       ON a.id = owner.object_id " +
+                "   WHERE title LIKE (?) OR description LIKE (?) ";
 
         public static final String UPDATE_QUERY = "UPDATE " + table + " SET name=? WHERE id=?";
         public static final int UPDATE_QUERY_INDEX_ID = 2;
@@ -99,6 +108,7 @@ public class SQLQueryConstants {
                 " ON o.id = W.object_id ";
         public static final String SELECT_BY_NAME_QUERY = SELECT_WITHOUT_WHERE + "WHERE g.name = ?";
         public static final String SELECT_BY_ID_QUERY = SELECT_WITHOUT_WHERE +  "WHERE g.id = ?";
+        public static final String SEARCH_QUERY = SELECT_WITHOUT_WHERE + "WHERE title LIKE (?) OR description LIKE (?)";
 
         public static final String UPDATE = "UPDATE " + TABLE + " SET name = ? WHERE id = ?";
         public static final int UPDATE_INDEX_ID = 2;

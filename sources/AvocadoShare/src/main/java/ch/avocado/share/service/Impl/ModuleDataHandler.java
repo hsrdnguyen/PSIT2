@@ -164,4 +164,30 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             throw new DataHandlerException(e);
         }
     }
+
+    @Override
+    public List<Module> searchModules(String searchString) throws DataHandlerException {
+        try {
+            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+
+            PreparedStatement ps = connectionHandler.getPreparedStatement(SQLQueryConstants.Module.SEARCH_QUERY);
+            ps.setString(1, "%"+searchString+"%");
+            ps.setString(2, "%"+searchString+"%");
+
+            ResultSet rs = connectionHandler.executeQuery(ps);
+
+            List<Module> modules = new LinkedList<>();
+            Module module = getModuleFromResult(rs);
+
+            while (module != null)
+            {
+                modules.add(module);
+            }
+
+            return modules;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

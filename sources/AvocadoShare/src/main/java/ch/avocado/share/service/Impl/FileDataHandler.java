@@ -9,6 +9,7 @@ import ch.avocado.share.model.factory.FileFactory;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IFileDataHandler;
+import ch.avocado.share.service.ISearchEngineService;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import java.sql.PreparedStatement;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -114,34 +116,19 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public List<File> search(List<String> searchTerms) throws DataHandlerException {
+    public List<File> searchFiles(String searchString) throws DataHandlerException {
+
         try {
-            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+            ISearchEngineService searchService = ServiceLocator.getService(ISearchEngineService.class);
 
-            String query = SQLQueryConstants.File.SEARCH_QUERY_START + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
+            List<String> ids = searchService.search(searchString);
+            return this.getFiles(ids);
 
-            for (String tmp : searchTerms) {
-                // TODO @bergmsas: equals verwenden?
-                if (!tmp.equals(searchTerms.get(0))) {
-                    query += SQLQueryConstants.File.SEARCH_QUERY_LINK + SQLQueryConstants.File.SEARCH_QUERY_LIKE;
-                }
-            }
-            PreparedStatement ps = connectionHandler.getPreparedStatement(query);
-            int i = 1;
-            for (String tmp : searchTerms) {
-                ps.setString(i, "%"+tmp+"%");
-                i++;
-                ps.setString(i, "%"+tmp+"%");
-                i++;
-            }
-
-            ResultSet rs = connectionHandler.executeQuery(ps);
-
-            return getMultipleFilesFromResultSet(rs);
-        } catch (SQLException e) {
+        } catch (ServiceNotFoundException e) {
             e.printStackTrace();
         }
-        return null;
+
+        return new LinkedList<>();
     }
 
     @Override
