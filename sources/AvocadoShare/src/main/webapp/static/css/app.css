@@ -230,3 +230,25 @@ input.add-category {
 .category:hover .delete-category, .category:focus .delete-category  {
     display: inline-block;
 }
+
+
+.rating {
+    font-size: 2em;
+    line-height: 2em;
+    position: relative;
+    top: 0;
+    left: 0;
+    display: inline-block;
+}
+
+.rating .rating-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: tomato;
+    overflow: hidden;
+}
+
+.rating:hover .rating-overlay, .rating-overlay:hover {
+    display: none;
+}

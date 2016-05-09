@@ -18,7 +18,7 @@
         <h4><%--<span class="octicon octicon-person"></span>--%> Benutzer</h4>
     </div>
 </div>
-<% for (Map.Entry<User, AccessLevelEnum> member : members.getUsersWithAccess()) {
+<% for (Map.Entry<User, AccessLevelEnum> member : members.getUsersWithAccess().entrySet()) {
     String memberEditUrl = "?action=" + action_edit + "&id=" + Encoder.forUrlAttribute(members.getTarget().getId()) + "&" + owner_parameter + "=" + Encoder.forUrlAttribute(member.getKey().getId());
     String memberName = Encoder.forHtml(member.getKey().getFullName());
     AccessLevelEnum currentLevel = member.getValue();

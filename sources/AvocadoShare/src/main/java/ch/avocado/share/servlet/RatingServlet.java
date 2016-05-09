@@ -19,9 +19,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 
-import static ch.avocado.share.common.HttpStatusCode.*;
+import static ch.avocado.share.common.HttpStatusCode.BAD_REQUEST;
+import static ch.avocado.share.common.HttpStatusCode.UNAUTHORIZED;
 
 @WebServlet("/rating")
 public class RatingServlet extends ExtendedHttpServlet{
@@ -85,6 +85,7 @@ public class RatingServlet extends ExtendedHttpServlet{
 
     private void writeCurrentRating(Rating rating, HttpServletResponse response) throws IOException {
         ServletOutputStream outputStream = response.getOutputStream();
+        response.setContentType("application/json");
         String jsonData = "{\"rating\": ";
         jsonData += rating.getRating();
         jsonData += "}";

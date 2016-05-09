@@ -85,4 +85,8 @@ public class UrlHelper {
     public String getCategoryServletUrl() {
         return getBase() + "/category";
     }
+
+    public String getRatingUrl() {
+        return getBase() + "/rating";
+    }
 }

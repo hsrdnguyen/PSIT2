@@ -36,6 +36,10 @@
                 </p>
             </div>
             <div class="list-group-item">
+                <h3 class="list-group-item-heading">Rating</h3>
+                <div data-rating-object="<%=Encoder.forHtmlAttribute(file.getId())%>" data-rating-url="<%=urlHelper.getRatingUrl()%>"></div>
+            </div>
+            <div class="list-group-item">
                 <h3 class="list-group-item-heading">Vorschau</h3>
                 <div class="preview">
                     <%=previewGenerator.getPreview() %>

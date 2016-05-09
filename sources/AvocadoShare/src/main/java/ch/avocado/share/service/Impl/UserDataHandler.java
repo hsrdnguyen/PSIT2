@@ -308,12 +308,15 @@ public class UserDataHandler extends DataHandlerBase implements IUserDataHandler
     private List<User> getUsersFromResultSet(ResultSet rs) throws DataHandlerException {
         List<User> users = new LinkedList<>();
         User user;
-        do {
-            user = getUserFromResultSet(rs);
-            if(user != null) {
+        try {
+            while(rs.next()) {
+                user = getUserFromResultSet(rs);
+                assert user != null;
                 users.add(user);
             }
-        }while(user != null);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
         return users;
     }
 }

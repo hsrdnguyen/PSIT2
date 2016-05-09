@@ -17,6 +17,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
@@ -99,6 +100,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         HttpMethod method = getMethodFromRequest(request, parameter);
         UserSession session = new UserSession(request);
         Action action = getActionFromMethod(method);
+
         executeAction(request, response, session, parameter, action);
     }
 
@@ -181,7 +183,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         if (request == null) throw new NullPointerException("request is null");
         if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
             return getMultipartParameter(request);
-        } else {
+        } else{
             Parameter parameter = new Parameter();
             Enumeration<String> parameterNames = request.getParameterNames();
             while (parameterNames.hasMoreElements()) {
