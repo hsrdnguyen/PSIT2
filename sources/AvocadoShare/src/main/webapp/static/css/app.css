@@ -235,10 +235,10 @@ input.add-category {
 .rating {
     font-size: 2em;
     line-height: 2em;
-    width: 4em;
     position: relative;
     top: 0;
     left: 0;
+    display: inline-block;
 }
 
 .rating .rating-overlay {
