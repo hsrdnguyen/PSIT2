@@ -92,16 +92,21 @@ var Rating = function (container) {
     this.container = container;
     this.objectId = container.getAttribute("data-rating-object");
     this.url = container.getAttribute("data-rating-url");
+
+    this.container.className += " rating";
+
+
     var ratingButtonContainer = document.createElement("div");
     var ratingOverlay = document.createElement("div");
+    ratingButtonContainer.className = "rating-buttons";
+    ratingOverlay.className = "rating-overlay";
+    /* ☆ ★ */
     for (var i = this.minRating; i <= this.maxRating; ++i) {
         var star = document.createElement("a");
-        star.innerHTML = "*";
+        star.innerHTML = "★";
         star.addEventListener("click", function (rating, ratingObject) {
             return function() {
-                console.log("click: " + rating);
                 var sendData = {rating: rating, object: ratingObject.objectId, method: "put"};
-                console.log("data: ", sendData);
                 $.ajax({
                     type: "POST",
                     url: ratingObject.url,
@@ -113,8 +118,10 @@ var Rating = function (container) {
                 });
             }
         }(i, this));
-
         ratingButtonContainer.appendChild(star);
+        star = document.createElement("span");
+        star.innerHTML = "★";
+        ratingOverlay.appendChild(star);
     }
     this.container.appendChild(ratingButtonContainer);
     this.container.appendChild(ratingOverlay);
@@ -123,7 +130,7 @@ var Rating = function (container) {
 
 Rating.prototype.setRating = function(rating) {
     var overlay = this.getRatingOverlay();
-    var percents = 100.0 * (rating - this.minRating) / this.maxRating;
+    var percents = 100.0 * rating / this.maxRating;
     overlay.style.width = percents + "%";
 };
 
