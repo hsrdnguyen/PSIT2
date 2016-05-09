@@ -6,6 +6,6 @@ public class DataHandlerException extends ServiceException {
     }
 
     public DataHandlerException(Exception e) {
-        super(e.getMessage());
+        super(e);
     }
 }
