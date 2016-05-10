@@ -40,7 +40,7 @@ public class DetailViewConfig extends ViewConfig {
     }
 
     public <E> E getObject(Class<E> modelClass) {
-        if(modelClass == null) throw new IllegalArgumentException("modelClass is null");
+        if(modelClass == null) throw new NullPointerException("modelClass is null");
         return modelClass.cast(object);
     }
 

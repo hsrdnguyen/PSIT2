@@ -7,7 +7,7 @@ import ch.avocado.share.model.data.AccessLevelEnum;
  */
 public class EditMemberBean {
     public static String getReadableLevelName(AccessLevelEnum level) {
-        if(level == null) throw new IllegalArgumentException("level is null");
+        if(level == null) throw new NullPointerException("level is null");
         switch (level) {
             case NONE:
                 return "Kein Zugriffsrecht";
@@ -24,7 +24,7 @@ public class EditMemberBean {
     }
 
     public String getLevelOptions(AccessLevelEnum currentLevel) {
-        if(currentLevel == null) throw new IllegalArgumentException("currentLevel is null");
+        if(currentLevel == null) throw new NullPointerException("currentLevel is null");
         StringBuilder result = new StringBuilder();
         if(currentLevel == AccessLevelEnum.OWNER) {
             return "<option>Besitzer</option>";

@@ -1,8 +1,6 @@
 package ch.avocado.share.model.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Base class for all access control objects.
@@ -10,28 +8,32 @@ import java.util.List;
 public abstract class AccessControlObjectBase extends Model{
 
     private String id;
-    private List<Category> categories;
+    private CategoryList categoryList;
     private Date creationDate;
-    private float rating;
+    private Rating rating;
     private String ownerId;
     private String description;
 
     /**
      * Constructor
-     * @param id
+     * @param id The identifier of the object.
      * @param categories A list of categories or null if there are no categories.
-     * @param creationDate
-     * @param rating
-     * @param ownerId
-     * @param description
+     * @param creationDate The date of the object creation
+     * @param rating The average of all ratings
+     * @param ownerId The identifier of the owner
+     * @param description Description of the object
      */
-    public AccessControlObjectBase(String id, List<Category> categories, Date creationDate, float rating, String ownerId, String description) {
+    public AccessControlObjectBase(String id, Collection<Category> categories, Date creationDate, Rating rating, String ownerId, String description) {
         this.id = id;
-        setCategories(categories);
+        if(categories == null) {
+            categories = new ArrayList<>();
+        }
+        this.categoryList = new CategoryList(categories);
         setCreationDate(creationDate);
         this.rating = rating;
         setOwnerId(ownerId);
         setDescription(description);
+        setDirty(false);
     }
 
     /**
@@ -46,25 +48,24 @@ public abstract class AccessControlObjectBase extends Model{
      * @param id The unique identifier of this object.
      */
     public void setId(String id) {
-        if (id == null) throw new IllegalArgumentException("id is null");
+        if (id == null) throw new NullPointerException("id is null");
+        if (id.isEmpty()) throw new IllegalArgumentException("id is empty");
         this.id = id;
     }
 
     /**
      * @return The categories assigned to this object.
      */
-    public List<Category> getCategories() {
-        return categories;
+    public CategoryList getCategoryList() {
+        return categoryList;
     }
 
     /**
-     * @param categories The categories assigned to this object
+     * @param categoryList The categories assigned to this object
      */
-    public void setCategories(List<Category> categories) {
-        if(categories == null) {
-            categories = new ArrayList<>();
-        }
-        this.categories = categories;
+    public void setCategories(Collection<Category> categoryList) {
+        if(categoryList == null) throw new NullPointerException("categoryList is null");
+        this.categoryList.setCategories(categoryList);
         setDirty(true);
     }
 
@@ -79,23 +80,18 @@ public abstract class AccessControlObjectBase extends Model{
      * @param creationDate Set the creation date
      */
     public void setCreationDate(Date creationDate) {
-        if(creationDate == null) throw new IllegalArgumentException("creationDate is null");
-        this.creationDate = creationDate;
-        setDirty(true);
+        if(creationDate == null) throw new NullPointerException("creationDate is null");
+        if(!creationDate.equals(this.creationDate)) {
+            this.creationDate = new Date(creationDate.getTime());
+            setDirty(true);
+        }
     }
 
     /**
-     * @return The average rating
+     * @return The rating object.
      */
-    public float getRating() {
+    public Rating getRating() {
         return rating;
-    }
-
-    /**
-     * @param rating The average rating
-     */
-    public void setRating(float rating) {
-        this.rating = rating;
     }
 
     /**
@@ -110,8 +106,11 @@ public abstract class AccessControlObjectBase extends Model{
      */
     public void setOwnerId(String ownerId) {
         // if(ownerId == null) throw new IllegalArgumentException("ownerId is null");
-        this.ownerId = ownerId;
-        setDirty(true);
+        if(ownerId != null && ownerId.isEmpty()) throw new IllegalArgumentException("ownerId is empty");
+        if(!Objects.equals(this.ownerId, ownerId)) {
+            this.ownerId = ownerId;
+            setDirty(true);
+        }
     }
 
     /**
@@ -125,7 +124,7 @@ public abstract class AccessControlObjectBase extends Model{
      * @param description The description of the object.
      */
     public void setDescription(String description) {
-        if(description == null) throw new IllegalArgumentException("description is null");
+        if(description == null) throw new NullPointerException("description is null");
         this.description = description;
         setDirty(true);
     }

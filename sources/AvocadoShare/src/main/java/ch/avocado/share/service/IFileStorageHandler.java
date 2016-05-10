@@ -3,6 +3,7 @@ package ch.avocado.share.service;
 import ch.avocado.share.service.exceptions.FileStorageException;
 import org.apache.commons.fileupload.FileItem;
 
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -16,6 +17,14 @@ public interface IFileStorageHandler {
      * @return Path to the file-location
      */
     String saveFile(FileItem tempUploadedFile) throws FileStorageException;
+
+    /**
+     * Writes the content read by teh input stream to a disk file.
+     * @param file The file to store.
+     * @return The reference to the file.
+     * @throws FileStorageException
+     */
+    String saveFile(File file) throws FileStorageException;
 
     /**
      * Gets the file on the given location

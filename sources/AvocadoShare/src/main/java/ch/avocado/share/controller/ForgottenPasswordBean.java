@@ -2,9 +2,11 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
-import ch.avocado.share.model.data.PasswordResetVerification;
+import ch.avocado.share.model.data.MailVerification;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICaptchaVerifier;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
@@ -12,7 +14,6 @@ import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Bean to reset a forgotten password.
@@ -33,7 +34,7 @@ public class ForgottenPasswordBean implements Serializable {
     }
 
     public void setEmail(String email) {
-        if (email == null) throw new IllegalArgumentException("email can't be null");
+        if (email == null) throw new NullPointerException("email can't be null");
         this.email = email;
     }
 
@@ -44,13 +45,14 @@ public class ForgottenPasswordBean implements Serializable {
 
     private boolean storeVerification(User user, IUserDataHandler userDataHandler) {
         try {
-            if (!userDataHandler.updateUser(user)) {
-                errorMessage = ErrorMessageConstants.UPDATE_USER_FAILED;
-                return false;
-            }
+            userDataHandler.updateUser(user);
         } catch (DataHandlerException e) {
             e.printStackTrace();
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            return false;
+        } catch (ObjectNotFoundException e) {
+            e.printStackTrace();
+            errorMessage = ErrorMessageConstants.OBJECT_NOT_FOUND;
             return false;
         }
         return true;
@@ -81,8 +83,8 @@ public class ForgottenPasswordBean implements Serializable {
     /**
      * Make sure you call {@link #setEmail(String)} before calling this method.
      *
-     * @return True if a password reset link was send to the user
      * @param request
+     * @return True if a password reset link was send to the user
      */
     public boolean requestNewPassword(HttpServletRequest request) {
         if (!checkParameterEmail()) return false;
@@ -100,9 +102,8 @@ public class ForgottenPasswordBean implements Serializable {
         return storeVerification(user, userDataHandler) && sendResetMail(user);
     }
 
-    private PasswordResetVerification createPasswordResetVerification() {
-        Date expiry = PasswordResetVerification.getDateFromExpiryInHours(24 * 2);
-        return new PasswordResetVerification(expiry);
+    private MailVerification createPasswordResetVerification() {
+        return MailVerification.fromExpiryInHours(24 * 2);
     }
 
     /**
@@ -124,7 +125,7 @@ public class ForgottenPasswordBean implements Serializable {
      * @param code The password reset code.
      */
     public void setCode(String code) {
-        if (code == null) throw new IllegalArgumentException("code can't be null");
+        if (code == null) throw new NullPointerException("code can't be null");
         this.code = code;
     }
 
@@ -132,7 +133,7 @@ public class ForgottenPasswordBean implements Serializable {
      * @param passwordConfirmation The repeated password
      */
     public void setPasswordConfirmation(String passwordConfirmation) {
-        if (passwordConfirmation == null) throw new IllegalArgumentException("passwordConfirmation can't be null");
+        if (passwordConfirmation == null) throw new NullPointerException("passwordConfirmation can't be null");
         this.passwordConfirmation = passwordConfirmation;
     }
 
@@ -140,7 +141,7 @@ public class ForgottenPasswordBean implements Serializable {
      * @param password The new password
      */
     public void setPassword(String password) {
-        if (password == null) throw new IllegalArgumentException("password can't be null");
+        if (password == null) throw new NullPointerException("password can't be null");
         this.password = password;
     }
 
@@ -152,13 +153,15 @@ public class ForgottenPasswordBean implements Serializable {
      * @return The user or null
      */
     private User getUserFromEmail(IUserDataHandler userDataHandler, String email) {
-        if (userDataHandler == null) throw new IllegalArgumentException("userDataHandler is null");
-        if (email == null) throw new IllegalArgumentException("email is null");
+        if (userDataHandler == null) throw new NullPointerException("userDataHandler is null");
+        if (email == null) throw new NullPointerException("email is null");
         User user;
         try {
             user = userDataHandler.getUserByEmailAddress(email);
         } catch (DataHandlerException e) {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
+            return null;
+        } catch (ObjectNotFoundException e) {
             return null;
         }
         return user;
@@ -187,7 +190,7 @@ public class ForgottenPasswordBean implements Serializable {
         if (userDataHandler == null) return null;
 
         User user = getUserFromEmail(userDataHandler, email);
-        if (user == null || user.getPassword().getResetVerification() == null|| !user.getPassword().getResetVerification().getCode().equals(code)) {
+        if (user == null || user.getPassword().getResetVerification() == null || !user.getPassword().getResetVerification().getCode().equals(code)) {
             this.errorMessage = ErrorMessageConstants.ERROR_INVALID_CODE_OR_EMAIL;
             return null;
         }
@@ -230,7 +233,7 @@ public class ForgottenPasswordBean implements Serializable {
                     try {
                         ServiceLocator.getService(IUserDataHandler.class).updateUser(user);
                         return true;
-                    } catch (ServiceNotFoundException | DataHandlerException e) {
+                    } catch (ServiceException e) {
                         errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
                     }
                 } else {

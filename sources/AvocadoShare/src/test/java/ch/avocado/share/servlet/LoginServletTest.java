@@ -23,11 +23,6 @@ public class LoginServletTest {
     private LoginServlet servlet;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
-    
-    @SuppressWarnings("unused")
-	private static final String VALID_LOGIN_EMAIL = null;
-    @SuppressWarnings("unused")
-	private static final String VALID_LOGIN_PASSWORD = null;
 
     private static final String INVALID_LOGIN_EMAIL = "nobody@zhaw.ch";
     private static final String INVALID_LOGIN_PASSWORD = "notexisting";
@@ -90,7 +85,7 @@ public class LoginServletTest {
         request.setParameter(LoginServlet.FIELD_EMAIL, user.getMail().getAddress());
         servlet.doPost(request, response);
         String loginError = (String) request.getAttribute(LoginServlet.LOGIN_ERROR);
-        //assertNull(loginError);
+        assertNull(loginError);
         UserSession userSession = new UserSession(request);
         assertTrue(userSession.isAuthenticated());
 	}

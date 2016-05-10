@@ -85,3 +85,65 @@ Autocomplete.prototype.showResults = function (query, users) {
         this.cachedSuggestions = query;
     }
 };
+
+var Rating = function (container) {
+    this.minRating = 1;
+    this.maxRating = 4;
+    this.container = container;
+    this.objectId = container.getAttribute("data-rating-object");
+    this.url = container.getAttribute("data-rating-url");
+
+    this.container.className += " rating";
+
+
+    var ratingButtonContainer = document.createElement("div");
+    var ratingOverlay = document.createElement("div");
+    ratingButtonContainer.className = "rating-buttons";
+    ratingOverlay.className = "rating-overlay";
+    /* ☆ ★ */
+    for (var i = this.minRating; i <= this.maxRating; ++i) {
+        var star = document.createElement("a");
+        star.innerHTML = "★";
+        star.addEventListener("click", function (rating, ratingObject) {
+            return function() {
+                var sendData = {rating: rating, object: ratingObject.objectId, method: "put"};
+                $.ajax({
+                    type: "POST",
+                    url: ratingObject.url,
+                    data: sendData,
+                    success: function(data) {
+                        console.log("Rating data: ", data);
+                        ratingObject.setRating(data["rating"]);
+                    }
+                });
+            }
+        }(i, this));
+        ratingButtonContainer.appendChild(star);
+        star = document.createElement("span");
+        star.innerHTML = "★";
+        ratingOverlay.appendChild(star);
+    }
+    this.container.appendChild(ratingButtonContainer);
+    this.container.appendChild(ratingOverlay);
+};
+
+
+Rating.prototype.setRating = function(rating) {
+    var overlay = this.getRatingOverlay();
+    var percents = 100.0 * rating / this.maxRating;
+    overlay.style.width = percents + "%";
+};
+
+Rating.prototype.getRatingOverlay = function() {
+    return this.container.childNodes.item(1);
+};
+
+Rating.prototype.getRatingButtonContainer = function() {
+    return this.container.childNodes.item(0);
+};
+
+$(function () {
+    $("[data-rating-object]").each(function(){
+        new Rating(this);
+    })
+});

@@ -3,8 +3,10 @@ package ch.avocado.share.service.Mock;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.*;
 
@@ -38,12 +40,12 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
         objects.clear();
         for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
             String id = "group" + i;
-            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), 0, "owner" + i, "Eine Beschreibung der Gruppe " + i + ".\n Vielleicht wiederspiegelt diese Gruppe eine Klasse, dann könnte das hier stehen.", "groupName" + i));
+            objects.put(id, new Group(id, new ArrayList<Category>(), new Date(1000), new Rating(), "owner" + i, "Eine Beschreibung der Gruppe " + i + ".\n Vielleicht wiederspiegelt diese Gruppe eine Klasse, dann könnte das hier stehen.", "groupName" + i));
         }
     }
 
     @Override
-    public Group getGroup(String id) {
+    public Group getGroup(String id) throws ObjectNotFoundException {
         return get(id);
     }
 
@@ -51,10 +53,13 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     public List<Group> getGroups(Collection<String> ids) throws DataHandlerException {
         ArrayList<Group> groups = new ArrayList<>(ids.size());
         for(String id: ids) {
-            Group group = getGroup(id);
-            if(group != null) {
-                groups.add(group);
+            Group group;
+            try {
+                group = getGroup(id);
+            } catch (ObjectNotFoundException e) {
+                continue;
             }
+            groups.add(group);
         }
         return groups;
     }
@@ -68,13 +73,13 @@ public class GroupDataHandlerMock extends DataHandlerMockBase<Group> implements 
     }
 
     @Override
-    public boolean updateGroup(Group group) {
-        return update(group);
+    public void updateGroup(Group group) throws ObjectNotFoundException {
+        update(group);
     }
 
     @Override
-    public boolean deleteGroup(Group group) {
-        return delete(group);
+    public void deleteGroup(Group group) throws ObjectNotFoundException {
+        delete(group);
     }
 
     @Override

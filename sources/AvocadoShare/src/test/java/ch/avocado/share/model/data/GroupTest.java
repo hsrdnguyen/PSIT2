@@ -18,7 +18,7 @@ public class GroupTest {
     private static final String DEFAULT_NAME = "name";
     @Before
     public void setUp() {
-        group = new Group("id", new ArrayList<Category>(), new Date(), 0.0f, "owner", "description", DEFAULT_NAME);
+        group = new Group("id", new ArrayList<Category>(), new Date(), new Rating(), "owner", "description", DEFAULT_NAME);
     }
 
     @Test
@@ -30,8 +30,13 @@ public class GroupTest {
         assertEquals(group.getName(), name);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetNameWithNull() {
         group.setName(null);
+    }
+
+    @Test
+    public void testGetReadableName() {
+        assertEquals(group.getName(), group.getReadableName());
     }
 }

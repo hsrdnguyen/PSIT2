@@ -17,7 +17,7 @@ public class FramePreview implements IPreviewGenerator {
      * @param streamUrl The url from which the content can be streamed.
      */
     public FramePreview(String streamUrl) {
-        if(streamUrl == null) throw new IllegalArgumentException("streamUrl is null");
+        if(streamUrl == null) throw new NullPointerException("streamUrl is null");
         this.streamUrl = streamUrl;
     }
 

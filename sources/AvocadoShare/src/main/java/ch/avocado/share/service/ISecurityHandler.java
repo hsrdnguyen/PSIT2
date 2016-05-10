@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.AccessIdentity;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Module;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public interface ISecurityHandler {
      * @param accessLevel the new level The level must not be {@link AccessLevelEnum#OWNER}.
      * @return {@code true} if the execution was successful.
      */
-    boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException;
+    boolean setAccessLevel(AccessIdentity identity, AccessControlObjectBase target, AccessLevelEnum accessLevel) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Sets the access of the identity on the target to the given level.
@@ -52,7 +53,7 @@ public interface ISecurityHandler {
      * @param targetId   identifier of the new level. The level must not be {@link AccessLevelEnum#OWNER}.
      * @return {@code true} if the execution was successful.
      */
-    boolean setAccessLevel(String identityId, String targetId, AccessLevelEnum accessLevel) throws DataHandlerException;
+    boolean setAccessLevel(String identityId, String targetId, AccessLevelEnum accessLevel) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * checks and returns what access level an anonymous (unauthenticated) user
@@ -65,7 +66,7 @@ public interface ISecurityHandler {
 
     AccessLevelEnum getAnonymousAccessLevel(String targetId) throws DataHandlerException;
 
-    boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException;
+    boolean setAnonymousAccessLevel(AccessControlObjectBase object, AccessLevelEnum level) throws DataHandlerException, ObjectNotFoundException;
 
     Map<String, AccessLevelEnum> getGroupsWithAccessIncluding(AccessLevelEnum accessLevel, AccessControlObjectBase target) throws DataHandlerException;
 
@@ -78,5 +79,5 @@ public interface ISecurityHandler {
      * empty list is returned (not null).
      * @throws DataHandlerException If some error occurs while handling the data.
      */
-    List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException;
+    List<String> getIdsOfObjectsOnWhichIdentityHasAccess(AccessIdentity identity, AccessLevelEnum accessLevelEnum) throws DataHandlerException, ObjectNotFoundException;
 }

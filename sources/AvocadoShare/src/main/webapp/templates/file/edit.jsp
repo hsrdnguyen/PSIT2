@@ -7,11 +7,13 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ch.avocado.share.common.form.InputType" %>
+<%@ page import="ch.avocado.share.common.form.FormEncoding" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     FormBuilder form = new FormBuilder(viewConfig, File.class);
-    form.setEncodingType("multipart/form-data");
+    form.setEncodingType(FormEncoding.MULTIPART);
     form.setReadableFieldName("title", "Titel");
     form.setReadableFieldName("description", "Beschreibung");
     form.setReadableFieldName("moduleId", "Modul auswählen");
@@ -76,7 +78,7 @@
                             <%=form.getLabelFor("description") %>
                         </div>
                         <div class="col-sm-10">
-                            <%=form.getInputFor("description", "textarea") %>
+                            <%=form.getInputFor("description", InputType.TEXTAREA) %>
                         </div>
                     </div>
 

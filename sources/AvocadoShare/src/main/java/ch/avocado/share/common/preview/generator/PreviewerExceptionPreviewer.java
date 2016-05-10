@@ -14,7 +14,7 @@ public class PreviewerExceptionPreviewer implements IPreviewGenerator {
     private final PreviewException exception;
 
     public PreviewerExceptionPreviewer(PreviewException exception) {
-        if(exception == null) throw new IllegalArgumentException("exception is null");
+        if(exception == null) throw new NullPointerException("exception is null");
         this.exception = exception;
     }
 

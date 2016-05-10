@@ -1,6 +1,6 @@
 package ch.avocado.share.common;
 
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Impl.*;
 import ch.avocado.share.service.Mock.FileStorageHandlerMock;
@@ -50,6 +50,8 @@ public class ServiceLocator {
         services.put(ICategoryDataHandler.class, new CategoryDataHandler());
         services.put(IModuleDataHandler.class, new ModuleDataHandler());
         services.put(ICaptchaVerifier.class, new ReCaptchaVerifier());
+        services.put(IAvatarStorageHandler.class, new AvatarFileStorageHandler());
+        services.put(IRatingDataHandler.class, new RatingDataHandler());
         try {
             services.put(ISearchEngineService.class, new SolRJService(getService(IDatabaseConnectionHandler.class)));
             services.put(IFileDataHandler.class, new FileDataHandler(getService(ISearchEngineService.class)));

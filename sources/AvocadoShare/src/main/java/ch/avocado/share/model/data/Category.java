@@ -1,25 +1,32 @@
 package ch.avocado.share.model.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Representation of a single category.
+ *
+ * Category objects are immutable.
  */
-public class Category {
-    private String name;
-    private List<String> objectIds;
+public class Category implements Comparable<Category> {
+
+    private final String name;
+    private final List<String> objectIds;
 
     public Category(String name, List<String> objectIds) {
-        if(name == null ) throw new IllegalArgumentException("name in category");
-        if(objectIds == null ) throw new IllegalArgumentException("objectIds in category");
+        if(name == null ) throw new NullPointerException("name in category");
+        if(objectIds == null ) throw new NullPointerException("objectIds in category");
 
         this.name = name;
-        this.objectIds = objectIds;
+        this.objectIds = new ArrayList<>(objectIds.size());
+        this.objectIds.addAll(objectIds);
     }
 
     public Category(String name) {
-        if(name == null ) throw new IllegalArgumentException("name in category");
+        if(name == null ) throw new NullPointerException("name in category");
+        if(name.isEmpty()) throw new IllegalArgumentException("empty name");
         this.name = name;
         this.objectIds = new ArrayList<>();
     }
@@ -28,18 +35,10 @@ public class Category {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String[] getObjectIds() {
-        String[] idArray = new String[objectIds.size()];
-        return objectIds.toArray(idArray);
-    }
-
-    public void addObjectId(String objectId) {
-        if(objectId == null ) throw new IllegalArgumentException("objectId in category addObjectId");
-        objectIds.add(objectId);
+    public Collection<String> getObjectIds() {
+        ArrayList<String> ids = new ArrayList<>(objectIds.size());
+        ids.addAll(objectIds);
+        return ids;
     }
 
     @Override
@@ -49,5 +48,27 @@ public class Category {
         if (other.getClass() != getClass()) return false;
         if (!name.equals(((Category)other).getName())) return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public int compareTo(Category category) {
+        if(category == null) throw new NullPointerException("category is null");
+        int result = name.toLowerCase().compareTo(category.getName().toLowerCase());
+        if(result == 0) {
+            return name.compareTo(category.getName());
+        }
+        return result;
     }
 }

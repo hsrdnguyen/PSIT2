@@ -1,13 +1,13 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.SQLQueryConstants;
+import ch.avocado.share.common.constants.sql.FileConstants;
 import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
-import ch.avocado.share.model.factory.FileFactory;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.ISearchEngineService;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -17,11 +17,10 @@ import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.util.IteratorChain;
 import org.apache.solr.common.util.NamedList;
 
-import java.io.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -96,7 +95,7 @@ public class SolRJService implements ISearchEngineService {
             server.deleteByQuery("*:*");
             server.commit();
 
-            PreparedStatement stmt = databaseService.getPreparedStatement(SQLQueryConstants.File.SELECT_ALL_FILES);
+            PreparedStatement stmt = databaseService.getPreparedStatement(FileConstants.SELECT_ALL_FILES);
             ResultSet rs = databaseService.executeQuery(stmt);
 
             List<ch.avocado.share.model.data.File> files = getMultipleFilesFromResultSet(rs);
@@ -119,13 +118,14 @@ public class SolRJService implements ISearchEngineService {
         try {
             List<ch.avocado.share.model.data.File> files = new ArrayList<>();
             while (resultSet.next()) {
-                ch.avocado.share.model.data.File file = FileFactory.getDefaultFile();
-                file.setId(resultSet.getString(1));
-                file.setTitle(resultSet.getString(2));
-                file.setDescription(resultSet.getString(3));
-                file.setLastChanged(new Date(resultSet.getTimestamp(4).getTime()));
-                file.setCreationDate(new Date(resultSet.getTimestamp(5).getTime()));
-                file.setPath(resultSet.getString(6));
+                String id = resultSet.getString(1);
+                String title = resultSet.getString(2);
+                String desc = resultSet.getString(3);
+                Date lastChanged = new Date(resultSet.getTimestamp(4).getTime());
+                Date creationDate = new Date(resultSet.getTimestamp(5).getTime());
+                String path = resultSet.getString(6);
+
+                ch.avocado.share.model.data.File file =  new ch.avocado.share.model.data.File(id, new ArrayList<Category>(), creationDate, new Rating(), "", desc, title, path, lastChanged, "", "", "");
                 files.add(file);
             }
             return files;
@@ -144,7 +144,7 @@ public class SolRJService implements ISearchEngineService {
 
         SolRJService service = new SolRJService(ServiceLocator.getService(IDatabaseConnectionHandler.class));
 
-        service.indexFile(new ch.avocado.share.model.data.File("80", new ArrayList<Category>(), new Date(), 0.0f, "1", "", "", file_docx, new Date(), "", "", ""));
+        service.indexFile(new ch.avocado.share.model.data.File("80", new ArrayList<Category>(), new Date(), new Rating(), "1", "", "", file_docx, new Date(), "", "", ""));
         //service.reloadSearchIndex();
         service.search("*:*");
 

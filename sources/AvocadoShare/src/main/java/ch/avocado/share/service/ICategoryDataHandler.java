@@ -3,8 +3,10 @@ package ch.avocado.share.service;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by kunzlio1 on 23.03.2016.
@@ -13,19 +15,15 @@ public interface ICategoryDataHandler {
     /**
      * updates the categories from a AccessControlObjectBase object,
      * by passing the old Object on the database and the "new"/"changed" Object.
-     * @param oldAccessObject       the AccessControlObject on the database
      * @param changedAccessObject   the "new"/"changed" AccessControlObject
-     * @return true if updated successfully
      */
-    boolean updateAccessObjectCategories(AccessControlObjectBase oldAccessObject,
-                                         AccessControlObjectBase changedAccessObject) throws DataHandlerException;
+    void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * adds all categories from new created AccessControlObject to the database
      * @param accessObject the new created AccessControlObject
-     * @return true if added all categories successful
      */
-    boolean addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException;
+    void addAccessObjectCategories(AccessControlObjectBase accessObject) throws DataHandlerException;
 
     /**
      * checks if a Category is already added to a AccessControlObject
@@ -40,12 +38,12 @@ public interface ICategoryDataHandler {
      * @param name the Category name
      * @return the Category object
      */
-    Category getCategoryByName(String name) throws DataHandlerException;
+    Category getCategoryByName(String name) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Returns all categories, which are assigned to AccessControlObject.
      * @param accessControlObjectId the accessObjectId, for which the categories should be returned.
-     * @return the accessObject assigned categories.
+     * @return the accessObject assigned categories. If the object could not be found am empty list is returned.
      */
     List<Category> getAccessObjectAssignedCategories(String accessControlObjectId) throws DataHandlerException;
 }

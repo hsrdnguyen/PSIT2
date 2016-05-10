@@ -67,8 +67,10 @@ public class UserServletTest {
         ServiceLocatorModifier.setService(ISecurityHandler.class, mockSecurityHandler);
 
         response = new MockHttpServletResponse();
-        dummyUser = new User(null, new ArrayList<Category>(), new Date(), 0.0f, "Description", UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new EmailAddressVerification(new Date())));
-        accessingUser = new User(null, new ArrayList<Category>(), new Date(), 0.0f, "Description", UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new EmailAddressVerification(new Date())));
+        final Date expiry = new Date();
+        dummyUser = new User(null, new ArrayList<Category>(), new Date(), new Rating(), "Description", UserPassword.fromPassword(""), "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new MailVerification(expiry)));
+        final Date expiry1 = new Date();
+        accessingUser = new User(null, new ArrayList<Category>(), new Date(), new Rating(), "Description", UserPassword.fromPassword(""), "Prename", "Surname", "1234", new EmailAddress(false, "asomething@zhaw.ch", new MailVerification(expiry1)));
 
         ServiceLocator.getService(IUserDataHandler.class).addUser(dummyUser);
         ServiceLocator.getService(IUserDataHandler.class).addUser(accessingUser);
@@ -90,13 +92,13 @@ public class UserServletTest {
         request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        request.setParameter(ResourceServlet.PARAMETER_METHOD, method);
+        request.setParameter(ExtendedHttpServlet.PARAMETER_METHOD, method);
         requests.add(request);
 
         request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        request.setParameter(ResourceServlet.PARAMETER_METHOD, method.toLowerCase());
+        request.setParameter(ExtendedHttpServlet.PARAMETER_METHOD, method.toLowerCase());
         requests.add(request);
 
         return requests;

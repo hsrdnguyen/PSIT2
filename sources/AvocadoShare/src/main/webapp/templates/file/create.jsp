@@ -4,18 +4,21 @@
 <%@ page import="ch.avocado.share.controller.UserSession" %>
 <%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="ch.avocado.share.model.data.Module" %>
-<%@ page import="ch.avocado.share.model.exceptions.HttpBeanException" %>
+<%@ page import="ch.avocado.share.model.exceptions.HttpServletException" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ch.avocado.share.common.form.InputType" %>
+<%@ page import="ch.avocado.share.common.form.FormEncoding" %>
+<%@ page import="ch.avocado.share.common.ResponseHelper" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     String parameterModuleId = request.getParameter("m");
 
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     FormBuilder formBuilder = new FormBuilder(viewConfig, File.class);
-    formBuilder.setEncodingType("multipart/form-data");
+    formBuilder.setEncodingType(FormEncoding.MULTIPART);
     formBuilder.setReadableFieldName("title", "Titel");
     formBuilder.setReadableFieldName("description", "Beschreibung");
     formBuilder.setReadableFieldName("moduleId", "Modul auswählen");
@@ -25,8 +28,8 @@
     List<Module> userModules = new ArrayList<Module>();
     try {
         userModules = FileBean.getModulesToUpload(userSession.getUser());
-    } catch (HttpBeanException e) {
-        response.sendError(e.getStatusCode(), e.getDescription());
+    } catch (HttpServletException e) {
+        ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
     }
 
 %>
@@ -67,7 +70,7 @@
 
                         <div class="form-group">
                             <%=formBuilder.getLabelFor("description") %>
-                            <%=formBuilder.getInputFor("description", "textarea") %>
+                            <%=formBuilder.getInputFor("description", InputType.TEXTAREA) %>
                         </div>
                         <%=formBuilder.getSubmit("Speichern")%>
                         <%=formBuilder.getFormEnd() %>

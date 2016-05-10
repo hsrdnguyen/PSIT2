@@ -2,10 +2,10 @@ package ch.avocado.share.common;
 
 
 import ch.avocado.share.model.data.File;
+import ch.avocado.share.servlet.AvatarServlet;
 import ch.avocado.share.servlet.DownloadServlet;
 import ch.avocado.share.servlet.LoginServlet;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -16,7 +16,7 @@ public class UrlHelper {
     private final HttpServletRequest request;
 
     public UrlHelper(HttpServletRequest request) {
-        if(request == null) throw new IllegalArgumentException("request is null");
+        if(request == null) throw new NullPointerException("request is null");
         this.request = request;
     }
 
@@ -56,6 +56,16 @@ public class UrlHelper {
         return path;
     }
 
+    public String getPathAndQueryWithoutBase() {
+        String contextPath = getBase();
+        String path = getPathAndQuery();
+        if(!path.startsWith(contextPath)) {
+            throw new RuntimeException("path doesn't start with base");
+        } else {
+            return path.substring(contextPath.length());
+        }
+    }
+
     public String getLoginUrl() {
         return this.getBase() + "/login";
     }
@@ -63,5 +73,30 @@ public class UrlHelper {
     public String getLoginUrlWithRedirect() {
         String currentUrl = getPathAndQuery();
         return getLoginUrl() + "?" + encodeUrlParameter(LoginServlet.FIELD_REDIRECT_TO, currentUrl);
+    }
+
+    public String getAvatarUrl(String userId) {
+        return getBase() + "/avatar?" + encodeUrlParameter(AvatarServlet.PARAMETER_USER_ID, userId);
+    }
+
+    public String getReferrer() {
+        String referer = request.getHeader("Referer");
+        if(referer != null) {
+            // TODO: muellcy1 add check for referer validity.
+            return referer;
+        }
+        return null;
+    }
+
+    public String getNoRefererPage() {
+        return getBase() + "/noreferer.jsp";
+    }
+
+    public String getCategoryServletUrl() {
+        return getBase() + "/category";
+    }
+
+    public String getRatingUrl() {
+        return getBase() + "/rating";
     }
 }

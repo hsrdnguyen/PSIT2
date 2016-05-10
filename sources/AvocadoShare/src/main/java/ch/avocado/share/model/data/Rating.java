@@ -9,25 +9,25 @@ import java.util.List;
  * Created by kunzlio1 on 18.04.2016.
  */
 public class Rating {
+    private static long DEFAULT_RATED_OBJECT_ID = -1;
+    private static float DEFAULT_RATING = RatingConstants.MIN_RATING_VALUE;
     private List<Long> ratingUserIds;
     private long ratedObjectId;
     private float rating;
 
     public Rating(long ratedObjectId){
+        if(ratedObjectId < 0) throw new IllegalArgumentException("ratedObjectId is below zero");
         ratingUserIds = new ArrayList<>();
         this.ratedObjectId = ratedObjectId;
     }
 
-    public void addRatingUserId(long ratingUserId){
-        ratingUserIds.add(ratingUserId);
+    public Rating(){
+        ratingUserIds = new ArrayList<>();
+        this.ratedObjectId = DEFAULT_RATED_OBJECT_ID;
     }
 
     public boolean hasUserRated(long ratingUserId){
         return ratingUserIds.contains(ratingUserId);
-    }
-
-    public void setRatedObjectId(long ratedObjectId){
-        this.ratedObjectId = ratedObjectId;
     }
 
     public long getRatedObjectId(){
@@ -39,10 +39,14 @@ public class Rating {
     }
 
     public float getRating(){
+        if(ratingUserIds.isEmpty()) {
+            return DEFAULT_RATING;
+        }
         return rating / ((float)ratingUserIds.size());
     }
 
     public void addRating(int rating, long ratingUserId){
+        if(ratingUserId < 0) throw new IllegalArgumentException("ratingUserId is below zero");
         if(rating < RatingConstants.MIN_RATING_VALUE || rating > RatingConstants.MAX_RATING_VALUE) {
             throw new IllegalArgumentException("Rating not between " + RatingConstants.MIN_RATING_VALUE
                     + " and " + RatingConstants.MAX_RATING_VALUE);

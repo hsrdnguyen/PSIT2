@@ -3,24 +3,21 @@ package ch.avocado.share.model.data;
 import ch.avocado.share.common.Base64;
 import ch.avocado.share.common.BinaryTokenGenerator;
 import ch.avocado.share.common.TokenGenerator;
-import com.sun.istack.internal.Nullable;
 import org.bouncycastle.crypto.generators.SCrypt;
+import org.bouncycastle.math.raw.Mod;
 
 import java.io.Serializable;
 
 /**
  * Class to handle user passwords.
- * It uses a cryptographical strong algorithm to hash the passwords.
+ * It uses a strong cryptographic algorithm to hash the passwords.
  * 
  * For existing hashes you can simply use the default constructor. 
  * If you want to create a hash from a new password you have to 
  * use the @{link UserPassword.fromPassword} method.
- * 
- * @author muellcy1
+ *
  */
-public class UserPassword implements Serializable{
-
-	public static  final UserPassword EMPTY_PASSWORD = UserPassword.fromPassword("");
+public class UserPassword extends Model implements Serializable {
 
 	private static final long serialVersionUID = 3245810310373510720L;
 
@@ -41,7 +38,7 @@ public class UserPassword implements Serializable{
 	private static final int SCRYPT_KEY_LENGTH = 32;
 
 	private String digest;
-    private PasswordResetVerification resetVerification;
+    private MailVerification resetVerification;
 
 	/**
 	 * Private constructor for fromPassword.
@@ -61,7 +58,7 @@ public class UserPassword implements Serializable{
 	}
 
 	
-    public UserPassword(String digest, PasswordResetVerification resetVerification) {
+    public UserPassword(String digest, MailVerification resetVerification) {
         setDigest(digest);
         setResetVerification(resetVerification);
     }
@@ -73,9 +70,7 @@ public class UserPassword implements Serializable{
 	 * @return
 	 */
 	static public UserPassword fromPassword(String password) {
-		if(password == null) {
-			throw new IllegalArgumentException("password can't be null");
-		}
+		if(password == null) throw new NullPointerException("password can't be null");
 		UserPassword passwordObject = new UserPassword();
 		passwordObject.setPassword(password);
 		return passwordObject;
@@ -97,12 +92,8 @@ public class UserPassword implements Serializable{
 	 * @return
 	 */
 	private static String generateDigest(String password, byte[] salt) {
-		if(password == null){
-			throw new IllegalArgumentException("password can't be null");
-		}
-		if(salt == null) {
-			throw new IllegalArgumentException("salt can't be null");
-		}
+		if(password == null) throw new NullPointerException("password can't be null");
+		if(salt == null) throw new NullPointerException("salt can't be null");
 		byte[] key = SCrypt.generate(password.getBytes(), salt, SCRYPT_CPU_MEMORY_COST, SCRYPT_BLOCK_SIZE,
 				SCRYPT_PARALLELIZING_FACTOR, SCRYPT_KEY_LENGTH);
 		return Base64.encode(salt) + ":" + Base64.encode(key);
@@ -120,9 +111,8 @@ public class UserPassword implements Serializable{
 	 * @param digest The digest
 	 */
 	public void setDigest(String digest) {
-		if(digest == null) {
-			throw new IllegalArgumentException("digest can't be null");
-		}
+		if(digest == null) throw new NullPointerException("digest can't be null");
+		if(!digest.contains(":")) throw new IllegalArgumentException("invalid digest");
 		this.digest = digest;
 	}
 
@@ -143,10 +133,12 @@ public class UserPassword implements Serializable{
 	 * @return The salt
 	 */
 	private byte[] getSalt() {
-		if (this.digest.contains(":")) {
-			return Base64.decode(this.digest.split(":")[0]);
+		assert digest != null;
+		if (digest.contains(":")) {
+			return Base64.decode(digest.split(":")[0]);
+		} else {
+			throw new RuntimeException("invalid digest");
 		}
-		return null;
 	}
 
 	/**
@@ -155,20 +147,18 @@ public class UserPassword implements Serializable{
 	 * @return True if the password match, False otherwise.
 	 */
 	public boolean matchesPassword(String password) {
+		assert digest != null;
 		byte[] salt = getSalt();
-		if (digest == null || salt == null) {
-			return false;
-		}
 		String generatedDigest = generateDigest(password, salt);
 		return generatedDigest.equals(digest);
 	}
 
 
-    public PasswordResetVerification getResetVerification() {
+    public MailVerification getResetVerification() {
         return resetVerification;
     }
 
-    public void setResetVerification(@Nullable PasswordResetVerification resetVerification) {
+    public void setResetVerification(MailVerification resetVerification) {
         this.resetVerification = resetVerification;
     }
 }

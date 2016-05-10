@@ -4,6 +4,7 @@
 <%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
+<%@ page import="ch.avocado.share.common.*" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
     File file = viewConfig.getObject(File.class);
@@ -13,6 +14,8 @@
     DefaultPreviewFactory defaultPreviewFactory = new DefaultPreviewFactory();
     IPreviewGenerator previewGenerator = null;
     previewGenerator = defaultPreviewFactory.getInstanceAndHandleErrors(file);
+    UrlHelper urlHelper = new UrlHelper(request);
+    String downloadUrl = Encoder.forHtmlAttribute(urlHelper.getDownloadUrl(file));
 %>
 <div class="row">
     <div class="content-main">
@@ -22,7 +25,7 @@
                     <a class="btn btn-secondary-outline" href="?action=edit&id=<%=id %>"><span
                             class="octicon octicon-pencil"></span></a>
                     <%-- TODO: fix absolute link --%>
-                    <a class="btn btn-primary-outline" href="/download?download=yes&id=<%=id %>" target="_blank">Download</a>
+                    <a class="btn btn-primary-outline" href="<%=downloadUrl %>" target="_blank">Download</a>
                 </div>
                 <h2><%=title %>
                 </h2>
@@ -31,6 +34,10 @@
                 <h3 class="list-group-item-heading">Beschreibung</h3>
                 <p><%=description%>
                 </p>
+            </div>
+            <div class="list-group-item">
+                <h3 class="list-group-item-heading">Rating</h3>
+                <div data-rating-object="<%=Encoder.forHtmlAttribute(file.getId())%>" data-rating-url="<%=urlHelper.getRatingUrl()%>"></div>
             </div>
             <div class="list-group-item">
                 <h3 class="list-group-item-heading">Vorschau</h3>
@@ -42,6 +49,7 @@
     </div>
     <div class="content-right">
         <%@include file="../member/index.jsp" %>
+        <%@include file="categories.jsp"%>
         <%@include file="info.jsp"%>
     </div>
 </div>

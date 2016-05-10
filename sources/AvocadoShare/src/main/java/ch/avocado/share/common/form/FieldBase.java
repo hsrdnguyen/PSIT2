@@ -23,7 +23,7 @@ abstract class FieldBase {
     }
 
     public void setName(String name) {
-        if (name == null) throw new IllegalArgumentException("name is null");
+        if (name == null) throw new NullPointerException("name is null");
         this.name = name;
     }
 
@@ -32,13 +32,13 @@ abstract class FieldBase {
     }
 
     public void setId(String id) {
-        if (id == null) throw new IllegalArgumentException("id is null");
+        if (id == null) throw new NullPointerException("id is null");
         this.id = id;
     }
 
     private String concatHtmlClasses(String first, String second) {
-        if(first == null) throw new IllegalArgumentException("first is null");
-        if(second == null) throw new IllegalArgumentException("second is null");
+        if(first == null) throw new NullPointerException("first is null");
+        if(second == null) throw new NullPointerException("second is null");
         if(first.isEmpty()) {
             return second;
         } else if(second.isEmpty()) {
@@ -85,7 +85,7 @@ abstract class FieldBase {
     }
 
     public void setHtmlClass(String htmlClass) {
-        if(htmlClass == null) throw new IllegalArgumentException("htmlClass is null");
+        if(htmlClass == null) throw new NullPointerException("htmlClass is null");
         this.htmlClass = htmlClass;
     }
 

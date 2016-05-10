@@ -3,6 +3,7 @@ package ch.avocado.share.service.Mock;
 
 
 import ch.avocado.share.model.data.AccessControlObjectBase;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
@@ -21,35 +22,37 @@ public abstract class DataHandlerMockBase<E extends AccessControlObjectBase>{
         objects = new HashMap<>();
     }
 
-    protected E get(String id) {
-        if(id == null) throw new IllegalArgumentException("id is null");
-        return objects.get(id);
+    protected E get(String id) throws ObjectNotFoundException {
+        if(id == null) throw new NullPointerException("id is null");
+        E result = objects.get(id);
+        if(result == null) throw new ObjectNotFoundException(AccessControlObjectBase.class, id);
+        return result;
     }
 
     protected String add(E object) {
-        if(object == null) throw new IllegalArgumentException("object is null");
+        if(object == null) throw new NullPointerException("object is null");
         if(object.getId() != null) throw new IllegalArgumentException("object.getId() is not null");
         Random random = new Random();
-        object.setId("object_" + random.nextLong() + random.nextLong());
+        object.setId("" + random.nextLong() + random.nextLong());
         objects.put(object.getId(), object);
         return object.getId();
     }
 
-    protected boolean delete(E object) {
+    protected void delete(E object) throws ObjectNotFoundException {
         if(objects.containsKey(object.getId())) {
             objects.remove(object.getId());
-            return true;
+        } else {
+            throw new ObjectNotFoundException(object.getClass(), object.getId());
         }
-        return false;
     }
 
-    protected boolean update(E object) {
-        if(object == null) throw new IllegalArgumentException("object is null");
+    protected void update(E object) throws ObjectNotFoundException {
+        if(object == null) throw new NullPointerException("object is null");
         if(objects.containsKey(object.getId())) {
             objects.put(object.getId(), object);
-            return true;
+        } else {
+            throw new ObjectNotFoundException(object.getClass(), object.getId());
         }
-        return false;
     }
 
     protected E[] getAll(Class<E> type) {

@@ -2,7 +2,9 @@ package ch.avocado.share.service.Mock;
 
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
+import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IGroupDataHandler;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +64,7 @@ public class GroupDataHandlerMockTest {
         String ownerId = "user0";
         String description = "new_description";
         String name = "new_group_name";
-        Group group = new Group(null, new ArrayList<Category>(), new Date(System.currentTimeMillis()), 0.0f, ownerId, description,  name);
+        Group group = new Group(null, new ArrayList<Category>(), new Date(System.currentTimeMillis()), new Rating(), ownerId, description,  name);
         String newId = handler.addGroup(group);
         assertNotNull(newId);
         Group addedGroup = handler.getGroup(newId);
@@ -74,7 +76,7 @@ public class GroupDataHandlerMockTest {
         // test add group with existing name
         assertNotNull(handler.getGroupByName(GroupDataHandlerMock.EXISTING_GROUP_NAME));
         name = GroupDataHandlerMock.EXISTING_GROUP_NAME;
-        group = new Group(null, new ArrayList<Category>(), new Date(System.currentTimeMillis()), 0.0f, ownerId, description,  name);
+        group = new Group(null, new ArrayList<Category>(), new Date(System.currentTimeMillis()), new Rating(), ownerId, description,  name);
         newId = handler.addGroup(group);
         assertNull(newId);
     }
@@ -85,8 +87,8 @@ public class GroupDataHandlerMockTest {
         String ownerId = "user0";
         String description = "new_description";
         String name = "new_group_name";
-        group = new Group(GroupDataHandlerMock.EXISTING_GROUP0, new ArrayList<Category>(), new Date(System.currentTimeMillis()), 0.0f, ownerId, description,  name);
-        assertTrue(handler.updateGroup(group));
+        group = new Group(GroupDataHandlerMock.EXISTING_GROUP0, new ArrayList<Category>(), new Date(System.currentTimeMillis()), new Rating(), ownerId, description,  name);
+        handler.updateGroup(group);
         group = handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
         assertEquals(group.getId(), GroupDataHandlerMock.EXISTING_GROUP0);
         assertEquals(group.getName(), name);
@@ -99,7 +101,10 @@ public class GroupDataHandlerMockTest {
         Group group = handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
         assertNotNull(group);
         handler.deleteGroup(group);
-        assertNull(handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0));
+        try {
+            handler.getGroup(GroupDataHandlerMock.EXISTING_GROUP0);
+            fail();
+        } catch (ObjectNotFoundException e){}
     }
 
     @Test
@@ -108,7 +113,7 @@ public class GroupDataHandlerMockTest {
         String ownerId = "user0";
         String description = "new_description";
         String name = "new_group_name";
-        group = new Group(null, new ArrayList<Category>(), new Date(System.currentTimeMillis()), 0.0f, ownerId, description,  name);
+        group = new Group(null, new ArrayList<Category>(), new Date(System.currentTimeMillis()), new Rating(), ownerId, description,  name);
         int numberOfGroupsBeforeAdd = handler.getNumberOfGroups();
         String id = handler.addGroup(group);
         assertEquals(numberOfGroupsBeforeAdd + 1, handler.getNumberOfGroups());

@@ -205,6 +205,53 @@ a.modul-link:hover .modul {
     width: 100%;
 }
 
+
+.category {
+    display: inline;
+    line-height: 2em;
+}
+
+.category input[type=submit], .category button {
+    padding: 0.1em;
+    margin: 0;
+    display: inline;
+    line-height: 1em;
+    font-size: 0.8em;
+}
+
+input.add-category {
+    min-width: 200px;
+}
+
+.category .delete-category {
+    display: none;
+}
+
+.category:hover .delete-category, .category:focus .delete-category  {
+    display: inline-block;
+}
+
+
+.rating {
+    font-size: 2em;
+    line-height: 2em;
+    position: relative;
+    top: 0;
+    left: 0;
+    display: inline-block;
+}
+
+.rating .rating-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: tomato;
+    overflow: hidden;
+}
+
+.rating:hover .rating-overlay, .rating-overlay:hover {
+    display: none;
+}
 .ModuleResult
 {
     background-color: #22FF0000;

@@ -2,17 +2,18 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
+import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
@@ -34,8 +35,8 @@ public class ModuleDataHandlerTest {
     @Before
     public void setUp() throws Exception {
         DatabaseConnectionHandlerMock.use();
-        owner = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "12345.jpg", new EmailAddress(false, "someone@zhaw.ch", new EmailAddressVerification(new Date())));
-        ownerTwo = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "12345.jpg", new EmailAddress(false, "someone_other@zhaw.ch", new EmailAddressVerification(new Date())));
+        owner = DummyFactory.newUser(1);
+        ownerTwo = DummyFactory.newUser(2);
 
         assertNotNull(userDataHandler.addUser(owner));
         assertNotNull(userDataHandler.addUser(ownerTwo));
@@ -69,6 +70,11 @@ public class ModuleDataHandlerTest {
         return categories;
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testAddNull() throws Exception {
+        moduleDataHandler.addModule(null);
+    }
+
     @Test
     public void testAddAndGetModule() throws Exception {
         String description, name;
@@ -85,8 +91,8 @@ public class ModuleDataHandlerTest {
 
 
         IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-        File fileOne = new File(owner.getId(), "File from ModulDataHandlerTest (1/2)", "title", "path", new Date(), ".jpg", module.getId(), "image/jpeg");
-        File fileTwo = new File(owner.getId(), "File from ModulDataHandlerTest (2/2)", "title2", "path", new Date(), ".jpg", module.getId(), "image/jpeg");
+        File fileOne = DummyFactory.newFile(1, owner, module);
+        File fileTwo = DummyFactory.newFile(2, owner, module);
         assertNotNull(fileDataHandler.addFile(fileOne));
         assertNotNull(fileDataHandler.addFile(fileTwo));
 
@@ -97,11 +103,26 @@ public class ModuleDataHandlerTest {
         assertEquals(2, fetchedModule.getFileIds().size());
         assertTrue(fetchedModule.getFileIds().contains(fileOne.getId()));
         assertTrue(fetchedModule.getFileIds().contains(fileTwo.getId()));
-        assertCategoriesEquals(categories, fetchedModule.getCategories());
+        assertCategoriesEquals(categories, fetchedModule.getCategoryList());
 
         fileDataHandler.deleteFile(fileOne);
         fileDataHandler.deleteFile(fileTwo);
 
+    }
+
+
+    @Test(expected = NullPointerException.class)
+    public void testDeleteNull() throws Exception {
+        moduleDataHandler.deleteModule(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteModuleWithIdNull() throws Exception {
+        String description, name;
+        description = "Description";
+        name = "testAddAndGetModule.module";
+        Module module = new Module(owner.getId(), description, name);
+        moduleDataHandler.deleteModule(module);
     }
 
     @Test
@@ -115,9 +136,19 @@ public class ModuleDataHandlerTest {
         notDeletedModuleIds.push(id);
         assertNotNull(module.getId());
         assertNotNull(moduleDataHandler.getModule(id));
-        assertTrue(moduleDataHandler.deleteModule(module));
-        assertNull(moduleDataHandler.getModule(id));
+
+        moduleDataHandler.deleteModule(module);
+        try {
+            moduleDataHandler.getModule(id);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
         notDeletedModuleIds.pop();
+        try {
+            moduleDataHandler.updateModule(module);
+            fail();
+        } catch (ObjectNotFoundException ignored) {
+        }
     }
 
     @Test
@@ -141,7 +172,6 @@ public class ModuleDataHandlerTest {
         ids.add(id);
 
         ids.add(owner.getId());
-        ids.add(null);
 
         List<Module> modules = moduleDataHandler.getModules(ids);
         assertEquals(2, modules.size());
@@ -173,12 +203,12 @@ public class ModuleDataHandlerTest {
         updatedModule.setCategories(categories);
         updatedModule.setOwnerId(ownerTwo.getId());
 
-        assertTrue(moduleDataHandler.updateModule(updatedModule));
+        moduleDataHandler.updateModule(updatedModule);
 
         Module fetchedModule = moduleDataHandler.getModule(id);
         assertEquals("Fetched name doesn't match", name, fetchedModule.getName());
         assertEquals("Fetched description doesn't match", description, fetchedModule.getDescription());
         assertEquals("Fetched ownerId doesn't match", ownerTwo.getId(), fetchedModule.getOwnerId());
-        assertCategoriesEquals(categories, fetchedModule.getCategories());
+        assertCategoriesEquals(categories, fetchedModule.getCategoryList());
     }
 }

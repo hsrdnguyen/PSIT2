@@ -31,8 +31,8 @@ public class DefaultPreviewFactory  extends PreviewFactory{
      * @param factory The factory
      */
     static public void registerFactory(String mimeType, PreviewFactory factory) {
-        if(mimeType == null) throw new IllegalArgumentException("mimeType is null");
-        if(factory == null) throw new IllegalArgumentException("factory is null");
+        if(mimeType == null) throw new NullPointerException("mimeType is null");
+        if(factory == null) throw new NullPointerException("factory is null");
         previewerFactories.put(mimeType, factory);
     }
 
@@ -49,7 +49,7 @@ public class DefaultPreviewFactory  extends PreviewFactory{
 
     @Override
     public IPreviewGenerator getInstance(File file) throws PreviewException{
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(file == null) throw new NullPointerException("file is null");
         String contentType, topLevelType;
         PreviewFactory previewFactory = null;
         contentType = file.getMimeType();

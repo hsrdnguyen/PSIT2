@@ -7,13 +7,14 @@ import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.Members;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.model.exceptions.HttpBeanDatabaseException;
-import ch.avocado.share.model.exceptions.HttpBeanException;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.model.exceptions.AccessDeniedException;
+import ch.avocado.share.model.exceptions.HttpServletException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ISecurityHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ServiceException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -46,34 +47,34 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
 
     /**
      * @return The new created object or null if there are errors.
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    public abstract E create() throws HttpBeanException, DataHandlerException;
+    public abstract E create() throws ServiceException, AccessDeniedException;
 
     /**
      * Load and returns a single Object by using the given parameters.
      *
      * @return The object (never null)
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    public abstract E get() throws HttpBeanException, DataHandlerException;
+    public abstract E get() throws ServiceException;
 
     /**
      * Returns a list filtered by the given parameters
      *
      * @return A list of objects
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    public abstract List<E> index() throws HttpBeanException, DataHandlerException;
+    public abstract List<E> index() throws ServiceException;
 
     /**
      * Updates the object which can be accessed through getObject().
      * Use addFormError if there are invalid or missing parameters.
      *
      * @param object
-     * @throws HttpBeanException
+     * @throws HttpServletException
      */
-    public abstract void update(E object) throws HttpBeanException, DataHandlerException;
+    public abstract void update(E object) throws ServiceException;
 
     /**
      * Update the descriptipon of the object
@@ -100,21 +101,12 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
     /**
      * Destroy the object
      *
-     * @throws HttpBeanException
+     * @throws ServiceException
      */
-    public abstract void destroy(E object) throws HttpBeanException, DataHandlerException;
-
-    /**
-     * Replace the object
-     *
-     * @throws HttpBeanException
-     */
-    public void replace(E object) throws HttpBeanException, DataHandlerException {
-        throw new HttpBeanException(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Replacement not allowed");
-    }
+    public abstract void destroy(E object) throws ServiceException, AccessDeniedException;
 
 
-    public Members getMembers(E object) throws HttpBeanException {
+    public Members getMembers(E object) throws HttpServletException {
         if (object == null) throw new IllegalStateException("object is null");
         Members members;
         if (!hasMembers()) {
@@ -122,20 +114,17 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
         }
         try {
             members = Members.fromIdsWithRights(getUsersWithAccess(object), getGroupsWithAccess(object), object);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanException(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.DATAHANDLER_EXPCEPTION);
+        } catch (ServiceException e) {
+            throw new HttpServletException(e);
         }
         return members;
     }
 
-    private Map<String, AccessLevelEnum> getUsersWithAccess(E object) throws HttpBeanException, DataHandlerException {
+    private Map<String, AccessLevelEnum> getUsersWithAccess(E object) throws ServiceException {
         return getService(ISecurityHandler.class).getUsersWithAccessIncluding(AccessLevelEnum.READ, object);
     }
 
-    private Map<String, AccessLevelEnum> getGroupsWithAccess(E object) throws HttpBeanException, DataHandlerException {
+    private Map<String, AccessLevelEnum> getGroupsWithAccess(E object) throws ServiceException {
         return getService(ISecurityHandler.class).getGroupsWithAccessIncluding(AccessLevelEnum.READ, object);
     }
 
@@ -193,14 +182,10 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @param serviceClass
      * @param <E>
      * @return The service
-     * @throws HttpBeanException
+     * @throws ServiceNotFoundException
      */
-    protected static <E> E getService(Class<E> serviceClass) throws HttpBeanException {
-        try {
-            return ServiceLocator.getService(serviceClass);
-        } catch (ServiceNotFoundException e) {
-            throw new HttpBeanException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorMessageConstants.SERVICE_NOT_FOUND + e.getService());
-        }
+    protected static <E> E getService(Class<E> serviceClass) throws ServiceNotFoundException {
+        return ServiceLocator.getService(serviceClass);
     }
 
     /**
@@ -208,25 +193,21 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      *
      * @param target        The access target
      * @param requiredLevel The required level of access on the target.
-     * @throws HttpBeanException If the required access is not met.
+     * @throws HttpServletException If the required access is not met.
      */
-    protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws HttpBeanException {
-        if (target == null) throw new IllegalArgumentException("target is null");
-        if (requiredLevel == null) throw new IllegalArgumentException("requiredLevel is null");
+    protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws ServiceNotFoundException, DataHandlerException, AccessDeniedException {
+        if (target == null) throw new NullPointerException("target is null");
+        if (requiredLevel == null) throw new NullPointerException("requiredLevel is null");
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);
         AccessLevelEnum grantedAccessLevel;
-        try {
-            if (getAccessingUser() == null) {
-                grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
-            } else {
-                grantedAccessLevel = securityHandler.getAccessLevel(getAccessingUser(), target);
-            }
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            throw new HttpBeanDatabaseException();
+        User user = getAccessingUser();
+        if (user == null) {
+            grantedAccessLevel = securityHandler.getAnonymousAccessLevel(target);
+        } else {
+            grantedAccessLevel = securityHandler.getAccessLevel(user, target);
         }
         if (!grantedAccessLevel.containsLevel(requiredLevel)) {
-            throw new HttpBeanException(HttpServletResponse.SC_FORBIDDEN, ErrorMessageConstants.ACCESS_DENIED);
+            throw new AccessDeniedException(user, target, requiredLevel);
         }
     }
 

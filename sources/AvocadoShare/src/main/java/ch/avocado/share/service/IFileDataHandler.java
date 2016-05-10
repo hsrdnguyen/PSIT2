@@ -2,6 +2,7 @@ package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.util.List;
 
@@ -21,14 +22,14 @@ public interface IFileDataHandler {
      * deletes the given file rom the database and the server
      * @param file file to be deleted
      */
-    boolean deleteFile(File file) throws DataHandlerException;
+    void deleteFile(File file) throws ObjectNotFoundException, DataHandlerException;
 
     /**
      * Returns the file from the server with the data from the database
      * @param fileId id of the requested file
      * @return File from server
      */
-    File getFile(String fileId) throws DataHandlerException;
+    File getFile(String fileId) throws ObjectNotFoundException, DataHandlerException;
 
     /**
      * Returns a list of files
@@ -50,13 +51,13 @@ public interface IFileDataHandler {
      * @param moduleId module id in which it was uploaded
      * @return The file object
      */
-    File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException;
+    File getFileByTitleAndModule(String fileTitle, String moduleId) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * updates a file on the server and database and creates a new version number
      * @param file file with updated data
      * @return {@code true} if the file was found an has been updated.
      */
-    boolean updateFile(File file) throws DataHandlerException;
+    void updateFile(File file) throws DataHandlerException, ObjectNotFoundException;
 }
 

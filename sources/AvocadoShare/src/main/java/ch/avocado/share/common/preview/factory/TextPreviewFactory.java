@@ -21,7 +21,7 @@ public class TextPreviewFactory extends PreviewFactory{
     private static final int MAX_FILE_SIZE = 1024 * 1024;
 
     private String readStream(InputStream stream) throws PreviewException {
-        if(stream == null) throw new IllegalArgumentException("stream is null");
+        if(stream == null) throw new NullPointerException("stream is null");
         try {
             return new String(Streams.readAllLimited(stream, MAX_FILE_SIZE), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -31,7 +31,7 @@ public class TextPreviewFactory extends PreviewFactory{
 
     @Override
     public IPreviewGenerator getInstance(File file) throws PreviewException {
-        if(file == null) throw new IllegalArgumentException("file is null");
+        if(file == null) throw new NullPointerException("file is null");
         IFileStorageHandler storageHandler = getFileStorageHandler();
         InputStream stream;
         long fileSize;

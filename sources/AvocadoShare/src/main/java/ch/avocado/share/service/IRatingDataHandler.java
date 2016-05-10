@@ -2,9 +2,10 @@ package ch.avocado.share.service;
 
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 /**
- * Created by User on 18.04.2016.
+ * Data handler interface to manage ratings.
  */
 public interface IRatingDataHandler {
     /**
@@ -13,7 +14,7 @@ public interface IRatingDataHandler {
      * @return The Ranking for the AccessControlObject.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    Rating getRatingForObject(int ratedObjectId) throws DataHandlerException;
+    Rating getRatingForObject(long ratedObjectId) throws DataHandlerException;
 
     /**
      * Gets the rating as integer, which the a User gave to an AccessControlObject.
@@ -22,26 +23,25 @@ public interface IRatingDataHandler {
      * @return The rating as integer, which the a User gave to the AccessControlObject.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    int getRatingForUserAndObject(long ratingUserId, long ratedObjectId) throws DataHandlerException;
+    int getRatingForUserAndObject(long ratingUserId, long ratedObjectId) throws DataHandlerException, ObjectNotFoundException;
+
+    /**
+     * Insert or update a ranking in the database.
+     * @param ratedAccessObjectId The id of the rated AccessControlObject.
+     * @param userId The id of the rating User.
+     * @param rating The rating, which the User gave to the AccessControlObject.
+     * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
+     */
+    void putRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
 
     /**
      * Insert a new Ranking int to the database.
      * @param ratedAccessObjectId The id of the rated AccessControlObject.
      * @param userId The id of the rating User.
      * @param rating The rating, which the User gave to the AccessControlObject.
-     * @return The primary key, from the inserted dataset.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    long addRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
-
-    /**
-     * Deletes a Ranking from the database.
-     * @param ratedAccessObjectId The id of the rated AccessControlObject.
-     * @param userId The id of the rating User.
-     * @return True if the Ranking was deleted from the database. False if not.
-     * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
-     */
-    boolean deleteRating(long ratedAccessObjectId, long userId) throws DataHandlerException;
+    void addRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
 
     /**
      * Updated a Ranking in the database.
@@ -51,5 +51,15 @@ public interface IRatingDataHandler {
      * @return True if the Ranking was updated correctly in the database. False if not.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    boolean updateRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
+    void updateRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException, ObjectNotFoundException;
+
+    /**
+     * Deletes a Ranking from the database.
+     * @param ratedAccessObjectId The id of the rated AccessControlObject.
+     * @param userId The id of the rating User.
+     * @return True if the Ranking was deleted from the database. False if not.
+     * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
+     */
+    void deleteRating(long ratedAccessObjectId, long userId) throws DataHandlerException, ObjectNotFoundException;
+
 }

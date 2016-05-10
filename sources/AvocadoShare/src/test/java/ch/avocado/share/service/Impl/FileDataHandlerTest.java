@@ -8,7 +8,8 @@ import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
 import ch.avocado.share.service.Mock.SearchServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
-import ch.avocado.share.test.Asserts;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.test.DummyFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,25 +41,15 @@ public class FileDataHandlerTest {
 
 
         userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-        String emailOne = "unexisting_email@zhaw.ch";
-        String emailTwo = "unexsiting_email2@zhaw.ch";
-        user = userDataHandler.getUserByEmailAddress(emailOne);
-        userTwo = userDataHandler.getUserByEmailAddress(emailTwo);
-        if (user != null) {
-            userDataHandler.deleteUser(user);
-        }
-        if (userTwo != null) {
-            userDataHandler.deleteUser(userTwo);
-        }
 
-        user = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "Description", new EmailAddress(false, emailOne, new EmailAddressVerification(new Date())));
-        userTwo = new User(UserPassword.EMPTY_PASSWORD, "Prename", "Surname", "Description", new EmailAddress(false, emailTwo, new EmailAddressVerification(new Date())));
+        user = DummyFactory.newUser(1);
+        userTwo = DummyFactory.newUser(2);
 
         assertNotNull(userDataHandler.addUser(user));
         assertNotNull(userDataHandler.addUser(userTwo));
 
-
         String module_name = "Unexisting Module!!!";
+
         module = new Module(user.getId(), "Description", module_name);
         moduleTwo = new Module(user.getId(), "Description", module_name + "TWO!");
         moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
@@ -73,12 +64,20 @@ public class FileDataHandlerTest {
     private void deleteModules() throws DataHandlerException {
         if (module != null && module.getId() != null) {
             if (module.getId() != null) {
-                moduleDataHandler.deleteModule(module);
+                try {
+                    moduleDataHandler.deleteModule(module);
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (moduleTwo != null) {
             if (moduleTwo.getId() != null) {
-                moduleDataHandler.deleteModule(moduleTwo);
+                try {
+                    moduleDataHandler.deleteModule(moduleTwo);
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -96,7 +95,7 @@ public class FileDataHandlerTest {
                         System.out.println("Deleting file: " + file);
                         fileDataHandler.deleteFile(file);
                     }
-                } catch (DataHandlerException e) {
+                } catch (ObjectNotFoundException | DataHandlerException e) {
                     e.printStackTrace();
                 }
             }
@@ -113,10 +112,15 @@ public class FileDataHandlerTest {
         return categories;
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testAddNull() throws Exception {
+        fileDataHandler.addFile(null);
+    }
+
     @Test
     public void testAddAndGetFile() throws Exception {
         // String ownerId, String description, String title, String path, Date lastChanged, String extension, String moduleId
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
@@ -125,7 +129,7 @@ public class FileDataHandlerTest {
         List<Category> categories = getTestCategories();
 
         // add file
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull("File could not be added", id);
@@ -152,28 +156,42 @@ public class FileDataHandlerTest {
         assertEquals("Path", expected.getPath(), actual.getPath());
         assertEquals("Last changed", expected.getLastChanged(), actual.getLastChanged());
         assertEquals("Extension", expected.getExtension(), actual.getExtension());
-        assertCategoriesEquals(expected.getCategories(), actual.getCategories());
+        assertCategoriesEquals(expected.getCategoryList(), actual.getCategoryList());
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testDeleteNull() throws Exception {
+        fileDataHandler.deleteFile(null);
+    }
+
 
     @Test
     public void testDeleteFile() throws Exception {
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
         String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
         String id = fileDataHandler.addFile(file);
         assertNotNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
         assertNotNull(id);
         assertNotNull(file.getId());
 
-        assertTrue(fileDataHandler.deleteFile(file));
-        assertNull(fileDataHandler.getFile(file.getId()));
-        assertNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
+        fileDataHandler.deleteFile(file);
+        try {
+            fileDataHandler.getFile(file.getId());
+            fail();
+        } catch (ObjectNotFoundException e) {
+        }
+        try {
+            assertNull(fileDataHandler.getFileByTitleAndModule(file.getTitle(), module.getId()));
+            fail();
+        }catch (ObjectNotFoundException e) {
+        }
     }
 
 
@@ -182,7 +200,7 @@ public class FileDataHandlerTest {
         ArrayList<String> ids = new ArrayList<>();
 
         String id;
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
@@ -190,7 +208,7 @@ public class FileDataHandlerTest {
         String mimeType = "image/jpeg";
 
         List<Category> categories = getTestCategories();
-        File fileOne = new File(user.getId(), description, title + "1", path, lastChanged, extension, module.getId(), mimeType);
+        File fileOne = new File(user.getId(), description, title + "1", lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         fileOne.setCategories(categories);
         // Add first file
         id = fileDataHandler.addFile(fileOne);
@@ -200,7 +218,7 @@ public class FileDataHandlerTest {
         ids.add(id);
 
         // Add second file
-        File fileTwo = new File(user.getId(), description, title + "2", path, lastChanged, extension, module.getId(), mimeType);
+        File fileTwo = new File(user.getId(), description, title + "2", lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         id = fileDataHandler.addFile(fileTwo);
         assertNotNull(id);
         assertNotNull(fileOne.getId());
@@ -223,7 +241,7 @@ public class FileDataHandlerTest {
     @Test
     public void testGetFileByTitleAndModule() throws Exception {
         String id;
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
@@ -231,7 +249,7 @@ public class FileDataHandlerTest {
         String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
 
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
 
         id = fileDataHandler.addFile(file);
@@ -246,19 +264,19 @@ public class FileDataHandlerTest {
 
     @Test
     public void testUpdateFile() throws Exception {
-        String description = "Description";
+        String description = "File Description";
         String title = "Title";
         String path = "123456";
         Date lastChanged = new Date();
         String extension = ".jpg";
         String mimeType = "image/jpeg";
         List<Category> categories = getTestCategories();
-        File file = new File(user.getId(), description, title, path, lastChanged, extension, module.getId(), mimeType);
+        File file = new File(user.getId(), description, title, lastChanged, module.getId(), new DiskFile(path, mimeType, extension));
         file.setCategories(categories);
 
         assertNotNull(fileDataHandler.addFile(file));
         notDeletedIds.push(file.getId());
-        assertNotNull(fileDataHandler.getFile(file.getId()));
+        file = fileDataHandler.getFile(file.getId());
 
 
         description = description + " new";
@@ -268,16 +286,18 @@ public class FileDataHandlerTest {
         categories = getTestCategories();
         categories.add(new Category("Something new"));
         file.setOwnerId(userTwo.getId());
-        file.setPath(path);
         file.setTitle(title);
         file.setDescription(description);
         file.setLastChanged(lastChanged);
-        file.setPath(path);
-        file.setExtension(".png");
-        file.setMimeType("image/png");
+        file.setDiskFile(new DiskFile(path, "image/png", ".png"));
         file.setModuleId(moduleTwo.getId());
+        System.out.println("Current" +file.getCategoryList());
         file.setCategories(categories);
-        assertTrue(fileDataHandler.updateFile(file));
+        System.out.println("Current" + file.getCategoryList());
+        System.out.println(file.getCategoryList().getNewCategories());
+        System.out.println(file.getCategoryList().getRemovedCategories());
+
+        fileDataHandler.updateFile(file);
 
         File fetchedFile = fileDataHandler.getFile(file.getId());
         assertNotNull(fetchedFile);

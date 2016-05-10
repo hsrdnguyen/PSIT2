@@ -1,14 +1,15 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
-import ch.avocado.share.common.constants.SQLQueryConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
-import ch.avocado.share.model.exceptions.ServiceNotFoundException;
+import ch.avocado.share.model.data.Rating;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -19,17 +20,20 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import static ch.avocado.share.common.constants.sql.ModuleConstants.*;
+
 public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHandler {
+
     @Override
     public String addModule(Module module) throws DataHandlerException {
-        if(module == null) throw new IllegalArgumentException("module is null");
-        if(module.getOwnerId() == null) throw new IllegalArgumentException("module.ownerId is null");
+        if(module == null) throw new NullPointerException("module is null");
+        if(module.getOwnerId() == null) throw new NullPointerException("module.ownerId is null");
         String id = addAccessControlObject(module);
         module.setId(id);
         try {
-            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Module.INSERT_QUERY);
-            statement.setLong(SQLQueryConstants.Module.INSERT_QUERY_ID_INDEX, Long.parseLong(id));
-            statement.setString(SQLQueryConstants.Module.INSERT_QUERY_NAME_INDEX, module.getName());
+            PreparedStatement statement = getConnectionHandler().getPreparedStatement(INSERT_QUERY);
+            statement.setLong(INSERT_QUERY_ID_INDEX, Long.parseLong(id));
+            statement.setString(INSERT_QUERY_NAME_INDEX, module.getName());
             getConnectionHandler().insertDataSet(statement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -39,48 +43,45 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     }
 
     @Override
-    public boolean deleteModule(Module module) throws DataHandlerException {
-        return deleteAccessControlObject(module.getId());
+    public void deleteModule(Module module) throws DataHandlerException, ObjectNotFoundException {
+        deleteAccessControlObject(module);
     }
 
     private Module getModuleFromResult(ResultSet resultSet) throws DataHandlerException {
         String id, name, description, ownerId;
         Date creationDate;
         try {
-            if (!resultSet.next()) return null;
-            id = Long.toString(resultSet.getLong(SQLQueryConstants.Module.RESULT_INDEX_ID));
-            name = resultSet.getString(SQLQueryConstants.Module.RESULT_INDEX_NAME);
-            description = resultSet.getString(SQLQueryConstants.Module.RESULT_INDEX_DESCRIPTION);
-            creationDate = resultSet.getDate(SQLQueryConstants.Module.RESULT_INDEX_CREATION_DATE);
-            ownerId = Long.toString(resultSet.getLong(SQLQueryConstants.Module.RESULT_INDEX_OWNER));
+            id = Long.toString(resultSet.getLong(RESULT_INDEX_ID));
+            name = resultSet.getString(RESULT_INDEX_NAME);
+            description = resultSet.getString(RESULT_INDEX_DESCRIPTION);
+            creationDate = resultSet.getDate(RESULT_INDEX_CREATION_DATE);
+            ownerId = Long.toString(resultSet.getLong(RESULT_INDEX_OWNER));
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return new Module(id, new ArrayList<Category>(), creationDate, 0.0f, ownerId, description, name, new ArrayList<>());
+        List<Category> categories = getCategories(id);
+        return new Module(id, categories, creationDate, new Rating(), ownerId, description, name, new ArrayList<String>());
     }
 
-    private void getCategories(Module module) throws DataHandlerException {
+    private List<Category> getCategories(String id) throws DataHandlerException {
         ICategoryDataHandler categoryDataHandler;
         try {
             categoryDataHandler = ServiceLocator.getService(ICategoryDataHandler.class);
         } catch (ServiceNotFoundException e) {
             throw new DataHandlerException(e);
         }
-        List<Category> categories = categoryDataHandler.getAccessObjectAssignedCategories(module.getId());
-        module.setCategories(categories);
+        return categoryDataHandler.getAccessObjectAssignedCategories(id);
+
     }
 
-    private void updateCategories(Module module) throws DataHandlerException {
+    private void updateCategories(Module module) throws DataHandlerException, ObjectNotFoundException {
         ICategoryDataHandler categoryDataHandler;
         try {
             categoryDataHandler = ServiceLocator.getService(ICategoryDataHandler.class);
         }catch (ServiceNotFoundException e) {
             throw new DataHandlerException(e);
         }
-        Module oldModule = getModule(module.getId());
-        if(!categoryDataHandler.updateAccessObjectCategories(oldModule, module)) {
-            throw new DataHandlerException("Failed to update categories of an existing module");
-        }
+        categoryDataHandler.updateAccessObjectCategories(module);
     }
 
     private void addCategories(Module module) throws  DataHandlerException {
@@ -94,32 +95,37 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
     }
 
     @Override
-    public Module getModule(String moduleId) throws DataHandlerException {
+    public Module getModule(String moduleId) throws DataHandlerException, ObjectNotFoundException {
+        if (moduleId == null) throw new NullPointerException("moduleId is null");
         // TODO: categoeries, rating and ownerId
         ResultSet resultSet;
         long moduleIdAsLong = Long.parseLong(moduleId);
         try {
-            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Module.SELECT_QUERY);
-            statement.setLong(SQLQueryConstants.Module.SELECT_QUERY_INDEX_ID, moduleIdAsLong);
+            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SELECT_QUERY);
+            statement.setLong(SELECT_QUERY_INDEX_ID, moduleIdAsLong);
             resultSet = getConnectionHandler().executeQuery(statement);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        Module module = getModuleFromResult(resultSet);
-        if(module != null) {
-            getCategories(module);
-            module.setFileIds(getFileIds(moduleIdAsLong));
+        try {
+            if(!resultSet.next()) {
+                throw new ObjectNotFoundException(Module.class, moduleId);
+            }
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
+        Module module = getModuleFromResult(resultSet);
+        module.setFileIds(getFileIds(moduleIdAsLong));
         return module;
     }
 
 
     private List<String> getFileIds(long moduleId) throws DataHandlerException {
-        List<String> fileIds = new LinkedList<>();
+        List<String> fileIds = new ArrayList<>();
         IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
         try {
-            PreparedStatement statement = connectionHandler.getPreparedStatement(SQLQueryConstants.Module.SELECT_FILES);
-            statement.setLong(SQLQueryConstants.Module.SELECT_FILES_INDEX_MODULE, moduleId);
+            PreparedStatement statement = connectionHandler.getPreparedStatement(SELECT_FILES);
+            statement.setLong(SELECT_FILES_INDEX_MODULE, moduleId);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 fileIds.add(resultSet.getString(1));
@@ -130,36 +136,53 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         return fileIds;
     }
 
-    @Override
-    public List<Module> getModules(Collection<String> ids) throws DataHandlerException {
-        List<Module> modules = new ArrayList<>(ids.size());
-        for (String id : ids) {
-            if(id == null) {
-                continue;
+    private List<Module> getMultipleModulesFromResult(ResultSet resultSet) throws DataHandlerException {
+        List<Module> modules = new LinkedList<>();
+        try {
+            while (resultSet.next()) {
+                modules.add(getModuleFromResult(resultSet));
             }
-            Module module = getModule(id);
-            if (module != null) {
-                modules.add(module);
-            }
+        }catch (SQLException e) {
+            throw new DataHandlerException(e);
         }
         return modules;
     }
 
     @Override
-    public boolean updateModule(Module module) throws DataHandlerException {
-        boolean success;
+    public List<Module> getModules(Collection<String> ids) throws DataHandlerException {
+        if (ids == null) throw new NullPointerException("ids is null");
+        if (ids.isEmpty()) return new ArrayList<>();
+        String query = SELECT_BY_ID_LIST + getIdList(ids);
+        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+        ResultSet result;
         try {
-            PreparedStatement statement = getConnectionHandler().getPreparedStatement(SQLQueryConstants.Module.UPDATE_QUERY);
-            statement.setInt(SQLQueryConstants.Module.UPDATE_QUERY_INDEX_ID, Integer.parseInt(module.getId()));
-            statement.setString(SQLQueryConstants.Module.UPDATE_QUERY_INDEX_NAME, module.getName());
-            success = getConnectionHandler().updateDataSet(statement);
-            if (success) {
-                success = updateObject(module);
+            PreparedStatement preparedStatement = connectionHandler.getPreparedStatement(query);
+            result = connectionHandler.executeQuery(preparedStatement);
+        } catch (SQLException e) {
+            throw new DataHandlerException(e);
+        }
+        return getMultipleModulesFromResult(result);
+    }
+
+    @Override
+    public void updateModule(Module module) throws DataHandlerException, ObjectNotFoundException {
+        if(module == null) throw new NullPointerException("module is null");
+        if(module.getId() == null) throw new NullPointerException("module.id is null");
+        long moduleId;
+        try {
+            moduleId = Long.parseLong(module.getId());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("module.id is not a number");
+        }
+        try {
+            PreparedStatement statement = getConnectionHandler().getPreparedStatement(UPDATE_QUERY);
+            statement.setLong(UPDATE_QUERY_INDEX_ID, moduleId);
+            statement.setString(UPDATE_QUERY_INDEX_NAME, module.getName());
+            if(!getConnectionHandler().updateDataSet(statement)) {
+                throw new ObjectNotFoundException(Module.class, moduleId);
             }
-            if (success) {
-                updateCategories(module);
-            }
-            return success;
+            updateObject(module);
+            updateCategories(module);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -170,7 +193,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         try {
             IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
 
-            PreparedStatement ps = connectionHandler.getPreparedStatement(SQLQueryConstants.Module.SEARCH_QUERY);
+            PreparedStatement ps = connectionHandler.getPreparedStatement(SEARCH_QUERY);
             ps.setString(1, "%"+searchString+"%");
             ps.setString(2, "%"+searchString+"%");
 

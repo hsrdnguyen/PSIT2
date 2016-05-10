@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by coffeemakr on 31.03.16.
@@ -17,32 +17,42 @@ public class FileTest {
 
     @Before
     public void setUp() {
-        this.file = new File("id", new ArrayList<Category>(), new Date(), 0.0f, "", "", "", "", new Date(), "", "", "");
+        this.file = new File("id", new ArrayList<Category>(), new Date(), new Rating(), "1234", "description", "title", "path", new Date(), "", "4123321", "image/png");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetTitleNull() throws Exception {
         file.setTitle(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetPathNull() throws Exception {
-        file.setPath(null);
+    public void testSetEmptyTitle() throws Exception {
+        file.setTitle("");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testSetLastChangedNull() throws Exception {
         file.setLastChanged(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetTypeNull() throws Exception {
-        file.setExtension(null);
+    @Test(expected = NullPointerException.class)
+    public void testSetDiskFileNull() throws Exception {
+        file.setDiskFile(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetModuleIdNull() throws Exception {
+    public void testSetModuleIdToEmptyString() throws Exception {
+        file.setModuleId("");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSetModuleIdToNull() throws Exception {
         file.setModuleId(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSetCategoriesToNull() throws Exception {
+        file.setCategories(null);
     }
 
     @Test
@@ -52,12 +62,6 @@ public class FileTest {
         assertEquals(title, file.getTitle());
     }
 
-    @Test
-    public void testSetPath() throws Exception {
-        String path = "RandomPath";
-        file.setPath(path);
-        assertEquals(path, file.getPath());
-    }
 
     @Test
     public void testSetLastChanged() throws Exception {
@@ -67,17 +71,24 @@ public class FileTest {
     }
 
     @Test
-    public void testSetType() throws Exception {
-        String type="Type";
-        file.setExtension(type);
-        assertEquals(type, file.getExtension());
-    }
-
-    @Test
     public void testSetModuleId() throws Exception {
         String moduleId = "1234";
         file.setModuleId(moduleId);
         assertEquals(moduleId, file.getModuleId());
+    }
+
+    @Test
+    public void testGetReadableName() throws Exception {
+        assertEquals(file.getTitle(), file.getReadableName());
+    }
+
+    @Test
+    public void testSetCategories() throws Exception {
+        ArrayList<Category> categoryList = new ArrayList<>();
+        categoryList.add(new Category("hi"));
+        file.setCategories(categoryList);
+        // make sure we cannot modify its inner list.
+        assertNotSame(categoryList, file.getCategoryList());
     }
 
 }

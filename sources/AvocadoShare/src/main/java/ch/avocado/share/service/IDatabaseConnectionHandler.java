@@ -27,6 +27,7 @@ public interface IDatabaseConnectionHandler {
      * Executes an insert query on the database
      * @param statement statement to be executed on the database
      * @return returns the key of the inserted dataset
+     * @throws SQLException is the insertion fails
      */
     String insertDataSet(PreparedStatement statement) throws SQLException;
 
