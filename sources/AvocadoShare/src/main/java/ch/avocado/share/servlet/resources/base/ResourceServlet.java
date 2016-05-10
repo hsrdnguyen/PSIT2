@@ -2,6 +2,7 @@ package ch.avocado.share.servlet.resources.base;
 
 import ch.avocado.share.common.HttpStatusCode;
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.UrlHelper;
 import ch.avocado.share.controller.ResourceBean;
 import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.*;
@@ -72,7 +73,8 @@ public abstract class ResourceServlet<E extends AccessControlObjectBase> extends
      */
     protected String getUrlForView(HttpServletRequest request, View view, E object) {
         if (view == null) throw new NullPointerException("view is null");
-        String url = request.getServletPath();
+        UrlHelper urlHelper = new UrlHelper(request);
+        String url = urlHelper.getBase() + "/" + request.getServletPath();
         switch (view) {
             case EDIT:
                 if (object == null) throw new NullPointerException("object is null for edit");
