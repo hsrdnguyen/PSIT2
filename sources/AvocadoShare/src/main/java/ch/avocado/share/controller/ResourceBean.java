@@ -195,7 +195,7 @@ public abstract class ResourceBean<E extends AccessControlObjectBase> implements
      * @param requiredLevel The required level of access on the target.
      * @throws HttpServletException If the required access is not met.
      */
-    protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws ServiceNotFoundException, DataHandlerException, AccessDeniedException {
+    protected void ensureAccessingUserHasAccess(AccessControlObjectBase target, AccessLevelEnum requiredLevel) throws ServiceException, AccessDeniedException {
         if (target == null) throw new NullPointerException("target is null");
         if (requiredLevel == null) throw new NullPointerException("requiredLevel is null");
         ISecurityHandler securityHandler = getService(ISecurityHandler.class);

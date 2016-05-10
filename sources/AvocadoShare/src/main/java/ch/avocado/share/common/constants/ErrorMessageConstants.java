@@ -32,8 +32,12 @@ public final class ErrorMessageConstants {
     public static final String ERROR_EMPTY_PASSWORD_CONFIRMATION = "Passwort-Bestätigung darf nicht leer sein.";
     public static final String ERROR_INVALID_CODE_OR_EMAIL = "Bestätigungscode oder E-Mail-Adresse stimmen nicht.";
     public static final String ERROR_PASSWORDS_DO_NOT_MATCH = "Passwörter stimmen nicht überein.";
-    public static final String ERROR_SEND_MAIL_FAILED = "Sender des E-Mail fehlgeschlagen.";
+    public static final String ERROR_SEND_MAIL_FAILED = "Senden des E-Mail fehlgeschlagen.";
     public static final String ERROR_EMAIL_NOT_VERIFIED = "E-Mail-Adresse wurde noch nicht bestätigt.";
+    public static final String ERROR_SEND_VERIFICATION_MAIL = "Senden des verifikations E-Mails fehlgeschlagen";
+    public static final String ERROR_SEND_ACCESS_REQUEST_MAIL = "Senden des Zugriff beantragen E-Mails fehlgeschlagen";
+    public static final String ERROR_SEND_PASSWORD_RESET_MAIL = "Senden des Passwort zurücksetzten E-Mails fehlgeschlagen";
+
 
     // Preview's
     public static final String ERROR_VIDEO_TYPE_NOT_SUPPORTED_IN_BROWSER = "Ihr Browser scheint das Video-Format leider nicth zu unterstützen.";

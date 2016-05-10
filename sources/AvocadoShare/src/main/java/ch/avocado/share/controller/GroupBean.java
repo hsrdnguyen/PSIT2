@@ -36,7 +36,7 @@ public class GroupBean extends ResourceBean<Group> {
         }
     }
 
-    private void checkNameIsUnique(Group group) throws ServiceNotFoundException, DataHandlerException {
+    private void checkNameIsUnique(Group group) throws ServiceException {
         try {
             getService(IGroupDataHandler.class).getGroupByName(name);
             group.setName(name);
@@ -52,7 +52,7 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public Group create() throws DataHandlerException, ServiceNotFoundException {
+    public Group create() throws ServiceException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         Group group = new Group(null, null, new Date(System.currentTimeMillis()), new Rating(), getAccessingUser().getId(), "", "");
         checkNameNotEmpty(group);
@@ -109,7 +109,7 @@ public class GroupBean extends ResourceBean<Group> {
     }
 
     @Override
-    public void destroy(Group group) throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
+    public void destroy(Group group) throws ServiceException {
         IGroupDataHandler groupDataHandler = getService(IGroupDataHandler.class);
         groupDataHandler.deleteGroup(group);
     }

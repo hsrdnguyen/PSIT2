@@ -50,7 +50,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public File create() throws DataHandlerException, ServiceNotFoundException, FileStorageException, AccessDeniedException {
+    public File create() throws ServiceException, AccessDeniedException {
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         IModuleDataHandler moduleDataHandler = getService(IModuleDataHandler.class);
         File file = newFile();
@@ -116,7 +116,7 @@ public class FileBean extends ResourceBean<File> {
     }
 
     @Override
-    public File get() throws DataHandlerException, ObjectNotFoundException, ServiceNotFoundException {
+    public File get() throws ServiceException {
         if (!hasIdentifier()) throw new IllegalStateException("get() without identifier");
         IFileDataHandler fileDataHandler = getService(IFileDataHandler.class);
         File file;
@@ -183,7 +183,7 @@ public class FileBean extends ResourceBean<File> {
      * @throws ServiceNotFoundException The IFileStorageHandler implementation could not be found.
      * @throws FileStorageException     the file could not be uploaded
      */
-    private DiskFile uploadFile(FileItem fileItem) throws ServiceNotFoundException, FileStorageException {
+    private DiskFile uploadFile(FileItem fileItem) throws ServiceException {
         if (fileItem == null) throw new NullPointerException("fileItem is null");
         IFileStorageHandler fileStorageHandler = getService(IFileStorageHandler.class);
         String mimeType, path, extension;
@@ -305,7 +305,7 @@ public class FileBean extends ResourceBean<File> {
      * @return the rating of the user for the file
      * @throws HttpServletException is thrown, if there is an error while getting the rating.
      */
-    public int getRatingForAccessingUser() throws ServiceNotFoundException, ObjectNotFoundException {
+    public int getRatingForAccessingUser() throws ServiceException {
         if (!rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
             // TODO: throw appropirate exception
             throw new RuntimeException("User hadn't rated yet");
@@ -326,7 +326,7 @@ public class FileBean extends ResourceBean<File> {
      * @param ratingUserId the id of the user which had rated
      * @throws HttpServletException is thrown, if there is an error while adding the rating.
      */
-    public void addRatingForAccessingUser(int rating, long ratingUserId) throws ServiceNotFoundException, DataHandlerException, ObjectNotFoundException {
+    public void addRatingForAccessingUser(int rating, long ratingUserId) throws ServiceException {
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
         if (this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
             ratingDataHandler.updateRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
@@ -337,7 +337,7 @@ public class FileBean extends ResourceBean<File> {
         }
     }
 
-    private void checkParameterTitle(File file) throws DataHandlerException, ServiceNotFoundException {
+    private void checkParameterTitle(File file) throws ServiceException {
         checkParameterModuleId(file);
         if (file.hasErrors()) {
             return;

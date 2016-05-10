@@ -75,7 +75,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
 
-    private void checkEmailAddressIsUnique(User user) throws DataHandlerException, ServiceNotFoundException {
+    private void checkEmailAddressIsUnique(User user) throws ServiceException {
         if(getMail() == null) {
             return;
         }
@@ -117,14 +117,14 @@ public class UserBean extends ResourceBean<User> {
         user.setMail(mail);
     }
 
-    private void storeNewEmailAddress(User user, String emailAddress) throws DataHandlerException, ServiceNotFoundException {
+    private void storeNewEmailAddress(User user, String emailAddress) throws ServiceException {
         addEmailToUser(user, emailAddress);
         getService(IUserDataHandler.class).addMail(user);
         getService(IMailingService.class).sendVerificationEmail(user);
     }
 
     @Override
-    public User create() throws DataHandlerException, ServiceNotFoundException, FileStorageException {
+    public User create() throws ServiceException {
         User user = new User(UserPassword.fromPassword(""), "", "", "", new EmailAddress(false, "", null));
 
         checkPrename(user);
@@ -148,7 +148,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
     @Override
-    public User get() throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
+    public User get() throws ServiceException {
         return getService(IUserDataHandler.class).getUser(getId());
     }
 
@@ -158,7 +158,7 @@ public class UserBean extends ResourceBean<User> {
     }
 
 
-    private void storeAvatar(User user, FileItem avatar) throws FileStorageException, ServiceNotFoundException {
+    private void storeAvatar(User user, FileItem avatar) throws ServiceException {
         IAvatarStorageHandler avatarStorageHandler = getService(IAvatarStorageHandler.class);
         InputStream inputStream = null;
         try {
