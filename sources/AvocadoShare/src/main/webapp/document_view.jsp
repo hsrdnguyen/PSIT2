@@ -1,10 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-<%@ page import="ch.avocado.share.model.data.File"%>
-<%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %>
+<%@ page import="ch.avocado.share.model.data.File" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
-<%@ page import="ch.avocado.share.common.constants.SQLQueryConstants" %>
 <%@ page import="ch.avocado.share.model.data.Module" %>
+<%@ page import="java.util.List" %>
 <jsp:useBean id="searchBean" class="ch.avocado.share.controller.SearchBean"/>
 <jsp:setProperty name="searchBean" property="searchString"/>
 <%@include file="includes/header.jsp"%>
