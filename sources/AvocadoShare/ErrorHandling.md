@@ -42,7 +42,6 @@ To allow a distinction between different types of error (bad parameter, no acces
 | Exception                 | Base                    | Occurrence                         |
 | ------------------------- | ----------------------- | ---------------------------------- |
 | `AccessDeniedException`   | `ResourceBeanException` | The user doesn't have enough rights. The exception MUST hold the allowed level and the required level of access. |
-| `BadRequestException`     | `ResourceBeanException` | The request didn't hold all required parameters. |
 | `ObjectNotFoundException` | `ServiceException`        | The object could not be found. |
 
 ### Other beans
