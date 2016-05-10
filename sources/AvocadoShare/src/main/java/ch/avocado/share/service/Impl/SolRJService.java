@@ -1,10 +1,12 @@
 package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.common.constants.FileStorageConstants;
 import ch.avocado.share.common.constants.sql.FileConstants;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
+import ch.avocado.share.service.IFileStorageHandler;
 import ch.avocado.share.service.ISearchEngineService;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
@@ -77,7 +79,7 @@ public class SolRJService implements ISearchEngineService {
     public boolean indexFile(ch.avocado.share.model.data.File file) {
         ContentStreamUpdateRequest up = new ContentStreamUpdateRequest("/update/extract");
         try {
-            up.addFile(new File(file.getPath()));
+            up.addFile(new File(ServiceLocator.getService(IFileStorageHandler.class).getStoreDirectory() + "\\" + file.getPath()));
             up.setParam("literal.id", file.getId());
             up.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);
             NamedList<Object> result = server.request(up);
@@ -125,7 +127,7 @@ public class SolRJService implements ISearchEngineService {
                 Date creationDate = new Date(resultSet.getTimestamp(5).getTime());
                 String path = resultSet.getString(6);
 
-                ch.avocado.share.model.data.File file =  new ch.avocado.share.model.data.File(id, new ArrayList<Category>(), creationDate, new Rating(), "", desc, title, path, lastChanged, "", "", "");
+                ch.avocado.share.model.data.File file =  new ch.avocado.share.model.data.File(id, new ArrayList<Category>(), creationDate, new Rating(), "unknown", desc, title, path, lastChanged, "unknown", "unknown", "unknown");
                 files.add(file);
             }
             return files;
@@ -144,19 +146,10 @@ public class SolRJService implements ISearchEngineService {
 
         SolRJService service = new SolRJService(ServiceLocator.getService(IDatabaseConnectionHandler.class));
 
-        service.indexFile(new ch.avocado.share.model.data.File("80", new ArrayList<Category>(), new Date(), new Rating(), "1", "", "", file_docx, new Date(), "", "", ""));
+        service.indexFile(new ch.avocado.share.model.data.File("80", new ArrayList<Category>(), new Date(), new Rating(), "1", "unknown", "unknown", file_docx, new Date(), "unknown", "unknown", "unknown"));
         //service.reloadSearchIndex();
         service.search("*:*");
 
-        SolrServer server = new CommonsHttpSolrServer("http://srv-lab-t-944:8983/solr/avocadoCollection");
 
-        ContentStreamUpdateRequest up = new ContentStreamUpdateRequest("/update/extract");
-        up.addFile(new File(file_pdf));
-        up.setParam("literal.id", file_pdf);
-        up.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);
-        NamedList<Object> result = server.request(up);
-
-        QueryResponse rsp = server.query(new SolrQuery("*ERROR*"));
-        System.out.println("Result: " + rsp.getResults().getNumFound());
     }
 }

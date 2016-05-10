@@ -50,4 +50,10 @@ public interface IFileStorageHandler {
     String getContentType(String filepath, String name) throws FileStorageException;
 
     long getFileSize(String filepath) throws FileStorageException;
+
+    /**
+     * Returns the path to the directory where the files are storedy
+     * @return
+     */
+    String getStoreDirectory();
 }

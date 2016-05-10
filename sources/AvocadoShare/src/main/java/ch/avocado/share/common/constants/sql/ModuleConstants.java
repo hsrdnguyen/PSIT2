@@ -31,7 +31,7 @@ public final class ModuleConstants {
             "       ON m.id = a.id " +
             "   LEFT JOIN avocado_share.ownership AS owner " +
             "       ON a.id = owner.object_id " +
-            "   WHERE title LIKE (?) OR description LIKE (?) ";
+            "   WHERE name LIKE (?) OR description LIKE (?) ";
 
     public static final String SELECT_QUERY = SELECT_WITHOUT_WHERE + " WHERE a.id = ? ";
     public static final String SELECT_BY_ID_LIST = SELECT_WITHOUT_WHERE  + " WHERE a.id IN ";

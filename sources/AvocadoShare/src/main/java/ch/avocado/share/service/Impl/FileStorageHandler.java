@@ -86,7 +86,7 @@ public class FileStorageHandler implements IFileStorageHandler {
     /**
      * @return The directory in which files can be stored.
      */
-    protected String getStoreDirectory() {
+    public String getStoreDirectory() {
         return FileStorageConstants.FILE_DESTINATION_ON_SERVER;
     }
 

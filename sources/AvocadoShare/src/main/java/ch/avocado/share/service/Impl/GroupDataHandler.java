@@ -192,10 +192,9 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
             ResultSet rs = connectionHandler.executeQuery(ps);
 
             List<Group> groups = new LinkedList<>();
-            Group group = getGroupFromResultSet(rs);
-
-            while (group != null)
+            while (rs.next())
             {
+                Group group = getGroupFromResultSet(rs);
                 groups.add(group);
             }
 
@@ -203,6 +202,6 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 }

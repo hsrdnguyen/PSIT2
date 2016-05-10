@@ -68,6 +68,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         insertFileData(file);
         addFileToModule(file);
         addFileCategoriesToDb(file);
+        searchService.indexFile(file);
         return file.getId();
     }
 

@@ -12,6 +12,7 @@
 <%@ page import="ch.avocado.share.common.form.InputType" %>
 <%@ page import="ch.avocado.share.common.form.FormEncoding" %>
 <%@ page import="ch.avocado.share.common.ResponseHelper" %>
+<%@ page import="ch.avocado.share.common.HttpMethod" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     String parameterModuleId = request.getParameter("m");
@@ -54,7 +55,7 @@
                 <div>
                     <p class="text-block">Es müssen alle Felder ausfüllt werden.</p>
                     <div>
-                        <%= formBuilder.getFormBegin("post") %>
+                        <%= formBuilder.getFormBegin(HttpMethod.POST) %>
                         <div class="form-group">
                             <%=formBuilder.getLabelFor("moduleId") %>
                             <%=formBuilder.getSelectFor("moduleId", userModules, parameterModuleId) %>

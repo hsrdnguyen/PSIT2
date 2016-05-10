@@ -67,22 +67,22 @@
 
               if (obj.getClass() == File.class) {
                   url = baseUrl + "/file?id=" + Encoder.forHtmlAttribute(obj.getId());
-                  title = Encoder.forHtml(((File) obj).getTitle());
+                  objtitle = Encoder.forHtml(((File) obj).getTitle());
                   cssClass = "FileResult";
               }else if (obj.getClass() == Group.class) {
                   url = baseUrl + "/group?id=" + Encoder.forHtmlAttribute(obj.getId());
-                  title = Encoder.forHtml(((Group) obj).getName());
+                  objtitle = Encoder.forHtml(((Group) obj).getName());
                   cssClass = "GroupResult";
               }else if (obj.getClass() == Module.class) {
                   url = baseUrl + "/module?id=" + Encoder.forHtmlAttribute(obj.getId());
-                  title = Encoder.forHtml(((Module) obj).getName());
+                  objtitle = Encoder.forHtml(((Module) obj).getName());
                   cssClass = "ModuleResult";
               }else {
                 break;
               }
         %>
 
-            <a href="<%=url %>" class="list-group-item fileSearchResult">
+            <a href="<%=url %>" class="list-group-item <%=cssClass %>">
                 <div class="pull-xs-right">
                     <form id="edit-doc" method="POST" action="<%=baseUrl%>/requestAccess.jsp">
                         <input type="submit" id="requestRights" class="btn btn-secondary btn-secondary" type="submit" value="Rechte anfordern" />

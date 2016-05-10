@@ -7,7 +7,7 @@
           <element id="module-output" name="AvocadoShare" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="Maven: org.postgresql:postgresql:9.4.1208" />
+          <element id="library" level="project" name="Maven: org.postgresql:postgresql:9.4.1208.jre7" />
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.1.0" />
           <element id="library" level="project" name="Maven: javax.mail:javax.mail-api:1.5.5" />
           <element id="library" level="project" name="Maven: org.apache.tika:tika-core:1.12" />

@@ -33,24 +33,13 @@ public class SearchBean implements Serializable {
 
                 final List<AccessControlObjectBase> results = new LinkedList<>();
 
-                fileService.searchFiles(searchString).forEach(new Consumer<File>() {
-                    @Override
-                    public void accept(File file) {
-                        results.add(file);
-                    }
-                });
-                moduleService.searchModules(searchString).forEach(new Consumer<Module>() {
-                    @Override
-                    public void accept(Module file) {
-                        results.add(file);
-                    }
-                });
-                groupService.searchGroups(searchString).forEach(new Consumer<Group>() {
-                    @Override
-                    public void accept(Group file) {
-                        results.add(file);
-                    }
-                });
+                List<File> files = fileService.searchFiles(searchString);
+                List<Module> modules = moduleService.searchModules(searchString);
+                List<Group> groups = groupService.searchGroups(searchString);
+
+                results.addAll(files);
+                results.addAll(modules);
+                results.addAll(groups);
 
                 return results;
             } catch (ServiceNotFoundException | DataHandlerException e) {

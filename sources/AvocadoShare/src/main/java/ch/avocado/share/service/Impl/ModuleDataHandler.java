@@ -200,10 +200,9 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             ResultSet rs = connectionHandler.executeQuery(ps);
 
             List<Module> modules = new LinkedList<>();
-            Module module = getModuleFromResult(rs);
-
-            while (module != null)
+            while (rs.next())
             {
+                Module module = getModuleFromResult(rs);
                 modules.add(module);
             }
 
@@ -211,6 +210,6 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 }
