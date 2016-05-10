@@ -39,10 +39,10 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     @Override
     public ResultSet executeQuery(PreparedStatement statement) throws SQLException {
-        ensureConnection();
+        //ensureConnection();
         ResultSet result = statement.executeQuery();
 
-        conn.close();
+        //conn.close();
         return result;
     }
 
@@ -70,9 +70,9 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     @Override
     public boolean updateDataSet(PreparedStatement statement) throws SQLException {
-        ensureConnection();
+        //ensureConnection();
         boolean result = statement.executeUpdate() != 0;
-        conn.close();
+        //conn.close();
         return result;
     }
 
