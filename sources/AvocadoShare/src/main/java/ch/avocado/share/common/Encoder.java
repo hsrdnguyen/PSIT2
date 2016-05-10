@@ -1,5 +1,7 @@
 package ch.avocado.share.common;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -835,5 +837,10 @@ public class Encoder {
         }catch (UnsupportedEncodingException e) {
             throw new RuntimeException("UTF-8 not supported: " + e.getMessage());
         }
+    }
+
+    public static void getStackTraceForHtml(Throwable exception) {
+        StringWriter stringWriter = new StringWriter();
+        exception.printStackTrace(new PrintWriter(stringWriter));
     }
 }
