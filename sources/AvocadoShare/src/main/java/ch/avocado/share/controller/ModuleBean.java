@@ -86,7 +86,7 @@ public class ModuleBean extends ResourceBean<Module> {
     }
 
     @Override
-    public void destroy(Module module) throws DataHandlerException, ServiceNotFoundException, ObjectNotFoundException {
+    public void destroy(Module module) throws ServiceException {
         getService(IModuleDataHandler.class).deleteModule(module);
     }
 
