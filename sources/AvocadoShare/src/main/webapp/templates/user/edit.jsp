@@ -4,6 +4,7 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.common.form.InputType" %>
 <%@ page import="ch.avocado.share.common.form.FormEncoding" %>
+<%@ page import="ch.avocado.share.common.HttpMethod" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -18,18 +19,19 @@
 <div class="content-main">
     <div class="list-group">
         <div class="list-group-item list-group-header">
-            <h1>Benutzer bearbeiten</h1>
+            <h2>Benutzer bearbeiten</h2>
         </div>
-            <% if (!form.getFormErrors().isEmpty()) { %>
+        <% if (!form.getFormErrors().isEmpty()) { %>
         <div class="list-group-item list-group-item-danger">
             <%=form.getFormErrors()%>
         </div>
         <% } %>
 
         <div class="list-group-item">
-            <h2>Informationen</h2>
-
-            <%=form.getFormBegin("patch") %>
+            <div class="list-group-item-heading">
+                <h3>Informationen</h3>
+            </div>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <div class="form-group">
                 <%=form.getLabelFor("prename")%>
                 <%=form.getInputFor("prename")%>
@@ -46,8 +48,10 @@
             <%=form.getFormEnd()%>
         </div>
         <div class="list-group-item">
-            <h3>Passwort</h3>
-            <%=form.getFormBegin("patch") %>
+            <div class="list-group-item-heading">
+                <h3>Passwort</h3>
+            </div>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <div class="form-group">
                 <%=form.getLabelFor("password")%>
                 <%=form.getInputFor("password")%>
@@ -60,31 +64,35 @@
             <%=form.getFormEnd() %>
         </div>
         <div class="list-group-item">
-            <h3>Profilbild</h3>
+            <div class="list-group-item-heading">
+                <h3>Profilbild</h3>
+            </div>
             <% form.setEncodingType(FormEncoding.MULTIPART); %>
-            <%=form.getFormBegin("patch") %>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <div class="form-group">
                 <input type="file" name="avatar"/>
             </div>
             <%=form.getSubmit("Hochladen") %>
             <%=form.getFormEnd() %>
         </div>
-        <div class="list-group-item">
-            <h3>Anderes</h3>
+    </div>
+    <div class="list-group">
+        <div class="list-group-item list-group-header">
             <h4>Benutzer löschen</h4>
-            <p>
-                Sie können Ihrer Benutzer mit der folgenden Schaltfläche löschen.
-            </p>
-            <div class="alert alert-danger">
-                Wenn Sie Ihren Benutzer löschen werden alle Gruppen, Module und Dateien, die Sie erstellt haben
-                unwiderruflich
-                gelöscht!
-            </div>
+        </div>
+        <div class="list-group-item">
+            Sie können Ihrer Benutzer mit der folgenden Schaltfläche löschen.
+        </div>
+        <div class="list-group-item list-group-item-danger">
+            Wenn Sie Ihren Benutzer löschen werden alle Gruppen, Module und Dateien, die Sie erstellt haben
+            unwiderruflich
+            gelöscht!
+        </div>
+        <div class="list-group-item">
             <% form.setEncodingType(FormEncoding.URLENCODED); %>
-            <%=form.getFormBegin("delete") %>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <%=form.getSubmit("Benutzer löschen", "btn-danger")%>
             <%=form.getFormEnd()%>
-
         </div>
     </div>
 </div>

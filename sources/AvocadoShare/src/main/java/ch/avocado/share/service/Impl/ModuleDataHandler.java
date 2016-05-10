@@ -60,7 +60,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
             throw new DataHandlerException(e);
         }
         List<Category> categories = getCategories(id);
-        return new Module(id, categories, creationDate, new Rating(), ownerId, description, name, new ArrayList<>());
+        return new Module(id, categories, creationDate, new Rating(), ownerId, description, name, new ArrayList<String>());
     }
 
     private List<Category> getCategories(String id) throws DataHandlerException {

@@ -3,6 +3,7 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.common.form.InputType" %>
+<%@ page import="ch.avocado.share.common.HttpMethod" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -17,7 +18,7 @@
         </div>
         <div class="list-group-item">
             <%=form.getFormErrors() %>
-            <%=form.getFormBegin("POST")%>
+            <%=form.getFormBegin(HttpMethod.POST)%>
             <div class="form-group">
                 <%=form.getLabelFor("name") %>
                 <%=form.getInputFor("name") %>

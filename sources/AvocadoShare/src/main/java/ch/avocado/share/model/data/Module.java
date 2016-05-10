@@ -25,7 +25,7 @@ public class Module extends AccessControlObjectBase {
     }
 
     public Module(String ownerId, String description, String name) {
-        this(null, new ArrayList<>(), new Date(), new Rating(), ownerId, description, name, new ArrayList<>());
+        this(null, new ArrayList<Category>(), new Date(), new Rating(), ownerId, description, name, new ArrayList<String>());
     }
 
     /**

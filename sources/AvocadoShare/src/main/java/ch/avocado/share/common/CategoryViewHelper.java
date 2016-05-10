@@ -4,10 +4,9 @@ import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.CategoryList;
 import ch.avocado.share.servlet.resources.base.DetailViewConfig;
-import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
-import java.time.temporal.ValueRange;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,7 +25,12 @@ public class CategoryViewHelper {
         CategoryList categories = object.getCategoryList();
         ArrayList<Category> sortedCategories = new ArrayList<>(categories.size());
         sortedCategories.addAll(categories);
-        sortedCategories.sort(Category::compareTo);
+        sortedCategories.sort(new Comparator<Category>() {
+            @Override
+            public int compare(Category category, Category category2) {
+                return category.compareTo(category2);
+            }
+        });
         return sortedCategories;
     }
 

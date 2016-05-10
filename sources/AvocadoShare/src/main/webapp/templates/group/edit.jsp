@@ -2,6 +2,7 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.DetailViewConfig" %>
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.common.form.InputType" %>
+<%@ page import="ch.avocado.share.common.HttpMethod" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -17,7 +18,7 @@
             </div>
             <div class="list-group-item">
                 <%=formBuilder.getFormErrors()%>
-                <%=formBuilder.getFormBegin("PATCH") %>
+                <%=formBuilder.getFormBegin(HttpMethod.PATCH) %>
                 <div class="form-group">
                     <%=formBuilder.getLabelFor("name") %>
                     <%=formBuilder.getInputFor("name") %>
@@ -37,7 +38,7 @@
                     Eine gelöschte Gruppe kann nicht wiederhergestellt werden.<br/>
                     Sowohl Sie als auch alle Mitglieder verlieren die Rechte die Sie durch diese Gruppe erworben haben.
                 </div>
-                <%=formBuilder.getFormBegin("delete")%>
+                <%=formBuilder.getFormBegin(HttpMethod.DELETE)%>
                 <%=formBuilder.getSubmit("Gruppe löschen", "btn-danger")%>
                 <%=formBuilder.getFormEnd()%>
             </div>
