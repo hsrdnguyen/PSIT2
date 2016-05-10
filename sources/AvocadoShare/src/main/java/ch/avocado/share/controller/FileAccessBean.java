@@ -4,6 +4,7 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
+import ch.avocado.share.service.exceptions.MailingServiceException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IFileDataHandler;
 import ch.avocado.share.service.IMailingService;
@@ -76,7 +77,12 @@ public class FileAccessBean implements Serializable {
         if (currentLevel.containsLevel(AccessLevelEnum.READ)) {
             return false;
         }
-        return mailingService.sendRequestAccessEmail(user, owningUser, file);
+        try {
+            return mailingService.sendRequestAccessEmail(user, owningUser, file);
+        } catch (MailingServiceException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean grantAccess() {
