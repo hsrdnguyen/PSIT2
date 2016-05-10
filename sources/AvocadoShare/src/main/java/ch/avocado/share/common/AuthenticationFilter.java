@@ -40,7 +40,7 @@ public class AuthenticationFilter implements Filter{
         if(excludePattern == null) {
             return false;
         }
-        Matcher matcher = excludePattern.matcher(urlHelper.getPathAndQuery());
+        Matcher matcher = excludePattern.matcher(urlHelper.getPathAndQueryWithoutBase());
         return matcher.matches();
     }
 

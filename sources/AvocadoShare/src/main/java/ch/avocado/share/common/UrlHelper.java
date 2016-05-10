@@ -56,6 +56,16 @@ public class UrlHelper {
         return path;
     }
 
+    public String getPathAndQueryWithoutBase() {
+        String contextPath = getBase();
+        String path = getPathAndQuery();
+        if(!path.startsWith(contextPath)) {
+            throw new RuntimeException("path doesn't start with base");
+        } else {
+            return path.substring(contextPath.length());
+        }
+    }
+
     public String getLoginUrl() {
         return this.getBase() + "/login";
     }
