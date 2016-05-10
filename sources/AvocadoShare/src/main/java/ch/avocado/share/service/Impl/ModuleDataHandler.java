@@ -96,6 +96,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
 
     @Override
     public Module getModule(String moduleId) throws DataHandlerException, ObjectNotFoundException {
+        if (moduleId == null) throw new NullPointerException("moduleId is null");
         // TODO: categoeries, rating and ownerId
         ResultSet resultSet;
         long moduleIdAsLong = Long.parseLong(moduleId);

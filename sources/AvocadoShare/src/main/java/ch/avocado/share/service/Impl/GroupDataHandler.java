@@ -24,7 +24,6 @@ import static ch.avocado.share.common.constants.sql.GroupConstants.*;
  */
 public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandler {
 
-
     private PreparedStatement getGetStatement(String id) throws DataHandlerException {
         if (id == null) throw new NullPointerException("id is null");
         PreparedStatement statement;

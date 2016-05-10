@@ -51,7 +51,7 @@ public interface IRatingDataHandler {
      * @return True if the Ranking was updated correctly in the database. False if not.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    boolean updateRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException;
+    void updateRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException, ObjectNotFoundException;
 
     /**
      * Deletes a Ranking from the database.
@@ -60,6 +60,6 @@ public interface IRatingDataHandler {
      * @return True if the Ranking was deleted from the database. False if not.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    boolean deleteRating(long ratedAccessObjectId, long userId) throws DataHandlerException;
+    void deleteRating(long ratedAccessObjectId, long userId) throws DataHandlerException, ObjectNotFoundException;
 
 }

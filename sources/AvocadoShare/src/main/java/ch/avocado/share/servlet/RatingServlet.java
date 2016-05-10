@@ -9,6 +9,7 @@ import ch.avocado.share.model.data.Rating;
 import ch.avocado.share.model.exceptions.HttpServletException;
 import ch.avocado.share.service.IRatingDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.servlet.resources.base.ExtendedHttpServlet;
 import ch.avocado.share.servlet.resources.base.Parameter;
@@ -116,7 +117,7 @@ public class RatingServlet extends ExtendedHttpServlet{
         try {
             ratingDataHandler = ServiceLocator.getService(IRatingDataHandler.class);
             ratingDataHandler.deleteRating(objectId, userId);
-        } catch (DataHandlerException | ServiceNotFoundException e) {
+        } catch (DataHandlerException | ServiceNotFoundException | ObjectNotFoundException e) {
             throw new HttpServletException(e);
         }
         Rating currentRating = getCurrentRating(objectId);

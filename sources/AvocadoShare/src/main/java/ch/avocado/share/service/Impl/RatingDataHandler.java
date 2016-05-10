@@ -71,7 +71,9 @@ public class RatingDataHandler implements IRatingDataHandler {
 
     @Override
     public void putRating(long ratedAccessObjectId, long userId, int rating) throws DataHandlerException {
-        if(!updateRating(ratedAccessObjectId, userId, rating)) {
+        try {
+            updateRating(ratedAccessObjectId, userId, rating);
+        } catch (ObjectNotFoundException e) {
             insertRating(ratedAccessObjectId, userId, rating);
         }
     }
@@ -102,14 +104,15 @@ public class RatingDataHandler implements IRatingDataHandler {
      * @return True if the Ranking was deleted from the database. False if not.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    public boolean deleteRating(long ratedAccessObjectId, long ratingUserId) throws DataHandlerException {
+    public void deleteRating(long ratedAccessObjectId, long ratingUserId) throws DataHandlerException, ObjectNotFoundException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         try {
             preparedStatement = connectionHandler.getPreparedStatement(SQL_DELETE_RATING);
             preparedStatement.setLong(1, ratedAccessObjectId);
             preparedStatement.setLong(2, ratingUserId);
-            return connectionHandler.deleteDataSet(preparedStatement);
+            if(!connectionHandler.deleteDataSet(preparedStatement))
+                throw new ObjectNotFoundException(Rating.class, ratedAccessObjectId + " " + ratingUserId);
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
@@ -124,7 +127,7 @@ public class RatingDataHandler implements IRatingDataHandler {
      * @return True if the Ranking was updated correctly in the database. False if not.
      * @throws DataHandlerException This Exception is thrown, if there is an error while accessing/reading or writing in the db.
      */
-    public boolean updateRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException {
+    public void updateRating(long ratedAccessObjectId, long ratingUserId, int rating) throws DataHandlerException, ObjectNotFoundException {
         IDatabaseConnectionHandler connectionHandler = getDatabaseHandler();
         PreparedStatement preparedStatement;
         try {
@@ -132,7 +135,9 @@ public class RatingDataHandler implements IRatingDataHandler {
             preparedStatement.setInt(1, rating);
             preparedStatement.setLong(2, ratedAccessObjectId);
             preparedStatement.setLong(3, ratingUserId);
-            return connectionHandler.updateDataSet(preparedStatement);
+            if (!connectionHandler.updateDataSet(preparedStatement)) {
+                throw new ObjectNotFoundException(Rating.class, ratedAccessObjectId + " " + ratingUserId + " " + rating);
+            }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }

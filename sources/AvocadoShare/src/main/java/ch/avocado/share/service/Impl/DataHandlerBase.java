@@ -193,12 +193,14 @@ abstract class DataHandlerBase {
      * @deprecated It's better to use a joined statement to query all values at once.
      */
     protected String getOwnerId(String objectId) throws DataHandlerException {
+        if (objectId == null) throw new NullPointerException("objectId is null");
         Long ownerId = getOwnerIdInternal(Long.parseLong(objectId));
         if (ownerId == null) return null;
         return Long.toString(ownerId);
     }
 
     protected String getIdList(Collection<String> ids) {
+        if (ids == null) throw new NullPointerException("ids is null");
         String idListForQuery = "( ";
         boolean addComma = false;
         for (String id : ids) {

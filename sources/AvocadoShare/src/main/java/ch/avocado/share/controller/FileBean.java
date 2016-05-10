@@ -326,7 +326,7 @@ public class FileBean extends ResourceBean<File> {
      * @param ratingUserId the id of the user which had rated
      * @throws HttpServletException is thrown, if there is an error while adding the rating.
      */
-    public void addRatingForAccessingUser(int rating, long ratingUserId) throws ServiceNotFoundException, DataHandlerException {
+    public void addRatingForAccessingUser(int rating, long ratingUserId) throws ServiceNotFoundException, DataHandlerException, ObjectNotFoundException {
         IRatingDataHandler ratingDataHandler = getService(IRatingDataHandler.class);
         if (this.rating.hasUserRated(Long.parseLong(getAccessingUser().getId()))) {
             ratingDataHandler.updateRating(Long.parseLong(moduleId), Long.parseLong(getAccessingUser().getId()), rating);
