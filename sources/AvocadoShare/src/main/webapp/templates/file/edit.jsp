@@ -91,20 +91,25 @@
                     <%=form.getFormEnd() %>
                 </div>
             </div>
-            <div class="list-group-item">
+        </div>
+        <div class="list-group">
+            <div class="list-group-item list-group-header">
                 <h4>Datei löschen</h4>
-                <div class="alert alert-danger">
-                    Wenn Sie die Datei löschen, können weder Sie noch andere Benutzer die Datei
-                    anzeigen, herunterladen oder widerherstellen.
-                </div>
+            </div>
+            <div class="list-group-item list-group-item-danger">
+                Wenn Sie die Datei löschen, können weder Sie noch andere Benutzer die Datei
+                anzeigen, herunterladen oder widerherstellen.
+            </div>
+            <div class="list-group-item">
                 <%=form.getFormBegin(HttpMethod.DELETE) %>
                 <%=form.getSubmit("Datei löschen", "btn-danger")%>
                 <%=form.getFormEnd()%>
             </div>
         </div>
     </div>
-    <div class="content-right">
-        <%@include file="../member/index.jsp"%>
-        <%@include file="info.jsp"%>
-    </div>
+</div>
+<div class="content-right">
+    <%@include file="../member/index.jsp" %>
+    <%@include file="info.jsp" %>
+</div>
 </div>

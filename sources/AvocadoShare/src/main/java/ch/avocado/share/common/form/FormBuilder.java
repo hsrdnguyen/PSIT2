@@ -212,12 +212,12 @@ public class FormBuilder {
     }
 
     public String getSubmit(String value) {
-        return getSubmit(value, null);
+        return getSubmit(value, "btn-primary");
     }
 
     public String getSubmit(String value, String htmlClass) {
         // TODO: make configurable
-        return "<input type=\"submit\" class=\"btn btn-primary " + Encoder.forHtmlAttribute(htmlClass) + "\" " + formatAttribute("value", value) + "/>";
+        return "<input type=\"submit\" class=\"btn " + Encoder.forHtmlAttribute(htmlClass) + "\" " + formatAttribute("value", value) + "/>";
     }
 
     /**
