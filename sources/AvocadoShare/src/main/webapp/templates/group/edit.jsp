@@ -18,7 +18,7 @@
             </div>
             <div class="list-group-item">
                 <%=formBuilder.getFormErrors()%>
-                <%=formBuilder.getFormBegin("PATCH") %>
+                <%=formBuilder.getFormBegin(HttpMethod.PATCH) %>
                 <div class="form-group">
                     <%=formBuilder.getLabelFor("name") %>
                     <%=formBuilder.getInputFor("name") %>
