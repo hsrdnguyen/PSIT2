@@ -5,6 +5,7 @@ import ch.avocado.share.model.data.*;
 import ch.avocado.share.service.IModuleDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
+import ch.avocado.share.service.Mock.SearchServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.test.Asserts;
@@ -35,7 +36,7 @@ public class FileDataHandlerTest {
     @Before
     public void setUp() throws Exception {
         DatabaseConnectionHandlerMock.use();
-        fileDataHandler = new FileDataHandler();
+        fileDataHandler = new FileDataHandler(new SearchServiceMock());
 
 
         userDataHandler = ServiceLocator.getService(IUserDataHandler.class);

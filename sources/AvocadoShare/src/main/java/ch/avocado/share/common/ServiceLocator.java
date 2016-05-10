@@ -42,7 +42,6 @@ public class ServiceLocator {
      */
     private static void registerServices() {
         services.put(ISecurityHandler.class, new SecurityHandler());
-        services.put(IFileDataHandler.class, new FileDataHandler());
         services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
         services.put(IUserDataHandler.class, new UserDataHandler());
         services.put(IFileStorageHandler.class, new FileStorageHandlerMock());
@@ -53,6 +52,7 @@ public class ServiceLocator {
         services.put(ICaptchaVerifier.class, new ReCaptchaVerifier());
         try {
             services.put(ISearchEngineService.class, new SolRJService(getService(IDatabaseConnectionHandler.class)));
+            services.put(IFileDataHandler.class, new FileDataHandler(getService(ISearchEngineService.class)));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ServiceNotFoundException e) {
