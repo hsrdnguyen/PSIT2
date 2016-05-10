@@ -44,7 +44,7 @@ public class ServiceLocator {
         services.put(IFileDataHandler.class, new FileDataHandler());
         services.put(IDatabaseConnectionHandler.class, new DatabaseConnectionHandler());
         services.put(IUserDataHandler.class, new UserDataHandler());
-        services.put(IFileStorageHandler.class, new FileStorageHandlerMock());
+        services.put(IFileStorageHandler.class, new FileStorageHandler());
         services.put(IMailingService.class, new MailingService());
         services.put(IGroupDataHandler.class, new GroupDataHandler());
         services.put(ICategoryDataHandler.class, new CategoryDataHandler());
