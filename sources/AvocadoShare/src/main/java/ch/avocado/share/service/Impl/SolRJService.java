@@ -16,9 +16,11 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.request.AbstractUpdateRequest;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.SpellingParams;
 import org.apache.solr.common.util.NamedList;
 
 import java.io.File;
@@ -51,28 +53,30 @@ public class SolRJService implements ISearchEngineService {
 
     @Override
     public List<String> search(String searchString) {
+        List<String> fileIds = new ArrayList<>();
+
         try {
-            SolrQuery query = new SolrQuery();
-            query.setQuery(searchString);
+            SolrQuery qry = new SolrQuery(searchString);
+            qry.setFields("id");
+            qry.setShowDebugInfo(true);
+            qry.setRows(100);
+            QueryRequest qryReq = new QueryRequest(qry);
+            QueryResponse resp = qryReq.process(server);
 
-            QueryResponse response = server.query(query);
-            SolrDocumentList results = response.getResults();
+            SolrDocumentList results = resp.getResults();
 
-            List<String> fileIds = new ArrayList<>();
             Iterator<SolrDocument> docIterator = results.iterator();
 
             while (docIterator.hasNext())
             {
                 SolrDocument doc = docIterator.next();
-                System.out.print(doc.keySet());
-
+                fileIds.add(doc.getFieldValue("id").toString());
             }
         } catch (SolrServerException e) {
             e.printStackTrace();
         }
 
-
-        return new ArrayList<String>();
+        return fileIds;
     }
 
     @Override

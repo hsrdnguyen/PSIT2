@@ -254,16 +254,16 @@ input.add-category {
 }
 .ModuleResult
 {
-    background-color: #22FF0000;
+    background-color: #DDFFFF;
 }
 
 .GroupResult
 {
-    background-color: #2200FF00;
+    background-color: #FFDDFF;
 }
 
 .FileResult
 {
-    background-color: #220000FF;
+    background-color: #FFFFDD;
 }
 

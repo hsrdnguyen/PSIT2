@@ -3,7 +3,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.model.data.AccessControlObjectBase" %>
 <%@ page import="ch.avocado.share.model.data.Group" %>
-<%@ page import="ch.avocado.share.common.constants.SQLQueryConstants" %>
 <%@ page import="ch.avocado.share.model.data.Module" %>
 <jsp:useBean id="searchBean" class="ch.avocado.share.controller.SearchBean"/>
 <jsp:setProperty name="searchBean" property="searchString"/>
