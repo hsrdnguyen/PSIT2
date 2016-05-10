@@ -26,6 +26,15 @@ import java.util.List;
  */
 public class FileDataHandler extends DataHandlerBase implements IFileDataHandler {
 
+
+    private ISearchEngineService searchService;
+
+    public FileDataHandler(ISearchEngineService searchService)
+    {
+        if(searchService != null) throw new IllegalArgumentException("searchService is NULL");
+        this.searchService = searchService;
+    }
+
     private void addFileToModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
         long moduleId = Long.parseLong(file.getModuleId());
@@ -60,6 +69,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         insertFileData(file);
         addFileToModule(file);
         if(!addFileCategoriesToDb(file)) throw new DataHandlerException("Unable to add categories.");
+        searchService.indexFile(file);
         return file.getId();
     }
 
@@ -84,7 +94,10 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     @Override
     public boolean deleteFile(File file) throws DataHandlerException {
         if(file == null) throw new IllegalArgumentException("file is null");
-        return deleteAccessControlObject(file.getId());
+
+        boolean success = deleteAccessControlObject(file.getId());
+        searchService.reloadSearchIndex(); //TODO @bergmsas make this one efficient
+        return success;
     }
 
     @Override
@@ -118,17 +131,8 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     @Override
     public List<File> searchFiles(String searchString) throws DataHandlerException {
 
-        try {
-            ISearchEngineService searchService = ServiceLocator.getService(ISearchEngineService.class);
-
-            List<String> ids = searchService.search(searchString);
-            return this.getFiles(ids);
-
-        } catch (ServiceNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return new LinkedList<>();
+        List<String> ids = searchService.search(searchString);
+        return this.getFiles(ids);
     }
 
     @Override
@@ -178,7 +182,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         if (!updateFileCategoriesFromDb(oldFileOnDb, file)){
             return false;
         }
-        return updateObject(file);
+        boolean success = updateObject(file);
+        searchService.reloadSearchIndex(); //TODO @bergmsas Make this one efficient
+        return success;
     }
 
     private List<Category> getFileCategoriesFromDb(String fileId) throws DataHandlerException {

@@ -92,7 +92,6 @@ public class SolRJService implements ISearchEngineService {
 
     @Override
     public void reloadSearchIndex() {
-
         try {
             server.deleteByQuery("*:*");
             server.commit();
