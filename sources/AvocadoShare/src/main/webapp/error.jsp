@@ -30,6 +30,9 @@
         response.sendRedirect(baseUrl);
     }
     Throwable avocadoExcpetion = (Throwable) request.getAttribute(ResponseHelper.EXCEPTION_ATTRIBUTE);
+    if(avocadoExcpetion != null) {
+        exception = avocadoExcpetion;
+    }
 %>
 <h2>
     <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
@@ -40,10 +43,10 @@
         <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
         <%=message%>
     </p>
-    <% if (avocadoExcpetion != null) { %>
+    <% if (exception != null) { %>
     <pre>
         <%
-            avocadoExcpetion.printStackTrace(new java.io.PrintWriter(out));
+            exception.printStackTrace(new java.io.PrintWriter(out));
         %>
     </pre>
     <% } %>
