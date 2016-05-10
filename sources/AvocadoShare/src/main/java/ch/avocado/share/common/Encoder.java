@@ -839,8 +839,9 @@ public class Encoder {
         }
     }
 
-    public static void getStackTraceForHtml(Throwable exception) {
+    public static String getStackTraceForHtml(Throwable exception) {
         StringWriter stringWriter = new StringWriter();
         exception.printStackTrace(new PrintWriter(stringWriter));
+        return forHtml(stringWriter.toString());
     }
 }

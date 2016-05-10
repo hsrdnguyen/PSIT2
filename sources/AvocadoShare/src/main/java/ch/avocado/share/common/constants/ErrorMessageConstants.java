@@ -73,5 +73,6 @@ public final class ErrorMessageConstants {
     public static final String RESPONSE_NOT_WRITEABLE = "Antwort konnte nicht geschrieben werden.";
     public static final String FILE_STORAGE_EXCEPTION = "Es trat ein Fehler beim schreiben oder lesen der Datei auf.";
     public static final java.lang.String UNSUPPORTED_ENCODING = "Ein erforderliches Encoding wird nicht unterstützt.";
+    public static final String PATH_NOT_FOUND = "Der Pfad konnte nicht gefunden werden: ";
     public static String UNKNOWN_SERVICE_EXCEPTION = "Unbekannter Fehler";
 }

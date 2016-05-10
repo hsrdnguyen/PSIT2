@@ -1,54 +1,42 @@
 <%@ page import="ch.avocado.share.common.HttpStatusCode" %>
-<%@ page import="ch.avocado.share.common.ResponseHelper" %>
-<%@ page import="java.util.Enumeration" %>
 <%@ page contentType="text/html;charset=UTF-8"
          pageEncoding="UTF-8"
          language="java"
          isErrorPage="true"
 %>
+<jsp:useBean id="errorBean" class="ch.avocado.share.controller.ErrorDisplayBean" />
 <%@include file="includes/header.jsp" %>
 <%
-
-    Enumeration<String> names = request.getAttributeNames();
-    while (names.hasMoreElements()) {
-        System.out.println(names.nextElement());
+    errorBean.setRequest(request);
+    errorBean.setResponse(response);
+    if(exception != null) {
+        errorBean.setException(exception);
     }
-    System.out.println("Exception: " + exception + " - " + (exception == null));
-    String message;
-    if (exception != null) {
-        message = exception.getMessage();
-    } else {
-        message = (String) request.getAttribute("javax.servlet.error.message");
-        if (message == null || message.isEmpty()) {
-            message = "Unbekannter Fehler.";
-        }
-    }
-    HttpStatusCode statusCode = HttpStatusCode.fromCode(response.getStatus());
-    message = Encoder.forHtml(message);
-    if (statusCode.getCode() == 200) {
-        // If it wasn't an error we direct to the
-        response.sendRedirect(baseUrl);
-    }
-    Throwable avocadoExcpetion = (Throwable) request.getAttribute(ResponseHelper.EXCEPTION_ATTRIBUTE);
-    if(avocadoExcpetion != null) {
-        exception = avocadoExcpetion;
-    }
+    String message = errorBean.getDescription();
+    HttpStatusCode statusCode = errorBean.getStatusCode();
+    exception = errorBean.getException();
 %>
-<h2>
-    <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
-    </a> - Oh nein!
-</h2>
-<div>
-    <p>
-        <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
-        <%=message%>
-    </p>
-    <% if (exception != null) { %>
-    <pre>
-        <%
-            exception.printStackTrace(new java.io.PrintWriter(out));
-        %>
-    </pre>
-    <% } %>
+<div class="content-main">
+    <div class="list-group">
+        <div class="list-group-item list-group-header">
+            <h2>
+                <a title="<%=Encoder.forHtmlAttribute(statusCode.getMessage()) %>"><%=statusCode.getCode() %>
+                </a> - Oh nein!
+            </h2>
+        </div>
+        <div class="list-group-item">
+            <p>
+                <span class="text-muted">Während dem Bearbeiten ihrer Anfrage ist ein Fehler aufgetreten:</span> <br/>
+                <%=Encoder.forHtml(message)%>
+            </p>
+        </div>
+        <% if (exception != null) { %>
+        <div class="list-group-item">
+            <pre class="stacktrace">
+                <%=Encoder.getStackTraceForHtml(exception) %>
+            </pre>
+        </div>
+        <% } %>
+    </div>
 </div>
 <%@include file="includes/footer.jsp" %>
