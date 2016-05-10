@@ -4,13 +4,10 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.model.data.MailVerification;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.service.exceptions.ObjectNotFoundException;
-import ch.avocado.share.service.exceptions.ServiceException;
-import ch.avocado.share.service.exceptions.ServiceNotFoundException;
+import ch.avocado.share.service.exceptions.*;
 import ch.avocado.share.service.ICaptchaVerifier;
 import ch.avocado.share.service.IMailingService;
 import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.exceptions.DataHandlerException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -73,7 +70,11 @@ public class ForgottenPasswordBean implements Serializable {
             errorMessage = ErrorMessageConstants.ERROR_INTERNAL_SERVER;
             return false;
         }
-        if (!mailingService.sendPasswordResetEmail(user)) {
+        try {
+            if (!mailingService.sendPasswordResetEmail(user)) {
+                return false;
+            }
+        } catch (MailingServiceException e) {
             errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
             return false;
         }
