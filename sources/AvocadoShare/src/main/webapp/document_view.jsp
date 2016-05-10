@@ -24,15 +24,15 @@
                 String description = Encoder.forHtml(obj.getDescription());
                 String cssClass = "";
 
-                if (obj.getClass() == File.class) {
+                if (obj instanceof File) {
                     url = baseUrl + "/file?id=" + Encoder.forHtmlAttribute(obj.getId());
                     objtitle = Encoder.forHtml(((File) obj).getTitle());
                     cssClass = "FileResult";
-                } else if (obj.getClass() == Group.class) {
+                } else if (obj instanceof Group) {
                     url = baseUrl + "/group?id=" + Encoder.forHtmlAttribute(obj.getId());
                     objtitle = Encoder.forHtml(((Group) obj).getName());
                     cssClass = "GroupResult";
-                } else if (obj.getClass() == Module.class) {
+                } else if (obj instanceof Module) {
                     url = baseUrl + "/module?id=" + Encoder.forHtmlAttribute(obj.getId());
                     objtitle = Encoder.forHtml(((Module) obj).getName());
                     cssClass = "ModuleResult";
