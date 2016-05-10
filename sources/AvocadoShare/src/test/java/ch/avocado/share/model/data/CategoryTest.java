@@ -18,7 +18,7 @@ public class CategoryTest {
         Category category = new Category(name);
         assertEquals(name, category.getName());
 
-        category = new Category(name, new ArrayList<>());
+        category = new Category(name, new ArrayList<String>());
         assertEquals(name, category.getName());
     }
 
@@ -29,7 +29,7 @@ public class CategoryTest {
 
     @Test(expected = NullPointerException.class)
     public void testNullAsNameInConstructorWithIds() {
-        new Category(null, new ArrayList<>());
+        new Category(null, new ArrayList<String>());
     }
 
     @Test(expected = NullPointerException.class)

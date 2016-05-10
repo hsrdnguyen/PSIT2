@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -154,7 +155,7 @@ public class RatingDataHandlerTest {
         ratingDataHandler.deleteRating(fileId, user1Id);
         fileFromDb = fileDataHandler.getFile(fileId.toString());
         rating = fileFromDb.getRating();
-        assertTrue(rating.hasUserRated(user1Id));
+        assertFalse(rating.hasUserRated(user1Id));
     }
 
     @Test

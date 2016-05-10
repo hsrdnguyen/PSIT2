@@ -79,6 +79,9 @@ public class SecurityHandler extends DataHandlerBase implements ISecurityHandler
             preparedStatement.setLong(7, objectId);
             preparedStatement.setLong(8, objectId);
             preparedStatement.setLong(9, ownerId);
+            preparedStatement.setLong(10, ownerId);
+            preparedStatement.setLong(11, objectId);
+
 
         } catch (SQLException e) {
             throw new DataHandlerException(e);

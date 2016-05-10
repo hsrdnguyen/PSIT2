@@ -2,9 +2,6 @@ package ch.avocado.share.common.constants.sql;
 
 import static ch.avocado.share.common.constants.sql.Tables.*;
 
-/**
- * Created by coffeemakr on 01.05.16.
- */
 public class SecurityConstants {
 
     public static final String SELECT_ANONYMOUS_ACCESS_LEVEL = "" +
@@ -38,7 +35,7 @@ public class SecurityConstants {
 
     public static final String SET_ACCESS_LEVEL_QUERY =
             "UPDATE " + RIGHTS_TABLE + " SET LEVEL= ? " +
-            "    WHERE object_id = ? AND owner_id = ?";
+                    "    WHERE object_id = ? AND owner_id = ?";
 
     public static final String ADD_ACCESS_LEVEL_QUERY = "" +
             "INSERT INTO " + RIGHTS_TABLE + " (object_id, owner_id, level) " +
@@ -102,11 +99,16 @@ public class SecurityConstants {
             "JOIN (SELECT\n" +
             "  rights_from_module.level\n" +
             "FROM\n" +
-            "  rights AS rights_from_module\n" +
-            "  JOIN uploaded_into AS ui\n" +
+            "  " + RIGHTS_TABLE + " AS rights_from_module\n" +
+            "  JOIN " + UPLOADED_TABLE + " AS ui\n" +
             "    ON ui.module_id = rights_from_module.object_id\n" +
             "  WHERE ui.file_id = ? AND rights_from_module.owner_id = ?) AS file_rights_from_module\n" +
-            "  ON file_rights_from_module.level = level2.level\n ";
+            "  ON file_rights_from_module.level = level2.level\n " +
+            " UNION " +
+            " SELECT true, true, true, false FROM " + OWNERSHIP_TABLE +
+            "   JOIN " + UPLOADED_TABLE +
+            "       ON module_id = object_id\n " +
+            "       WHERE owner_id = ? AND file_id  = ? ";
 
     public static final String SELECT_ACCESS_LEVEL_INCLUDING_INHERITED = "" +
             "SELECT " +

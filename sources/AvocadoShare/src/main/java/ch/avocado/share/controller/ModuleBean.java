@@ -41,7 +41,7 @@ public class ModuleBean extends ResourceBean<Module> {
 
     @Override
     public Module create() throws ServiceException {
-        Module module = new Module(null, new ArrayList<Category>(), new Date(), new Rating(), getAccessingUser().getId(), "", "", new ArrayList<>());
+        Module module = new Module(null, new ArrayList<Category>(), new Date(), new Rating(), getAccessingUser().getId(), "", "", new ArrayList<String>());
         checkParameterDescription(module);
         checkParameterName(module);
         if (module.isValid()) {
