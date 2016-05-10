@@ -65,7 +65,7 @@ public class UserSession {
 	 * @return {@code True} is the user is authenticated
      */
 	public boolean isAuthenticated() {
-		if (userId == null) {
+		if (getUser() == null) {
 			return false;
 		}
 		return true;

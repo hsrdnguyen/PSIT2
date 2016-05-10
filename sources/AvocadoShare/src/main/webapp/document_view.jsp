@@ -41,14 +41,7 @@
                 }
         %>
 
-        <a href="<%=url %>" class="list-group-item <%=cssClass %>">
-            <div class="pull-xs-right">
-                <form id="edit-doc" method="POST" action="<%=baseUrl%>/requestAccess.jsp">
-                    <input type="submit" id="requestRights" class="btn btn-secondary btn-secondary"
-                           type="submit" value="Rechte anfordern"/>
-                    <input id="fileId" name="fileId" type="hidden" value="<%=obj.getId() %>"/>
-                </form>
-            </div>
+        <a data-result-id="<%=Encoder.forHtmlAttribute(obj.getId()) %>" href="<%=url %>" class="list-group-item <%=cssClass %>">
             <h4 class="list-group-item-heading"><%=objtitle %>
             </h4>
             <p class="list-group-item-text"><%=description %>
@@ -96,4 +89,15 @@
         </div>
     </div>
 </div>
+<form name="request_access" action="<%=baseUrl%>/requestAccess.jsp">
+    <input type="hidden" name="fileId" />
+</form>
+<script type="application/javascript">
+    $(function(){
+        $("[data-result-id]").each(function(i, obj){
+            console.log(obj);
+            new SearchResult("<%=baseUrl%>/access/", obj.getAttribute("data-result-id"), obj, document.forms.request_access);
+        });
+    })
+</script>
 <%@include file="includes/footer.jsp" %>

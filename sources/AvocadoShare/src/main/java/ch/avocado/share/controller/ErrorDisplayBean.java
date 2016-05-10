@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
+/**
+ * Helper to display error messages
+ */
 public class ErrorDisplayBean implements Serializable{
     private Throwable exception = null;
     private HttpServletRequest request;
@@ -29,7 +32,7 @@ public class ErrorDisplayBean implements Serializable{
                 return ErrorMessageConstants.ERROR_INTERNAL_SERVER + ": " + exception.getClass().getName();
             }
         }
-        return "Unbekannter Fehler";
+        return ErrorMessageConstants.UNKNOWN_ERROR;
     }
 
     public HttpStatusCode getStatusCode() {

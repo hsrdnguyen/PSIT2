@@ -147,3 +147,43 @@ $(function () {
         new Rating(this);
     })
 });
+
+
+function SearchResult(apiUrl, id, element, requestAccessForm) {
+    this.requestAccessForm = requestAccessForm;
+    this.apiUrl = apiUrl;
+    this.id = id;
+    this.element = element;
+    this._getRights();
+}
+
+SearchResult.prototype._getRights = function () {
+    $.getJSON(this.apiUrl + this.id, function(result){
+        return function(data) {
+            result.setAccess(data["access"]);
+        }
+    }(this));
+};
+
+
+SearchResult.prototype.setAccess = function(access){
+    if(access == "NONE") {
+        var button = document.createElement("button");
+        button.className = "btn btn-default-outline pull-xs-right";
+        button.innerHTML = "Zugriff beantragen";
+        button.addEventListener("click", function(result){
+            return function(evt) {
+                result.requestAccess(evt);
+            }
+        }(this));
+        this.element.insertBefore(button, this.element.firstChild);
+    }
+};
+
+SearchResult.prototype.requestAccess = function(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    this.requestAccessForm.fileId.value = this.id;
+    this.requestAccessForm.submit();
+    return false;
+};
