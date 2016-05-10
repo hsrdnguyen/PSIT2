@@ -9,6 +9,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="ch.avocado.share.common.form.InputType" %>
 <%@ page import="ch.avocado.share.common.form.FormEncoding" %>
+<%@ page import="ch.avocado.share.common.*" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -33,7 +34,7 @@
                 <div class="list-group-item-heading">
                     <h3>Neue Datei hochladen</h3>
                 </div>
-                <%= form.getFormBegin("patch") %>
+                <%= form.getFormBegin(HttpMethod.PATCH) %>
                 <div class="form-group row">
                     <div class="col-sm-2">
                         <%=form.getLabelFor("fileItem")%>
@@ -55,7 +56,7 @@
             <div class="list-group-item">
                 <h3>Eigenschaften bearbeiten</h3>
                 <div>
-                    <%= form.getFormBegin("patch") %>
+                    <%= form.getFormBegin(HttpMethod.PATCH) %>
                     <div class="form-group row">
                         <div class="col-sm-2">
                             <%=form.getLabelFor("moduleId") %>
@@ -96,7 +97,7 @@
                     Wenn Sie die Datei löschen, können weder Sie noch andere Benutzer die Datei
                     anzeigen, herunterladen oder widerherstellen.
                 </div>
-                <%=form.getFormBegin("delete") %>
+                <%=form.getFormBegin(HttpMethod.DELETE) %>
                 <%=form.getSubmit("Datei löschen", "btn-danger")%>
                 <%=form.getFormEnd()%>
             </div>

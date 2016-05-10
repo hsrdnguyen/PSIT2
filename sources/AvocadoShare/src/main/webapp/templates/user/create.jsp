@@ -5,6 +5,7 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.common.form.InputType" %>
 <%@ page import="ch.avocado.share.common.form.FormEncoding" %>
+<%@ page import="ch.avocado.share.common.HttpMethod" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -41,7 +42,7 @@
     <div class="list-group-item">
         <p class="text-block">Die Felder mit * müssen ausgefüllt werden.</p>
         <div id="xform" class="xform">
-            <%=form.getFormBegin("post") %>
+            <%=form.getFormBegin(HttpMethod.POST) %>
             <div class="form-group" id="formular-prename">
                 <%=form.getLabelFor("prename")%>
                 <%=form.getInputFor("prename")%>

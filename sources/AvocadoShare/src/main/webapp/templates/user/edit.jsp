@@ -4,6 +4,7 @@
 <%@ page import="ch.avocado.share.servlet.resources.base.HtmlRenderer" %>
 <%@ page import="ch.avocado.share.common.form.InputType" %>
 <%@ page import="ch.avocado.share.common.form.FormEncoding" %>
+<%@ page import="ch.avocado.share.common.HttpMethod" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%
     DetailViewConfig viewConfig = (DetailViewConfig) request.getAttribute(HtmlRenderer.ATTRIBUTE_DETAIL_VIEW_CONFIG);
@@ -29,7 +30,7 @@
         <div class="list-group-item">
             <h2>Informationen</h2>
 
-            <%=form.getFormBegin("patch") %>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <div class="form-group">
                 <%=form.getLabelFor("prename")%>
                 <%=form.getInputFor("prename")%>
@@ -47,7 +48,7 @@
         </div>
         <div class="list-group-item">
             <h3>Passwort</h3>
-            <%=form.getFormBegin("patch") %>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <div class="form-group">
                 <%=form.getLabelFor("password")%>
                 <%=form.getInputFor("password")%>
@@ -62,7 +63,7 @@
         <div class="list-group-item">
             <h3>Profilbild</h3>
             <% form.setEncodingType(FormEncoding.MULTIPART); %>
-            <%=form.getFormBegin("patch") %>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <div class="form-group">
                 <input type="file" name="avatar"/>
             </div>
@@ -81,7 +82,7 @@
                 gelöscht!
             </div>
             <% form.setEncodingType(FormEncoding.URLENCODED); %>
-            <%=form.getFormBegin("delete") %>
+            <%=form.getFormBegin(HttpMethod.PATCH) %>
             <%=form.getSubmit("Benutzer löschen", "btn-danger")%>
             <%=form.getFormEnd()%>
 
