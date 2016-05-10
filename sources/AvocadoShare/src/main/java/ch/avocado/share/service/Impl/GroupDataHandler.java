@@ -11,10 +11,7 @@ import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static ch.avocado.share.common.constants.sql.GroupConstants.*;
 
@@ -181,5 +178,30 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
             throw new DataHandlerException(e);
         }
         return getGroupFromResultSet(resultSet);
+    }
+
+    @Override
+    public List<Group> searchGroups(String searchString) throws DataHandlerException {
+        try {
+            IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
+
+            PreparedStatement ps = connectionHandler.getPreparedStatement(SEARCH_QUERY);
+            ps.setString(1, "%"+searchString+"%");
+            ps.setString(2, "%"+searchString+"%");
+
+            ResultSet rs = connectionHandler.executeQuery(ps);
+
+            List<Group> groups = new LinkedList<>();
+            while (rs.next())
+            {
+                Group group = getGroupFromResultSet(rs);
+                groups.add(group);
+            }
+
+            return groups;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 }

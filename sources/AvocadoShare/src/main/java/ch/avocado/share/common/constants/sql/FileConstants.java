@@ -31,4 +31,7 @@ public class FileConstants {
 
     public static final String SELECT_BY_TITLE_QUERY_AND_MODULE = SELECT_FILES + "WHERE title = ? AND module_id = ?";
     public static final String SELECT_BY_ID_QUERY = SELECT_FILES + "WHERE o.id = ?";
+
+    public static final String SELECT_ALL_FILES = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id";
+
 }

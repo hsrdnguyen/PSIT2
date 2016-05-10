@@ -47,6 +47,7 @@ public final class GroupConstants {
             " JOIN " + OWNERSHIP_TABLE + " as W " +
             "   ON o.id = W.object_id ";
 
+    public static final String SEARCH_QUERY = SELECT_WITHOUT_WHERE + "WHERE name LIKE (?) OR description LIKE (?)";
 
     public static final String SELECT_BY_ID_LIST = SELECT_WITHOUT_WHERE  + " WHERE g.id in ";
 

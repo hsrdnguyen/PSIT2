@@ -252,3 +252,18 @@ input.add-category {
 .rating:hover .rating-overlay, .rating-overlay:hover {
     display: none;
 }
+.ModuleResult
+{
+    background-color: #22FF0000;
+}
+
+.GroupResult
+{
+    background-color: #2200FF00;
+}
+
+.FileResult
+{
+    background-color: #220000FF;
+}
+

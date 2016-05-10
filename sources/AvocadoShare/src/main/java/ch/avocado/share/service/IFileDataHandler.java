@@ -41,10 +41,10 @@ public interface IFileDataHandler {
 
     /**
      * Searches for files in the database that matches the given strings
-     * @param searchTerms searchterms the file HAS TO match
+     * @param searchString searchterm for the files to match
      * @return All files that match the search strings
      */
-    List<File> search(List<String> searchTerms) throws DataHandlerException;
+    List<File> searchFiles(String searchString) throws DataHandlerException;
 
     /**
      * @param fileTitle its title

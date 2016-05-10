@@ -25,6 +25,13 @@ public final class ModuleConstants {
             "   LEFT JOIN " + OWNERSHIP_TABLE + " AS owner " +
             "       ON a.id = owner.object_id ";
 
+    public static final String SEARCH_QUERY = "" +
+            "SELECT " + SELECT_COLUMNS + " FROM " + table + " AS m " +
+            "   JOIN avocado_share.access_control as a " +
+            "       ON m.id = a.id " +
+            "   LEFT JOIN avocado_share.ownership AS owner " +
+            "       ON a.id = owner.object_id " +
+            "   WHERE name LIKE (?) OR description LIKE (?) ";
 
     public static final String SELECT_QUERY = SELECT_WITHOUT_WHERE + " WHERE a.id = ? ";
     public static final String SELECT_BY_ID_LIST = SELECT_WITHOUT_WHERE  + " WHERE a.id IN ";

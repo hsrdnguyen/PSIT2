@@ -20,4 +20,6 @@ public interface IModuleDataHandler {
     List<Module> getModules(Collection<String> ids) throws DataHandlerException;
 
     void updateModule(Module module) throws DataHandlerException, ObjectNotFoundException;
+
+    List<Module> searchModules(String searchString) throws DataHandlerException;
 }

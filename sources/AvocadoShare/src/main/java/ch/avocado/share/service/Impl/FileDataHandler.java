@@ -4,11 +4,8 @@ import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.Rating;
+import ch.avocado.share.service.*;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.ICategoryDataHandler;
-import ch.avocado.share.service.IDatabaseConnectionHandler;
-import ch.avocado.share.service.IFileDataHandler;
-import ch.avocado.share.service.IRatingDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 
@@ -27,6 +24,13 @@ import static ch.avocado.share.common.constants.sql.FileConstants.*;
  */
 public class FileDataHandler extends DataHandlerBase implements IFileDataHandler {
 
+    private ISearchEngineService searchService;
+
+    public FileDataHandler(ISearchEngineService searchService)
+    {
+        if(searchService == null) throw new NullPointerException("searchService is NULL");
+        this.searchService = searchService;
+    }
 
     private void addFileToModule(File file) throws DataHandlerException {
         long fileId = Long.parseLong(file.getId());
@@ -64,6 +68,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         insertFileData(file);
         addFileToModule(file);
         addFileCategoriesToDb(file);
+        searchService.indexFile(file);
         return file.getId();
     }
 
@@ -86,8 +91,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
+
     public void deleteFile(File file) throws DataHandlerException, ObjectNotFoundException {
         deleteAccessControlObject(file);
+        searchService.reloadSearchIndex(); //TODO @bergmsas make this one efficient
+
     }
 
     @Override
@@ -126,31 +134,10 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
     }
 
     @Override
-    public List<File> search(List<String> searchTerms) throws DataHandlerException {
-        IDatabaseConnectionHandler connectionHandler = getConnectionHandler();
-        String query = SEARCH_QUERY_START + SEARCH_QUERY_LIKE;
-        try {
-            for (String tmp : searchTerms) {
-                // TODO @bergmsas: equals verwenden?
-                if (!tmp.equals(searchTerms.get(0))) {
-                    query += SEARCH_QUERY_LINK + SEARCH_QUERY_LIKE;
-                }
-            }
-            PreparedStatement ps = connectionHandler.getPreparedStatement(query);
-            int i = 1;
-            for (String tmp : searchTerms) {
-                ps.setString(i, "%"+tmp+"%");
-                i++;
-                ps.setString(i, "%"+tmp+"%");
-                i++;
-            }
+    public List<File> searchFiles(String searchString) throws DataHandlerException {
 
-            ResultSet rs = connectionHandler.executeQuery(ps);
-
-            return getMultipleFilesFromResultSet(rs);
-        } catch (SQLException e) {
-            throw new DataHandlerException(e);
-        }
+        List<String> ids = searchService.search(searchString);
+        return this.getFiles(ids);
     }
 
     @Override
@@ -205,6 +192,7 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         changeFileAssociatedModule(file);
         updateFileCategoriesFromDb(file);
         updateObject(file);
+        searchService.reloadSearchIndex(); //TODO @bergmsas Make this one efficient
     }
 
     private List<Category> getFileCategoriesFromDb(String fileId) throws DataHandlerException {
@@ -212,7 +200,6 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         if (fileId == null || fileId.trim().isEmpty()) return null;
         return categoryHandler.getAccessObjectAssignedCategories(fileId);
     }
-
     private void addFileCategoriesToDb(File file) throws DataHandlerException {
         ICategoryDataHandler categoryHandler = getCategoryDataHandler();
         categoryHandler.addAccessObjectCategories(file);
