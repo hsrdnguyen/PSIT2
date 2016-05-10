@@ -14,7 +14,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by bergm on 22/03/2016.
+ * Handles the storage of files.
+ * This class stores all documents in the folder defined by {@link FileStorageConstants#FILE_DESTINATION_ON_SERVER}.
  */
 public class FileStorageHandler implements IFileStorageHandler {
 

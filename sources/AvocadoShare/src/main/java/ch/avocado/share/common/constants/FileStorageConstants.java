@@ -2,8 +2,8 @@ package ch.avocado.share.common.constants;
 
 
 public class FileStorageConstants {
-    public static final String FILE_DESTINATION_ON_SERVER = "C:\\avocadoshare\\documents";
-    public static final String FILE_TEMP_DESTINATION_ON_SERVER = "C:\\avocadoshare\\TMP";
+    public static final String FILE_DESTINATION_ON_SERVER = "/srv/avocado";
+    public static final String FILE_TEMP_DESTINATION_ON_SERVER = "/srv/avocado/tmp";
     /**
      * The maximal size of file in bytes.
      * -1 indicates there is no limit.
