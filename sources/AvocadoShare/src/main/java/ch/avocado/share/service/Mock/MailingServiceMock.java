@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Mock;
 
+import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IMailingService;
@@ -12,7 +13,7 @@ public class MailingServiceMock implements IMailingService {
     }
 
     @Override
-    public boolean sendRequestAccessEmail(User requestingUser, User owningUser, File file) {
+    public boolean sendRequestAccessEmail(User requestingUser, User owningUser, AccessControlObjectBase object) {
         return true;
     }
 

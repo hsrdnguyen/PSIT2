@@ -174,4 +174,5 @@
             </div>
         </nav>
     </header>
+    <div class="container" id="js-error-container"></div>
     <main class="container">

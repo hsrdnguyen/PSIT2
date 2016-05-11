@@ -3,6 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.Encoder;
 import ch.avocado.share.common.constants.ErrorMessageConstants;
 import ch.avocado.share.common.constants.MailingConstants;
+import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
 import ch.avocado.share.service.IMailingService;
@@ -39,17 +40,16 @@ public class MailingService implements IMailingService {
     }
 
     @Override
-    public boolean sendRequestAccessEmail(User requestingUser, User owningUser, File file) throws MailingServiceException {
+    public boolean sendRequestAccessEmail(User requestingUser, User owningUser, AccessControlObjectBase object) throws MailingServiceException {
         if (requestingUser == null) throw new NullPointerException("user is Null");
-        if (file == null) throw new NullPointerException("file is Null");
+        if (object == null) throw new NullPointerException("object is Null");
         if (owningUser == null) throw new NullPointerException("owningUser is Null");
 
         Session session = prepareMessage();
 
         try {
-
-            String link = String.format(MailingConstants.REQUEST_RESPONSE_URL, file.getId(), requestingUser.getId(), owningUser.getId());
-            sendEmail(owningUser, session, MailingConstants.REQUEST_SUBJECT, String.format(MailingConstants.REQUEST_MESSAGE, requestingUser.getFullName(), file.getTitle(), link));
+            String link = String.format(MailingConstants.REQUEST_RESPONSE_URL, object.getId(), requestingUser.getId(), owningUser.getId());
+            sendEmail(owningUser, session, MailingConstants.REQUEST_SUBJECT, String.format(MailingConstants.REQUEST_MESSAGE, requestingUser.getFullName(), object.getReadableName(), link));
         } catch (MessagingException e) {
             throw new MailingServiceException(ErrorMessageConstants.ERROR_SEND_ACCESS_REQUEST_MAIL, owningUser.getMail().getAddress(), e);
         }

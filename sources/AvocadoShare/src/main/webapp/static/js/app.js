@@ -1,5 +1,32 @@
 "use strict";
 
+function Alert(containerId) {
+    var container = document.getElementById(containerId);
+    console.log(container);
+    if(container === null || typeof container === 'undefined') {
+        throw new Error("js error container not found!");
+    }
+    this.container = container;
+}
+
+Alert.addError = function(title, message) {
+    this._addAlertBox("error", title, message);
+};
+
+Alert._addAlertBox = function(level, title, message) {
+    var alert = document.createElement("div");
+    alert.className = "alert alert-dismissible alert-dismissible fade in alert-" + level;
+    alert.setAttribute("role", "alert");
+    var content = '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+    content += '<span aria-hidden="true">&times;</span></button><strong>';
+    content += title + '</strong>' + message + '</div>';
+    alert.innerHTML = content;
+    this.container.appendChild(alert);
+};
+
+var alert = null;
+
+
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
@@ -149,16 +176,18 @@ $(function () {
 });
 
 
-function SearchResult(apiUrl, id, element, requestAccessForm) {
-    this.requestAccessForm = requestAccessForm;
+function SearchResult(apiUrl, id, type, element, requestUrl) {
+    this.requestUrl = requestUrl;
     this.apiUrl = apiUrl;
     this.id = id;
+    this.type = type;
     this.element = element;
     this._getRights();
 }
 
-SearchResult.prototype._getRights = function () {
-    $.getJSON(this.apiUrl + this.id, function(result){
+SearchResult.prototype._getRights = function() {
+    var promise = $.getJSON(this.apiUrl + this.id);
+    promise.then(function(result){
         return function(data) {
             result.setAccess(data["access"]);
         }
@@ -171,19 +200,21 @@ SearchResult.prototype.setAccess = function(access){
         var button = document.createElement("button");
         button.className = "btn btn-default pull-xs-right";
         button.innerHTML = "Zugriff beantragen";
-        button.addEventListener("click", function(result){
+        button.addEventListener("click", function(obj){
             return function(evt) {
-                result.requestAccess(evt);
+                evt.preventDefault();
+                obj.requestAccess();
             }
         }(this));
         this.element.insertBefore(button, this.element.firstChild);
     }
 };
 
-SearchResult.prototype.requestAccess = function(evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
-    this.requestAccessForm.fileId.value = this.id;
-    this.requestAccessForm.submit();
-    return false;
+
+SearchResult.prototype.requestAccess = function() {
+    window.location.href = this.requestUrl + "?id=" + encodeURIComponent(this.id) + "&type=" + encodeURIComponent(this.type);
 };
+
+$(function(){
+    alert = new Alert("js-error-container");
+});

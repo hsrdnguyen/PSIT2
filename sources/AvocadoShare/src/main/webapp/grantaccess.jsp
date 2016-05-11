@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
-<jsp:useBean id="accessBean" class="ch.avocado.share.controller.FileAccessBean" />
+<jsp:useBean id="accessBean" class="ch.avocado.share.controller.ObjectAccessBean" />
 <jsp:setProperty name="accessBean" property="fileId" />
 <jsp:setProperty name="accessBean" property="requesterUserId" />
 <%@include file="includes/header.jsp"%>

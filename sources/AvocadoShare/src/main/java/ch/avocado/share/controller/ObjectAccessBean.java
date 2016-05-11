@@ -1,24 +1,21 @@
 package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
+import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.AccessLevelEnum;
 import ch.avocado.share.model.data.File;
 import ch.avocado.share.model.data.User;
-import ch.avocado.share.service.exceptions.MailingServiceException;
-import ch.avocado.share.service.exceptions.ServiceNotFoundException;
-import ch.avocado.share.service.IFileDataHandler;
-import ch.avocado.share.service.IMailingService;
-import ch.avocado.share.service.ISecurityHandler;
-import ch.avocado.share.service.IUserDataHandler;
-import ch.avocado.share.service.exceptions.DataHandlerException;
-import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.model.exceptions.HttpServletException;
+import ch.avocado.share.service.*;
+import ch.avocado.share.service.exceptions.*;
 
+import javax.sql.rowset.serial.SerialRef;
 import java.io.Serializable;
 
 /**
  * Bean to allow requesting and granting request to a file.
  */
-public class FileAccessBean implements Serializable {
+public class ObjectAccessBean implements Serializable {
 
     /**
      * The identifier of the file
@@ -31,59 +28,8 @@ public class FileAccessBean implements Serializable {
     private String requesterUserMail;
     private User objectOwner;
     private String requesterUserId;
+    private String objectType;
 
-    /**
-     * Please make sure that {@link #setFileId(String)} and {@link #requesterUserMail}
-     * @return
-     */
-    public boolean requestAccess() {
-        if (fileId == null) throw new NullPointerException("fileId is null");
-        if (requesterUserMail == null) throw new NullPointerException("requestingUserMail is null");
-        IMailingService mailingService;
-        IFileDataHandler fileDataHandler;
-        IUserDataHandler userDataHandler;
-        ISecurityHandler securityHandler;
-        try {
-            mailingService = ServiceLocator.getService(IMailingService.class);
-            fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
-            securityHandler = ServiceLocator.getService(ISecurityHandler.class);
-        } catch (ServiceNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        File file;
-        User user;
-        User owningUser;
-        AccessLevelEnum currentLevel;
-        try {
-            user = userDataHandler.getUserByEmailAddress(requesterUserMail);
-            file = fileDataHandler.getFile(fileId);
-
-            if (file.getOwnerId() == null) {
-                System.out.println("File has no owner");
-                return false;
-            }
-            currentLevel = securityHandler.getAccessLevel(user, file);
-            owningUser = userDataHandler.getUser(file.getOwnerId());
-        } catch (DataHandlerException e) {
-            e.printStackTrace();
-            return false;
-        } catch (ObjectNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-        if (currentLevel.containsLevel(AccessLevelEnum.READ)) {
-            return false;
-        }
-        try {
-            return mailingService.sendRequestAccessEmail(user, owningUser, file);
-        } catch (MailingServiceException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     public boolean grantAccess() {
         if (requesterUserId == null) throw new NullPointerException("requesterUserId is null");
@@ -126,7 +72,7 @@ public class FileAccessBean implements Serializable {
         } catch (DataHandlerException e) {
             e.printStackTrace();
             return false;
-        } catch (ObjectNotFoundException e){
+        } catch (ObjectNotFoundException e) {
             e.printStackTrace();
             return false;
         }
@@ -147,5 +93,9 @@ public class FileAccessBean implements Serializable {
 
     public void setFileId(String fileId) {
         this.fileId = fileId;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
     }
 }

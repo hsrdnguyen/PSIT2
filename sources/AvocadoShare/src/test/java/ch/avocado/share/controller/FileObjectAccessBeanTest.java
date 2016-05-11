@@ -25,14 +25,14 @@ import static org.mockito.Mockito.*;
 /**
  * Created by coffeemakr on 16.04.16.
  */
-public class FileAccessBeanTest {
+public class FileObjectAccessBeanTest {
 
     private User userWithoutReadRights;
     private User userWithReadRights;
     private User owner;
     private File file;
     private Module module;
-    private FileAccessBean bean;
+    private ObjectAccessBean bean;
     private ISecurityHandler securityHandler;
     private String email0 = "unexisting_user0@zhaw.ch";
     private String email1 = "unexisting_user1@zhaw.ch";
@@ -52,7 +52,7 @@ public class FileAccessBeanTest {
         IRatingDataHandler ratingDataHandler = ServiceLocator.getService(IRatingDataHandler.class);
         securityHandler = ServiceLocator.getService(ISecurityHandler.class);
 
-        bean = new FileAccessBean();
+        bean = new ObjectAccessBean();
         userWithReadRights = userFromEmail(email0);
         userWithoutReadRights = userFromEmail(email1);
         owner = userFromEmail(email2);
@@ -114,6 +114,7 @@ public class FileAccessBeanTest {
         ServiceLocatorModifier.restore();
     }
 
+    /*
     @Test
     public void testRequestAccessForUserWithoutAccess() throws Exception {
         MailingServiceMock.use();
@@ -197,7 +198,7 @@ public class FileAccessBeanTest {
 
         verify(mailingService, never()).sendRequestAccessEmail(any(User.class), any(User.class), any(File.class));
     }
-
+    */
 
     @Test
     public void testGrantAccess() throws Exception {

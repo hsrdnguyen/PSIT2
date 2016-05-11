@@ -24,25 +24,28 @@
                 String objtitle = "";
                 String description = Encoder.forHtml(obj.getDescription());
                 String cssClass = "";
-
+                String type;
                 if (obj instanceof File) {
                     url = baseUrl + "/file?id=" + Encoder.forHtmlAttribute(obj.getId());
                     objtitle = Encoder.forHtml(((File) obj).getTitle());
                     cssClass = "FileResult";
+                    type = "file";
                 } else if (obj instanceof Group) {
                     url = baseUrl + "/group?id=" + Encoder.forHtmlAttribute(obj.getId());
                     objtitle = Encoder.forHtml(((Group) obj).getName());
                     cssClass = "GroupResult";
+                    type = "group";
                 } else if (obj instanceof Module) {
                     url = baseUrl + "/module?id=" + Encoder.forHtmlAttribute(obj.getId());
                     objtitle = Encoder.forHtml(((Module) obj).getName());
                     cssClass = "ModuleResult";
+                    type = "module";
                 } else {
-                    break;
+                    continue;
                 }
         %>
 
-        <a data-result-id="<%=Encoder.forHtmlAttribute(obj.getId()) %>" href="<%=url %>" style="visibility: collapse" class="list-group-item <%=cssClass %>">
+        <a data-result-type="<%=type%>"data-result-id="<%=Encoder.forHtmlAttribute(obj.getId()) %>" href="<%=url %>" style="visibility: collapse" class="list-group-item <%=cssClass %>">
             <h4 class="list-group-item-heading"><%=objtitle %></h4>
             <p class="list-group-item-text"><%=description %></p>
         </a>
@@ -80,7 +83,11 @@
     $(function(){
         $("[data-result-id]").each(function(i, obj){
             console.log(obj);
-            new SearchResult("<%=baseUrl%>/access/", obj.getAttribute("data-result-id"), obj, document.forms.request_access);
+            new SearchResult("<%=baseUrl%>/access/",
+                             obj.getAttribute("data-result-id"),
+                             obj.getAttribute("data-result-type"),
+                             obj,
+                             "<%=baseUrl%>/requestAccess");
         });
     })
 </script>
