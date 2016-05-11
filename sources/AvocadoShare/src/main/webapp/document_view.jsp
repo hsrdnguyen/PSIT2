@@ -7,6 +7,7 @@
 <jsp:useBean id="searchBean" class="ch.avocado.share.controller.SearchBean"/>
 <jsp:setProperty name="searchBean" property="searchString"/>
 <%@include file="includes/header.jsp" %>
+<%@include file="includes/searchFilter.html" %>
 
 <div class="content-main">
     <div class="list-group">
@@ -41,11 +42,9 @@
                 }
         %>
 
-        <a data-result-id="<%=Encoder.forHtmlAttribute(obj.getId()) %>" href="<%=url %>" class="list-group-item <%=cssClass %>">
-            <h4 class="list-group-item-heading"><%=objtitle %>
-            </h4>
-            <p class="list-group-item-text"><%=description %>
-            </p>
+        <a data-result-id="<%=Encoder.forHtmlAttribute(obj.getId()) %>" href="<%=url %>" style="visibility: collapse" class="list-group-item <%=cssClass %>">
+            <h4 class="list-group-item-heading"><%=objtitle %></h4>
+            <p class="list-group-item-text"><%=description %></p>
         </a>
         <%
             }
@@ -59,33 +58,18 @@
         <!-- First Module -->
         <div class="list-group-item">
             <label>
-                <input type="checkbox" rel="dab"/>
-                Datenbank
+                <input type="checkbox" checked="checked" id="File" onclick="setResultsVisibility()"/>
+                Dateien
             </label><br>
             <label>
-                <input type="checkbox" rel="web"/>
-                Web
+                <input type="checkbox" checked="checked" id="Module" onclick="setResultsVisibility()"/>
+                Module
             </label><br>
             <label>
-                <input type="checkbox" rel="prog"/>
-                Programmieren
+                <input type="checkbox" checked="checked" id="Group" onclick="setResultsVisibility()"/>
+                Gruppen
             </label><br>
-            <label>
-                <input type="checkbox" rel="thin"/>
-                Theoretische Informatik
-            </label><br>
-            <label>
-                <input type="checkbox" rel="manit"/>
-                Mathematik Analysis
-            </label><br>
-            <label>
-                <input type="checkbox" rel="mgmit"/>
-                Diskrete Mathematik
-            </label><br>
-            <label>
-                <input type="checkbox" rel="etc"/>
-                ...
-            </label><br>
+
         </div>
     </div>
 </div>

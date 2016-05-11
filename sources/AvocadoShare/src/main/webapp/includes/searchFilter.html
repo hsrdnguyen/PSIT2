@@ -1,0 +1,23 @@
+<script type="text/javascript">
+    function ResultSet(id, className) {
+        var x = document.getElementsByClassName(className);
+        var i;
+        for (i = 0; i < x.length; i++) {
+            if(document.getElementById(id).checked) {
+                x[i].setAttribute('style', 'visibility:visible');
+                x[i].setAttribute('style', 'display:block');
+            }else{
+                x[i].setAttribute('style', 'visibility:collapse');
+                x[i].setAttribute('style', 'display:none');
+            }
+        }
+    }
+
+    function setResultsVisibility(){
+        ResultSet("File", "FileResult");
+        ResultSet("Group", "GroupResult");
+        ResultSet("Module", "ModuleResult");
+    }
+
+window.onload = setResultsVisibility;
+</script>
