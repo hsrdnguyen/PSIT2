@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Impl;
 
+import ch.avocado.share.common.SearchResultComparater;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Group;
 import ch.avocado.share.model.data.Rating;
@@ -98,6 +99,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
             throw new DataHandlerException(e);
         }
         groups.trimToSize();
+        Collections.sort(groups, new SearchResultComparater());
         return groups;
     }
 
@@ -198,6 +200,7 @@ public class GroupDataHandler extends DataHandlerBase implements IGroupDataHandl
                 groups.add(group);
             }
 
+            Collections.sort(groups, new SearchResultComparater());
             return groups;
         } catch (SQLException e) {
             e.printStackTrace();

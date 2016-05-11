@@ -56,4 +56,11 @@ public class Group extends AccessIdentity implements Serializable {
     public String getReadableName() {
         return getName();
     }
+
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
 }

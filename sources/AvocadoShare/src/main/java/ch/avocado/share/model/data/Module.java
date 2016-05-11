@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Module model
  */
-public class Module extends AccessControlObjectBase {
+public class Module extends AccessControlObjectBase{
 
     private String name;
     private List<String> fileIds;
@@ -70,5 +70,11 @@ public class Module extends AccessControlObjectBase {
             }
             return fileDataHandler.getFiles(this.fileIds);
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return name;
     }
 }
