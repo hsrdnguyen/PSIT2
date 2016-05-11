@@ -3,7 +3,7 @@ package ch.avocado.share.service.Impl;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.data.CategoryList;
+import ch.avocado.share.common.util.ChangeTrackingSet;
 import ch.avocado.share.service.exceptions.ObjectNotFoundException;
 import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.ICategoryDataHandler;
@@ -33,11 +33,11 @@ public class CategoryDataHandler implements ICategoryDataHandler {
     @Override
     public void updateAccessObjectCategories(AccessControlObjectBase changedAccessObject) throws DataHandlerException, ObjectNotFoundException {
         if (changedAccessObject == null) throw new NullPointerException("changedAccessObject is null");
-        CategoryList categories = changedAccessObject.getCategoryList();
-        for (Category newCategory : categories.getNewCategories()) {
+        ChangeTrackingSet<Category> categories = changedAccessObject.getCategoryList();
+        for (Category newCategory : categories.getNewSet()) {
             addCategory(newCategory.getName(), changedAccessObject.getId());
         }
-        for (Category delCategory : categories.getRemovedCategories()) {
+        for (Category delCategory : categories.getRemovedSet()) {
             deleteCategoryAssignedObject(delCategory.getName(), changedAccessObject.getId());
         }
     }

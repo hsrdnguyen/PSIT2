@@ -294,8 +294,8 @@ public class FileDataHandlerTest {
         System.out.println("Current" +file.getCategoryList());
         file.setCategories(categories);
         System.out.println("Current" + file.getCategoryList());
-        System.out.println(file.getCategoryList().getNewCategories());
-        System.out.println(file.getCategoryList().getRemovedCategories());
+        System.out.println(file.getCategoryList().getNewSet());
+        System.out.println(file.getCategoryList().getRemovedSet());
 
         fileDataHandler.updateFile(file);
 

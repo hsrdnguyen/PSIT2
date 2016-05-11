@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Created by bergm on 15/04/2016.
@@ -24,7 +23,7 @@ public class SearchBean implements Serializable {
 
     private String searchString = "";
 
-    public List<AccessControlObjectBase> search() throws ServiceNotFoundException {
+    public List<AccessControlObjectBase> search() {
         if (!searchString.equals("")) {
             try {
                 IFileDataHandler fileService = ServiceLocator.getService(IFileDataHandler.class);

@@ -1,8 +1,8 @@
 package ch.avocado.share.common;
 
+import ch.avocado.share.common.util.ChangeTrackingSet;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.Category;
-import ch.avocado.share.model.data.CategoryList;
 import ch.avocado.share.servlet.resources.base.DetailViewConfig;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class CategoryViewHelper {
     }
 
     public List<Category> getSortedCategoryList() {
-        CategoryList categories = object.getCategoryList();
+        ChangeTrackingSet<Category> categories = object.getCategoryList();
         ArrayList<Category> sortedCategories = new ArrayList<>(categories.size());
         sortedCategories.addAll(categories);
         sortedCategories.sort(new Comparator<Category>() {

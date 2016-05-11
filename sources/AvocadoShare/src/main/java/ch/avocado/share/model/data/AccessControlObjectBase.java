@@ -1,5 +1,7 @@
 package ch.avocado.share.model.data;
 
+import ch.avocado.share.common.util.ChangeTrackingSet;
+
 import java.util.*;
 
 /**
@@ -8,7 +10,7 @@ import java.util.*;
 public abstract class AccessControlObjectBase extends Model{
 
     private String id;
-    private CategoryList categoryList;
+    private ChangeTrackingSet<Category> categoryList;
     private Date creationDate;
     private Rating rating;
     private String ownerId;
@@ -28,7 +30,8 @@ public abstract class AccessControlObjectBase extends Model{
         if(categories == null) {
             categories = new ArrayList<>();
         }
-        this.categoryList = new CategoryList(categories);
+        final Collection<Category> originalCategories = categories;
+        this.categoryList = new ChangeTrackingSet<Category>(originalCategories);
         setCreationDate(creationDate);
         this.rating = rating;
         setOwnerId(ownerId);
@@ -56,7 +59,7 @@ public abstract class AccessControlObjectBase extends Model{
     /**
      * @return The categories assigned to this object.
      */
-    public CategoryList getCategoryList() {
+    public ChangeTrackingSet<Category> getCategoryList() {
         return categoryList;
     }
 
@@ -65,7 +68,7 @@ public abstract class AccessControlObjectBase extends Model{
      */
     public void setCategories(Collection<Category> categoryList) {
         if(categoryList == null) throw new NullPointerException("categoryList is null");
-        this.categoryList.setCategories(categoryList);
+        this.categoryList.setCurrentSet(categoryList);
         setDirty(true);
     }
 

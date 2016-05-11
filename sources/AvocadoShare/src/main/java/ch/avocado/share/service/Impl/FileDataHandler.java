@@ -26,8 +26,11 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
 
     private ISearchEngineService searchService;
 
-    public FileDataHandler(ISearchEngineService searchService)
-    {
+    /**
+     * Create a new file data handler
+     * @param searchService The search service to use
+     */
+    public FileDataHandler(ISearchEngineService searchService) {
         if(searchService == null) throw new NullPointerException("searchService is NULL");
         this.searchService = searchService;
     }

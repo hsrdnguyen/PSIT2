@@ -1,21 +1,20 @@
 package ch.avocado.share.model.data;
 
+import ch.avocado.share.common.util.ChangeTrackingSet;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import static ch.avocado.share.test.Asserts.assertCategoriesEquals;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link CategoryList}.
+ * Tests for {@link ChangeTrackingSet<Category>}.
  */
 public class CategoryListTest {
 
-    private CategoryList categoryList;
+    private ChangeTrackingSet<Category> categoryList;
     private ArrayList<Category> originalCategories;
 
     @Before
@@ -24,12 +23,12 @@ public class CategoryListTest {
         originalCategories.add(new Category("one"));
         originalCategories.add(new Category("two"));
         originalCategories.add(new Category("three"));
-        categoryList = new CategoryList(originalCategories);
+        final java.util.Collection<Category> originalCategories1 = originalCategories;
+        categoryList = new ChangeTrackingSet<Category>(originalCategories1);
     }
 
     @Test
     public void testGetCategories() {
-        assertCategoriesEquals(originalCategories, categoryList.getCategories());
         assertCategoriesEquals(originalCategories, categoryList);
     }
 
@@ -53,16 +52,16 @@ public class CategoryListTest {
         newCategories.add(new Category("one"));
         newCategories.add(new Category("two"));
         newCategories.add(new Category("three"));
-        categoryList.setCategories(newCategories);
+        categoryList.setCurrentSet(newCategories);
 
-        assertEquals(0, categoryList.getRemovedCategories().size());
-        assertEquals(0, categoryList.getNewCategories().size());
+        assertEquals(0, categoryList.getRemovedSet().size());
+        assertEquals(0, categoryList.getNewSet().size());
         assertCategoriesEquals(newCategories, categoryList);
     }
 
     @Test(expected = NullPointerException.class)
     public void testSetCategoriesWithNull() throws Exception {
-        categoryList.setCategories(null);
+        categoryList.setCurrentSet(null);
 
     }
 
@@ -74,14 +73,14 @@ public class CategoryListTest {
         newCategories.add(new Category("two"));
         newCategories.add(new Category("four"));
         newCategories.add(new Category("five"));
-        categoryList.setCategories(newCategories);
+        categoryList.setCurrentSet(newCategories);
         assertCategoriesEquals(newCategories, categoryList);
-        assertTrue(categoryList.getNewCategories().contains(new Category("four")));
-        assertTrue(categoryList.getNewCategories().contains(new Category("five")));
-        assertEquals(2, categoryList.getNewCategories().size());
+        assertTrue(categoryList.getNewSet().contains(new Category("four")));
+        assertTrue(categoryList.getNewSet().contains(new Category("five")));
+        assertEquals(2, categoryList.getNewSet().size());
 
-        assertTrue(categoryList.getRemovedCategories().contains(new Category("three")));
-        assertEquals(1, categoryList.getRemovedCategories().size());
+        assertTrue(categoryList.getRemovedSet().contains(new Category("three")));
+        assertEquals(1, categoryList.getRemovedSet().size());
     }
 
     @Test
@@ -112,27 +111,27 @@ public class CategoryListTest {
     public void testGetNewCategories() {
         categoryList.add(new Category("four"));
         assertTrue(categoryList.contains(new Category("four")));
-        assertEquals(1, categoryList.getNewCategories().size());
-        assertTrue(categoryList.getNewCategories().contains(new Category("four")));
-        assertTrue(categoryList.getRemovedCategories().isEmpty());
+        assertEquals(1, categoryList.getNewSet().size());
+        assertTrue(categoryList.getNewSet().contains(new Category("four")));
+        assertTrue(categoryList.getRemovedSet().isEmpty());
 
         // Only added once
         categoryList.add(new Category("four"));
-        assertEquals(1, categoryList.getNewCategories().size());
+        assertEquals(1, categoryList.getNewSet().size());
 
         // Not new if already exist
         categoryList.add(new Category("three"));
-        assertEquals(1, categoryList.getNewCategories().size());
-        assertFalse(categoryList.getNewCategories().contains(new Category("three")));
+        assertEquals(1, categoryList.getNewSet().size());
+        assertFalse(categoryList.getNewSet().contains(new Category("three")));
     }
 
     @Test
     public void testGetRemovedCategories() {
         categoryList.remove(new Category("three"));
-        assertTrue(categoryList.getRemovedCategories().contains(new Category("three")));
-        assertEquals(1, categoryList.getRemovedCategories().size());
+        assertTrue(categoryList.getRemovedSet().contains(new Category("three")));
+        assertEquals(1, categoryList.getRemovedSet().size());
         categoryList.remove(new Category("unexisting"));
-        assertFalse(categoryList.getRemovedCategories().contains(new Category("unexisting")));
+        assertFalse(categoryList.getRemovedSet().contains(new Category("unexisting")));
         assertFalse(categoryList.contains(new Category("unexisting")));
     }
 }
