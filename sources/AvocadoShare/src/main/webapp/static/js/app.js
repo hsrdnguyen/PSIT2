@@ -169,7 +169,7 @@ SearchResult.prototype._getRights = function () {
 SearchResult.prototype.setAccess = function(access){
     if(access == "NONE") {
         var button = document.createElement("button");
-        button.className = "btn btn-default-outline pull-xs-right";
+        button.className = "btn btn-default pull-xs-right";
         button.innerHTML = "Zugriff beantragen";
         button.addEventListener("click", function(result){
             return function(evt) {
