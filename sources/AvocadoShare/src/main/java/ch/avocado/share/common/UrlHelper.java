@@ -1,10 +1,11 @@
 package ch.avocado.share.common;
 
 
-import ch.avocado.share.model.data.File;
+import ch.avocado.share.model.data.*;
 import ch.avocado.share.servlet.AvatarServlet;
 import ch.avocado.share.servlet.DownloadServlet;
 import ch.avocado.share.servlet.LoginServlet;
+import ch.avocado.share.servlet.resources.base.ResourceServlet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -98,5 +99,45 @@ public class UrlHelper {
 
     public String getRatingUrl() {
         return getBase() + "/rating";
+    }
+
+    public String getUrlFor(File file) {
+        if(file == null) throw new NullPointerException("file is null");
+        if(file.getId() == null) throw new IllegalArgumentException("file id is null");
+        return getBase() + "/file?" + encodeUrlParameter("id", file.getId());
+    }
+    public String getUrlFor(Module module) {
+        if(module == null) throw new NullPointerException("module is null");
+        if(module.getId() == null) throw new IllegalArgumentException("module id is null");
+        return getBase() + "/module?" + encodeUrlParameter("id", module.getId());
+
+    }
+    public String getUrlFor(Group group) {
+        if(group == null) throw new NullPointerException("group is null");
+        if(group.getId() == null) throw new IllegalArgumentException("group id is null");
+        return getBase() + "/group?" + encodeUrlParameter("id", group.getId());
+
+
+    }
+    public String getUrlFor(User user) {
+        if(user == null) throw new NullPointerException("user is null");
+        if(user.getId() == null) throw new IllegalArgumentException("user id is null");
+        return getBase() + "/user?" + encodeUrlParameter("id", user.getId());
+    }
+
+    public String getUrlFor(AccessControlObjectBase object) {
+        if(object == null) throw new NullPointerException("object is null");
+        if(object.getId() == null) throw new IllegalArgumentException("object's id is null");
+        if(object instanceof File) {
+            return getUrlFor((File) object);
+        } else if(object instanceof Group) {
+            return getUrlFor((Group) object);
+        } else if(object instanceof  Module) {
+            return getUrlFor((Module) object);
+        } else if(object instanceof User) {
+            return getUrlFor((User) object);
+        } else {
+            throw new IllegalArgumentException("object has unknown class");
+        }
     }
 }
