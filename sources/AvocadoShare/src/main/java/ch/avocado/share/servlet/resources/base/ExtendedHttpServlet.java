@@ -24,6 +24,10 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import static ch.avocado.share.common.HttpStatusCode.*;
+import static ch.avocado.share.common.constants.ErrorMessageConstants.*;
+import static ch.avocado.share.common.constants.ErrorMessageConstants.UNKNOWN_ERROR;
+
 /**
  * The ExtendedHttpServlet has similar functionality as {@link javax.servlet.http.HttpServlet HttpServlet}
  * but supports the following features:
@@ -122,7 +126,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
                 doCreate(request, response, session, parameter);
                 break;
             default:
-                throw new HttpServletException(HttpStatusCode.NOT_IMPLEMENTED, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+                throw new HttpServletException(NOT_IMPLEMENTED, ACTION_NOT_IMPLEMENTED);
         }
     }
 
@@ -159,15 +163,23 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (request == null) throw new NullPointerException("request is null");
         if (response == null) throw new NullPointerException("response is null");
+        HttpServletException exception = null;
         try {
             parseRequestAndCallAction(request, response);
         } catch (HttpServletException e) {
             e.printStackTrace();
+            exception = e;
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            exception = new HttpServletException(INTERNAL_SERVER_ERROR, UNKNOWN_ERROR, e);
+        }
+        if(exception != null) {
+            exception.printStackTrace();
             if (!response.isCommitted()) {
-                System.out.println("Sending HttpBeanException: " + e.getMessage() + " - " + e.getStatusCode());
-                ResponseHelper.sendErrorFromHttpBeanException(e, request, response);
+                System.out.println("Sending HttpBeanException: " + exception.getMessage() + " - " + exception.getStatusCode());
+                ResponseHelper.sendErrorFromHttpBeanException(exception, request, response);
             } else {
-                throw new ServletException(e.getMessage());
+                throw new ServletException(exception.getMessage());
             }
         }
     }
@@ -192,7 +204,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
                 try {
                     value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    throw new HttpServletException(HttpStatusCode.INTERNAL_SERVER_ERROR, ErrorMessageConstants.UNSUPPORTED_ENCODING, e);
+                    throw new HttpServletException(INTERNAL_SERVER_ERROR, UNSUPPORTED_ENCODING, e);
                 }
                 parameter.put(paramName, value);
             }
@@ -213,7 +225,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
         try {
             items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
         } catch (FileUploadException e) {
-            throw new HttpServletException(HttpStatusCode.BAD_REQUEST, e.getMessage());
+            throw new HttpServletException(BAD_REQUEST, e.getMessage());
         }
         for (FileItem item : items) {
             if (item.isFormField()) {
@@ -231,28 +243,28 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
 
     protected void doCreate(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
             throws HttpServletException, IOException {
-        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+        throw new HttpServletException(BAD_REQUEST, ACTION_NOT_IMPLEMENTED);
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
             throws HttpServletException, IOException {
-        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+        throw new HttpServletException(BAD_REQUEST, ACTION_NOT_IMPLEMENTED);
 
     }
 
     protected void doUpdate(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
             throws HttpServletException, IOException {
-        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+        throw new HttpServletException(BAD_REQUEST, ACTION_NOT_IMPLEMENTED);
     }
 
     protected void doView(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
             throws HttpServletException, IOException {
-        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+        throw new HttpServletException(BAD_REQUEST, ACTION_NOT_IMPLEMENTED);
     }
 
     protected void doReplace(HttpServletRequest request, HttpServletResponse response, UserSession session, Parameter parameter)
             throws HttpServletException, IOException {
-        throw new HttpServletException(HttpStatusCode.BAD_REQUEST, ErrorMessageConstants.ACTION_NOT_IMPLEMENTED);
+        throw new HttpServletException(BAD_REQUEST, ACTION_NOT_IMPLEMENTED);
     }
 
 }
