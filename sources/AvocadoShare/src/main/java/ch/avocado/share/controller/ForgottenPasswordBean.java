@@ -71,9 +71,7 @@ public class ForgottenPasswordBean implements Serializable {
             return false;
         }
         try {
-            if (!mailingService.sendPasswordResetEmail(user)) {
-                return false;
-            }
+            mailingService.sendPasswordResetEmail(user);
         } catch (MailingServiceException e) {
             errorMessage = ErrorMessageConstants.ERROR_SEND_MAIL_FAILED;
             return false;

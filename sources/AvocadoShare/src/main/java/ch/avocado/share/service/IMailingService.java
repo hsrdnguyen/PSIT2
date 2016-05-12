@@ -13,22 +13,22 @@ public interface IMailingService {
     /**
      * Sends an email to the users email with a link to verify the email with the link emailVerification in the user
      * @param user user to send the email to
-     * @return true if mail was sent successfully
+     * @throws MailingServiceException if the email could not be sent
      */
-    boolean sendVerificationEmail(User user) throws MailingServiceException;
+    void sendVerificationEmail(User user) throws MailingServiceException;
 
     /**
      * Sends an email to request access to the given resource
      * @param requestingUser user that requests access
      * @param object object to be accessed -> Owner will receive email
-     * @return true if mail was sent successfully
+     * @throws MailingServiceException if the email could not be sent
      */
-    boolean sendRequestAccessEmail(User requestingUser, User owningUser, AccessControlObjectBase object) throws MailingServiceException;
+    void sendRequestAccessEmail(User requestingUser, User owningUser, AccessControlObjectBase object) throws MailingServiceException;
 
     /**
      * Sends an email to the user with a link to reset his password.
      * @param user user to send the email to
-     * @return true if mail was sent successfully
+     * @throws MailingServiceException if the email could not be sent
      */
-    boolean sendPasswordResetEmail(User user) throws MailingServiceException;
+    void sendPasswordResetEmail(User user) throws MailingServiceException;
 }

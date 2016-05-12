@@ -37,16 +37,14 @@ public class MailingServiceTest {
         final Date expiry = new Date(0);
         User user = new User("123", new ArrayList<Category>(), new Date(0), new Rating(), "", UserPassword.fromPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new MailVerification(expiry, "123456")));
         File file = new File("123", new ArrayList<Category>(), new Date(0), new Rating(), "1234", "", "title", "path",  new Date(0), "", "321321", "image/png");
-
-        assertTrue(service.sendRequestAccessEmail(user, user, file));
+        service.sendRequestAccessEmail(user, user, file);
     }
 
     @Test
     public void test_verificationSendMail() throws MailingServiceException {
         final Date expiry = new Date(0);
         User user = new User("123", new ArrayList<Category>(), new Date(0), new Rating(), "", UserPassword.fromPassword("123456"), "", "", "", new EmailAddress(true, "bergmsas@students.zhaw.ch", new MailVerification(expiry, "123456")));
-
-        assertTrue(service.sendVerificationEmail(user));
+        service.sendVerificationEmail(user);
     }
 
 }

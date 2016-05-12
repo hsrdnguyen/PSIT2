@@ -20,7 +20,7 @@ import java.util.Properties;
 public class MailingService implements IMailingService {
 
     @Override
-    public boolean sendVerificationEmail(User user) throws MailingServiceException {
+    public void sendVerificationEmail(User user) throws MailingServiceException {
         if (user == null) throw new NullPointerException("user is Null");
         if (user.getMail().getVerification() == null) throw new IllegalArgumentException("emailAddressVerification is Null");
 
@@ -36,11 +36,10 @@ public class MailingService implements IMailingService {
         } catch (MessagingException e) {
             throw new MailingServiceException(ErrorMessageConstants.ERROR_SEND_VERIFICATION_MAIL, user.getMail().getAddress(), e);
         }
-        return true;
     }
 
     @Override
-    public boolean sendRequestAccessEmail(User requestingUser, User owningUser, AccessControlObjectBase object) throws MailingServiceException {
+    public void sendRequestAccessEmail(User requestingUser, User owningUser, AccessControlObjectBase object) throws MailingServiceException {
         if (requestingUser == null) throw new NullPointerException("user is Null");
         if (object == null) throw new NullPointerException("object is Null");
         if (owningUser == null) throw new NullPointerException("owningUser is Null");
@@ -53,11 +52,10 @@ public class MailingService implements IMailingService {
         } catch (MessagingException e) {
             throw new MailingServiceException(ErrorMessageConstants.ERROR_SEND_ACCESS_REQUEST_MAIL, owningUser.getMail().getAddress(), e);
         }
-        return true;
     }
 
     @Override
-    public boolean sendPasswordResetEmail(User user) throws MailingServiceException {
+    public void sendPasswordResetEmail(User user) throws MailingServiceException {
         if (user == null) throw new NullPointerException("user is Null");
         String code, email;
         Session session = prepareMessage();
@@ -70,7 +68,6 @@ public class MailingService implements IMailingService {
         } catch (MessagingException e) {
             throw new MailingServiceException(ErrorMessageConstants.ERROR_SEND_PASSWORD_RESET_MAIL, user.getMail().getAddress(), e);
         }
-        return true;
     }
 
     private void sendEmail(User user, Session session, String subject, String message) throws MessagingException {
