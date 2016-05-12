@@ -47,7 +47,6 @@ public abstract class AccessControlObjectBase extends Model{
     }
 
     /**
-     * @todo: change id to number
      * @param id The unique identifier of this object.
      */
     public void setId(String id) {

@@ -38,7 +38,7 @@ public class RatingDataHandler implements IRatingDataHandler {
             if(resultSet.next()) {
                 return getRatingFromResultSet(resultSet);
             } else {
-                return new Rating(ratedObjectId);
+                return new Rating();
             }
         } catch (SQLException e) {
             throw new DataHandlerException(e);
@@ -161,7 +161,7 @@ public class RatingDataHandler implements IRatingDataHandler {
 
     private Rating getRatingFromResultSet(ResultSet resultSet) throws SQLException {
         Rating rating;
-        rating = new Rating(resultSet.getLong(1));
+        rating = new Rating();
         do {
             rating.addRating(resultSet.getInt(3), resultSet.getLong(2));
         } while (resultSet.next());

@@ -30,7 +30,7 @@ public class RatingTest {
     public void setUp() {
         ratings = new HashMap<>();
         objectId = 1234;
-        rating = new Rating(1234);
+        rating = new Rating();
         averageRating = 0.0f;
         Random random = new Random();
         random.setSeed(1);
@@ -44,10 +44,12 @@ public class RatingTest {
         averageRating /= 10.0;
     }
 
+    /*
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithNegativeValue() throws Exception {
         new Rating(-1);
     }
+    */
 
     @Test
     public void testHasUserRated() {
@@ -57,10 +59,12 @@ public class RatingTest {
         assertFalse(rating.hasUserRated(11111));
     }
 
+    /*
     @Test
     public void testGetRatedObjectId() {
         assertEquals(objectId, rating.getRatedObjectId());
     }
+    */
 
     @Test
     public void testGetNumberOfRatings() {
@@ -74,7 +78,7 @@ public class RatingTest {
     public void testGetRating() {
         assertEquals(averageRating, rating.getRating(), 0.01);
 
-        rating = new Rating(3213);
+        rating = new Rating();
         assertEquals(RatingConstants.MIN_RATING_VALUE, rating.getRating(), 0.01);
     }
 

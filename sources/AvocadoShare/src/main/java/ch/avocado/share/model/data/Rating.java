@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kunzlio1 on 18.04.2016.
+ * The rating contains the users who have rated and the avarage rating.
  */
 public class Rating {
     private static long DEFAULT_RATED_OBJECT_ID = -1;
@@ -15,12 +15,19 @@ public class Rating {
     private long ratedObjectId;
     private float rating;
 
+    /**
+     * Create a new rating object with the associated object id.
+     * @param ratedObjectId
+     */
     public Rating(long ratedObjectId){
         if(ratedObjectId < 0) throw new IllegalArgumentException("ratedObjectId is below zero");
         ratingUserIds = new ArrayList<>();
         this.ratedObjectId = ratedObjectId;
     }
 
+    /**
+     * Create a new rating object without the associated object id.
+     */
     public Rating(){
         ratingUserIds = new ArrayList<>();
         this.ratedObjectId = DEFAULT_RATED_OBJECT_ID;
@@ -28,10 +35,6 @@ public class Rating {
 
     public boolean hasUserRated(long ratingUserId){
         return ratingUserIds.contains(ratingUserId);
-    }
-
-    public long getRatedObjectId(){
-        return ratedObjectId;
     }
 
     public int getNumberOfRatings(){

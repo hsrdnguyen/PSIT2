@@ -56,7 +56,7 @@ public class AccessControlObjectBaseTest {
         creationDate = new Date();
         ownerId = "9876543";
         description = "Description";
-        rating = new Rating(Long.parseLong(id));
+        rating = new Rating();
         rating.addRating(2, Long.parseLong(ownerId));
         object = new Object(id, categories, creationDate, rating, ownerId, description);
         assertFalse(object.isDirty());

@@ -9,6 +9,12 @@ public class DiskFile {
     private final String mimeType;
     private final String path;
 
+    /**
+     * Create a new diskfile
+     * @param path The path to the file
+     * @param mimeType The mime type of the file
+     * @param extension The extension of the file without a leading dot.
+     */
     public DiskFile(String path, String mimeType, String extension) {
         if(path == null) throw new NullPointerException("path is null");
         if(path.isEmpty()) throw new IllegalArgumentException("path is empty");
@@ -20,24 +26,33 @@ public class DiskFile {
         this.extension = extension;
     }
 
+    /**
+     * @return The extension without the leading dot (e.g. "png")
+     */
     public String getExtension() {
         return extension;
     }
 
+    /**
+     * @return The mime-type. (e.g. "image/png")
+     */
     public String getMimeType() {
         return mimeType;
     }
 
+    /**
+     * @return A reference to the path of the of the file
+     */
     public String getPath() {
         return path;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
 
-        DiskFile diskFile = (DiskFile) o;
+        DiskFile diskFile = (DiskFile) other;
 
         if (!extension.equals(diskFile.extension)) return false;
         if (!mimeType.equals(diskFile.mimeType)) return false;

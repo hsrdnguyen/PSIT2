@@ -3,7 +3,7 @@ package ch.avocado.share.model.data;
 import java.util.Objects;
 
 /**
- * email address model.
+ * Email address model.
  */
 public class EmailAddress extends Model {
 

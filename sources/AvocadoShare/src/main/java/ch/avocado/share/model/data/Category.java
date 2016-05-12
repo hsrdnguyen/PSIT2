@@ -15,6 +15,11 @@ public class Category implements Comparable<Category> {
     private final String name;
     private final List<String> objectIds;
 
+    /**
+     * Create a new category.
+     * @param name The name of the category
+     * @param objectIds The ids of the objects assigned to this category.
+     */
     public Category(String name, List<String> objectIds) {
         if(name == null ) throw new NullPointerException("name in category");
         if(objectIds == null ) throw new NullPointerException("objectIds in category");
@@ -31,10 +36,16 @@ public class Category implements Comparable<Category> {
         this.objectIds = new ArrayList<>();
     }
 
+    /**
+     * @return The name of the category
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return The id's of the objects with this category.
+     */
     public Collection<String> getObjectIds() {
         ArrayList<String> ids = new ArrayList<>(objectIds.size());
         ids.addAll(objectIds);

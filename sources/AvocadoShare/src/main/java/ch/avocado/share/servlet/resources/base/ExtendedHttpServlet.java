@@ -179,6 +179,7 @@ public abstract class ExtendedHttpServlet extends GenericServlet {
                 System.out.println("Sending HttpBeanException: " + exception.getMessage() + " - " + exception.getStatusCode());
                 ResponseHelper.sendErrorFromHttpBeanException(exception, request, response);
             } else {
+                // We can't send an error message so we throw an exception
                 throw new ServletException(exception.getMessage());
             }
         }

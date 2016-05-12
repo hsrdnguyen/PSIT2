@@ -19,8 +19,13 @@ public class ServiceLocator {
     private static final Map<Type, Object> services;
 
     static {
-        services = new HashMap<>();
-        registerServices();
+        try {
+            services = new HashMap<>();
+            registerServices();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**

@@ -4,10 +4,26 @@ package ch.avocado.share.model.data;
  * All possible access levels.
  */
 public enum AccessLevelEnum {
+    /**
+     * No access at all.
+     */
     NONE(0),
+    /**
+     * Reading access. No modifications allowed.
+     */
     READ(1),
+    /**
+     * Modification of the objects content allowed but no
+     * modification of the access and not allowed to delete the object.
+     */
     WRITE(3),
+    /**
+     * Manage rights
+     */
     MANAGE(4),
+    /**
+     * Ownership of the object.
+     */
     OWNER(7);
 
     /**

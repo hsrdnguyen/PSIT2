@@ -6,10 +6,7 @@ import ch.avocado.share.service.IGroupDataHandler;
 import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Members {
@@ -59,26 +56,44 @@ public class Members {
         return new Members(usersWithRights, groupsWithRights, target);
     }
 
-    public Iterable<User> getUsers() {
-        return users.keySet();
+    /**
+     * @return An set of all users which are members.
+     */
+    public Set<User> getUsers() {
+        return new HashSet<>(users.keySet());
     }
 
-    public Iterable<Group> getGroups() {
-        return groups.keySet();
+    /**
+     * @return An set of all groups which are members.
+     */
+    public Set<Group> getGroups() {
+        return new HashSet<>(groups.keySet());
     }
 
+    /**
+     * @return A map of users the access on the target.
+     */
     public HashMap<User, AccessLevelEnum> getUsersWithAccess() {
         return new HashMap<>(users);
     }
 
+    /**
+     * @return A map of groups the access on the target.
+     */
     public HashMap<Group, AccessLevelEnum> getGroupsWithAccess() {
         return new HashMap<>(groups);
     }
 
+    /**
+     * @return The target.
+     */
     public AccessControlObjectBase getTarget() {
         return target;
     }
 
+    /**
+     * @return A map of all identities with the assosiated access.
+     */
     public Map<AccessIdentity, AccessLevelEnum> getIdentitiesWithAccess() {
         Map<AccessIdentity, AccessLevelEnum> map = new HashMap<>();
         map.putAll(users);
@@ -86,7 +101,7 @@ public class Members {
         return map;
     }
 
-    public Iterable<AccessIdentity> getIdentities() {
+    public List<AccessIdentity> getIdentities() {
         List<AccessIdentity> list = new ArrayList<>(groups.size() + users.size());
         list.addAll(groups.keySet());
         list.addAll(users.keySet());
