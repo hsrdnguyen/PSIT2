@@ -45,7 +45,7 @@
                 }
         %>
 
-        <a data-result-type="<%=type%>"data-result-id="<%=Encoder.forHtmlAttribute(obj.getId()) %>" href="<%=url %>" style="visibility: collapse" class="list-group-item <%=cssClass %>">
+        <a data-result-type="<%=type%>" data-result-id="<%=Encoder.forHtmlAttribute(obj.getId()) %>" href="<%=url %>" style="visibility: collapse" class="list-group-item result <%=cssClass %>">
             <h4 class="list-group-item-heading"><%=objtitle %></h4>
             <p class="list-group-item-text"><%=description %></p>
         </a>
@@ -76,9 +76,6 @@
         </div>
     </div>
 </div>
-<form name="request_access" action="<%=baseUrl%>/requestAccess.jsp">
-    <input type="hidden" name="fileId" />
-</form>
 <script type="application/javascript">
     $(function(){
         $("[data-result-id]").each(function(i, obj){

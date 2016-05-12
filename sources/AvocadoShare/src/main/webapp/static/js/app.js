@@ -207,12 +207,16 @@ SearchResult.prototype.setAccess = function(access){
             }
         }(this));
         this.element.insertBefore(button, this.element.firstChild);
+        this.element.href = this.getRequestAccessUrl();
     }
 };
 
+SearchResult.prototype.getRequestAccessUrl = function() {
+    return this.requestUrl + "?id=" + encodeURIComponent(this.id) + "&type=" + encodeURIComponent(this.type);
+};
 
 SearchResult.prototype.requestAccess = function() {
-    window.location.href = this.requestUrl + "?id=" + encodeURIComponent(this.id) + "&type=" + encodeURIComponent(this.type);
+    window.location.href = this.getRequestAccessUrl();
 };
 
 $(function(){

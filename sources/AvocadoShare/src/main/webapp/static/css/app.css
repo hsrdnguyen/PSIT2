@@ -233,6 +233,9 @@ input.add-category {
 .rating:hover .rating-overlay, .rating-overlay:hover {
     display: none;
 }
+
+/*
+
 .ModuleResult
 {
     background-color: #DDFFFF;
@@ -246,9 +249,40 @@ input.add-category {
 .FileResult
 {
     background-color: #FFFFDD;
+}*/
+
+
+
+.result {
+    padding: 1em;
+}
+
+.ModuleResult:before, .GroupResult:before, .FileResult:before {
+    color: rgba(0,0,0,0.4);
+    margin-top: -0.5em;
 }
 
 
+
 .stacktrace {
-    font-size: 0.9em;
+    font-size: 0.5em;
+    overflow: scroll;
+}
+
+
+.card-module:before, .card-group:before, .card-file:before{
+    color: rgba(0,0,0,0.4);
+    float: right;
+}
+
+.ModuleResult:before, .card-module:before {
+    content: "Modul";
+}
+
+.GroupResult:before, .card-group:before {
+    content: "Gruppe";
+}
+
+.FileResult:before, .card-file:before {
+    content: "Datei";
 }

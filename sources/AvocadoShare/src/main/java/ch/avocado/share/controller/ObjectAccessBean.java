@@ -22,13 +22,8 @@ public class ObjectAccessBean implements Serializable {
      */
     private String fileId;
 
-    /**
-     * The e-mail address of the user who requests the access.
-     */
-    private String requesterUserMail;
     private User objectOwner;
     private String requesterUserId;
-    private String objectType;
 
 
     public boolean grantAccess() {
@@ -38,12 +33,10 @@ public class ObjectAccessBean implements Serializable {
 
         IFileDataHandler fileDataHandler;
         ISecurityHandler securityHandler;
-        IUserDataHandler userDataHandler;
 
         File file;
 
         try {
-            userDataHandler = ServiceLocator.getService(IUserDataHandler.class);
             fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
             securityHandler = ServiceLocator.getService(ISecurityHandler.class);
         } catch (ServiceNotFoundException e) {
@@ -87,15 +80,8 @@ public class ObjectAccessBean implements Serializable {
         this.requesterUserId = requesterUserId;
     }
 
-    public void setRequesterUserMail(String requesterUserMail) {
-        this.requesterUserMail = requesterUserMail;
-    }
-
     public void setFileId(String fileId) {
         this.fileId = fileId;
     }
 
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
-    }
 }
