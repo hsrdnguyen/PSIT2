@@ -3,6 +3,24 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ch.avocado.share</groupId>
     <url>https://github.engineering.zhaw.ch/ps-15-spio-lerx/ps_15_gruppe13</url>
+    <developers>
+        <developer>
+            <name>Sascha Bergmann</name>
+            <email>bergmsas@students.zhaw.ch</email>
+        </developer>
+        <developer>
+            <name>Lion Kunz</name>
+            <email>kunzlio@students.zhaw.ch</email>
+        </developer>
+        <developer>
+            <name>Cyril Müller</name>
+            <email>muellcy1@students.zhaw.ch</email>
+        </developer>
+        <developer>
+            <name>Dang Thien Nguyen</name>
+            <email>nguyeda@students.zhaw.ch</email>
+        </developer>
+    </developers>
     <artifactId>AvocadoShare</artifactId>
     <version>0.0.4</version>
     <packaging>war</packaging>
