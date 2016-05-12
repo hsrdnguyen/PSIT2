@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Impl;
 
+import ch.avocado.share.common.SearchResultComparater;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.File;
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -133,7 +135,9 @@ public class FileDataHandler extends DataHandlerBase implements IFileDataHandler
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return getMultipleFilesFromResultSet(result);
+        List<File> files = getMultipleFilesFromResultSet(result);
+        Collections.sort(files, new SearchResultComparater());
+        return files;
     }
 
     @Override

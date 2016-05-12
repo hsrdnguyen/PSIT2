@@ -100,4 +100,10 @@ public class File extends AccessControlObjectBase {
         if(this.diskFile == null) throw new IllegalStateException("diskfile not added yet");
         return this.diskFile.getPath();
     }
+
+    @Override
+    public String toString()
+    {
+        return title;
+    }
 }

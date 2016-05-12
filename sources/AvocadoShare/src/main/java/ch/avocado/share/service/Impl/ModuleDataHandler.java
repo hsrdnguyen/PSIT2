@@ -1,5 +1,6 @@
 package ch.avocado.share.service.Impl;
 
+import ch.avocado.share.common.SearchResultComparater;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.Module;
@@ -15,10 +16,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static ch.avocado.share.common.constants.sql.ModuleConstants.*;
 
@@ -161,7 +159,10 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
         } catch (SQLException e) {
             throw new DataHandlerException(e);
         }
-        return getMultipleModulesFromResult(result);
+        List<Module> modules = getMultipleModulesFromResult(result);
+
+        Collections.sort(modules, new SearchResultComparater());
+        return modules;
     }
 
     @Override
@@ -206,6 +207,7 @@ public class ModuleDataHandler extends DataHandlerBase implements IModuleDataHan
                 modules.add(module);
             }
 
+            Collections.sort(modules, new SearchResultComparater());
             return modules;
         } catch (SQLException e) {
             e.printStackTrace();

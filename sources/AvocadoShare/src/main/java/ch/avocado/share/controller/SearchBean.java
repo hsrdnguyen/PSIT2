@@ -1,5 +1,6 @@
 package ch.avocado.share.controller;
 
+import ch.avocado.share.common.SearchResultComparater;
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.AccessControlObjectBase;
 import ch.avocado.share.model.data.File;
@@ -13,6 +14,7 @@ import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +41,8 @@ public class SearchBean implements Serializable {
                 results.addAll(files);
                 results.addAll(modules);
                 results.addAll(groups);
+
+                Collections.sort(results, new SearchResultComparater());
 
                 return results;
             } catch (ServiceNotFoundException | DataHandlerException e) {
