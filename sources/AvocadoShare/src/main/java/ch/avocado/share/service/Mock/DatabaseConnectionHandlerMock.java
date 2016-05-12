@@ -5,6 +5,7 @@ import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.IDatabaseConnectionHandler;
 import ch.avocado.share.service.Impl.DatabaseConnectionHandler;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,15 +21,14 @@ public class DatabaseConnectionHandlerMock extends DatabaseConnectionHandler imp
     //  Database credentials
     private static final String USER = "avocado_tomcat";
     private static final String PASS = "77eb2c2e52824f26bd47f6d0bc6e1dcb";
+    private Connection conn = null;
 
     @Override
-    protected void ensureConnection() throws SQLException {
-        if (conn == null || conn.isClosed())
-        {
-            conn =  DriverManager.getConnection(DB_URL,USER,PASS);
-            Statement setSchema = conn.createStatement();
-            setSchema.execute("SET search_path TO avocado_share;");
+    protected Connection getConnection() throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
         }
+        return conn;
     }
 
     public static void use() throws IllegalAccessException {
@@ -38,7 +38,7 @@ public class DatabaseConnectionHandlerMock extends DatabaseConnectionHandler imp
         } catch (ServiceNotFoundException e) {
             connectionHandler = null;
         }
-        if(connectionHandler == null || !connectionHandler.getClass().equals(DatabaseConnectionHandlerMock.class)) {
+        if (connectionHandler == null || !connectionHandler.getClass().equals(DatabaseConnectionHandlerMock.class)) {
             ServiceLocatorModifier.setService(IDatabaseConnectionHandler.class, new DatabaseConnectionHandlerMock());
         }
     }

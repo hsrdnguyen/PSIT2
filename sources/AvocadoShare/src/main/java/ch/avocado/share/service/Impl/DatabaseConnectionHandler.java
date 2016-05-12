@@ -9,7 +9,7 @@ import java.sql.*;
  */
 public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
-    protected static Connection conn;
+    private Connection conn = null;
 
     // JDBC driver name and database URL
     private static final String JDBC_DRIVER = "org.postgresql.Driver";
@@ -33,13 +33,12 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     @Override
     public PreparedStatement getPreparedStatement(String query) throws SQLException {
-        ensureConnection();
-        return conn.prepareStatement(query);
+        return getConnection().prepareStatement(query);
     }
 
     @Override
     public ResultSet executeQuery(PreparedStatement statement) throws SQLException {
-        //ensureConnection();
+        //getConnection();
         ResultSet result = statement.executeQuery();
 
         //conn.close();
@@ -48,9 +47,8 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     @Override
     public String insertDataSet(PreparedStatement statement) throws SQLException {
-        ensureConnection();
 
-        Statement stmt = conn.createStatement();
+        Statement stmt = getConnection().createStatement();
         stmt.execute(statement.toString(), Statement.RETURN_GENERATED_KEYS);
 
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -70,18 +68,19 @@ public class DatabaseConnectionHandler implements IDatabaseConnectionHandler {
 
     @Override
     public boolean updateDataSet(PreparedStatement statement) throws SQLException {
-        //ensureConnection();
+        //getConnection();
         boolean result = statement.executeUpdate() != 0;
         //conn.close();
         return result;
     }
 
-    protected void ensureConnection() throws SQLException {
+    protected Connection getConnection() throws SQLException {
         if (conn == null || conn.isClosed())
         {
             conn =  DriverManager.getConnection(DB_URL,USER,PASS);
             Statement setSchema = conn.createStatement();
             setSchema.execute("SET search_path TO avocado_share;");
         }
+        return conn;
     }
 }
