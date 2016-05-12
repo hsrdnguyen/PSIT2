@@ -4,7 +4,7 @@ import ch.avocado.share.model.data.File;
 import org.mockito.ArgumentMatcher;
 
 /**
- * Created by coffeemakr on 17.04.16.
+ * Argument matcher for Files
  */
 public class FileArgumentMatcher implements ArgumentMatcher<File> {
 

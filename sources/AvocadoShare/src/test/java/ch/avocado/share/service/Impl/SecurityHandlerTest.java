@@ -2,9 +2,11 @@ package ch.avocado.share.service.Impl;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.service.*;
+import ch.avocado.share.service.IFileDataHandler;
+import ch.avocado.share.service.IGroupDataHandler;
+import ch.avocado.share.service.IModuleDataHandler;
+import ch.avocado.share.service.IUserDataHandler;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
-import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
 import ch.avocado.share.test.DummyFactory;
@@ -12,7 +14,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,6 @@ public class SecurityHandlerTest {
     @Before
     public void setUp() throws Exception {
         DatabaseConnectionHandlerMock.use();
-        MailingServiceMock.use();
 
         securityHandler = new SecurityHandler();
 

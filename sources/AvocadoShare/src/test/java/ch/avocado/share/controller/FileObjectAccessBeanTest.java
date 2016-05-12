@@ -2,16 +2,14 @@ package ch.avocado.share.controller;
 
 import ch.avocado.share.common.ServiceLocator;
 import ch.avocado.share.model.data.*;
-import ch.avocado.share.service.exceptions.ObjectNotFoundException;
-import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.service.*;
 import ch.avocado.share.service.Mock.DatabaseConnectionHandlerMock;
-import ch.avocado.share.service.Mock.MailingServiceMock;
 import ch.avocado.share.service.Mock.ServiceLocatorModifier;
 import ch.avocado.share.service.exceptions.DataHandlerException;
+import ch.avocado.share.service.exceptions.ObjectNotFoundException;
+import ch.avocado.share.service.exceptions.ServiceException;
+import ch.avocado.share.service.exceptions.ServiceNotFoundException;
 import ch.avocado.share.test.DummyFactory;
-import ch.avocado.share.test.FileArgumentMatcher;
-import ch.avocado.share.test.UserArgumentMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +17,6 @@ import org.junit.Test;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 
 /**
@@ -103,10 +100,20 @@ public class FileObjectAccessBeanTest {
     @After
     public void tearDown() throws Exception {
         deleteTestUsers();
-        IModuleDataHandler moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
-        IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
-        fileDataHandler.deleteFile(file);
-        moduleDataHandler.deleteModule(module);
+
+        try {
+            IFileDataHandler fileDataHandler = ServiceLocator.getService(IFileDataHandler.class);
+            fileDataHandler.deleteFile(file);
+        }catch (ServiceException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            IModuleDataHandler moduleDataHandler = ServiceLocator.getService(IModuleDataHandler.class);
+            moduleDataHandler.deleteModule(module);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
     }
 
     @After
@@ -114,91 +121,6 @@ public class FileObjectAccessBeanTest {
         ServiceLocatorModifier.restore();
     }
 
-    /*
-    @Test
-    public void testRequestAccessForUserWithoutAccess() throws Exception {
-        MailingServiceMock.use();
-        IMailingService mailingService = mock(IMailingService.class);
-        when(mailingService.sendRequestAccessEmail(any(User.class), any(User.class), any(File.class))).thenReturn(true);
-        ServiceLocatorModifier.setService(IMailingService.class, mailingService);
-
-        UserArgumentMatcher isOwner = new UserArgumentMatcher(owner);
-        UserArgumentMatcher isRequester = new UserArgumentMatcher(userWithoutReadRights);
-        FileArgumentMatcher isFile = new FileArgumentMatcher(file);
-
-        bean.setFileId(file.getId());
-        bean.setRequesterUserMail(userWithoutReadRights.getMail().getAddress());
-        assertTrue("Request access failed", bean.requestAccess());
-
-        verify(mailingService, times(1)).sendRequestAccessEmail(argThat(isRequester), argThat(isOwner), argThat(isFile));
-    }
-
-    @Test
-    public void testRequestAccessFailesWhenMailingServiceFails() throws Exception {
-        MailingServiceMock.use();
-        IMailingService mailingService = mock(IMailingService.class);
-        when(mailingService.sendRequestAccessEmail(any(User.class), any(User.class), any(File.class))).thenReturn(false);
-        ServiceLocatorModifier.setService(IMailingService.class, mailingService);
-
-        UserArgumentMatcher isOwner = new UserArgumentMatcher(owner);
-        UserArgumentMatcher isRequester = new UserArgumentMatcher(userWithoutReadRights);
-        FileArgumentMatcher isFile = new FileArgumentMatcher(file);
-
-        bean.setFileId(file.getId());
-        bean.setRequesterUserMail(userWithoutReadRights.getMail().getAddress());
-        assertFalse("Request succeeded but mailing service failed ", bean.requestAccess());
-
-        verify(mailingService, times(1)).sendRequestAccessEmail(argThat(isRequester), argThat(isOwner), argThat(isFile));
-    }
-
-
-    @Test
-    public void testRequestAccessForUserWithAccess() throws Exception {
-        MailingServiceMock.use();
-        IMailingService mailingService = mock(IMailingService.class);
-        ServiceLocatorModifier.setService(IMailingService.class, mailingService);
-
-        bean.setFileId(file.getId());
-        bean.setRequesterUserMail(userWithReadRights.getMail().getAddress());
-        assertFalse("Request access succeeded but should fail", bean.requestAccess());
-
-        verify(mailingService, never()).sendRequestAccessEmail(any(User.class), any(User.class), any(File.class));
-    }
-
-    @Test
-    public void testRequestAccessForInvalidUser() throws Exception {
-        MailingServiceMock.use();
-        IMailingService mailingService = mock(IMailingService.class);
-        ServiceLocatorModifier.setService(IMailingService.class, mailingService);
-
-        bean.setFileId(file.getId());
-        // We use a inexisting id
-        bean.setRequesterUserMail("999999999999999");
-        assertFalse(bean.requestAccess());
-
-        verify(mailingService, never()).sendRequestAccessEmail(any(User.class), any(User.class), any(File.class));
-    }
-
-    @Test
-    public void testRequestAccessForInvalidFile() throws Exception {
-        MailingServiceMock.use();
-        IMailingService mailingService = mock(IMailingService.class);
-        ServiceLocatorModifier.setService(IMailingService.class, mailingService);
-
-        // We use a inexisting id
-        String notExistingFileId = "999999999999999";
-        try {
-            ServiceLocator.getService(IFileDataHandler.class).getFile(notExistingFileId);
-            fail();
-        } catch (ObjectNotFoundException ignored) {
-        }
-        bean.setFileId(notExistingFileId);
-        bean.setRequesterUserMail(userWithoutReadRights.getId());
-        assertFalse(bean.requestAccess());
-
-        verify(mailingService, never()).sendRequestAccessEmail(any(User.class), any(User.class), any(File.class));
-    }
-    */
 
     @Test
     public void testGrantAccess() throws Exception {

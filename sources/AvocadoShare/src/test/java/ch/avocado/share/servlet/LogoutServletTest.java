@@ -14,10 +14,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static ch.avocado.share.test.Asserts.assertIsLoggedIn;
+import static ch.avocado.share.test.Asserts.assertIsLoggedOut;
+import static ch.avocado.share.test.Asserts.assertIsRedirected;
 
 public class LogoutServletTest {
 
@@ -44,27 +45,11 @@ public class LogoutServletTest {
 		ServiceLocatorModifier.restore();
 	}
 
-    private void assertIsRedirect(HttpServletResponse response) {
-		String redirectUrl = response.getHeader("location");
-		assertTrue(response.getStatus() == HttpServletResponse.SC_FOUND);
-		assertNotNull(redirectUrl);
-    }
-
-	private void assertIsLoggedOut(MockHttpServletRequest request) {
-		UserSession session = new UserSession(request);
-		assertFalse("Not logged out", session.isAuthenticated());
-	}
-
-	private void assertIsLoggedIn(MockHttpServletRequest request) {
-		UserSession session = new UserSession(request);
-		assertTrue("Not logged in", session.isAuthenticated());
-	}
-
 	@Test
 	public void testDoPostHttpServletRequestHttpServletResponse() throws ServletException, IOException {
 		assertIsLoggedIn(request);
 		servlet.doPost(request, response);
-		assertIsRedirect(response);
+		assertIsRedirected(response);
 		assertIsLoggedOut(request);
 	}
 
@@ -72,7 +57,7 @@ public class LogoutServletTest {
 	public void testDoGetHttpServletRequestHttpServletResponse() throws ServletException, IOException {
 		assertIsLoggedIn(request);
 		servlet.doGet(request, response);
-		assertIsRedirect(response);
+		assertIsRedirected(response);
 		assertIsLoggedOut(request);
 	}
 }

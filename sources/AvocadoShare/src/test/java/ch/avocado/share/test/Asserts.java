@@ -1,8 +1,11 @@
 package ch.avocado.share.test;
 
+import ch.avocado.share.controller.UserSession;
 import ch.avocado.share.model.data.Category;
 import ch.avocado.share.model.data.User;
+import org.springframework.mock.web.MockHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -53,5 +56,23 @@ public class Asserts {
         }
         assertEquals("Mail", expected.getMail(), actual.getMail());
         assertEquals("Reset verification", expected.getPassword().getResetVerification(), actual.getPassword().getResetVerification());
+    }
+
+
+
+    public static void assertIsRedirected(HttpServletResponse response) {
+        String redirectUrl = response.getHeader("location");
+        assertEquals(HttpServletResponse.SC_FOUND, response.getStatus());
+        assertNotNull(redirectUrl);
+    }
+
+    public static void assertIsLoggedOut(MockHttpServletRequest request) {
+        UserSession session = new UserSession(request);
+        assertFalse("Not logged out", session.isAuthenticated());
+    }
+
+    public static void assertIsLoggedIn(MockHttpServletRequest request) {
+        UserSession session = new UserSession(request);
+        assertTrue("Not logged in", session.isAuthenticated());
     }
 }

@@ -4,7 +4,7 @@ import ch.avocado.share.model.data.User;
 import org.mockito.ArgumentMatcher;
 
 /**
- * Created by coffeemakr on 17.04.16.
+ * Argument matcher for Users
  */
 public class UserArgumentMatcher implements ArgumentMatcher<User> {
 
