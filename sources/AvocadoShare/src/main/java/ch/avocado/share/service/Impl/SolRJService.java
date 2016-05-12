@@ -83,11 +83,11 @@ public class SolRJService implements ISearchEngineService {
     public boolean indexFile(ch.avocado.share.model.data.File file) {
         ContentStreamUpdateRequest up = new ContentStreamUpdateRequest("/update/extract");
         try {
-            up.addFile(new File(ServiceLocator.getService(IFileStorageHandler.class).getStoreDirectory() + "\\" + file.getPath()));
+            File fullFilePath = new File(ServiceLocator.getService(IFileStorageHandler.class).getStoreDirectory(), file.getPath());
+            up.addFile(fullFilePath);
             up.setParam("literal.id", file.getId());
             up.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);
             NamedList<Object> result = server.request(up);
-
             return result != null;
         } catch (Exception e) {
             e.printStackTrace();
