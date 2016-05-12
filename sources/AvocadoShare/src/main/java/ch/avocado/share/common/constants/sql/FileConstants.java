@@ -6,8 +6,8 @@ import static ch.avocado.share.common.constants.sql.Tables.*;
 public class FileConstants {
     private static final String SELECT_FILES = "" +
             "SELECT o.id, title, description, last_changed, creation_date, path, module_id, owner.owner_id, extension, mimetype " +
-            "   FROM file AS f " +
-            "JOIN access_control AS o " +
+            "   FROM " + FILE_TABLE + " AS f " +
+            "JOIN " + BASE_OBJECT_TABLE + " AS o " +
             "   ON f.id = o.id " +
             "JOIN " + UPLOADED_TABLE + " AS u " +
             "   ON u.file_id = f.id " +
@@ -32,6 +32,6 @@ public class FileConstants {
     public static final String SELECT_BY_TITLE_QUERY_AND_MODULE = SELECT_FILES + "WHERE title = ? AND module_id = ?";
     public static final String SELECT_BY_ID_QUERY = SELECT_FILES + "WHERE o.id = ?";
 
-    public static final String SELECT_ALL_FILES = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN access_control AS o ON f.id = o.id";
+    public static final String SELECT_ALL_FILES = "SELECT o.id, title, description, last_changed, creation_date, path FROM file AS f JOIN " + BASE_OBJECT_TABLE + " AS o ON f.id = o.id";
 
 }

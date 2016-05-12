@@ -95,7 +95,7 @@ public class SecurityConstants {
     public static final int SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX = 2;
     public static final int SELECT_TARGETS_WITH_ACCESS_LEVEL_INDEX_2 = 5;
     private static final String SELECT_MODULE_RIGHTS_FOR_FILE = "" +
-            "SELECT readable, writable, manageable, FALSE FROM access_level AS level2\n" +
+            "SELECT readable, writable, manageable, FALSE FROM " + RIGHTS_LEVEL_TABLE + " AS level2\n" +
             "JOIN (SELECT\n" +
             "  rights_from_module.level\n" +
             "FROM\n" +

@@ -59,7 +59,7 @@ public class UserConstants {
             "FROM " + Tables.USER_TABLE + "  AS I " +
             "  JOIN avocado_share.email AS E " +
             "    ON E.identity_id = I.id " +
-            "  JOIN avocado_share.access_control AS O " +
+            "  JOIN " + Tables.BASE_OBJECT_TABLE + " AS O " +
             "    ON O.id = I.id " +
             "  LEFT JOIN avocado_share.password_reset AS r " +
             "    ON r.id = I.id ";

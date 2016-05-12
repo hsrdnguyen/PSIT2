@@ -9,7 +9,7 @@ public class AccessControlObjectConstants {
     //ACCESS CONTROL DATA OBJECT
     public static final int INSERT_ACCESS_CONTROL_QUERY_DESCRIPTION_INDEX = 1;
     public static final String INSERT_ACCESS_CONTROL_QUERY = "INSERT INTO " + BASE_OBJECT_TABLE + "(id, creation_date, description) VALUES (DEFAULT, DEFAULT, ?) ";
-    public static final String DELETE_ACCESS_CONTROL_QUERY = "DELETE FROM access_control WHERE id = ?";
+    public static final String DELETE_ACCESS_CONTROL_QUERY = "DELETE FROM " + BASE_OBJECT_TABLE + " WHERE id = ?";
     public static final String UPDATE_ACCESS_CONTROL_DESCRIPTION = "UPDATE " + BASE_OBJECT_TABLE + " SET description = ? WHERE id = ?";
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_DESCRIPTION_INDEX = 1;
     public static final int UPDATE_ACCESS_CONTROL_DESCRIPTION_ID_INDEX = 2;
